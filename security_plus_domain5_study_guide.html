@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security+ Domain 5: Security Program Management and Oversight</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+
+        .domain-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #3498db;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .navigation {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .objective-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .objective-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .objective-header {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .objective-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .objective-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .main-content {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+
+        .concept-card {
+            background: #fff;
+            border-left: 4px solid #3498db;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 0 10px 10px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .concept-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .concept-content {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .key-points {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .key-points h4 {
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .key-points ul {
+            margin-left: 1rem;
+        }
+
+        .key-points li {
+            margin-bottom: 0.3rem;
+        }
+
+        .example-box {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid #2ecc71;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .example-box h4 {
+            color: #27ae60;
+            margin-bottom: 0.5rem;
+        }
+
+        .warning-box {
+            background: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid #e74c3c;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box h4 {
+            color: #c0392b;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-links {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .quick-links h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .quick-links a {
+            display: block;
+            color: #3498db;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            transition: color 0.3s ease;
+        }
+
+        .quick-links a:hover {
+            color: #2980b9;
+        }
+
+        .progress-tracker {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .progress-tracker h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-checkbox {
+            margin-right: 0.5rem;
+        }
+
+        .progress-label {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .interactive-quiz {
+            background: rgba(155, 89, 182, 0.1);
+            border: 2px solid #9b59b6;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .quiz-question {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #8e44ad;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .quiz-option {
+            background: #fff;
+            border: 2px solid #ddd;
+            padding: 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: #9b59b6;
+            background: rgba(155, 89, 182, 0.05);
+        }
+
+        .quiz-option.correct {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: #e74c3c;
+        }
+
+        .quiz-explanation {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .floating-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+        }
+
+        .nav-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active,
+        .nav-dot:hover {
+            background: #3498db;
+            transform: scale(1.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-nav {
+                display: none;
+            }
+            
+            .nav-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Security+ Domain 5: Security Program Management and Oversight</h1>
+        <p>Complete Study Guide for SY0-701 Certification</p>
+        
+        <div class="domain-stats">
+            <div class="stat-card">
+                <h3>Exam Weight</h3>
+                <p>20%</p>
+            </div>
+            <div class="stat-card">
+                <h3>Objectives</h3>
+                <p>6</p>
+            </div>
+            <div class="stat-card">
+                <h3>Key Topics</h3>
+                <p>25+</p>
+            </div>
+            <div class="stat-card">
+                <h3>Study Time</h3>
+                <p>15-20 Hours</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="navigation">
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="showObjective('51')">5.1 Security Governance</button>
+                <button class="nav-btn" onclick="showObjective('52')">5.2 Risk Management</button>
+                <button class="nav-btn" onclick="showObjective('53')">5.3 Third-party Risk</button>
+                <button class="nav-btn" onclick="showObjective('54')">5.4 Security Compliance</button>
+                <button class="nav-btn" onclick="showObjective('55')">5.5 Audits & Assessments</button>
+                <button class="nav-btn" onclick="showObjective('56')">5.6 Security Awareness</button>
+            </div>
+        </div>
+
+        <!-- Objective 5.1: Security Governance -->
+        <div class="objective-section active" id="objective-51">
+            <div class="objective-header">
+                <div class="objective-title">5.1 Summarize elements of effective security governance</div>
+                <div class="objective-description">Understanding policies, standards, procedures, and governance structures that ensure effective security management</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <div class="concept-card">
+                        <div class="concept-title">Security Governance Framework</div>
+                        <div class="concept-content">
+                            <p>Security governance provides the strategic direction and control necessary for an organization's security program. It establishes the framework for making security decisions, allocating resources, and ensuring accountability.</p>
+                            
+                            <div class="key-points">
+                                <h4>Core Components:</h4>
+                                <ul>
+                                    <li><strong>Guidelines:</strong> High-level recommendations and best practices</li>
+                                    <li><strong>Policies:</strong> Formal statements of management intent</li>
+                                    <li><strong>Standards:</strong> Mandatory requirements and specifications</li>
+                                    <li><strong>Procedures:</strong> Step-by-step instructions for implementation</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Real-World Example:</h4>
+                                <p>A financial institution implements a comprehensive governance framework including a board-level cybersecurity committee, written information security policies, password standards requiring 12+ characters, and detailed incident response procedures.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Policy Types and Implementation</div>
+                        <div class="concept-content">
+                            <p>Security policies form the foundation of an organization's security program, providing clear direction on how to protect assets and manage risks.</p>
+                            
+                            <div class="key-points">
+                                <h4>Essential Policy Types:</h4>
+                                <ul>
+                                    <li><strong>Acceptable Use Policy (AUP):</strong> Defines appropriate use of IT resources</li>
+                                    <li><strong>Information Security Policy:</strong> Overarching security requirements</li>
+                                    <li><strong>Business Continuity Policy:</strong> Ensures operational resilience</li>
+                                    <li><strong>Disaster Recovery Policy:</strong> Plans for system recovery</li>
+                                    <li><strong>Incident Response Policy:</strong> Procedures for handling security incidents</li>
+                                    <li><strong>SDLC Policy:</strong> Security in software development</li>
+                                    <li><strong>Change Management Policy:</strong> Controlling system changes</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <h4>Common Pitfalls:</h4>
+                                <p>Policies that are too technical, not regularly updated, or lack executive support often fail. Ensure policies are written in business language and regularly reviewed.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Standards and Procedures</div>
+                        <div class="concept-content">
+                            <p>Standards provide specific technical requirements, while procedures offer step-by-step implementation guidance.</p>
+                            
+                            <div class="key-points">
+                                <h4>Critical Standards:</h4>
+                                <ul>
+                                    <li><strong>Password Standards:</strong> Complexity, length, rotation requirements</li>
+                                    <li><strong>Access Control Standards:</strong> User provisioning and de-provisioning</li>
+                                    <li><strong>Physical Security Standards:</strong> Facility protection measures</li>
+                                    <li><strong>Encryption Standards:</strong> Cryptographic requirements</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Essential Procedures:</h4>
+                                <ul>
+                                    <li><strong>Change Management:</strong> Testing, approval, documentation</li>
+                                    <li><strong>Onboarding/Offboarding:</strong> Account lifecycle management</li>
+                                    <li><strong>Playbooks:</strong> Standardized response procedures</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Governance Structures</div>
+                        <div class="concept-content">
+                            <p>Different organizational structures provide governance oversight and decision-making authority for security programs.</p>
+                            
+                            <div class="key-points">
+                                <h4>Governance Models:</h4>
+                                <ul>
+                                    <li><strong>Boards:</strong> High-level strategic oversight and direction</li>
+                                    <li><strong>Committees:</strong> Subject matter experts implementing board directives</li>
+                                    <li><strong>Government Entities:</strong> Public sector governance requirements</li>
+                                    <li><strong>Centralized:</strong> Single group makes all security decisions</li>
+                                    <li><strong>Decentralized:</strong> Business units have security autonomy</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Centralized vs. Decentralized:</h4>
+                                <p><strong>Centralized:</strong> A global CISO team sets all security policies for worldwide operations.<br>
+                                <strong>Decentralized:</strong> Regional offices adapt security policies to local regulations and business needs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interactive-quiz">
+                        <div class="quiz-question">Which governance structure allows business units to adapt security policies to their specific operational needs?</div>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">A) Centralized governance</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">B) Board-based governance</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, true)">C) Decentralized governance</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">D) Committee-based governance</div>
+                        </div>
+                        <div class="quiz-explanation">
+                            <strong>Correct Answer: C) Decentralized governance</strong><br>
+                            Decentralized governance allows individual business units or departments to have autonomy in making security decisions that align with their specific operational needs while still following overall organizational guidelines.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="quick-links">
+                        <h3>Quick Links</h3>
+                        <a href="#governance-framework">Governance Framework</a>
+                        <a href="#policy-types">Policy Types</a>
+                        <a href="#standards">Standards & Procedures</a>
+                        <a href="#governance-structures">Governance Structures</a>
+                    </div>
+
+                    <div class="progress-tracker">
+                        <h3>Progress Tracker</h3>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-51-1">
+                            <label for="progress-51-1" class="progress-label">Governance Framework</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-51-2">
+                            <label for="progress-51-2" class="progress-label">Policy Types</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-51-3">
+                            <label for="progress-51-3" class="progress-label">Standards</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-51-4">
+                            <label for="progress-51-4" class="progress-label">Governance Structures</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Objective 5.2: Risk Management -->
+        <div class="objective-section" id="objective-52">
+            <div class="objective-header">
+                <div class="objective-title">5.2 Explain elements of the risk management process</div>
+                <div class="objective-description">Understanding risk identification, assessment, analysis, and management strategies</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <div class="concept-card">
+                        <div class="concept-title">Risk Identification and Assessment</div>
+                        <div class="concept-content">
+                            <p>Risk management begins with systematic identification of potential threats and vulnerabilities, followed by assessment of their likelihood and potential impact.</p>
+                            
+                            <div class="key-points">
+                                <h4>Assessment Types:</h4>
+                                <ul>
+                                    <li><strong>Ad Hoc:</strong> One-time assessments for specific situations</li>
+                                    <li><strong>Recurring:</strong> Regular scheduled assessments (monthly, yearly)</li>
+                                    <li><strong>One-time:</strong> Project-specific or event-driven assessments</li>
+                                    <li><strong>Continuous:</strong> Ongoing monitoring and assessment</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Assessment Scenarios:</h4>
+                                <p><strong>Ad Hoc:</strong> CEO learns about new attack vector at conference<br>
+                                <strong>Recurring:</strong> Annual risk assessment required by compliance<br>
+                                <strong>One-time:</strong> Merger acquisition risk evaluation<br>
+                                <strong>Continuous:</strong> Real-time threat monitoring system</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Risk Analysis Methods</div>
+                        <div class="concept-content">
+                            <p>Organizations use both qualitative and quantitative methods to analyze risks and make informed decisions about risk treatment.</p>
+                            
+                            <div class="key-points">
+                                <h4>Qualitative Analysis:</h4>
+                                <ul>
+                                    <li>Uses descriptive scales (High, Medium, Low)</li>
+                                    <li>Based on expert judgment and experience</li>
+                                    <li>Faster to conduct than quantitative analysis</li>
+                                    <li>Good for initial risk screening</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Quantitative Analysis:</h4>
+                                <ul>
+                                    <li><strong>ARO (Annualized Rate of Occurrence):</strong> Frequency per year</li>
+                                    <li><strong>AV (Asset Value):</strong> Monetary value of asset</li>
+                                    <li><strong>EF (Exposure Factor):</strong> Percentage of asset loss</li>
+                                    <li><strong>SLE (Single Loss Expectancy):</strong> AV × EF</li>
+                                    <li><strong>ALE (Annualized Loss Expectancy):</strong> SLE × ARO</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Quantitative Example:</h4>
+                                <p>Laptop theft analysis:<br>
+                                Asset Value (AV): $1,000<br>
+                                Exposure Factor (EF): 1.0 (complete loss)<br>
+                                SLE = $1,000 × 1.0 = $1,000<br>
+                                ARO: 10 laptops stolen per year<br>
+                                ALE = $1,000 × 10 = $10,000 annual loss</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Risk Management Strategies</div>
+                        <div class="concept-content">
+                            <p>Organizations have several options for addressing identified risks based on their risk appetite and tolerance levels.</p>
+                            
+                            <div class="key-points">
+                                <h4>Risk Treatment Options:</h4>
+                                <ul>
+                                    <li><strong>Accept:</strong> Acknowledge risk but take no action</li>
+                                    <li><strong>Avoid:</strong> Eliminate the risk by not engaging in the activity</li>
+                                    <li><strong>Transfer:</strong> Shift risk to another party (insurance, outsourcing)</li>
+                                    <li><strong>Mitigate:</strong> Reduce likelihood or impact through controls</li>
+                                    <li><strong>Exemption:</strong> Formal approval to deviate from standard policy</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Risk Appetite Approaches:</h4>
+                                <ul>
+                                    <li><strong>Expansionary:</strong> Willing to take higher risks for greater rewards</li>
+                                    <li><strong>Conservative:</strong> Prefer lower risks and stable returns</li>
+                                    <li><strong>Neutral:</strong> Balanced approach to risk and reward</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Business Impact Analysis (BIA)</div>
+                        <div class="concept-content">
+                            <p>BIA identifies critical business functions and quantifies the impact of disruptions to support recovery planning and resource allocation.</p>
+                            
+                            <div class="key-points">
+                                <h4>Key BIA Metrics:</h4>
+                                <ul>
+                                    <li><strong>RTO (Recovery Time Objective):</strong> Maximum acceptable downtime</li>
+                                    <li><strong>RPO (Recovery Point Objective):</strong> Maximum acceptable data loss</li>
+                                    <li><strong>MTTR (Mean Time to Repair):</strong> Average time to fix failures</li>
+                                    <li><strong>MTBF (Mean Time Between Failures):</strong> Average operational time</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>BIA Example:</h4>
+                                <p>E-commerce website:<br>
+                                RTO: 1 hour (business loses $50,000/hour)<br>
+                                RPO: 15 minutes (acceptable transaction loss)<br>
+                                MTTR: 30 minutes (average repair time)<br>
+                                MTBF: 720 hours (30 days average uptime)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interactive-quiz">
+                        <div class="quiz-question">If an asset valued at $50,000 has an exposure factor of 0.3 and experiences incidents 4 times per year, what is the ALE?</div>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">A) $15,000</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, true)">B) $60,000</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">C) $200,000</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">D) $37,500</div>
+                        </div>
+                        <div class="quiz-explanation">
+                            <strong>Correct Answer: B) $60,000</strong><br>
+                            SLE = AV × EF = $50,000 × 0.3 = $15,000<br>
+                            ALE = SLE × ARO = $15,000 × 4 = $60,000
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="quick-links">
+                        <h3>Quick Links</h3>
+                        <a href="#risk-identification">Risk Identification</a>
+                        <a href="#risk-analysis">Risk Analysis</a>
+                        <a href="#risk-strategies">Risk Strategies</a>
+                        <a href="#bia">Business Impact Analysis</a>
+                    </div>
+
+                    <div class="progress-tracker">
+                        <h3>Progress Tracker</h3>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-52-1">
+                            <label for="progress-52-1" class="progress-label">Risk Assessment Types</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-52-2">
+                            <label for="progress-52-2" class="progress-label">Qualitative vs Quantitative</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-52-3">
+                            <label for="progress-52-3" class="progress-label">Risk Strategies</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-52-4">
+                            <label for="progress-52-4" class="progress-label">BIA Concepts</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Objective 5.3: Third-party Risk Assessment and Management -->
+        <div class="objective-section" id="objective-53">
+            <div class="objective-header">
+                <div class="objective-title">5.3 Explain processes associated with third-party risk assessment and management</div>
+                <div class="objective-description">Managing risks introduced by vendors, suppliers, and business partners</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <div class="concept-card">
+                        <div class="concept-title">Vendor Assessment and Selection</div>
+                        <div class="concept-content">
+                            <p>Comprehensive evaluation of potential vendors ensures they meet security and business requirements before establishing partnerships.</p>
+                            
+                            <div class="key-points">
+                                <h4>Assessment Components:</h4>
+                                <ul>
+                                    <li><strong>Due Diligence:</strong> Background checks and verification of vendor claims</li>
+                                    <li><strong>Penetration Testing:</strong> Security testing of vendor systems</li>
+                                    <li><strong>Supply Chain Analysis:</strong> Evaluation of vendor's suppliers</li>
+                                    <li><strong>Financial Stability:</strong> Assessment of vendor's business continuity</li>
+                                    <li><strong>Conflict of Interest:</strong> Identification of potential conflicts</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Due Diligence Example:</h4>
+                                <p>Before selecting a cloud provider, a healthcare organization verifies the vendor's HIPAA compliance, reviews security certifications, conducts financial background checks, and validates customer references.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Vendor Agreement Management</div>
+                        <div class="concept-content">
+                            <p>Contractual agreements establish security requirements, performance expectations, and accountability measures for vendor relationships.</p>
+                            
+                            <div class="key-points">
+                                <h4>Essential Agreement Elements:</h4>
+                                <ul>
+                                    <li><strong>Service Level Agreements (SLAs):</strong> Performance and availability requirements</li>
+                                    <li><strong>Master Service Agreements (MSAs):</strong> Overall relationship framework</li>
+                                    <li><strong>Statements of Work (SOWs):</strong> Specific project deliverables</li>
+                                    <li><strong>Non-Disclosure Agreements (NDAs):</strong> Confidentiality protections</li>
+                                    <li><strong>Right-to-Audit Clauses:</strong> Access for security assessments</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <h4>Critical Consideration:</h4>
+                                <p>Right-to-audit clauses are essential for maintaining security oversight. Without these provisions, organizations cannot verify vendor security controls or compliance status.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Vendor Monitoring and Questionnaires</div>
+                        <div class="concept-content">
+                            <p>Ongoing monitoring ensures vendors maintain security standards throughout the relationship lifecycle.</p>
+                            
+                            <div class="key-points">
+                                <h4>Monitoring Methods:</h4>
+                                <ul>
+                                    <li><strong>Security Questionnaires:</strong> Regular assessment of security practices</li>
+                                    <li><strong>Performance Reviews:</strong> Evaluation against SLA metrics</li>
+                                    <li><strong>Compliance Audits:</strong> Verification of regulatory adherence</li>
+                                    <li><strong>Continuous Monitoring:</strong> Real-time security posture assessment</li>
+                                    <li><strong>Incident Reporting:</strong> Notification of security events</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Common Questionnaire Topics:</h4>
+                                <ul>
+                                    <li>Data protection and encryption practices</li>
+                                    <li>Access control and authentication methods</li>
+                                    <li>Incident response capabilities</li>
+                                    <li>Business continuity planning</li>
+                                    <li>Regulatory compliance status</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Rules of Engagement and Testing</div>
+                        <div class="concept-content">
+                            <p>Clear guidelines ensure security testing and assessment activities are conducted safely and effectively.</p>
+                            
+                            <div class="key-points">
+                                <h4>Rules of Engagement Include:</h4>
+                                <ul>
+                                    <li><strong>Scope Definition:</strong> Systems and networks included/excluded</li>
+                                    <li><strong>Testing Windows:</strong> Authorized times for testing activities</li>
+                                    <li><strong>Escalation Procedures:</strong> Contact information for issues</li>
+                                    <li><strong>Methodology Constraints:</strong> Prohibited testing techniques</li>
+                                    <li><strong>Reporting Requirements:</strong> Documentation and notification procedures</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Testing Scope Example:</h4>
+                                <p>Penetration testing authorized on development environment only, excluding production databases, during maintenance windows (2-6 AM), with immediate escalation for any service impacts.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interactive-quiz">
+                        <div class="quiz-question">Which contractual provision allows an organization to conduct security audits of their vendor's systems and processes?</div>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">A) Service Level Agreement (SLA)</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">B) Non-Disclosure Agreement (NDA)</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, true)">C) Right-to-audit clause</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">D) Master Service Agreement (MSA)</div>
+                        </div>
+                        <div class="quiz-explanation">
+                            <strong>Correct Answer: C) Right-to-audit clause</strong><br>
+                            A right-to-audit clause specifically grants the organization the contractual right to examine and assess the vendor's security controls, compliance status, and operational practices.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="quick-links">
+                        <h3>Quick Links</h3>
+                        <a href="#vendor-assessment">Vendor Assessment</a>
+                        <a href="#agreements">Agreement Management</a>
+                        <a href="#monitoring">Vendor Monitoring</a>
+                        <a href="#testing-rules">Rules of Engagement</a>
+                    </div>
+
+                    <div class="progress-tracker">
+                        <h3>Progress Tracker</h3>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-53-1">
+                            <label for="progress-53-1" class="progress-label">Vendor Assessment</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-53-2">
+                            <label for="progress-53-2" class="progress-label">Agreement Types</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-53-3">
+                            <label for="progress-53-3" class="progress-label">Monitoring Methods</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-53-4">
+                            <label for="progress-53-4" class="progress-label">Rules of Engagement</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Objective 5.4: Security Compliance -->
+        <div class="objective-section" id="objective-54">
+            <div class="objective-header">
+                <div class="objective-title">5.4 Summarize elements of effective security compliance</div>
+                <div class="objective-description">Understanding regulatory requirements, compliance monitoring, and privacy considerations</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <div class="concept-card">
+                        <div class="concept-title">Compliance Reporting and Monitoring</div>
+                        <div class="concept-content">
+                            <p>Effective compliance programs require systematic monitoring, documentation, and reporting to ensure adherence to regulatory requirements.</p>
+                            
+                            <div class="key-points">
+                                <h4>Compliance Components:</h4>
+                                <ul>
+                                    <li><strong>Due Diligence:</strong> Reasonable care in compliance efforts</li>
+                                    <li><strong>Due Care:</strong> Ongoing attention to compliance requirements</li>
+                                    <li><strong>Attestation:</strong> Formal statements of compliance status</li>
+                                    <li><strong>Acknowledgment:</strong> User confirmation of policy understanding</li>
+                                    <li><strong>Internal Reporting:</strong> Compliance status to management</li>
+                                    <li><strong>External Reporting:</strong> Submissions to regulatory bodies</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Compliance Monitoring Example:</h4>
+                                <p>A healthcare organization implements automated HIPAA compliance monitoring that tracks access to patient records, generates monthly compliance reports, and alerts administrators to potential violations.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Consequences of Non-compliance</div>
+                        <div class="concept-content">
+                            <p>Organizations face significant penalties for failing to meet regulatory requirements, making compliance a critical business priority.</p>
+                            
+                            <div class="key-points">
+                                <h4>Potential Consequences:</h4>
+                                <ul>
+                                    <li><strong>Financial Penalties:</strong> Fines and monetary sanctions</li>
+                                    <li><strong>Legal Action:</strong> Lawsuits and criminal charges</li>
+                                    <li><strong>Operational Restrictions:</strong> Limitations on business activities</li>
+                                    <li><strong>Reputational Damage:</strong> Loss of customer trust</li>
+                                    <li><strong>License Revocation:</strong> Loss of operating permits</li>
+                                    <li><strong>Increased Oversight:</strong> Enhanced regulatory scrutiny</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <h4>GDPR Penalty Example:</h4>
+                                <p>GDPR violations can result in fines up to €20 million or 4% of annual global revenue, whichever is higher. Meta was fined €390 million in 2023 for data processing violations.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Privacy Regulations and Requirements</div>
+                        <div class="concept-content">
+                            <p>Privacy laws establish requirements for collecting, processing, storing, and protecting personal information.</p>
+                            
+                            <div class="key-points">
+                                <h4>Major Privacy Regulations:</h4>
+                                <ul>
+                                    <li><strong>GDPR:</strong> European Union data protection regulation</li>
+                                    <li><strong>CCPA:</strong> California Consumer Privacy Act</li>
+                                    <li><strong>HIPAA:</strong> Healthcare information privacy (US)</li>
+                                    <li><strong>COPPA:</strong> Children's online privacy protection</li>
+                                    <li><strong>SOX:</strong> Financial reporting requirements</li>
+                                    <li><strong>PCI DSS:</strong> Payment card industry standards</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Key Privacy Concepts:</h4>
+                                <ul>
+                                    <li><strong>Data Subject:</strong> Individual whose data is processed</li>
+                                    <li><strong>Data Controller:</strong> Entity that determines processing purposes</li>
+                                    <li><strong>Data Processor:</strong> Entity that processes data on behalf of controller</li>
+                                    <li><strong>Right to be Forgotten:</strong> Individual's right to data deletion</li>
+                                    <li><strong>Data Sovereignty:</strong> Data subject to laws of storage location</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Legal and Geographic Considerations</div>
+                        <div class="concept-content">
+                            <p>Organizations must navigate complex legal requirements that vary by jurisdiction and industry.</p>
+                            
+                            <div class="key-points">
+                                <h4>Legal Implications:</h4>
+                                <ul>
+                                    <li><strong>Jurisdictional Requirements:</strong> Laws vary by location</li>
+                                    <li><strong>Data Residency:</strong> Where data must be stored</li>
+                                    <li><strong>Cross-border Transfers:</strong> International data movement restrictions</li>
+                                    <li><strong>Breach Notification:</strong> Timeline and method requirements</li>
+                                    <li><strong>Individual Rights:</strong> Access, correction, deletion rights</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Geographic Complexity:</h4>
+                                <p>A multinational company must comply with GDPR for EU customers, CCPA for California residents, and PIPEDA for Canadian citizens, each with different requirements for data handling and breach notification.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interactive-quiz">
+                        <div class="quiz-question">Under GDPR, what is the term for an individual whose personal data is being processed?</div>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">A) Data controller</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">B) Data processor</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, true)">C) Data subject</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">D) Data owner</div>
+                        </div>
+                        <div class="quiz-explanation">
+                            <strong>Correct Answer: C) Data subject</strong><br>
+                            Under GDPR, a data subject is any identified or identifiable natural person whose personal data is being processed. Data subjects have specific rights including access, rectification, and deletion of their personal data.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="quick-links">
+                        <h3>Quick Links</h3>
+                        <a href="#compliance-monitoring">Compliance Monitoring</a>
+                        <a href="#non-compliance">Non-compliance Consequences</a>
+                        <a href="#privacy-laws">Privacy Regulations</a>
+                        <a href="#legal-considerations">Legal Considerations</a>
+                    </div>
+
+                    <div class="progress-tracker">
+                        <h3>Progress Tracker</h3>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-54-1">
+                            <label for="progress-54-1" class="progress-label">Compliance Reporting</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-54-2">
+                            <label for="progress-54-2" class="progress-label">Non-compliance Consequences</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-54-3">
+                            <label for="progress-54-3" class="progress-label">Privacy Regulations</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-54-4">
+                            <label for="progress-54-4" class="progress-label">Legal Implications</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Objective 5.5: Audits and Assessments -->
+        <div class="objective-section" id="objective-55">
+            <div class="objective-header">
+                <div class="objective-title">5.5 Explain types and purposes of audits and assessments</div>
+                <div class="objective-description">Understanding different audit types, penetration testing, and assessment methodologies</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <div class="concept-card">
+                        <div class="concept-title">Internal vs External Audits</div>
+                        <div class="concept-content">
+                            <p>Organizations use both internal and external audits to assess security controls, compliance status, and operational effectiveness.</p>
+                            
+                            <div class="key-points">
+                                <h4>Internal Audits:</h4>
+                                <ul>
+                                    <li><strong>Compliance Audits:</strong> Adherence to policies and regulations</li>
+                                    <li><strong>Audit Committee:</strong> Board-level oversight group</li>
+                                    <li><strong>Self-assessments:</strong> Department-level evaluations</li>
+                                    <li><strong>Operational Reviews:</strong> Process efficiency assessments</li>
+                                    <li><strong>Risk Assessments:</strong> Internal risk evaluation</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>External Audits:</h4>
+                                <ul>
+                                    <li><strong>Regulatory Audits:</strong> Government compliance verification</li>
+                                    <li><strong>Financial Audits:</strong> Independent financial statement review</li>
+                                    <li><strong>Third-party Assessments:</strong> Independent security evaluations</li>
+                                    <li><strong>Certification Audits:</strong> ISO, SOC, etc. compliance</li>
+                                    <li><strong>Attestation:</strong> Formal compliance statements</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Audit Comparison:</h4>
+                                <p><strong>Internal:</strong> IT department conducts quarterly security control review<br>
+                                <strong>External:</strong> Independent auditor performs annual SOC 2 Type II assessment</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Penetration Testing</div>
+                        <div class="concept-content">
+                            <p>Penetration testing provides realistic assessment of security defenses by simulating real-world attack scenarios.</p>
+                            
+                            <div class="key-points">
+                                <h4>Testing Environments:</h4>
+                                <ul>
+                                    <li><strong>Known Environment:</strong> Full system knowledge provided (white box)</li>
+                                    <li><strong>Partially Known:</strong> Limited system information (gray box)</li>
+                                    <li><strong>Unknown Environment:</strong> No prior knowledge (black box)</li>
+                                    <li><strong>Physical Testing:</strong> Testing physical security controls</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Testing Approaches:</h4>
+                                <ul>
+                                    <li><strong>Offensive:</strong> Red team attacking</li>
+                                    <li><strong>Defensive:</strong> Blue team defending</li>
+                                    <li><strong>Integrated:</strong> Purple team collaboration</li>
+                                    <li><strong>Passive Reconnaissance:</strong> Information gathering without interaction</li>
+                                    <li><strong>Active Reconnaissance:</strong> Direct system interaction</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <h4>Testing Considerations:</h4>
+                                <p>Penetration testing must be carefully scoped and authorized to avoid business disruption. Always establish clear rules of engagement and emergency procedures.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Assessment Types and Purposes</div>
+                        <div class="concept-content">
+                            <p>Different assessment types serve specific purposes in evaluating organizational security posture and compliance status.</p>
+                            
+                            <div class="key-points">
+                                <h4>Assessment Categories:</h4>
+                                <ul>
+                                    <li><strong>Vulnerability Assessments:</strong> Identification of security weaknesses</li>
+                                    <li><strong>Risk Assessments:</strong> Evaluation of threat likelihood and impact</li>
+                                    <li><strong>Compliance Assessments:</strong> Verification of regulatory adherence</li>
+                                    <li><strong>Security Control Testing:</strong> Validation of control effectiveness</li>
+                                    <li><strong>Maturity Assessments:</strong> Evaluation of program development</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Assessment Purposes:</h4>
+                                <ul>
+                                    <li>Identify security gaps and vulnerabilities</li>
+                                    <li>Validate control implementation and effectiveness</li>
+                                    <li>Support risk management decisions</li>
+                                    <li>Demonstrate compliance to stakeholders</li>
+                                    <li>Guide security improvement initiatives</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Reconnaissance and Intelligence Gathering</div>
+                        <div class="concept-content">
+                            <p>Reconnaissance activities gather information about target systems and organizations to support security assessments.</p>
+                            
+                            <div class="key-points">
+                                <h4>Reconnaissance Types:</h4>
+                                <ul>
+                                    <li><strong>OSINT (Open Source Intelligence):</strong> Publicly available information</li>
+                                    <li><strong>Social Engineering:</strong> Human-based information gathering</li>
+                                    <li><strong>Network Scanning:</strong> Technical system enumeration</li>
+                                    <li><strong>Physical Reconnaissance:</strong> On-site information gathering</li>
+                                    <li><strong>Dumpster Diving:</strong> Physical waste examination</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>OSINT Sources:</h4>
+                                <p>Social media profiles, company websites, job postings, public records, domain registration information, and technical documentation can reveal valuable attack information.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interactive-quiz">
+                        <div class="quiz-question">Which type of penetration test provides the testing team with full knowledge of the target system's architecture and configuration?</div>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">A) Unknown environment (black box)</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">B) Partially known environment (gray box)</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, true)">C) Known environment (white box)</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">D) Physical penetration test</div>
+                        </div>
+                        <div class="quiz-explanation">
+                            <strong>Correct Answer: C) Known environment (white box)</strong><br>
+                            In a known environment (white box) penetration test, the testing team has full knowledge of the system architecture, source code, network diagrams, and other internal documentation, allowing for comprehensive testing.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="quick-links">
+                        <h3>Quick Links</h3>
+                        <a href="#audit-types">Audit Types</a>
+                        <a href="#penetration-testing">Penetration Testing</a>
+                        <a href="#assessment-types">Assessment Types</a>
+                        <a href="#reconnaissance">Reconnaissance</a>
+                    </div>
+
+                    <div class="progress-tracker">
+                        <h3>Progress Tracker</h3>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-55-1">
+                            <label for="progress-55-1" class="progress-label">Internal vs External Audits</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-55-2">
+                            <label for="progress-55-2" class="progress-label">Penetration Testing</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-55-3">
+                            <label for="progress-55-3" class="progress-label">Assessment Types</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-55-4">
+                            <label for="progress-55-4" class="progress-label">Reconnaissance</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Objective 5.6: Security Awareness -->
+        <div class="objective-section" id="objective-56">
+            <div class="objective-header">
+                <div class="objective-title">5.6 Given a scenario, implement security awareness practices</div>
+                <div class="objective-description">Developing effective security training programs and user education initiatives</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <div class="concept-card">
+                        <div class="concept-title">Phishing Campaigns and Training</div>
+                        <div class="concept-content">
+                            <p>Simulated phishing campaigns provide hands-on training to help users recognize and respond appropriately to phishing attempts.</p>
+                            
+                            <div class="key-points">
+                                <h4>Campaign Components:</h4>
+                                <ul>
+                                    <li><strong>Phishing Simulation:</strong> Realistic but safe phishing emails</li>
+                                    <li><strong>User Tracking:</strong> Monitoring who clicks, opens, or reports</li>
+                                    <li><strong>Immediate Training:</strong> Just-in-time education for those who fail</li>
+                                    <li><strong>Progressive Difficulty:</strong> Increasingly sophisticated simulations</li>
+                                    <li><strong>Metrics and Reporting:</strong> Measuring program effectiveness</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Training Indicators to Recognize:</h4>
+                                <ul>
+                                    <li>Spelling and grammatical errors</li>
+                                    <li>Suspicious sender addresses</li>
+                                    <li>Urgent or threatening language</li>
+                                    <li>Unexpected attachments or links</li>
+                                    <li>Requests for sensitive information</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Phishing Campaign Example:</h4>
+                                <p>Monthly simulated phishing emails testing different attack vectors (CEO fraud, invoice scams, credential harvesting), with immediate feedback and quarterly security awareness training for repeat clickers.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Anomalous Behavior Recognition</div>
+                        <div class="concept-content">
+                            <p>Training users to identify and report unusual activities helps create an additional layer of security monitoring.</p>
+                            
+                            <div class="key-points">
+                                <h4>Risky Behaviors to Monitor:</h4>
+                                <ul>
+                                    <li><strong>Host File Modifications:</strong> Unauthorized system changes</li>
+                                    <li><strong>Operating System File Replacement:</strong> Potential malware installation</li>
+                                    <li><strong>Sensitive File Uploads:</strong> Potential data exfiltration</li>
+                                    <li><strong>Unusual Login Patterns:</strong> Access from unexpected locations</li>
+                                    <li><strong>Excessive Data Transfers:</strong> Unusual network activity</li>
+                                    <li><strong>Unauthorized Software Installation:</strong> Shadow IT activities</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Unexpected Behaviors:</h4>
+                                <ul>
+                                    <li>Login attempts from foreign countries</li>
+                                    <li>After-hours access to sensitive systems</li>
+                                    <li>Multiple failed authentication attempts</li>
+                                    <li>Accessing systems outside normal job functions</li>
+                                    <li>Sudden changes in data access patterns</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <h4>Unintentional vs. Malicious:</h4>
+                                <p>Not all anomalous behavior indicates malicious intent. Users may accidentally trigger alerts through normal but unusual work activities. Training should emphasize reporting without fear of punishment.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">User Guidance and Training Programs</div>
+                        <div class="concept-content">
+                            <p>Comprehensive training programs address various security topics relevant to different user roles and responsibilities.</p>
+                            
+                            <div class="key-points">
+                                <h4>Training Topics:</h4>
+                                <ul>
+                                    <li><strong>Policy and Handbooks:</strong> Organizational security requirements</li>
+                                    <li><strong>Situational Awareness:</strong> Recognizing security threats</li>
+                                    <li><strong>Insider Threats:</strong> Understanding internal risks</li>
+                                    <li><strong>Password Management:</strong> Creating and managing strong passwords</li>
+                                    <li><strong>Removable Media and Cables:</strong> USB and device security</li>
+                                    <li><strong>Social Engineering:</strong> Manipulation techniques and defenses</li>
+                                    <li><strong>Operational Security (OPSEC):</strong> Protecting sensitive information</li>
+                                    <li><strong>Hybrid/Remote Work:</strong> Securing distributed environments</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Training Delivery Methods:</h4>
+                                <ul>
+                                    <li>Online interactive modules</li>
+                                    <li>In-person workshops and seminars</li>
+                                    <li>Security newsletters and updates</li>
+                                    <li>Lunch-and-learn sessions</li>
+                                    <li>Role-specific training programs</li>
+                                    <li>Gamification and competitions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Reporting and Monitoring</div>
+                        <div class="concept-content">
+                            <p>Effective security awareness programs include mechanisms for users to report suspicious activities and for organizations to monitor program effectiveness.</p>
+                            
+                            <div class="key-points">
+                                <h4>Reporting Mechanisms:</h4>
+                                <ul>
+                                    <li><strong>Dedicated Email Address:</strong> security@company.com</li>
+                                    <li><strong>Incident Reporting Portal:</strong> Web-based reporting system</li>
+                                    <li><strong>Phone Hotline:</strong> 24/7 security reporting number</li>
+                                    <li><strong>Manager Escalation:</strong> Supervisor notification procedures</li>
+                                    <li><strong>Anonymous Reporting:</strong> Confidential reporting options</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Program Monitoring Metrics:</h4>
+                                <ul>
+                                    <li>Phishing simulation click rates</li>
+                                    <li>Training completion percentages</li>
+                                    <li>Security incident reporting frequency</li>
+                                    <li>Knowledge assessment scores</li>
+                                    <li>Behavioral change indicators</li>
+                                    <li>User feedback and satisfaction</li>
+                                </ul>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>Success Metrics:</h4>
+                                <p>Organization reduces phishing susceptibility from 30% to 5% after 12 months of training, increases security incident reporting by 40%, and achieves 95% training completion rate.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Specialized Training Considerations</div>
+                        <div class="concept-content">
+                            <p>Different user groups require tailored training approaches based on their roles, access levels, and risk exposure.</p>
+                            
+                            <div class="key-points">
+                                <h4>Role-Based Training:</h4>
+                                <ul>
+                                    <li><strong>Executives:</strong> Business email compromise, CEO fraud</li>
+                                    <li><strong>HR Personnel:</strong> Social engineering, sensitive data handling</li>
+                                    <li><strong>IT Staff:</strong> Advanced persistent threats, privileged access</li>
+                                    <li><strong>Finance:</strong> Wire fraud, invoice scams</li>
+                                    <li><strong>General Users:</strong> Basic security hygiene, reporting</li>
+                                    <li><strong>Third Parties:</strong> Contractor and vendor security requirements</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Continuous Improvement:</h4>
+                                <ul>
+                                    <li>Regular program assessment and updates</li>
+                                    <li>Incorporation of current threat landscape</li>
+                                    <li>User feedback integration</li>
+                                    <li>Industry best practice adoption</li>
+                                    <li>Regulatory requirement updates</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interactive-quiz">
+                        <div class="quiz-question">What is the primary goal of simulated phishing campaigns in security awareness training?</div>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">A) To identify malicious users in the organization</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, true)">B) To train users to recognize and respond appropriately to phishing attempts</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">C) To test the effectiveness of email security systems</div>
+                            <div class="quiz-option" onclick="selectQuizOption(this, false)">D) To punish users who fail security tests</div>
+                        </div>
+                        <div class="quiz-explanation">
+                            <strong>Correct Answer: B) To train users to recognize and respond appropriately to phishing attempts</strong><br>
+                            Simulated phishing campaigns are educational tools designed to help users develop skills in identifying suspicious emails and taking appropriate action, such as reporting them to the security team.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="quick-links">
+                        <h3>Quick Links</h3>
+                        <a href="#phishing-campaigns">Phishing Campaigns</a>
+                        <a href="#anomalous-behavior">Anomalous Behavior</a>
+                        <a href="#user-training">User Training</a>
+                        <a href="#reporting-monitoring">Reporting & Monitoring</a>
+                    </div>
+
+                    <div class="progress-tracker">
+                        <h3>Progress Tracker</h3>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-56-1">
+                            <label for="progress-56-1" class="progress-label">Phishing Campaigns</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-56-2">
+                            <label for="progress-56-2" class="progress-label">Behavior Recognition</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-56-3">
+                            <label for="progress-56-3" class="progress-label">Training Programs</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-56-4">
+                            <label for="progress-56-4" class="progress-label">Reporting Mechanisms</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="objective-section" id="summary">
+            <div class="objective-header">
+                <div class="objective-title">Domain 5 Summary & Exam Preparation</div>
+                <div class="objective-description">Review key concepts and prepare for the Security+ exam</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <div class="concept-card">
+                        <div class="concept-title">Key Exam Topics Summary</div>
+                        <div class="concept-content">
+                            <div class="key-points">
+                                <h4>5.1 Security Governance (Critical Concepts):</h4>
+                                <ul>
+                                    <li>Difference between policies, standards, and procedures</li>
+                                    <li>Types of governance structures (centralized vs. decentralized)</li>
+                                    <li>Essential policy types (AUP, incident response, change management)</li>
+                                    <li>External considerations (regulatory, legal, industry requirements)</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>5.2 Risk Management (Must Know):</h4>
+                                <ul>
+                                    <li>Risk assessment types (ad hoc, recurring, continuous)</li>
+                                    <li>Quantitative formulas (SLE = AV × EF, ALE = SLE × ARO)</li>
+                                    <li>Risk treatment strategies (accept, avoid, transfer, mitigate)</li>
+                                    <li>BIA metrics (RTO, RPO, MTTR, MTBF)</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>5.3 Third-party Risk (Focus Areas):</h4>
+                                <ul>
+                                    <li>Due diligence processes and vendor assessment</li>
+                                    <li>Contract elements (SLA, MSA, NDA, right-to-audit)</li>
+                                    <li>Vendor monitoring through questionnaires and audits</li>
+                                    <li>Rules of engagement for security testing</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>5.4 Security Compliance (Essential Knowledge):</h4>
+                                <ul>
+                                    <li>Major regulations (GDPR, HIPAA, SOX, PCI DSS)</li>
+                                    <li>Privacy concepts (data subject, controller, processor)</li>
+                                    <li>Compliance consequences and reporting requirements</li>
+                                    <li>Geographic and legal considerations</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>5.5 Audits & Assessments (Key Distinctions):</h4>
+                                <ul>
+                                    <li>Internal vs. external audits</li>
+                                    <li>Penetration testing environments (known, unknown, partially known)</li>
+                                    <li>Testing approaches (offensive, defensive, integrated)</li>
+                                    <li>Reconnaissance types (passive vs. active)</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>5.6 Security Awareness (Implementation Focus):</h4>
+                                <ul>
+                                    <li>Phishing campaign components and metrics</li>
+                                    <li>Anomalous behavior recognition and reporting</li>
+                                    <li>Training program delivery methods</li>
+                                    <li>Role-based training considerations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Exam Strategy and Tips</div>
+                        <div class="concept-content">
+                            <div class="key-points">
+                                <h4>Domain 5 Exam Approach:</h4>
+                                <ul>
+                                    <li>Focus on scenario-based questions requiring practical application</li>
+                                    <li>Understand the relationships between governance, risk, and compliance</li>
+                                    <li>Memorize key formulas for quantitative risk analysis</li>
+                                    <li>Know major compliance regulations and their requirements</li>
+                                    <li>Distinguish between different audit and assessment types</li>
+                                </ul>
+                            </div>
+
+                            <div class="key-points">
+                                <h4>Common Question Patterns:</h4>
+                                <ul>
+                                    <li>"Which type of assessment..." - Focus on assessment characteristics</li>
+                                    <li>"What should be included in..." - Contract or policy requirements</li>
+                                    <li>"Calculate the ALE..." - Apply quantitative risk formulas</li>
+                                    <li>"Which regulation requires..." - Match requirements to regulations</li>
+                                    <li>"Given this scenario..." - Apply concepts to real situations</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <h4>Common Mistakes to Avoid:</h4>
+                                <p>Don't confuse policies with standards, mixing up risk formulas, assuming all audits are the same type, or forgetting that compliance requirements vary by industry and geography.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="concept-card">
+                        <div class="concept-title">Practice Questions</div>
+                        <div class="concept-content">
+                            <div class="interactive-quiz">
+                                <div class="quiz-question">1. A company wants to ensure they can assess a cloud provider's security controls. What should be included in the contract?</div>
+                                <div class="quiz-options">
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">A) Service Level Agreement</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, true)">B) Right-to-audit clause</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">C) Non-disclosure agreement</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">D) Master service agreement</div>
+                                </div>
+                                <div class="quiz-explanation">
+                                    <strong>Answer: B</strong> - Right-to-audit clauses specifically grant the organization permission to examine and assess vendor security controls.
+                                </div>
+                            </div>
+
+                            <div class="interactive-quiz">
+                                <div class="quiz-question">2. Under GDPR, what maximum fine can be imposed for serious violations?</div>
+                                <div class="quiz-options">
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">A) €10 million or 2% of annual revenue</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, true)">B) €20 million or 4% of annual revenue</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">C) €5 million or 1% of annual revenue</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">D) €50 million or 10% of annual revenue</div>
+                                </div>
+                                <div class="quiz-explanation">
+                                    <strong>Answer: B</strong> - GDPR Article 83 sets maximum fines at €20 million or 4% of annual global revenue, whichever is higher.
+                                </div>
+                            </div>
+
+                            <div class="interactive-quiz">
+                                <div class="quiz-question">3. What type of risk assessment is performed when a CEO returns from a conference with concerns about a new threat?</div>
+                                <div class="quiz-options">
+                                    <div class="quiz-option" onclick="selectQuizOption(this, true)">A) Ad hoc assessment</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">B) Recurring assessment</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">C) Continuous assessment</div>
+                                    <div class="quiz-option" onclick="selectQuizOption(this, false)">D) Quantitative assessment</div>
+                                </div>
+                                <div class="quiz-explanation">
+                                    <strong>Answer: A</strong> - Ad hoc assessments are performed "for this purpose" when specific situations arise requiring immediate evaluation.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="quick-links">
+                        <h3>Study Resources</h3>
+                        <a href="#exam-objectives">Official Exam Objectives</a>
+                        <a href="#practice-tests">Practice Tests</a>
+                        <a href="#video-training">Video Training</a>
+                        <a href="#study-groups">Study Groups</a>
+                    </div>
+
+                    <div class="progress-tracker">
+                        <h3>Domain 5 Mastery</h3>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-summary-1">
+                            <label for="progress-summary-1" class="progress-label">Governance Concepts</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-summary-2">
+                            <label for="progress-summary-2" class="progress-label">Risk Management</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-summary-3">
+                            <label for="progress-summary-3" class="progress-label">Third-party Risk</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-summary-4">
+                            <label for="progress-summary-4" class="progress-label">Compliance</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-summary-5">
+                            <label for="progress-summary-5" class="progress-label">Audits & Assessments</label>
+                        </div>
+                        <div class="progress-item">
+                            <input type="checkbox" class="progress-checkbox" id="progress-summary-6">
+                            <label for="progress-summary-6" class="progress-label">Security Awareness</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-nav">
+        <div class="nav-dot active" onclick="showObjective('51')" title="5.1 Governance"></div>
+        <div class="nav-dot" onclick="showObjective('52')" title="5.2 Risk Management"></div>
+        <div class="nav-dot" onclick="showObjective('53')" title="5.3 Third-party Risk"></div>
+        <div class="nav-dot" onclick="showObjective('54')" title="5.4 Compliance"></div>
+        <div class="nav-dot" onclick="showObjective('55')" title="5.5 Audits"></div>
+        <div class="nav-dot" onclick="showObjective('56')" title="5.6 Awareness"></div>
+    </div>
+
+    <script>
+        function showObjective(objectiveId) {
+            // Hide all sections
+            document.querySelectorAll('.objective-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(`objective-${objectiveId}`).classList.add('active');
+            
+            // Update navigation buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Find and activate the correct button
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.textContent.includes(objectiveId.charAt(0) + '.' + objectiveId.charAt(1))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update floating nav dots
+            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index === parseInt(objectiveId.charAt(1)) - 1) {
+                    dot.classList.add('active');
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectQuizOption(element, isCorrect) {
+            // Remove previous selections
+            element.parentNode.querySelectorAll('.quiz-option').forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+            });
+            
+            // Mark selected option
+            if (isCorrect) {
+                element.classList.add('correct');
+            } else {
+                element.classList.add('incorrect');
+                // Also show the correct answer
+                element.parentNode.querySelectorAll('.quiz-option').forEach(option => {
+                    if (option.onclick.toString().includes('true')) {
+                        option.classList.add('correct');
+                    }
+                });
+            }
+            
+            // Show explanation
+            const explanation = element.parentNode.parentNode.querySelector('.quiz-explanation');
+            explanation.style.display = 'block';
+        }
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const currentActive = document.querySelector('.nav-btn.active');
+            const allButtons = document.querySelectorAll('.nav-btn');
+            let currentIndex = Array.from(allButtons).indexOf(currentActive);
+            
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                currentIndex = (currentIndex + 1) % allButtons.length;
+                allButtons[currentIndex].click();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                currentIndex = (currentIndex - 1 + allButtons.length) % allButtons.length;
+                allButtons[currentIndex].click();
+            }
+        });
+
+        // Save progress to localStorage
+        document.querySelectorAll('.progress-checkbox').forEach(checkbox => {
+            const savedState = localStorage.getItem(checkbox.id);
+            if (savedState === 'true') {
+                checkbox.checked = true;
+            }
+            
+            checkbox.addEventListener('change', () => {
+                localStorage.setItem(checkbox.id, checkbox.checked);
+            });
+        });
+
+        // Update floating nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.objective-section');
+            const navDots = document.querySelectorAll('.nav-dot');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                if (sectionTop <= 100) {
+                    current = section.id;
+                }
+            });
+            
+            navDots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (current === `objective-5${index + 1}`) {
+                    dot.classList.add('active');
+                }
+            });
+        });
+
+        // Add entrance animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.concept-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+            
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+
+        // Add summary navigation
+        function showSummary() {
+            showObjective('summary');
+        }
+
+        // Add a summary button to navigation
+        const navButtons = document.querySelector('.nav-buttons');
+        const summaryBtn = document.createElement('button');
+        summaryBtn.className = 'nav-btn';
+        summaryBtn.textContent = 'Domain Summary';
+        summaryBtn.onclick = showSummary;
+        navButtons.appendChild(summaryBtn);
+    </script>
+</body>
+</html>
+                

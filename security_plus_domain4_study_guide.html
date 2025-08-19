@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompTIA Security+ Domain 4: Security Operations - Comprehensive Study Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid #2a5298;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            color: #2a5298;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .domain-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 0.3rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .objective-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--objective-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .objective-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .objective-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: var(--objective-color);
+            opacity: 0.1;
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .objective-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .objective-number {
+            background: var(--objective-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .objective-title {
+            flex-grow: 1;
+            margin-left: 1rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--objective-color);
+            line-height: 1.3;
+        }
+
+        .objective-description {
+            color: #555;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .expand-btn {
+            background: var(--objective-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .expand-btn:hover {
+            background: var(--objective-color-dark);
+            transform: scale(1.05);
+        }
+
+        .objective-content {
+            display: none;
+            margin-top: 2rem;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .objective-content.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(var(--objective-rgb), 0.05);
+            border-radius: 10px;
+            border-left: 3px solid var(--objective-color);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--objective-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--objective-color);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .content-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .content-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(var(--objective-rgb), 0.1);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .content-list li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--objective-color);
+            font-size: 0.8rem;
+        }
+
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .concept-tag {
+            background: var(--objective-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .exam-tips {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border-left: 4px solid #e17055;
+        }
+
+        .exam-tips h4 {
+            color: #d63031;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .practical-examples {
+            background: linear-gradient(135deg, #a8e6cf, #88d8a3);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border-left: 4px solid #00b894;
+        }
+
+        .practical-examples h4 {
+            color: #00695c;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .scenario-box {
+            background: #f8f9fa;
+            border: 2px solid var(--objective-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .scenario-box h5 {
+            color: var(--objective-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Objective-specific colors */
+        .obj-4-1 {
+            --objective-color: #e74c3c;
+            --objective-color-dark: #c0392b;
+            --objective-rgb: 231, 76, 60;
+        }
+
+        .obj-4-2 {
+            --objective-color: #3498db;
+            --objective-color-dark: #2980b9;
+            --objective-rgb: 52, 152, 219;
+        }
+
+        .obj-4-3 {
+            --objective-color: #2ecc71;
+            --objective-color-dark: #27ae60;
+            --objective-rgb: 46, 204, 113;
+        }
+
+        .obj-4-4 {
+            --objective-color: #9b59b6;
+            --objective-color-dark: #8e44ad;
+            --objective-rgb: 155, 89, 182;
+        }
+
+        .obj-4-5 {
+            --objective-color: #f39c12;
+            --objective-color-dark: #e67e22;
+            --objective-rgb: 243, 156, 18;
+        }
+
+        .obj-4-6 {
+            --objective-color: #1abc9c;
+            --objective-color-dark: #16a085;
+            --objective-rgb: 26, 188, 156;
+        }
+
+        .obj-4-7 {
+            --objective-color: #34495e;
+            --objective-color-dark: #2c3e50;
+            --objective-rgb: 52, 73, 94;
+        }
+
+        .obj-4-8 {
+            --objective-color: #e67e22;
+            --objective-color-dark: #d35400;
+            --objective-rgb: 230, 126, 34;
+        }
+
+        .obj-4-9 {
+            --objective-color: #8e44ad;
+            --objective-color-dark: #7d3c98;
+            --objective-rgb: 142, 68, 173;
+        }
+
+        .navigation {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-item {
+            display: block;
+            width: 40px;
+            height: 40px;
+            margin: 0.5rem 0;
+            background: #bdc3c7;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: #3498db;
+            transform: scale(1.1);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .objectives-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .navigation {
+                display: none;
+            }
+            
+            .domain-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .quiz-question {
+            margin-bottom: 1rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .quiz-options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quiz-options li {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-options li:hover {
+            background: #e9ecef;
+        }
+
+        .quiz-options li.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .quiz-options li.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="header">
+        <h1>Domain 4: Security Operations</h1>
+        <div class="subtitle">CompTIA Security+ SY0-701 - Comprehensive Study Guide</div>
+        
+        <div class="domain-stats">
+            <div class="stat-card">
+                <span class="stat-number">28%</span>
+                <span class="stat-label">of Exam Weight</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">9</span>
+                <span class="stat-label">Objectives</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">25-30</span>
+                <span class="stat-label">Exam Questions</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">15</span>
+                <span class="stat-label">Week Course</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="objectives-grid">
+            <!-- Objective 4.1 -->
+            <div class="objective-card obj-4-1" id="obj-4-1">
+                <div class="objective-header">
+                    <div class="objective-number">4.1</div>
+                    <div class="objective-title">Apply Common Security Techniques to Computing Resources</div>
+                </div>
+                <div class="objective-description">
+                    Master the implementation of security baselines, hardening techniques, wireless security, mobile solutions, and application security measures across diverse computing environments.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-1')">Explore Objective 4.1</button>
+                
+                <div class="objective-content" id="content-4-1">
+                    <div class="content-section">
+                        <div class="section-title">Secure Baselines</div>
+                        <p>Security baselines establish standardized configurations that ensure consistent security posture across all systems in an organization.</p>
+                        <ul class="content-list">
+                            <li><strong>Establish:</strong> Create comprehensive security standards based on industry frameworks (CIS Controls, NIST, DISA STIGs)</li>
+                            <li><strong>Deploy:</strong> Implement baselines through automated tools and configuration management systems</li>
+                            <li><strong>Maintain:</strong> Regularly update and validate baseline compliance through monitoring and auditing</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">CIS Controls</span>
+                            <span class="concept-tag">NIST Framework</span>
+                            <span class="concept-tag">DISA STIGs</span>
+                            <span class="concept-tag">Configuration Management</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Hardening Targets</div>
+                        <p>System hardening involves reducing attack surfaces by disabling unnecessary services, applying security patches, and configuring secure settings.</p>
+                        <ul class="content-list">
+                            <li><strong>Mobile Devices:</strong> MDM policies, encryption, app whitelisting, remote wipe capabilities</li>
+                            <li><strong>Workstations:</strong> Disable unnecessary services, apply patches, configure firewalls, antivirus deployment</li>
+                            <li><strong>Network Infrastructure:</strong> Change default credentials, disable unused ports, implement access controls</li>
+                            <li><strong>Servers:</strong> Minimize installed software, configure secure protocols, implement logging</li>
+                            <li><strong>Cloud Infrastructure:</strong> IAM policies, network segmentation, encryption at rest and in transit</li>
+                            <li><strong>ICS/SCADA:</strong> Network segmentation, access controls, firmware updates, monitoring</li>
+                            <li><strong>Embedded Systems & RTOS:</strong> Secure boot, code signing, minimal attack surface</li>
+                            <li><strong>IoT Devices:</strong> Change default passwords, firmware updates, network isolation</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Attack Surface Reduction</span>
+                            <span class="concept-tag">Patch Management</span>
+                            <span class="concept-tag">Service Hardening</span>
+                            <span class="concept-tag">Configuration Security</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Wireless Security Implementation</div>
+                        <p>Comprehensive wireless security requires proper planning, deployment, and ongoing management of wireless infrastructure.</p>
+                        <ul class="content-list">
+                            <li><strong>Site Surveys:</strong> RF analysis, coverage mapping, interference identification, capacity planning</li>
+                            <li><strong>Heat Maps:</strong> Visual representation of signal strength, coverage gaps, optimal AP placement</li>
+                            <li><strong>WPA3 Implementation:</strong> Enhanced encryption, SAE authentication, forward secrecy</li>
+                            <li><strong>AAA/RADIUS Integration:</strong> Centralized authentication, authorization, and accounting</li>
+                            <li><strong>Enterprise Authentication:</strong> 802.1X, EAP methods, certificate-based authentication</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Practical Scenario:</h5>
+                            <p>A company is deploying wireless infrastructure in a multi-story office building. The security team must ensure proper coverage while maintaining security. Key considerations include conducting site surveys to identify optimal AP placement, implementing WPA3-Enterprise with 802.1X authentication, configuring guest network isolation, and establishing monitoring for rogue access points.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Mobile Device Management (MDM)</div>
+                        <p>MDM solutions provide centralized management and security enforcement for mobile devices accessing corporate resources.</p>
+                        <ul class="content-list">
+                            <li><strong>BYOD (Bring Your Own Device):</strong> Personal devices with corporate data access, containerization, limited control</li>
+                            <li><strong>COPE (Corporate-Owned, Personally Enabled):</strong> Company devices allowing personal use, full management control</li>
+                            <li><strong>CYOD (Choose Your Own Device):</strong> Employee selection from approved corporate devices</li>
+                            <li><strong>Connection Methods:</strong> Cellular (4G/5G), Wi-Fi, Bluetooth security considerations</li>
+                            <li><strong>MDM Capabilities:</strong> Remote wipe, app management, compliance enforcement, policy deployment</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Device Compliance</span>
+                            <span class="concept-tag">App Management</span>
+                            <span class="concept-tag">Remote Administration</span>
+                            <span class="concept-tag">Data Containerization</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Application Security</div>
+                        <p>Securing applications throughout the development lifecycle and runtime requires multiple layers of protection.</p>
+                        <ul class="content-list">
+                            <li><strong>Input Validation:</strong> Sanitize user inputs, prevent injection attacks, validate data types and ranges</li>
+                            <li><strong>Secure Cookies:</strong> HttpOnly, Secure flags, SameSite attributes, proper expiration</li>
+                            <li><strong>Static Code Analysis:</strong> Automated vulnerability detection in source code, policy enforcement</li>
+                            <li><strong>Code Signing:</strong> Digital signatures ensure code integrity and authenticity</li>
+                            <li><strong>Sandboxing:</strong> Isolated execution environments, resource limitations, containment</li>
+                        </ul>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.1</h4>
+                        <ul>
+                            <li>Understand the differences between BYOD, COPE, and CYOD deployment models</li>
+                            <li>Know the specific hardening techniques for different system types</li>
+                            <li>Be familiar with wireless security protocols (WPA3, 802.1X, EAP methods)</li>
+                            <li>Understand the importance of baselines in maintaining security posture</li>
+                            <li>Know application security techniques and their implementation</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>Enterprise Hardening:</strong> Implementing CIS Controls across 500+ workstations using Group Policy</li>
+                            <li><strong>Mobile Security:</strong> Deploying MDM solution for remote workforce with BYOD policy</li>
+                            <li><strong>Wireless Security:</strong> Securing guest network access in retail environment</li>
+                            <li><strong>Application Security:</strong> Implementing secure coding practices in web application development</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4.2 -->
+            <div class="objective-card obj-4-2" id="obj-4-2">
+                <div class="objective-header">
+                    <div class="objective-number">4.2</div>
+                    <div class="objective-title">Security Implications of Asset Management</div>
+                </div>
+                <div class="objective-description">
+                    Understand the complete asset lifecycle from acquisition to disposal, including security implications of proper hardware, software, and data asset management practices.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-2')">Explore Objective 4.2</button>
+                
+                <div class="objective-content" id="content-4-2">
+                    <div class="content-section">
+                        <div class="section-title">Acquisition and Procurement Process</div>
+                        <p>Secure acquisition ensures that security requirements are considered from the initial procurement phase through deployment.</p>
+                        <ul class="content-list">
+                            <li><strong>Security Requirements:</strong> Define security specifications in procurement documents</li>
+                            <li><strong>Vendor Assessment:</strong> Evaluate supplier security practices and compliance</li>
+                            <li><strong>Supply Chain Security:</strong> Assess risks from third-party components and dependencies</li>
+                            <li><strong>Security Testing:</strong> Validate security controls before deployment</li>
+                            <li><strong>Documentation:</strong> Maintain acquisition records and security assessments</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Procurement Security</span>
+                            <span class="concept-tag">Vendor Management</span>
+                            <span class="concept-tag">Supply Chain Risk</span>
+                            <span class="concept-tag">Security Testing</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Assignment and Accounting</div>
+                        <p>Proper asset assignment and accounting provides visibility and control over organizational resources throughout their lifecycle.</p>
+                        <ul class="content-list">
+                            <li><strong>Ownership Assignment:</strong> Clear responsibility for asset security and management</li>
+                            <li><strong>Asset Classification:</strong> Categorize assets based on criticality, sensitivity, and security requirements</li>
+                            <li><strong>Custodial Responsibility:</strong> Define roles for day-to-day asset management</li>
+                            <li><strong>Usage Policies:</strong> Establish acceptable use guidelines and restrictions</li>
+                            <li><strong>Access Controls:</strong> Implement appropriate access restrictions based on classification</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Asset Classification Example:</h5>
+                            <p><strong>Critical:</strong> Core business systems, payment processing<br>
+                            <strong>Sensitive:</strong> Employee records, customer data<br>
+                            <strong>Internal:</strong> General business documents<br>
+                            <strong>Public:</strong> Marketing materials, public documentation</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Monitoring and Asset Tracking</div>
+                        <p>Continuous monitoring and tracking ensure assets remain secure and compliant throughout their operational lifecycle.</p>
+                        <ul class="content-list">
+                            <li><strong>Inventory Management:</strong> Maintain accurate, real-time asset inventories</li>
+                            <li><strong>Automated Discovery:</strong> Use tools to identify and catalog network-connected assets</li>
+                            <li><strong>Asset Enumeration:</strong> Detailed cataloging of hardware, software, and configuration details</li>
+                            <li><strong>Change Detection:</strong> Monitor for unauthorized modifications or additions</li>
+                            <li><strong>Compliance Tracking:</strong> Ensure assets meet security policies and regulatory requirements</li>
+                            <li><strong>Vulnerability Tracking:</strong> Associate vulnerabilities with specific assets for remediation</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Asset Discovery</span>
+                            <span class="concept-tag">Inventory Management</span>
+                            <span class="concept-tag">Change Detection</span>
+                            <span class="concept-tag">Compliance Monitoring</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Disposal and Decommissioning</div>
+                        <p>Secure disposal ensures that sensitive data is properly protected when assets reach end-of-life or are replaced.</p>
+                        <ul class="content-list">
+                            <li><strong>Data Sanitization:</strong> Secure removal of data using appropriate methods (overwriting, degaussing, cryptographic erasure)</li>
+                            <li><strong>Physical Destruction:</strong> Complete destruction of storage media when sanitization is insufficient</li>
+                            <li><strong>Certification:</strong> Documented verification of successful data removal or destruction</li>
+                            <li><strong>Data Retention Compliance:</strong> Ensure disposal meets legal and regulatory requirements</li>
+                            <li><strong>Chain of Custody:</strong> Maintain detailed records of disposal processes and responsible parties</li>
+                            <li><strong>Environmental Considerations:</strong> Proper e-waste disposal in compliance with environmental regulations</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Sanitization Methods by Media Type:</h5>
+                            <p><strong>HDDs:</strong> Multi-pass overwriting, degaussing, physical destruction<br>
+                            <strong>SSDs:</strong> Cryptographic erasure, secure erase commands, physical destruction<br>
+                            <strong>Optical Media:</strong> Physical destruction (shredding)<br>
+                            <strong>Mobile Devices:</strong> Factory reset, encryption key destruction, physical destruction</p>
+                        </div>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.2</h4>
+                        <ul>
+                            <li>Understand the difference between data sanitization and physical destruction</li>
+                            <li>Know appropriate disposal methods for different types of storage media</li>
+                            <li>Be familiar with asset classification schemes and their security implications</li>
+                            <li>Understand the importance of chain of custody in asset disposal</li>
+                            <li>Know the role of asset inventory in security management</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>CMDB Implementation:</strong> Deploying configuration management database for IT asset tracking</li>
+                            <li><strong>Secure Disposal:</strong> Decommissioning data center with 1000+ servers requiring certified destruction</li>
+                            <li><strong>Asset Discovery:</strong> Using network scanning tools to identify rogue devices</li>
+                            <li><strong>Compliance Reporting:</strong> Generating asset reports for SOX compliance audits</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4.3 -->
+            <div class="objective-card obj-4-3" id="obj-4-3">
+                <div class="objective-header">
+                    <div class="objective-number">4.3</div>
+                    <div class="objective-title">Vulnerability Management Activities</div>
+                </div>
+                <div class="objective-description">
+                    Master the complete vulnerability management lifecycle including identification, analysis, response, remediation, and validation activities essential for maintaining security posture.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-3')">Explore Objective 4.3</button>
+                
+                <div class="objective-content" id="content-4-3">
+                    <div class="content-section">
+                        <div class="section-title">Vulnerability Identification Methods</div>
+                        <p>Effective vulnerability identification requires multiple approaches to discover security weaknesses across the environment.</p>
+                        <ul class="content-list">
+                            <li><strong>Vulnerability Scanning:</strong> Automated tools for network, web application, and database vulnerability detection</li>
+                            <li><strong>Static Analysis (SAST):</strong> Source code analysis for security flaws during development</li>
+                            <li><strong>Dynamic Analysis (DAST):</strong> Runtime testing of applications for security vulnerabilities</li>
+                            <li><strong>Package Monitoring:</strong> Tracking third-party libraries and dependencies for known vulnerabilities</li>
+                            <li><strong>Penetration Testing:</strong> Simulated attacks to identify exploitable vulnerabilities</li>
+                            <li><strong>Bug Bounty Programs:</strong> Crowdsourced vulnerability discovery through ethical hackers</li>
+                            <li><strong>System Audits:</strong> Comprehensive reviews of system configurations and security controls</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Vulnerability Scanning</span>
+                            <span class="concept-tag">SAST/DAST</span>
+                            <span class="concept-tag">Penetration Testing</span>
+                            <span class="concept-tag">Threat Intelligence</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Threat Intelligence Sources</div>
+                        <p>Leveraging diverse threat intelligence sources enhances vulnerability identification and prioritization capabilities.</p>
+                        <ul class="content-list">
+                            <li><strong>Open Source Intelligence (OSINT):</strong> Publicly available threat data, security research, vulnerability databases</li>
+                            <li><strong>Commercial Threat Feeds:</strong> Proprietary intelligence from security vendors and research organizations</li>
+                            <li><strong>Information Sharing Organizations:</strong> Industry groups, government agencies, CERTs</li>
+                            <li><strong>Dark Web Monitoring:</strong> Tracking threat actor communications and exploit availability</li>
+                            <li><strong>Vendor Advisories:</strong> Security updates and patch notifications from software vendors</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Threat Intelligence Integration:</h5>
+                            <p>A financial institution subscribes to multiple threat intelligence feeds and integrates them with their SIEM. When a new banking trojan variant is identified, the system automatically searches for indicators of compromise across the network and prioritizes related vulnerabilities for immediate patching.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Vulnerability Analysis and Prioritization</div>
+                        <p>Effective analysis ensures resources are focused on the most critical vulnerabilities that pose the greatest risk to the organization.</p>
+                        <ul class="content-list">
+                            <li><strong>CVSS Scoring:</strong> Common Vulnerability Scoring System for standardized risk assessment</li>
+                            <li><strong>CVE Tracking:</strong> Common Vulnerabilities and Exposures database for vulnerability identification</li>
+                            <li><strong>False Positive Management:</strong> Identifying and filtering out incorrect vulnerability reports</li>
+                            <li><strong>Environmental Context:</strong> Assessing vulnerability impact based on specific organizational environment</li>
+                            <li><strong>Exposure Factor Analysis:</strong> Calculating potential business impact of successful exploitation</li>
+                            <li><strong>Risk Tolerance Alignment:</strong> Prioritizing based on organizational risk appetite and tolerance</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">CVSS Scoring</span>
+                            <span class="concept-tag">Risk Assessment</span>
+                            <span class="concept-tag">Prioritization</span>
+                            <span class="concept-tag">Business Impact</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Vulnerability Response and Remediation</div>
+                        <p>Systematic response and remediation ensures vulnerabilities are addressed appropriately based on their risk level and organizational constraints.</p>
+                        <ul class="content-list">
+                            <li><strong>Patching Programs:</strong> Systematic application of security updates and patches</li>
+                            <li><strong>Risk Transfer:</strong> Cyber insurance to mitigate financial impact of certain vulnerabilities</li>
+                            <li><strong>Network Segmentation:</strong> Isolating vulnerable systems to limit potential impact</li>
+                            <li><strong>Compensating Controls:</strong> Alternative security measures when direct patching isn't possible</li>
+                            <li><strong>Exceptions and Exemptions:</strong> Formal processes for accepting certain vulnerability risks</li>
+                            <li><strong>Emergency Response:</strong> Rapid response procedures for critical vulnerabilities</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Compensating Controls Example:</h5>
+                            <p>A legacy industrial control system cannot be patched due to operational requirements. Compensating controls include: network segmentation to isolate the system, enhanced monitoring for suspicious activity, strict access controls, and regular security assessments.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Validation and Reporting</div>
+                        <p>Validation ensures remediation efforts are effective, while comprehensive reporting provides visibility into vulnerability management program effectiveness.</p>
+                        <ul class="content-list">
+                            <li><strong>Rescanning:</strong> Automated verification that vulnerabilities have been properly addressed</li>
+                            <li><strong>Manual Verification:</strong> Human validation of complex remediation efforts</li>
+                            <li><strong>Audit Trails:</strong> Comprehensive documentation of vulnerability lifecycle</li>
+                            <li><strong>Metrics and KPIs:</strong> Measuring program effectiveness and improvement areas</li>
+                            <li><strong>Executive Reporting:</strong> Risk-focused communication to leadership and stakeholders</li>
+                            <li><strong>Compliance Reporting:</strong> Demonstrating adherence to regulatory requirements</li>
+                        </ul>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.3</h4>
+                        <ul>
+                            <li>Understand CVSS scoring components (Base, Temporal, Environmental)</li>
+                            <li>Know the difference between SAST and DAST testing approaches</li>
+                            <li>Be familiar with various threat intelligence sources and their uses</li>
+                            <li>Understand when to use compensating controls vs. direct remediation</li>
+                            <li>Know the importance of validation in the vulnerability management process</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>Enterprise Scanning:</strong> Weekly vulnerability scans across 10,000+ endpoints with automated reporting</li>
+                            <li><strong>DevSecOps Integration:</strong> Implementing SAST/DAST in CI/CD pipelines</li>
+                            <li><strong>Critical Response:</strong> Emergency patching of zero-day vulnerability within 24 hours</li>
+                            <li><strong>Risk-Based Prioritization:</strong> Using business context to prioritize vulnerability remediation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4.4 -->
+            <div class="objective-card obj-4-4" id="obj-4-4">
+                <div class="objective-header">
+                    <div class="objective-number">4.4</div>
+                    <div class="objective-title">Security Alerting and Monitoring</div>
+                </div>
+                <div class="objective-description">
+                    Implement comprehensive security monitoring systems and understand alerting concepts, tools, and activities for effective threat detection and response.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-4')">Explore Objective 4.4</button>
+                
+                <div class="objective-content" id="content-4-4">
+                    <div class="content-section">
+                        <div class="section-title">Monitoring Computing Resources</div>
+                        <p>Comprehensive monitoring covers all layers of the technology stack to provide complete visibility into security events and potential threats.</p>
+                        <ul class="content-list">
+                            <li><strong>Systems Monitoring:</strong> Operating system events, performance metrics, configuration changes</li>
+                            <li><strong>Application Monitoring:</strong> Application-specific logs, user activities, transaction monitoring</li>
+                            <li><strong>Infrastructure Monitoring:</strong> Network devices, security appliances, cloud services, physical systems</li>
+                            <li><strong>Database Monitoring:</strong> Access patterns, query analysis, privilege escalation attempts</li>
+                            <li><strong>Endpoint Monitoring:</strong> Host-based activities, process monitoring, file integrity checking</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">System Monitoring</span>
+                            <span class="concept-tag">Application Logs</span>
+                            <span class="concept-tag">Infrastructure Visibility</span>
+                            <span class="concept-tag">Endpoint Detection</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Monitoring Activities</div>
+                        <p>Systematic monitoring activities ensure comprehensive coverage and effective response to security events and incidents.</p>
+                        <ul class="content-list">
+                            <li><strong>Log Aggregation:</strong> Centralized collection and normalization of log data from multiple sources</li>
+                            <li><strong>Real-time Alerting:</strong> Immediate notification of critical security events and threshold breaches</li>
+                            <li><strong>Continuous Scanning:</strong> Ongoing vulnerability and compliance assessments</li>
+                            <li><strong>Automated Reporting:</strong> Regular generation of security metrics, trends, and compliance reports</li>
+                            <li><strong>Long-term Archiving:</strong> Retention of historical data for forensic analysis and compliance</li>
+                            <li><strong>Alert Response and Validation:</strong> Investigation and verification of security alerts</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Alert Response Workflow:</h5>
+                            <p>1. <strong>Detection:</strong> SIEM triggers high-severity alert for multiple failed login attempts<br>
+                            2. <strong>Triage:</strong> SOC analyst reviews alert details and context<br>
+                            3. <strong>Investigation:</strong> Analyst examines source IP, user patterns, and system logs<br>
+                            4. <strong>Response:</strong> Account lockout, IP blocking, or escalation to incident response team<br>
+                            5. <strong>Documentation:</strong> Record findings and actions taken</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Alert Management and Tuning</div>
+                        <p>Effective alert management balances comprehensive detection with manageable alert volumes to prevent analyst fatigue.</p>
+                        <ul class="content-list">
+                            <li><strong>Alert Correlation:</strong> Combining related events to reduce noise and identify attack patterns</li>
+                            <li><strong>Threshold Tuning:</strong> Adjusting sensitivity to minimize false positives while maintaining detection capability</li>
+                            <li><strong>Suppression Rules:</strong> Filtering out known benign activities and expected behaviors</li>
+                            <li><strong>Escalation Procedures:</strong> Automated escalation based on alert severity and response timeframes</li>
+                            <li><strong>Quality Metrics:</strong> Measuring false positive rates, detection effectiveness, and response times</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Security Monitoring Tools</div>
+                        <p>Modern security monitoring relies on specialized tools that provide different capabilities for comprehensive threat detection and response.</p>
+                        <ul class="content-list">
+                            <li><strong>SIEM (Security Information and Event Management):</strong> Centralized log management, correlation, and alerting platform</li>
+                            <li><strong>SCAP (Security Content Automation Protocol):</strong> Standardized vulnerability and configuration assessment</li>
+                            <li><strong>Vulnerability Scanners:</strong> Automated identification of security weaknesses and misconfigurations</li>
+                            <li><strong>DLP (Data Loss Prevention):</strong> Monitoring and prevention of unauthorized data exfiltration</li>
+                            <li><strong>NetFlow Analysis:</strong> Network traffic analysis for anomaly detection and forensics</li>
+                            <li><strong>SNMP Monitoring:</strong> Network device health and performance monitoring</li>
+                            <li><strong>Endpoint Detection and Response (EDR):</strong> Advanced threat detection and response on endpoints</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">SIEM</span>
+                            <span class="concept-tag">EDR/XDR</span>
+                            <span class="concept-tag">DLP</span>
+                            <span class="concept-tag">Network Analysis</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Agent vs. Agentless Monitoring</div>
+                        <p>Understanding the trade-offs between agent-based and agentless monitoring approaches is crucial for effective deployment.</p>
+                        <ul class="content-list">
+                            <li><strong>Agent-based Benefits:</strong> Detailed visibility, real-time monitoring, local analysis capabilities</li>
+                            <li><strong>Agent-based Challenges:</strong> Resource consumption, deployment complexity, agent management</li>
+                            <li><strong>Agentless Benefits:</strong> No endpoint resource impact, easier deployment, reduced attack surface</li>
+                            <li><strong>Agentless Limitations:</strong> Limited visibility, network dependency, potential blind spots</li>
+                            <li><strong>Hybrid Approaches:</strong> Combining both methods for optimal coverage and efficiency</li>
+                        </ul>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.4</h4>
+                        <ul>
+                            <li>Understand the role of SIEM in security monitoring and incident response</li>
+                            <li>Know the differences between agent-based and agentless monitoring</li>
+                            <li>Be familiar with alert tuning techniques to reduce false positives</li>
+                            <li>Understand NetFlow and its use in network security monitoring</li>
+                            <li>Know the capabilities and limitations of different monitoring tools</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>SOC Implementation:</strong> 24/7 security operations center with SIEM and analyst tiers</li>
+                            <li><strong>Cloud Monitoring:</strong> Multi-cloud security monitoring with native and third-party tools</li>
+                            <li><strong>Compliance Monitoring:</strong> Automated PCI DSS compliance checking and reporting</li>
+                            <li><strong>Threat Hunting:</strong> Proactive searching for advanced persistent threats using multiple data sources</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4.5 -->
+            <div class="objective-card obj-4-5" id="obj-4-5">
+                <div class="objective-header">
+                    <div class="objective-number">4.5</div>
+                    <div class="objective-title">Modify Enterprise Capabilities to Enhance Security</div>
+                </div>
+                <div class="objective-description">
+                    Learn to enhance existing enterprise security infrastructure through configuration modifications, security protocol implementation, and advanced security technologies.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-5')">Explore Objective 4.5</button>
+                
+                <div class="objective-content" id="content-4-5">
+                    <div class="content-section">
+                        <div class="section-title">Firewall Configuration Enhancement</div>
+                        <p>Advanced firewall configuration goes beyond basic rules to implement sophisticated traffic control and security policies.</p>
+                        <ul class="content-list">
+                            <li><strong>Rule Optimization:</strong> Organizing rules for performance and security effectiveness</li>
+                            <li><strong>Access Control Lists (ACLs):</strong> Granular traffic control based on multiple criteria</li>
+                            <li><strong>Port and Protocol Management:</strong> Selective opening/closing based on business requirements</li>
+                            <li><strong>Screened Subnets (DMZ):</strong> Implementing defense-in-depth with multiple security zones</li>
+                            <li><strong>Application-Layer Filtering:</strong> Deep packet inspection and application control</li>
+                            <li><strong>Geo-blocking:</strong> Geographic-based access restrictions</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Firewall Rule Best Practices:</h5>
+                            <p>1. Deny by default, allow by exception<br>
+                            2. Most specific rules first, general rules last<br>
+                            3. Regular review and cleanup of unused rules<br>
+                            4. Document business justification for each rule<br>
+                            5. Implement logging for security-relevant traffic</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Intrusion Detection and Prevention Systems</div>
+                        <p>IDS/IPS systems provide real-time threat detection and automated response capabilities to protect against network-based attacks.</p>
+                        <ul class="content-list">
+                            <li><strong>Signature-based Detection:</strong> Pattern matching against known attack signatures</li>
+                            <li><strong>Anomaly-based Detection:</strong> Behavioral analysis to identify unusual network activity</li>
+                            <li><strong>Trend Analysis:</strong> Long-term pattern recognition for advanced threat detection</li>
+                            <li><strong>Custom Signatures:</strong> Organization-specific detection rules for targeted threats</li>
+                            <li><strong>Response Actions:</strong> Automated blocking, alerting, and containment measures</li>
+                            <li><strong>Tuning and Optimization:</strong> Reducing false positives while maintaining detection effectiveness</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Signature Detection</span>
+                            <span class="concept-tag">Anomaly Detection</span>
+                            <span class="concept-tag">Automated Response</span>
+                            <span class="concept-tag">False Positive Tuning</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Web Filtering and Content Control</div>
+                        <p>Web filtering systems protect against web-based threats while enforcing organizational internet usage policies.</p>
+                        <ul class="content-list">
+                            <li><strong>Agent-based Filtering:</strong> Endpoint-installed software for comprehensive protection</li>
+                            <li><strong>Centralized Proxy:</strong> Network-based filtering through proxy servers</li>
+                            <li><strong>URL Scanning:</strong> Real-time analysis of web destinations for threats</li>
+                            <li><strong>Content Categorization:</strong> Classification of websites by content type and risk level</li>
+                            <li><strong>Block Rules:</strong> Policy-based restriction of access to specific content categories</li>
+                            <li><strong>Reputation Filtering:</strong> Blocking based on website reputation scores and threat intelligence</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Email Security Enhancement</div>
+                        <p>Email security requires multiple layers of protection against phishing, malware, and email-based attacks.</p>
+                        <ul class="content-list">
+                            <li><strong>SPF (Sender Policy Framework):</strong> Validates authorized sending servers for domains</li>
+                            <li><strong>DKIM (DomainKeys Identified Mail):</strong> Cryptographic authentication of email messages</li>
+                            <li><strong>DMARC (Domain-based Message Authentication, Reporting, and Conformance):</strong> Policy enforcement and reporting for email authentication</li>
+                            <li><strong>Email Gateways:</strong> Centralized filtering and threat protection for email traffic</li>
+                            <li><strong>Attachment Scanning:</strong> Malware detection in email attachments</li>
+                            <li><strong>Link Protection:</strong> Real-time analysis and sandboxing of email links</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Email Authentication Implementation:</h5>
+                            <p>A company implements comprehensive email security by: publishing SPF records to authorize mail servers, configuring DKIM signing for message integrity, implementing DMARC with quarantine policy, and deploying an email gateway with advanced threat protection for inbound and outbound messages.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Advanced Security Technologies</div>
+                        <p>Next-generation security technologies provide enhanced protection against sophisticated and emerging threats.</p>
+                        <ul class="content-list">
+                            <li><strong>EDR/XDR (Extended Detection and Response):</strong> Advanced endpoint and cross-platform threat detection</li>
+                            <li><strong>User Behavior Analytics (UBA):</strong> ML-based analysis of user activities for insider threat detection</li>
+                            <li><strong>Network Access Control (NAC):</strong> Device authentication and policy enforcement for network access</li>
+                            <li><strong>DNS Filtering:</strong> Blocking malicious domains and DNS-based attacks</li>
+                            <li><strong>File Integrity Monitoring (FIM):</strong> Real-time detection of unauthorized file changes</li>
+                            <li><strong>DLP (Data Loss Prevention):</strong> Prevention of unauthorized data exfiltration</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Operating System Security Enhancements</div>
+                        <p>OS-level security improvements provide fundamental protection for enterprise systems and applications.</p>
+                        <ul class="content-list">
+                            <li><strong>Group Policy Management:</strong> Centralized Windows security policy deployment and enforcement</li>
+                            <li><strong>SELinux Configuration:</strong> Mandatory access controls for Linux systems</li>
+                            <li><strong>Security Benchmarks:</strong> Implementation of CIS, DISA STIG, and vendor security guidelines</li>
+                            <li><strong>Privilege Management:</strong> Least privilege enforcement and privilege escalation monitoring</li>
+                            <li><strong>Security Logging:</strong> Enhanced audit logging and log protection measures</li>
+                        </ul>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.5</h4>
+                        <ul>
+                            <li>Understand email authentication protocols (SPF, DKIM, DMARC) and their implementation</li>
+                            <li>Know the differences between various firewall types and their capabilities</li>
+                            <li>Be familiar with IDS vs. IPS functionality and deployment considerations</li>
+                            <li>Understand NAC deployment models and enforcement methods</li>
+                            <li>Know the role of EDR/XDR in advanced threat detection and response</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>Zero Trust Implementation:</strong> Deploying NAC with device authentication and microsegmentation</li>
+                            <li><strong>Email Security:</strong> Implementing DMARC with p=reject policy after gradual rollout</li>
+                            <li><strong>Advanced Threat Protection:</strong> EDR deployment across 5,000+ endpoints with centralized management</li>
+                            <li><strong>Web Security:</strong> Cloud-based web filtering with SSL inspection and sandboxing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4.6 -->
+            <div class="objective-card obj-4-6" id="obj-4-6">
+                <div class="objective-header">
+                    <div class="objective-number">4.6</div>
+                    <div class="objective-title">Identity and Access Management Implementation</div>
+                </div>
+                <div class="objective-description">
+                    Master the implementation and maintenance of comprehensive identity and access management systems, including authentication, authorization, and access control mechanisms.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-6')">Explore Objective 4.6</button>
+                
+                <div class="objective-content" id="content-4-6">
+                    <div class="content-section">
+                        <div class="section-title">User Lifecycle Management</div>
+                        <p>Comprehensive user lifecycle management ensures appropriate access throughout the entire employment lifecycle while maintaining security.</p>
+                        <ul class="content-list">
+                            <li><strong>User Provisioning:</strong> Automated account creation based on role and department requirements</li>
+                            <li><strong>Permission Assignment:</strong> Role-based access control implementation with least privilege principles</li>
+                            <li><strong>Account Modifications:</strong> Access adjustments for role changes, transfers, and temporary assignments</li>
+                            <li><strong>De-provisioning:</strong> Immediate access revocation upon termination or role change</li>
+                            <li><strong>Account Reviews:</strong> Regular audits of user accounts and permissions for compliance</li>
+                            <li><strong>Orphaned Account Management:</strong> Identification and cleanup of unused or abandoned accounts</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Automated Provisioning Workflow:</h5>
+                            <p>New employee John Smith joins as Marketing Analyst → HR system triggers automated account creation → Identity management system creates accounts in AD, email, CRM → Role-based permissions automatically assigned → Manager receives approval request for additional access → All changes logged for audit trail</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Authentication Systems</div>
+                        <p>Strong authentication systems provide the foundation for secure access control and user verification across enterprise resources.</p>
+                        <ul class="content-list">
+                            <li><strong>Single Sign-On (SSO):</strong> Centralized authentication for multiple applications and services</li>
+                            <li><strong>LDAP Integration:</strong> Directory services for centralized user and group management</li>
+                            <li><strong>OAuth Implementation:</strong> Secure authorization for third-party application access</li>
+                            <li><strong>SAML Configuration:</strong> Federated authentication for cross-domain access</li>
+                            <li><strong>Identity Proofing:</strong> Verification of user identity during account establishment</li>
+                            <li><strong>Federation Setup:</strong> Trust relationships between organizations for secure resource sharing</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">SSO</span>
+                            <span class="concept-tag">SAML</span>
+                            <span class="concept-tag">OAuth</span>
+                            <span class="concept-tag">Federation</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Access Control Models</div>
+                        <p>Different access control models provide various approaches to managing user permissions and resource access based on organizational needs.</p>
+                        <ul class="content-list">
+                            <li><strong>Mandatory Access Control (MAC):</strong> System-enforced access based on security labels and clearances</li>
+                            <li><strong>Discretionary Access Control (DAC):</strong> Owner-controlled access permissions for resources</li>
+                            <li><strong>Role-Based Access Control (RBAC):</strong> Access based on organizational roles and responsibilities</li>
+                            <li><strong>Rule-Based Access Control:</strong> Policy-driven access decisions based on defined rules</li>
+                            <li><strong>Attribute-Based Access Control (ABAC):</strong> Dynamic access decisions based on multiple attributes</li>
+                            <li><strong>Time-of-Day Restrictions:</strong> Temporal access controls based on business hours and requirements</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>ABAC Implementation Example:</h5>
+                            <p>An employee accessing financial data requires: correct department (Finance), appropriate role (Analyst+), current project assignment (Budget2024), network location (corporate), time restriction (business hours), and device compliance (managed, encrypted). All attributes must be satisfied for access approval.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Multi-Factor Authentication</div>
+                        <p>MFA significantly enhances security by requiring multiple forms of authentication, making account compromise much more difficult.</p>
+                        <ul class="content-list">
+                            <li><strong>Knowledge Factors (Something You Know):</strong> Passwords, PINs, security questions</li>
+                            <li><strong>Possession Factors (Something You Have):</strong> Smartphones, hardware tokens, smart cards</li>
+                            <li><strong>Inherence Factors (Something You Are):</strong> Biometrics including fingerprints, facial recognition, voice recognition</li>
+                            <li><strong>Location Factors (Somewhere You Are):</strong> GPS location, network location, geographic restrictions</li>
+                            <li><strong>Hardware Tokens:</strong> Dedicated devices for OTP generation and secure authentication</li>
+                            <li><strong>Software Tokens:</strong> Mobile apps and software-based authentication methods</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Biometrics</span>
+                            <span class="concept-tag">Hardware Tokens</span>
+                            <span class="concept-tag">Mobile Authentication</span>
+                            <span class="concept-tag">Location-based Access</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Password Management</div>
+                        <p>Effective password management balances security requirements with usability to ensure strong authentication without creating excessive user burden.</p>
+                        <ul class="content-list">
+                            <li><strong>Password Complexity:</strong> Requirements for length, character types, and entropy</li>
+                            <li><strong>Password Reuse Prevention:</strong> History checking to prevent password recycling</li>
+                            <li><strong>Expiration Policies:</strong> Balanced approach to password aging and rotation</li>
+                            <li><strong>Password Managers:</strong> Enterprise and personal tools for secure password storage and generation</li>
+                            <li><strong>Passwordless Authentication:</strong> Modern approaches using biometrics, certificates, and hardware tokens</li>
+                            <li><strong>Account Lockout Policies:</strong> Protection against brute force attacks while maintaining availability</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Privileged Access Management</div>
+                        <p>PAM solutions provide enhanced security for high-privilege accounts that pose the greatest risk if compromised.</p>
+                        <ul class="content-list">
+                            <li><strong>Just-in-Time (JIT) Permissions:</strong> Temporary privilege elevation for specific tasks</li>
+                            <li><strong>Password Vaulting:</strong> Secure storage and automated rotation of privileged account passwords</li>
+                            <li><strong>Ephemeral Credentials:</strong> Short-lived accounts and credentials for specific operations</li>
+                            <li><strong>Session Recording:</strong> Complete audit trail of privileged user activities</li>
+                            <li><strong>Privilege Escalation Monitoring:</strong> Detection of unauthorized privilege increases</li>
+                            <li><strong>Break-Glass Procedures:</strong> Emergency access protocols for critical situations</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>JIT Access Workflow:</h5>
+                            <p>Database administrator requests access to production database → Approval workflow initiated → Manager approves with 2-hour time limit → Temporary credentials generated → Access automatically revoked after time expires → All activities logged and recorded</p>
+                        </div>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.6</h4>
+                        <ul>
+                            <li>Understand the differences between various access control models (MAC, DAC, RBAC, ABAC)</li>
+                            <li>Know the authentication factors and their categorization (something you know/have/are/where you are)</li>
+                            <li>Be familiar with SSO protocols (SAML, OAuth, LDAP) and their use cases</li>
+                            <li>Understand PAM concepts including JIT permissions and password vaulting</li>
+                            <li>Know the principles of least privilege and separation of duties</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>Enterprise SSO:</strong> Implementing SAML-based SSO for 50+ SaaS applications</li>
+                            <li><strong>PAM Deployment:</strong> Securing 500+ privileged accounts with automated password rotation</li>
+                            <li><strong>Zero Trust IAM:</strong> Implementing continuous authentication with risk-based access controls</li>
+                            <li><strong>Mobile IAM:</strong> Biometric authentication integration for mobile workforce</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4.7 -->
+            <div class="objective-card obj-4-7" id="obj-4-7">
+                <div class="objective-header">
+                    <div class="objective-number">4.7</div>
+                    <div class="objective-title">Automation and Orchestration in Security Operations</div>
+                </div>
+                <div class="objective-description">
+                    Understand the importance of automation and orchestration in modern security operations, including use cases, benefits, and implementation considerations.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-7')">Explore Objective 4.7</button>
+                
+                <div class="objective-content" id="content-4-7">
+                    <div class="content-section">
+                        <div class="section-title">Security Automation Use Cases</div>
+                        <p>Security automation addresses repetitive tasks and enables rapid response to threats while reducing human error and improving consistency.</p>
+                        <ul class="content-list">
+                            <li><strong>User Provisioning:</strong> Automated account creation, permission assignment, and lifecycle management</li>
+                            <li><strong>Resource Provisioning:</strong> Automated deployment of secure infrastructure and applications</li>
+                            <li><strong>Guard Rails:</strong> Automated policy enforcement and compliance checking</li>
+                            <li><strong>Security Groups:</strong> Dynamic security group membership based on user attributes and roles</li>
+                            <li><strong>Ticket Creation:</strong> Automated incident and service request generation</li>
+                            <li><strong>Escalation Procedures:</strong> Automatic escalation based on severity and response timeframes</li>
+                            <li><strong>Service Management:</strong> Automated enabling/disabling of services based on security policies</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Process Automation</span>
+                            <span class="concept-tag">Policy Enforcement</span>
+                            <span class="concept-tag">Incident Response</span>
+                            <span class="concept-tag">Compliance Automation</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">DevSecOps Integration</div>
+                        <p>Integrating security into development and operations processes through automation ensures security is built-in rather than bolted-on.</p>
+                        <ul class="content-list">
+                            <li><strong>Continuous Integration (CI):</strong> Automated security testing in development pipelines</li>
+                            <li><strong>Continuous Testing:</strong> Automated vulnerability scanning and code analysis</li>
+                            <li><strong>Infrastructure as Code (IaC):</strong> Automated deployment of secure, consistent infrastructure</li>
+                            <li><strong>Configuration Management:</strong> Automated enforcement of security configurations</li>
+                            <li><strong>Compliance as Code:</strong> Automated compliance checking and reporting</li>
+                            <li><strong>Security Pipelines:</strong> Automated security gates in deployment processes</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>DevSecOps Pipeline Example:</h5>
+                            <p>Developer commits code → Automated SAST scan runs → Dependency vulnerability check → Security unit tests execute → Infrastructure compliance validation → Automated deployment to staging → DAST scan execution → Security approval gate → Production deployment</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">API Integration and Orchestration</div>
+                        <p>APIs enable integration between security tools and orchestration platforms, creating comprehensive automated security workflows.</p>
+                        <ul class="content-list">
+                            <li><strong>SOAR Platforms:</strong> Security Orchestration, Automation, and Response systems</li>
+                            <li><strong>API-Driven Integration:</strong> Connecting disparate security tools for coordinated response</li>
+                            <li><strong>Workflow Orchestration:</strong> Complex multi-step security processes and incident response</li>
+                            <li><strong>Threat Intelligence Integration:</strong> Automated threat feed consumption and correlation</li>
+                            <li><strong>Cross-Platform Communication:</strong> Seamless data exchange between security tools</li>
+                            <li><strong>Event-Driven Automation:</strong> Triggered responses based on security events and alerts</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Benefits of Security Automation</div>
+                        <p>Security automation provides significant operational and security benefits that enhance overall organizational security posture.</p>
+                        <ul class="content-list">
+                            <li><strong>Efficiency and Time Saving:</strong> Reduced manual effort for routine tasks and faster response times</li>
+                            <li><strong>Baseline Enforcement:</strong> Consistent application of security policies and configurations</li>
+                            <li><strong>Standard Infrastructure:</strong> Repeatable, secure infrastructure deployment and management</li>
+                            <li><strong>Secure Scaling:</strong> Maintain security controls during rapid growth and expansion</li>
+                            <li><strong>Employee Retention:</strong> Reduce repetitive work and focus on strategic security initiatives</li>
+                            <li><strong>Improved Reaction Time:</strong> Faster detection and response to security incidents</li>
+                            <li><strong>Workforce Multiplier:</strong> Enable small teams to manage large-scale security operations</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Operational Efficiency</span>
+                            <span class="concept-tag">Consistency</span>
+                            <span class="concept-tag">Scalability</span>
+                            <span class="concept-tag">Response Speed</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Implementation Considerations</div>
+                        <p>While automation provides significant benefits, careful consideration of challenges and limitations is essential for successful implementation.</p>
+                        <ul class="content-list">
+                            <li><strong>Complexity Management:</strong> Balancing automation benefits with system complexity</li>
+                            <li><strong>Cost Considerations:</strong> Initial investment, ongoing maintenance, and tool licensing</li>
+                            <li><strong>Single Point of Failure:</strong> Ensuring automation systems don't become critical vulnerabilities</li>
+                            <li><strong>Technical Debt:</strong> Managing accumulated automation code and configuration</li>
+                            <li><strong>Ongoing Supportability:</strong> Maintaining and updating automated systems and processes</li>
+                            <li><strong>Change Management:</strong> Adapting automation to evolving business and security requirements</li>
+                        </ul>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.7</h4>
+                        <ul>
+                            <li>Understand the various use cases for security automation in enterprise environments</li>
+                            <li>Know the benefits of automation including efficiency, consistency, and scalability</li>
+                            <li>Be familiar with DevSecOps concepts and CI/CD security integration</li>
+                            <li>Understand the role of APIs in security orchestration and tool integration</li>
+                            <li>Know the potential challenges and limitations of security automation</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>SOAR Implementation:</strong> Automating incident response workflows for 1000+ daily security alerts</li>
+                            <li><strong>Cloud Security:</strong> Automated compliance checking and remediation in multi-cloud environment</li>
+                            <li><strong>Vulnerability Management:</strong> Automated scanning, prioritization, and patching workflows</li>
+                            <li><strong>Identity Automation:</strong> Automated user lifecycle management for 10,000+ employees</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4.8 -->
+            <div class="objective-card obj-4-8" id="obj-4-8">
+                <div class="objective-header">
+                    <div class="objective-number">4.8</div>
+                    <div class="objective-title">Incident Response Activities</div>
+                </div>
+                <div class="objective-description">
+                    Master the incident response lifecycle, training requirements, testing procedures, and the critical activities needed for effective incident management and recovery.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-8')">Explore Objective 4.8</button>
+                
+                <div class="objective-content" id="content-4-8">
+                    <div class="content-section">
+                        <div class="section-title">Incident Response Process</div>
+                        <p>The incident response process provides a structured approach to handling security incidents from initial detection through recovery and lessons learned.</p>
+                        <ul class="content-list">
+                            <li><strong>Preparation:</strong> Establishing policies, procedures, teams, and tools before incidents occur</li>
+                            <li><strong>Detection and Analysis:</strong> Identifying potential incidents and determining their scope and impact</li>
+                            <li><strong>Containment:</strong> Limiting the spread and impact of the incident while preserving evidence</li>
+                            <li><strong>Eradication:</strong> Removing the threat and vulnerabilities that allowed the incident</li>
+                            <li><strong>Recovery:</strong> Restoring systems and services to normal operation</li>
+                            <li><strong>Lessons Learned:</strong> Post-incident analysis to improve future response capabilities</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Incident Response Timeline:</h5>
+                            <p><strong>T+0:</strong> Suspicious activity detected by SIEM<br>
+                            <strong>T+15 min:</strong> Incident declared, team activated<br>
+                            <strong>T+30 min:</strong> Initial containment measures implemented<br>
+                            <strong>T+2 hours:</strong> Threat eradicated, evidence preserved<br>
+                            <strong>T+4 hours:</strong> Systems restored to operation<br>
+                            <strong>T+1 week:</strong> Lessons learned session conducted</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Incident Response Team Structure</div>
+                        <p>Effective incident response requires a well-organized team with clearly defined roles and responsibilities.</p>
+                        <ul class="content-list">
+                            <li><strong>Incident Commander:</strong> Overall incident coordination and decision-making authority</li>
+                            <li><strong>Security Analysts:</strong> Technical investigation and analysis of the incident</li>
+                            <li><strong>IT Operations:</strong> System administration and technical response activities</li>
+                            <li><strong>Communications Lead:</strong> Internal and external communication management</li>
+                            <li><strong>Legal Counsel:</strong> Legal implications and regulatory compliance requirements</li>
+                            <li><strong>Management Liaison:</strong> Executive communication and business impact assessment</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Incident Response Training</div>
+                        <p>Regular training ensures incident response team members are prepared to execute their roles effectively during high-stress situations.</p>
+                        <ul class="content-list">
+                            <li><strong>Role-Based Training:</strong> Specific training for each team member's responsibilities</li>
+                            <li><strong>Technical Skills:</strong> Hands-on training with incident response tools and techniques</li>
+                            <li><strong>Communication Skills:</strong> Effective communication during crisis situations</li>
+                            <li><strong>Legal and Compliance:</strong> Understanding legal requirements and regulatory obligations</li>
+                            <li><strong>Cross-Training:</strong> Backup capability development for critical roles</li>
+                            <li><strong>Continuous Education:</strong> Staying current with evolving threats and response techniques</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Incident Response Testing</div>
+                        <p>Regular testing validates incident response capabilities and identifies areas for improvement before real incidents occur.</p>
+                        <ul class="content-list">
+                            <li><strong>Tabletop Exercises:</strong> Discussion-based scenarios to test decision-making and procedures</li>
+                            <li><strong>Functional Exercises:</strong> Hands-on testing of specific incident response capabilities</li>
+                            <li><strong>Full-Scale Simulations:</strong> Comprehensive exercises testing all aspects of incident response</li>
+                            <li><strong>Red Team Exercises:</strong> Simulated attacks to test detection and response capabilities</li>
+                            <li><strong>After-Action Reviews:</strong> Post-exercise analysis to identify improvements</li>
+                            <li><strong>Plan Updates:</strong> Incorporating lessons learned into incident response procedures</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Tabletop Exercises</span>
+                            <span class="concept-tag">Simulation Testing</span>
+                            <span class="concept-tag">Red Team Exercises</span>
+                            <span class="concept-tag">Continuous Improvement</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Root Cause Analysis</div>
+                        <p>Thorough root cause analysis prevents incident recurrence by identifying and addressing underlying vulnerabilities and weaknesses.</p>
+                        <ul class="content-list">
+                            <li><strong>Timeline Reconstruction:</strong> Detailed chronology of events leading to the incident</li>
+                            <li><strong>Contributing Factors:</strong> Identification of all factors that enabled the incident</li>
+                            <li><strong>System Failures:</strong> Analysis of technical and process failures</li>
+                            <li><strong>Human Factors:</strong> Understanding human error and decision-making impacts</li>
+                            <li><strong>Preventive Measures:</strong> Recommendations to prevent similar incidents</li>
+                            <li><strong>Process Improvements:</strong> Updates to policies, procedures, and controls</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Threat Hunting</div>
+                        <p>Proactive threat hunting identifies advanced threats that may have evaded traditional security controls and detection systems.</p>
+                        <ul class="content-list">
+                            <li><strong>Hypothesis-Driven Hunting:</strong> Targeted searches based on threat intelligence and attack patterns</li>
+                            <li><strong>Behavioral Analysis:</strong> Identifying anomalous activities that may indicate compromise</li>
+                            <li><strong>IOC Development:</strong> Creating indicators of compromise for future detection</li>
+                            <li><strong>Advanced Persistent Threats:</strong> Hunting for long-term, stealthy adversaries</li>
+                            <li><strong>Threat Intelligence Integration:</strong> Using external intelligence to guide hunting activities</li>
+                            <li><strong>Tool Enhancement:</strong> Improving detection capabilities based on hunting findings</li>
+                        </ul>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.8</h4>
+                        <ul>
+                            <li>Memorize the six phases of the incident response process</li>
+                            <li>Understand the importance of preparation and planning in incident response</li>
+                            <li>Know different types of incident response testing and their purposes</li>
+                            <li>Be familiar with root cause analysis techniques and objectives</li>
+                            <li>Understand the role of threat hunting in proactive security</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>Ransomware Response:</strong> Coordinated response to enterprise ransomware attack affecting 500+ systems</li>
+                            <li><strong>Data Breach:</strong> Complete incident response including forensics, notification, and remediation</li>
+                            <li><strong>APT Investigation:</strong> Long-term investigation and eradication of advanced persistent threat</li>
+                            <li><strong>Tabletop Exercise:</strong> Quarterly scenario-based training for incident response team</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objective 4.9 -->
+            <div class="objective-card obj-4-9" id="obj-4-9">
+                <div class="objective-header">
+                    <div class="objective-number">4.9</div>
+                    <div class="objective-title">Using Data Sources to Support Investigations</div>
+                </div>
+                <div class="objective-description">
+                    Learn to effectively utilize various data sources including logs, forensic evidence, and monitoring data to support security investigations and incident analysis.
+                </div>
+                <button class="expand-btn" onclick="toggleObjective('4-9')">Explore Objective 4.9</button>
+                
+                <div class="objective-content" id="content-4-9">
+                    <div class="content-section">
+                        <div class="section-title">Digital Forensics Fundamentals</div>
+                        <p>Digital forensics provides the foundation for evidence collection and analysis in security investigations and legal proceedings.</p>
+                        <ul class="content-list">
+                            <li><strong>Legal Hold:</strong> Preservation requirements for potential litigation and regulatory compliance</li>
+                            <li><strong>Chain of Custody:</strong> Documented evidence handling to maintain integrity and admissibility</li>
+                            <li><strong>Evidence Acquisition:</strong> Proper collection techniques for digital evidence preservation</li>
+                            <li><strong>Forensic Imaging:</strong> Bit-for-bit copies of storage devices for analysis</li>
+                            <li><strong>Evidence Preservation:</strong> Maintaining evidence integrity throughout the investigation</li>
+                            <li><strong>E-Discovery:</strong> Electronic discovery processes for legal proceedings</li>
+                            <li><strong>Expert Reporting:</strong> Documentation and presentation of forensic findings</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Chain of Custody Process:</h5>
+                            <p>1. Evidence identified and photographed in situ<br>
+                            2. Secure acquisition using write-blocking tools<br>
+                            3. Cryptographic hashing for integrity verification<br>
+                            4. Secure storage with access logging<br>
+                            5. Documented transfer between investigators<br>
+                            6. Continuous integrity verification</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Log Data Analysis</div>
+                        <p>Comprehensive log analysis provides crucial insights into security incidents and system activities across the enterprise environment.</p>
+                        <ul class="content-list">
+                            <li><strong>Firewall Logs:</strong> Network traffic analysis, blocked connections, and policy violations</li>
+                            <li><strong>Application Logs:</strong> User activities, errors, and application-specific security events</li>
+                            <li><strong>Endpoint Logs:</strong> Host-based activities, process execution, and file system changes</li>
+                            <li><strong>OS Security Logs:</strong> Authentication events, privilege changes, and system modifications</li>
+                            <li><strong>IPS/IDS Logs:</strong> Intrusion attempts, attack signatures, and network anomalies</li>
+                            <li><strong>Network Logs:</strong> Traffic flows, connection patterns, and communication analysis</li>
+                            <li><strong>Metadata Analysis:</strong> File properties, timestamps, and system information</li>
+                        </ul>
+                        <div class="key-concepts">
+                            <span class="concept-tag">Log Correlation</span>
+                            <span class="concept-tag">Timeline Analysis</span>
+                            <span class="concept-tag">Pattern Recognition</span>
+                            <span class="concept-tag">Evidence Reconstruction</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Advanced Data Sources</div>
+                        <p>Advanced data sources provide additional context and evidence for complex security investigations and threat analysis.</p>
+                        <ul class="content-list">
+                            <li><strong>Vulnerability Scan Results:</strong> Known weaknesses and potential attack vectors</li>
+                            <li><strong>Automated Security Reports:</strong> Regular security posture assessments and trend analysis</li>
+                            <li><strong>Security Dashboards:</strong> Real-time security metrics and key performance indicators</li>
+                            <li><strong>Packet Captures:</strong> Deep network traffic analysis and protocol examination</li>
+                            <li><strong>Memory Dumps:</strong> Volatile data analysis for malware and rootkit detection</li>
+                            <li><strong>Threat Intelligence Feeds:</strong> External threat data correlation and attribution</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Investigation Techniques</div>
+                        <p>Effective investigation techniques combine multiple data sources and analytical approaches to reconstruct incidents and identify root causes.</p>
+                        <ul class="content-list">
+                            <li><strong>Timeline Construction:</strong> Chronological reconstruction of events across multiple data sources</li>
+                            <li><strong>Correlation Analysis:</strong> Identifying relationships between disparate events and activities</li>
+                            <li><strong>Behavioral Analysis:</strong> Understanding normal vs. anomalous patterns of activity</li>
+                            <li><strong>Indicator Development:</strong> Creating IOCs for detection and future prevention</li>
+                            <li><strong>Attribution Analysis:</strong> Identifying threat actors and attack methodologies</li>
+                            <li><strong>Impact Assessment:</strong> Determining scope and business impact of security incidents</li>
+                        </ul>
+                        <div class="scenario-box">
+                            <h5>Multi-Source Investigation Example:</h5>
+                            <p>Investigating suspected data exfiltration: Firewall logs show unusual outbound traffic → Endpoint logs reveal suspicious process execution → Application logs show unauthorized database access → Email logs indicate phishing attack vector → Memory analysis confirms malware presence → Timeline reconstruction reveals complete attack progression</p>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-title">Data Source Integration</div>
+                        <p>Effective integration of multiple data sources enhances investigation capabilities and provides comprehensive visibility into security events.</p>
+                        <ul class="content-list">
+                            <li><strong>SIEM Integration:</strong> Centralized log management and correlation across data sources</li>
+                            <li><strong>Forensic Platforms:</strong> Specialized tools for evidence analysis and case management</li>
+                            <li><strong>Threat Intelligence Platforms:</strong> Integration of external threat data with internal evidence</li>
+                            <li><strong>Automated Analysis:</strong> Machine learning and AI for pattern recognition and anomaly detection</li>
+                            <li><strong>Visualization Tools:</strong> Graphical representation of complex relationships and timelines</li>
+                            <li><strong>Report Generation:</strong> Automated reporting and documentation of investigation findings</li>
+                        </div>
+                    </div>
+
+                    <div class="exam-tips">
+                        <h4>🎯 Exam Tips for Objective 4.9</h4>
+                        <ul>
+                            <li>Understand the importance of chain of custody in digital forensics</li>
+                            <li>Know different types of logs and their investigative value</li>
+                            <li>Be familiar with e-discovery processes and legal hold requirements</li>
+                            <li>Understand packet capture analysis and its role in network investigations</li>
+                            <li>Know the importance of evidence preservation and integrity verification</li>
+                        </ul>
+                    </div>
+
+                    <div class="practical-examples">
+                        <h4>💡 Real-World Applications</h4>
+                        <ul>
+                            <li><strong>Insider Threat Investigation:</strong> Using multiple data sources to investigate suspected data theft</li>
+                            <li><strong>Malware Analysis:</strong> Memory forensics and network analysis to understand malware behavior</li>
+                            <li><strong>Legal E-Discovery:</strong> Corporate investigation requiring admissible digital evidence</li>
+                            <li><strong>Breach Investigation:</strong> Comprehensive analysis of enterprise security breach affecting customer data</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain Summary Quiz -->
+        <div class="quiz-container">
+            <h2>Domain 4 Knowledge Check</h2>
+            <div class="quiz-question">
+                Which of the following is the MOST important consideration when implementing a BYOD policy?
+            </div>
+            <ul class="quiz-options">
+                <li onclick="selectAnswer(this, false)">A) Cost reduction for the organization</li>
+                <li onclick="selectAnswer(this, false)">B) Employee satisfaction and productivity</li>
+                <li onclick="selectAnswer(this, true)">C) Data separation and containerization</li>
+                <li onclick="selectAnswer(this, false)">D) Device standardization across the organization</li>
+            </ul>
+            <div id="quiz-explanation" style="display: none; margin-top: 1rem; padding: 1rem; background: #e8f5e8; border-left: 4px solid #28a745;">
+                <strong>Correct Answer: C) Data separation and containerization</strong><br>
+                In BYOD environments, the primary security concern is protecting corporate data while allowing personal use of devices. Data separation and containerization ensure corporate data remains secure and can be managed independently of personal data.
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <a href="#obj-4-1" class="nav-item active">4.1</a>
+        <a href="#obj-4-2" class="nav-item">4.2</a>
+        <a href="#obj-4-3" class="nav-item">4.3</a>
+        <a href="#obj-4-4" class="nav-item">4.4</a>
+        <a href="#obj-4-5" class="nav-item">4.5</a>
+        <a href="#obj-4-6" class="nav-item">4.6</a>
+        <a href="#obj-4-7" class="nav-item">4.7</a>
+        <a href="#obj-4-8" class="nav-item">4.8</a>
+        <a href="#obj-4-9" class="nav-item">4.9</a>
+    </div>
+
+    <script>
+        function toggleObjective(objectiveId) {
+            const content = document.getElementById(`content-${objectiveId}`);
+            const button = document.querySelector(`#obj-${objectiveId} .expand-btn`);
+            
+            // Close all other objectives
+            for (let i = 1; i <= 9; i++) {
+                const otherContent = document.getElementById(`content-4-${i}`);
+                const otherButton = document.querySelector(`#obj-4-${i} .expand-btn`);
+                if (otherContent && otherContent.id !== `content-${objectiveId}`) {
+                    otherContent.classList.remove('show');
+                    if (otherButton) {
+                        otherButton.textContent = `Explore Objective 4.${i}`;
+                    }
+                }
+            }
+            
+            // Toggle current objective
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                button.textContent = `Explore Objective ${objectiveId}`;
+            } else {
+                content.classList.add('show');
+                button.textContent = `Hide Objective ${objectiveId}`;
+                
+                // Scroll to the objective
+                setTimeout(() => {
+                    document.getElementById(`obj-${objectiveId}`).scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }, 100);
+            }
+        }
+
+        function selectAnswer(element, isCorrect) {
+            const options = document.querySelectorAll('.quiz-options li');
+            const explanation = document.getElementById('quiz-explanation');
+            
+            // Reset all options
+            options.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+            });
+            
+            // Mark the selected answer
+            if (isCorrect) {
+                element.classList.add('correct');
+            } else {
+                element.classList.add('incorrect');
+                // Also highlight the correct answer
+                options.forEach(option => {
+                    if (option.textContent.includes('C) Data separation')) {
+                        option.classList.add('correct');
+                    }
+                });
+            }
+            
+            // Show explanation
+            explanation.style.display = 'block';
+        }
+
+        // Update progress bar on scroll
+        window.addEventListener('scroll', () => {
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight - windowHeight;
+            const scrolled = window.scrollY;
+            const progress = (scrolled / documentHeight) * 100;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Update navigation
+            const objectives = document.querySelectorAll('.objective-card');
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            let currentObjective = 0;
+            objectives.forEach((objective, index) => {
+                const rect = objective.getBoundingClientRect();
+                if (rect.top <= windowHeight / 2 && rect.bottom >= windowHeight / 2) {
+                    currentObjective = index;
+                }
+            });
+            
+            navItems.forEach((item, index) => {
+                item.classList.toggle('active', index === currentObjective);
+            });
+        });
+
+        // Navigation click handlers
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = item.getAttribute('href');
+                document.querySelector(target).scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            });
+        });
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.objective-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '1' && e.key <= '9') {
+                const objectiveNumber = e.key;
+                const target = document.getElementById(`obj-4-${objectiveNumber}`);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

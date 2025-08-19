@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompTIA Security+ SY0-701 Certification Overview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+
+        .exam-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .info-card h3 {
+            color: #3498db;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .domain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .domain-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .domain-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--domain-color), var(--domain-color-light));
+        }
+
+        .domain-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .domain-card.expanded {
+            grid-column: 1 / -1;
+            transform: none;
+        }
+
+        .domain-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .domain-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--domain-color);
+        }
+
+        .domain-percentage {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--domain-color);
+            background: rgba(var(--domain-rgb), 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .domain-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .subdomains {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .subdomains.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subdomain {
+            background: rgba(var(--domain-rgb), 0.05);
+            margin-bottom: 1rem;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--domain-color);
+            transition: all 0.3s ease;
+        }
+
+        .subdomain:hover {
+            background: rgba(var(--domain-rgb), 0.1);
+            transform: translateX(10px);
+        }
+
+        .subdomain-title {
+            font-weight: bold;
+            color: var(--domain-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .subdomain-content {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .key-topics {
+            margin-top: 0.5rem;
+        }
+
+        .topic-tag {
+            display: inline-block;
+            background: var(--domain-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0.2rem 0.3rem 0.2rem 0;
+        }
+
+        .expand-btn {
+            background: var(--domain-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .expand-btn:hover {
+            background: var(--domain-color-dark);
+            transform: scale(1.05);
+        }
+
+        /* Domain-specific colors */
+        .domain-1 {
+            --domain-color: #e74c3c;
+            --domain-color-light: #f39c12;
+            --domain-color-dark: #c0392b;
+            --domain-rgb: 231, 76, 60;
+        }
+
+        .domain-2 {
+            --domain-color: #3498db;
+            --domain-color-light: #5dade2;
+            --domain-color-dark: #2980b9;
+            --domain-rgb: 52, 152, 219;
+        }
+
+        .domain-3 {
+            --domain-color: #2ecc71;
+            --domain-color-light: #58d68d;
+            --domain-color-dark: #27ae60;
+            --domain-rgb: 46, 204, 113;
+        }
+
+        .domain-4 {
+            --domain-color: #9b59b6;
+            --domain-color-light: #bb8fce;
+            --domain-color-dark: #8e44ad;
+            --domain-rgb: 155, 89, 182;
+        }
+
+        .domain-5 {
+            --domain-color: #f39c12;
+            --domain-color-light: #f7dc6f;
+            --domain-color-dark: #e67e22;
+            --domain-rgb: 243, 156, 18;
+        }
+
+        .course-info {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-info h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .week-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .week-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .floating-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+        }
+
+        .nav-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active,
+        .nav-dot:hover {
+            background: #3498db;
+            transform: scale(1.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .domain-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-nav {
+                display: none;
+            }
+            
+            .exam-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CompTIA Security+ SY0-701</h1>
+        <p>Complete Certification Overview & 15-Week Course Structure</p>
+        
+        <div class="exam-info">
+            <div class="info-card">
+                <h3>Questions</h3>
+                <p>Maximum 90</p>
+            </div>
+            <div class="info-card">
+                <h3>Duration</h3>
+                <p>90 Minutes</p>
+            </div>
+            <div class="info-card">
+                <h3>Passing Score</h3>
+                <p>750/900 (83%)</p>
+            </div>
+            <div class="info-card">
+                <h3>Question Types</h3>
+                <p>Multiple Choice & PBQs</p>
+            </div>
+            <div class="info-card">
+                <h3>Valid For</h3>
+                <p>3 Years</p>
+            </div>
+            <div class="info-card">
+                <h3>Experience</h3>
+                <p>2+ Years Recommended</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Core Domains</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">28</div>
+                <div class="stat-label">Exam Objectives</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">700K+</div>
+                <div class="stat-label">Certified Professionals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">15-20%</div>
+                <div class="stat-label">Salary Increase</div>
+            </div>
+        </div>
+
+        <div class="course-info">
+            <h2>15-Week Course Structure Overview</h2>
+            <div class="week-timeline">
+                <div class="week-item">
+                    <strong>Weeks 1-2</strong><br>
+                    Foundation & General Security Concepts
+                </div>
+                <div class="week-item">
+                    <strong>Weeks 3-6</strong><br>
+                    Threats, Vulnerabilities & Mitigations
+                </div>
+                <div class="week-item">
+                    <strong>Weeks 7-9</strong><br>
+                    Security Architecture & Design
+                </div>
+                <div class="week-item">
+                    <strong>Weeks 10-13</strong><br>
+                    Security Operations & Implementation
+                </div>
+                <div class="week-item">
+                    <strong>Weeks 14-15</strong><br>
+                    Program Management & Exam Prep
+                </div>
+            </div>
+        </div>
+
+        <div class="domain-grid" id="domainGrid">
+            <!-- Domain 1: General Security Concepts -->
+            <div class="domain-card domain-1" data-domain="1">
+                <div class="domain-header">
+                    <div class="domain-title">Domain 1: General Security Concepts</div>
+                    <div class="domain-percentage">12%</div>
+                </div>
+                <div class="domain-description">
+                    Foundation of cybersecurity principles including security controls, fundamental concepts, change management, and cryptographic solutions. This domain establishes the groundwork for all cybersecurity professionals.
+                </div>
+                <button class="expand-btn" onclick="toggleDomain(1)">View Subdomains</button>
+                
+                <div class="subdomains" id="subdomains-1">
+                    <div class="subdomain">
+                        <div class="subdomain-title">1.1 Compare and contrast various types of security controls</div>
+                        <div class="subdomain-content">
+                            Understanding different categories and types of security controls that enforce the CIA triad.
+                            <div class="key-topics">
+                                <span class="topic-tag">Technical Controls</span>
+                                <span class="topic-tag">Managerial Controls</span>
+                                <span class="topic-tag">Operational Controls</span>
+                                <span class="topic-tag">Physical Controls</span>
+                                <span class="topic-tag">Preventive Controls</span>
+                                <span class="topic-tag">Detective Controls</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">1.2 Summarize fundamental security concepts</div>
+                        <div class="subdomain-content">
+                            Core principles including CIA triad, AAA framework, Zero Trust, and physical security measures.
+                            <div class="key-topics">
+                                <span class="topic-tag">CIA Triad</span>
+                                <span class="topic-tag">Non-repudiation</span>
+                                <span class="topic-tag">AAA Framework</span>
+                                <span class="topic-tag">Zero Trust</span>
+                                <span class="topic-tag">Physical Security</span>
+                                <span class="topic-tag">Deception Technology</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">1.3 Explain the importance of change management processes</div>
+                        <div class="subdomain-content">
+                            Business processes, technical implications, and documentation requirements for secure change management.
+                            <div class="key-topics">
+                                <span class="topic-tag">Approval Process</span>
+                                <span class="topic-tag">Impact Analysis</span>
+                                <span class="topic-tag">Backout Plan</span>
+                                <span class="topic-tag">Version Control</span>
+                                <span class="topic-tag">Documentation</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">1.4 Explain the importance of using appropriate cryptographic solutions</div>
+                        <div class="subdomain-content">
+                            PKI, encryption methods, hashing, digital signatures, and cryptographic tools and technologies.
+                            <div class="key-topics">
+                                <span class="topic-tag">PKI</span>
+                                <span class="topic-tag">Encryption</span>
+                                <span class="topic-tag">Digital Signatures</span>
+                                <span class="topic-tag">Hashing</span>
+                                <span class="topic-tag">Certificates</span>
+                                <span class="topic-tag">Key Management</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Domain 2: Threats, Vulnerabilities, and Mitigations -->
+            <div class="domain-card domain-2" data-domain="2">
+                <div class="domain-header">
+                    <div class="domain-title">Domain 2: Threats, Vulnerabilities, and Mitigations</div>
+                    <div class="domain-percentage">22%</div>
+                </div>
+                <div class="domain-description">
+                    Comprehensive coverage of threat actors, attack vectors, vulnerability types, malicious activity indicators, and mitigation techniques. This domain focuses on identifying and responding to cybersecurity threats.
+                </div>
+                <button class="expand-btn" onclick="toggleDomain(2)">View Subdomains</button>
+                
+                <div class="subdomains" id="subdomains-2">
+                    <div class="subdomain">
+                        <div class="subdomain-title">2.1 Compare and contrast common threat actors and motivations</div>
+                        <div class="subdomain-content">
+                            Understanding different types of threat actors, their capabilities, and what drives their activities.
+                            <div class="key-topics">
+                                <span class="topic-tag">Nation-state</span>
+                                <span class="topic-tag">Hacktivist</span>
+                                <span class="topic-tag">Insider Threat</span>
+                                <span class="topic-tag">Organized Crime</span>
+                                <span class="topic-tag">Motivations</span>
+                                <span class="topic-tag">Capabilities</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">2.2 Explain common threat vectors and attack surfaces</div>
+                        <div class="subdomain-content">
+                            Various methods attackers use to compromise systems and networks, including social engineering tactics.
+                            <div class="key-topics">
+                                <span class="topic-tag">Email Threats</span>
+                                <span class="topic-tag">Social Engineering</span>
+                                <span class="topic-tag">Supply Chain</span>
+                                <span class="topic-tag">Wireless Attacks</span>
+                                <span class="topic-tag">Phishing</span>
+                                <span class="topic-tag">Default Credentials</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">2.3 Explain various types of vulnerabilities</div>
+                        <div class="subdomain-content">
+                            Different categories of vulnerabilities across applications, operating systems, hardware, and cloud environments.
+                            <div class="key-topics">
+                                <span class="topic-tag">Application Vulnerabilities</span>
+                                <span class="topic-tag">OS-based</span>
+                                <span class="topic-tag">Web-based</span>
+                                <span class="topic-tag">Cloud-specific</span>
+                                <span class="topic-tag">Zero-day</span>
+                                <span class="topic-tag">Mobile Device</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">2.4 Given a scenario, analyze indicators of malicious activity</div>
+                        <div class="subdomain-content">
+                            Recognizing signs of various attacks including malware, physical attacks, network attacks, and application attacks.
+                            <div class="key-topics">
+                                <span class="topic-tag">Malware Analysis</span>
+                                <span class="topic-tag">Network Attacks</span>
+                                <span class="topic-tag">Application Attacks</span>
+                                <span class="topic-tag">Indicators</span>
+                                <span class="topic-tag">Log Analysis</span>
+                                <span class="topic-tag">Behavioral Analysis</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">2.5 Explain the purpose of mitigation techniques</div>
+                        <div class="subdomain-content">
+                            Strategies and techniques used to reduce risk and protect enterprise environments from threats.
+                            <div class="key-topics">
+                                <span class="topic-tag">Segmentation</span>
+                                <span class="topic-tag">Access Control</span>
+                                <span class="topic-tag">Encryption</span>
+                                <span class="topic-tag">Monitoring</span>
+                                <span class="topic-tag">Hardening</span>
+                                <span class="topic-tag">Least Privilege</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Domain 3: Security Architecture -->
+            <div class="domain-card domain-3" data-domain="3">
+                <div class="domain-header">
+                    <div class="domain-title">Domain 3: Security Architecture</div>
+                    <div class="domain-percentage">18%</div>
+                </div>
+                <div class="domain-description">
+                    Design principles for secure infrastructure, data protection strategies, and resilience planning. This domain covers how to architect secure systems from the ground up.
+                </div>
+                <button class="expand-btn" onclick="toggleDomain(3)">View Subdomains</button>
+                
+                <div class="subdomains" id="subdomains-3">
+                    <div class="subdomain">
+                        <div class="subdomain-title">3.1 Compare and contrast security implications of different architecture models</div>
+                        <div class="subdomain-content">
+                            Understanding various architectural approaches and their security implications.
+                            <div class="key-topics">
+                                <span class="topic-tag">Cloud Architecture</span>
+                                <span class="topic-tag">Infrastructure as Code</span>
+                                <span class="topic-tag">Microservices</span>
+                                <span class="topic-tag">Virtualization</span>
+                                <span class="topic-tag">IoT</span>
+                                <span class="topic-tag">SCADA/ICS</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">3.2 Given a scenario, apply security principles to secure enterprise infrastructure</div>
+                        <div class="subdomain-content">
+                            Practical application of security principles in real-world infrastructure scenarios.
+                            <div class="key-topics">
+                                <span class="topic-tag">Network Appliances</span>
+                                <span class="topic-tag">Firewall Types</span>
+                                <span class="topic-tag">VPN</span>
+                                <span class="topic-tag">Port Security</span>
+                                <span class="topic-tag">Device Placement</span>
+                                <span class="topic-tag">Security Zones</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">3.3 Compare and contrast concepts and strategies to protect data</div>
+                        <div class="subdomain-content">
+                            Data classification, states, and protection methods across different environments.
+                            <div class="key-topics">
+                                <span class="topic-tag">Data Classification</span>
+                                <span class="topic-tag">Data States</span>
+                                <span class="topic-tag">Data Sovereignty</span>
+                                <span class="topic-tag">Protection Methods</span>
+                                <span class="topic-tag">Geographic Restrictions</span>
+                                <span class="topic-tag">Tokenization</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">3.4 Explain the importance of resilience and recovery in security architecture</div>
+                        <div class="subdomain-content">
+                            Business continuity, disaster recovery, and high availability planning and implementation.
+                            <div class="key-topics">
+                                <span class="topic-tag">High Availability</span>
+                                <span class="topic-tag">Disaster Recovery</span>
+                                <span class="topic-tag">Backup Strategies</span>
+                                <span class="topic-tag">Site Considerations</span>
+                                <span class="topic-tag">Testing</span>
+                                <span class="topic-tag">Power Management</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Domain 4: Security Operations -->
+            <div class="domain-card domain-4" data-domain="4">
+                <div class="domain-header">
+                    <div class="domain-title">Domain 4: Security Operations</div>
+                    <div class="domain-percentage">28%</div>
+                </div>
+                <div class="domain-description">
+                    Day-to-day security operations including hardening, asset management, vulnerability management, monitoring, incident response, and investigation techniques. This is the largest domain covering practical security work.
+                </div>
+                <button class="expand-btn" onclick="toggleDomain(4)">View Subdomains</button>
+                
+                <div class="subdomains" id="subdomains-4">
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.1 Given a scenario, apply common security techniques to computing resources</div>
+                        <div class="subdomain-content">
+                            Practical security implementation across various computing platforms and devices.
+                            <div class="key-topics">
+                                <span class="topic-tag">Secure Baselines</span>
+                                <span class="topic-tag">Hardening Targets</span>
+                                <span class="topic-tag">Mobile Solutions</span>
+                                <span class="topic-tag">Wireless Security</span>
+                                <span class="topic-tag">Application Security</span>
+                                <span class="topic-tag">Sandboxing</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.2 Explain the security implications of proper hardware, software, and data asset management</div>
+                        <div class="subdomain-content">
+                            Asset lifecycle management from acquisition to disposal with security considerations.
+                            <div class="key-topics">
+                                <span class="topic-tag">Acquisition Process</span>
+                                <span class="topic-tag">Asset Tracking</span>
+                                <span class="topic-tag">Inventory Management</span>
+                                <span class="topic-tag">Disposal</span>
+                                <span class="topic-tag">Sanitization</span>
+                                <span class="topic-tag">Data Retention</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.3 Explain various activities associated with vulnerability management</div>
+                        <div class="subdomain-content">
+                            Comprehensive vulnerability lifecycle from identification through remediation and validation.
+                            <div class="key-topics">
+                                <span class="topic-tag">Vulnerability Scanning</span>
+                                <span class="topic-tag">Threat Feeds</span>
+                                <span class="topic-tag">Penetration Testing</span>
+                                <span class="topic-tag">CVSS Scoring</span>
+                                <span class="topic-tag">Remediation</span>
+                                <span class="topic-tag">Validation</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.4 Explain security alerting and monitoring concepts and tools</div>
+                        <div class="subdomain-content">
+                            Monitoring systems, alert management, and security tools for continuous surveillance.
+                            <div class="key-topics">
+                                <span class="topic-tag">SIEM</span>
+                                <span class="topic-tag">Log Aggregation</span>
+                                <span class="topic-tag">Alerting</span>
+                                <span class="topic-tag">SCAP</span>
+                                <span class="topic-tag">DLP</span>
+                                <span class="topic-tag">NetFlow</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.5 Given a scenario, modify enterprise capabilities to enhance security</div>
+                        <div class="subdomain-content">
+                            Enhancing existing security infrastructure and implementing additional protective measures.
+                            <div class="key-topics">
+                                <span class="topic-tag">Firewall Configuration</span>
+                                <span class="topic-tag">IDS/IPS</span>
+                                <span class="topic-tag">Web Filtering</span>
+                                <span class="topic-tag">Email Security</span>
+                                <span class="topic-tag">EDR/XDR</span>
+                                <span class="topic-tag">NAC</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.6 Given a scenario, implement and maintain identity and access management</div>
+                        <div class="subdomain-content">
+                            Identity lifecycle management, authentication, authorization, and access control systems.
+                            <div class="key-topics">
+                                <span class="topic-tag">User Provisioning</span>
+                                <span class="topic-tag">SSO</span>
+                                <span class="topic-tag">MFA</span>
+                                <span class="topic-tag">Access Controls</span>
+                                <span class="topic-tag">Password Management</span>
+                                <span class="topic-tag">PAM</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.7 Explain the importance of automation and orchestration</div>
+                        <div class="subdomain-content">
+                            Security automation benefits, use cases, and considerations for implementation.
+                            <div class="key-topics">
+                                <span class="topic-tag">Use Cases</span>
+                                <span class="topic-tag">Efficiency Benefits</span>
+                                <span class="topic-tag">API Integration</span>
+                                <span class="topic-tag">Scaling</span>
+                                <span class="topic-tag">Complexity</span>
+                                <span class="topic-tag">Supportability</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.8 Explain appropriate incident response activities</div>
+                        <div class="subdomain-content">
+                            Incident response lifecycle, training, testing, and forensic activities.
+                            <div class="key-topics">
+                                <span class="topic-tag">IR Process</span>
+                                <span class="topic-tag">Preparation</span>
+                                <span class="topic-tag">Containment</span>
+                                <span class="topic-tag">Eradication</span>
+                                <span class="topic-tag">Recovery</span>
+                                <span class="topic-tag">Lessons Learned</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">4.9 Given a scenario, use data sources to support an investigation</div>
+                        <div class="subdomain-content">
+                            Digital forensics, data collection, and investigative techniques using various data sources.
+                            <div class="key-topics">
+                                <span class="topic-tag">Digital Forensics</span>
+                                <span class="topic-tag">Log Data</span>
+                                <span class="topic-tag">Chain of Custody</span>
+                                <span class="topic-tag">Data Sources</span>
+                                <span class="topic-tag">Packet Capture</span>
+                                <span class="topic-tag">Metadata</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Domain 5: Security Program Management and Oversight -->
+            <div class="domain-card domain-5" data-domain="5">
+                <div class="domain-header">
+                    <div class="domain-title">Domain 5: Security Program Management and Oversight</div>
+                    <div class="domain-percentage">20%</div>
+                </div>
+                <div class="domain-description">
+                    Governance, risk management, compliance, third-party management, and security awareness. This domain covers the management and oversight aspects of cybersecurity programs.
+                </div>
+                <button class="expand-btn" onclick="toggleDomain(5)">View Subdomains</button>
+                
+                <div class="subdomains" id="subdomains-5">
+                    <div class="subdomain">
+                        <div class="subdomain-title">5.1 Summarize elements of effective security governance</div>
+                        <div class="subdomain-content">
+                            Policies, procedures, standards, and governance structures for effective security management.
+                            <div class="key-topics">
+                                <span class="topic-tag">Policies</span>
+                                <span class="topic-tag">Standards</span>
+                                <span class="topic-tag">Procedures</span>
+                                <span class="topic-tag">Governance Structures</span>
+                                <span class="topic-tag">Roles & Responsibilities</span>
+                                <span class="topic-tag">Monitoring</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">5.2 Explain elements of the risk management process</div>
+                        <div class="subdomain-content">
+                            Risk identification, assessment, analysis, and management strategies throughout the enterprise.
+                            <div class="key-topics">
+                                <span class="topic-tag">Risk Identification</span>
+                                <span class="topic-tag">Risk Assessment</span>
+                                <span class="topic-tag">Risk Analysis</span>
+                                <span class="topic-tag">Risk Register</span>
+                                <span class="topic-tag">Risk Strategies</span>
+                                <span class="topic-tag">BIA</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">5.3 Explain the processes associated with third-party risk assessment and management</div>
+                        <div class="subdomain-content">
+                            Vendor assessment, selection, monitoring, and agreement management for third-party relationships.
+                            <div class="key-topics">
+                                <span class="topic-tag">Vendor Assessment</span>
+                                <span class="topic-tag">Due Diligence</span>
+                                <span class="topic-tag">SLA</span>
+                                <span class="topic-tag">NDA</span>
+                                <span class="topic-tag">Vendor Monitoring</span>
+                                <span class="topic-tag">Supply Chain</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">5.4 Summarize elements of effective security compliance</div>
+                        <div class="subdomain-content">
+                            Compliance monitoring, reporting, consequences, and privacy considerations across jurisdictions.
+                            <div class="key-topics">
+                                <span class="topic-tag">Compliance Reporting</span>
+                                <span class="topic-tag">Monitoring</span>
+                                <span class="topic-tag">Non-compliance</span>
+                                <span class="topic-tag">Privacy</span>
+                                <span class="topic-tag">Legal Implications</span>
+                                <span class="topic-tag">Data Subject Rights</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">5.5 Explain types and purposes of audits and assessments</div>
+                        <div class="subdomain-content">
+                            Internal and external audits, penetration testing, and various assessment methodologies.
+                            <div class="key-topics">
+                                <span class="topic-tag">Internal Audits</span>
+                                <span class="topic-tag">External Audits</span>
+                                <span class="topic-tag">Penetration Testing</span>
+                                <span class="topic-tag">Reconnaissance</span>
+                                <span class="topic-tag">Assessment Types</span>
+                                <span class="topic-tag">Attestation</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subdomain">
+                        <div class="subdomain-title">5.6 Given a scenario, implement security awareness practices</div>
+                        <div class="subdomain-content">
+                            Security training programs, phishing campaigns, and user education initiatives.
+                            <div class="key-topics">
+                                <span class="topic-tag">Phishing Campaigns</span>
+                                <span class="topic-tag">User Training</span>
+                                <span class="topic-tag">Awareness Programs</span>
+                                <span class="topic-tag">Reporting</span>
+                                <span class="topic-tag">Social Engineering</span>
+                                <span class="topic-tag">Remote Work</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-nav">
+        <div class="nav-dot active" onclick="scrollToDomain(1)" title="Domain 1"></div>
+        <div class="nav-dot" onclick="scrollToDomain(2)" title="Domain 2"></div>
+        <div class="nav-dot" onclick="scrollToDomain(3)" title="Domain 3"></div>
+        <div class="nav-dot" onclick="scrollToDomain(4)" title="Domain 4"></div>
+        <div class="nav-dot" onclick="scrollToDomain(5)" title="Domain 5"></div>
+    </div>
+
+    <script>
+        function toggleDomain(domainNumber) {
+            const subdomains = document.getElementById(`subdomains-${domainNumber}`);
+            const domainCard = document.querySelector(`[data-domain="${domainNumber}"]`);
+            const button = domainCard.querySelector('.expand-btn');
+            
+            // Close all other domains
+            for (let i = 1; i <= 5; i++) {
+                if (i !== domainNumber) {
+                    const otherSubdomains = document.getElementById(`subdomains-${i}`);
+                    const otherCard = document.querySelector(`[data-domain="${i}"]`);
+                    const otherButton = otherCard.querySelector('.expand-btn');
+                    
+                    otherSubdomains.classList.remove('show');
+                    otherCard.classList.remove('expanded');
+                    otherButton.textContent = 'View Subdomains';
+                }
+            }
+            
+            // Toggle current domain
+            if (subdomains.classList.contains('show')) {
+                subdomains.classList.remove('show');
+                domainCard.classList.remove('expanded');
+                button.textContent = 'View Subdomains';
+            } else {
+                subdomains.classList.add('show');
+                domainCard.classList.add('expanded');
+                button.textContent = 'Hide Subdomains';
+                
+                // Scroll to the expanded domain
+                setTimeout(() => {
+                    domainCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
+        function scrollToDomain(domainNumber) {
+            const domainCard = document.querySelector(`[data-domain="${domainNumber}"]`);
+            domainCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Update active nav dot
+            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index + 1 === domainNumber);
+            });
+        }
+
+        // Update active nav dot on scroll
+        window.addEventListener('scroll', () => {
+            const domains = document.querySelectorAll('.domain-card');
+            const navDots = document.querySelectorAll('.nav-dot');
+            
+            let currentDomain = 1;
+            domains.forEach((domain, index) => {
+                const rect = domain.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+                    currentDomain = index + 1;
+                }
+            });
+            
+            navDots.forEach((dot, index) => {
+                dot.classList.toggle('active', index + 1 === currentDomain);
+            });
+        });
+
+        // Add click handlers to domain cards for better UX
+        document.querySelectorAll('.domain-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Only trigger if not clicking the button
+                if (!e.target.classList.contains('expand-btn')) {
+                    const domainNumber = parseInt(card.dataset.domain);
+                    toggleDomain(domainNumber);
+                }
+            });
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '1' && e.key <= '5') {
+                const domainNumber = parseInt(e.key);
+                scrollToDomain(domainNumber);
+            }
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add entrance animations
+            const cards = document.querySelectorAll('.domain-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
