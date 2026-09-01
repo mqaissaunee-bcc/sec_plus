@@ -1,0 +1,2933 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="2" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 2: Cryptographic Solutions</title>
+<meta name="description" content="Symmetric and asymmetric encryption, hashing and salting, public key infrastructure, obfuscation, and the key management failures that cause most real cryptographic breaches.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-box.danger{stroke:var(--danger);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 2</p>
+    <h1>Cryptographic Solutions</h1>
+    <p class="subtitle">Symmetric and asymmetric encryption, hashing and salting, public key infrastructure, obfuscation, and the key management failures that cause most real cryptographic breaches.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="&#128272;" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to distinguish symmetric from
+        asymmetric encryption and say which key does what; explain hashing,
+        salting, and key stretching and why passwords are never encrypted; trace
+        a certificate chain from a root of trust to a server certificate and
+        explain how revocation works; compare obfuscation, tokenization, masking,
+        and steganography; and identify where keys are generated, stored, and
+        destroyed.
+      </div>
+
+      <p>Cryptography is objective 1.4, a single objective inside the smallest
+      domain on the exam. It is also the single densest body of vocabulary in
+      Security+, and it produces more wrong answers than any other topic in
+      Domain 1. The reason is that students memorise definitions without
+      understanding which key performs which operation, and the exam is built
+      almost entirely around that distinction.</p>
+
+      <p>Here is the shape of the problem. Nearly every candidate can recite that
+      asymmetric cryptography uses a public key and a private key. Far fewer can
+      answer, without hesitating, which key encrypts a message intended to stay
+      confidential, and which key signs a message so the recipient knows who sent
+      it. Those are different keys belonging to different people, and a question
+      that hinges on it will offer both as options.</p>
+
+      <div class="subsection">
+        <h3>What cryptography actually provides</h3>
+        <p>Map each tool onto the security properties from Module 1. This table
+        is worth learning before anything else in the module, because it converts
+        a memorisation problem into a reasoning problem.</p>
+        <table>
+          <thead><tr><th>Tool</th><th>Provides</th><th>Does not provide</th></tr></thead>
+          <tbody>
+            <tr><td>Symmetric encryption</td><td>Confidentiality</td><td>Integrity, non-repudiation</td></tr>
+            <tr><td>Asymmetric encryption</td><td>Confidentiality</td><td>Integrity on its own</td></tr>
+            <tr><td>Hashing</td><td>Integrity</td><td>Confidentiality, non-repudiation</td></tr>
+            <tr><td>Digital signature</td><td>Integrity, authentication, non-repudiation</td><td>Confidentiality</td></tr>
+          </tbody>
+        </table>
+        <p>Read the third row carefully. Hashing gives you integrity but
+        <em>not</em> non-repudiation, because anyone can compute a hash. That
+        distinction was introduced in Module 1 and is tested repeatedly here.
+        Read the fourth row too: a digital signature does not hide anything. A
+        signed message is fully readable by anyone; the signature only proves who
+        wrote it and that it has not changed.</p>
+      </div>
+
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="key-table">
+        Open the which-key reference table</button></p>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        When a scenario asks for both secrecy and proof of origin, the answer
+        involves two operations, not one. You sign, then you encrypt. Options
+        offering a single mechanism for both are distractors.
+      </div>
+    </section>
+
+    <section class="module-section" id="symmetric-asymmetric" data-icon="&#128273;" role="tabpanel"
+             aria-labelledby="tab-symmetric-asymmetric" tabindex="-1">
+      <h2 class="section-title">Symmetric and Asymmetric Encryption</h2>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="symmetric encryption">Symmetric encryption</span></h3>
+        <p>One key both encrypts and decrypts. It is fast, well understood, and
+        does the overwhelming majority of real encryption work: your disk
+        encryption, your VPN tunnel, and the bulk of every TLS session are all
+        symmetric.</p>
+        <p>The dominant algorithm is AES, standardised in 128-, 192-, and 256-bit
+        key lengths. You should recognise AES as the modern default and DES and
+        3DES as deprecated predecessors that appear in exam questions as the wrong
+        answer. Symmetric ciphers operate either as <em>block</em> ciphers,
+        processing fixed-size chunks, or <em>stream</em> ciphers, processing a bit
+        or byte at a time. AES is a block cipher.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127968;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A house key you have copied</p>
+        <p>You and your housemate hold identical keys. Either of you can lock the
+        door and either can unlock it, which is efficient and simple. But the
+        arrangement only works because you were both physically present when the
+        copy was cut.</p>
+        <p>Now imagine you need to give a key to someone across the country who
+        you have never met. You cannot post it, because anyone handling the
+        envelope could copy it. That is the key distribution problem, and it is
+        the reason asymmetric cryptography had to be invented.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The key distribution problem</h3>
+        <p>Symmetric encryption assumes both parties already share a secret. For
+        two people who have met, that is easy. For a browser connecting to a
+        server it has never contacted, on a network operated by strangers, it is
+        impossible - you cannot send the key over the channel you are trying to
+        protect, because anyone listening would capture it.</p>
+        <p>Scale makes it worse. Ten people who all need to communicate privately
+        in pairs require 45 separate keys. A thousand people require nearly half a
+        million. Symmetric cryptography alone does not scale to the open internet.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="asymmetric encryption">Asymmetric encryption</span></h3>
+        <p>Asymmetric cryptography uses a mathematically linked <em>pair</em> of
+        keys. What one key does, only the other can undo. One key is published
+        freely - the public key - and the other is never shared with anyone - the
+        private key. Knowing the public key does not let you derive the private
+        key.</p>
+        <p>The dominant algorithms are RSA and elliptic curve cryptography (ECC).
+        ECC achieves comparable security with much shorter keys, which is why it
+        dominates mobile and embedded use where processing power and bandwidth
+        are constrained. Diffie-Hellman is a related mechanism used specifically
+        to agree on a shared secret over an untrusted channel.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128235;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A mailbox with a public slot</p>
+        <p>Anyone walking past can drop a letter through the slot - the slot is
+        public, and you can advertise its location on a billboard. But only you
+        hold the key that opens the box and retrieves what is inside.</p>
+        <p>That is asymmetric encryption exactly. Publishing the slot's location
+        does not help a thief, because knowing where to post a letter tells you
+        nothing about how to open the box. This solves the distribution problem:
+        you can safely broadcast your public key to strangers.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a real
+        mailbox holds letters until you collect them. Asymmetric encryption is
+        also slow - hundreds of times slower than symmetric - so it is almost
+        never used to encrypt bulk data. It is used to exchange a symmetric key,
+        and then symmetric encryption does the actual work.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The rule that answers most exam questions</h3>
+        <p>Four operations, four keys. If you learn nothing else from this
+        section, learn this table.</p>
+        <table>
+          <thead><tr><th>Goal</th><th>Operation</th><th>Key used</th><th>Whose key</th></tr></thead>
+          <tbody>
+            <tr><td>Send a secret</td><td>Encrypt</td><td>Public</td><td>The recipient's</td></tr>
+            <tr><td>Read the secret</td><td>Decrypt</td><td>Private</td><td>The recipient's</td></tr>
+            <tr><td>Prove authorship</td><td>Sign</td><td>Private</td><td>The sender's</td></tr>
+            <tr><td>Check authorship</td><td>Verify</td><td>Public</td><td>The sender's</td></tr>
+          </tbody>
+        </table>
+        <p>The pattern beneath it: <strong>encryption uses the recipient's keys,
+        signing uses the sender's</strong>. And in both cases the public key does
+        the thing anyone may do (send secretly, check a signature) while the
+        private key does the thing only the owner may do (read the secret, create
+        the signature).</p>
+
+        <div class="callout warn">
+          <span class="tag">[EXAM]</span>
+          The most common error is answering that a sender encrypts with their
+          own public key. That would be pointless - anyone could then decrypt it
+          with the sender's widely published public key. If a message is meant for
+          Bob's eyes only, it is locked with Bob's public key, because only Bob's
+          private key can open it.
+        </div>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 300" role="img" aria-labelledby="kTitle kDesc">
+          <title id="kTitle">Which key is used for encryption versus signing</title>
+          <desc id="kDesc">Two rows. In the top row Alice encrypts with Bob's public key and Bob decrypts with his own private key. In the bottom row Alice signs with her own private key and Bob verifies with Alice's public key.</desc>
+          <text x="20" y="24" class="svg-label">Sending a secret &mdash; uses the RECIPIENT's key pair</text>
+          <rect x="20" y="36" width="130" height="52" rx="10" class="svg-box"/>
+          <text x="85" y="60" text-anchor="middle" class="svg-label">Alice</text>
+          <text x="85" y="78" text-anchor="middle" class="svg-sub">sender</text>
+          <rect x="230" y="36" width="230" height="52" rx="10" class="svg-box accent"/>
+          <text x="345" y="60" text-anchor="middle" class="svg-label">Encrypt</text>
+          <text x="345" y="78" text-anchor="middle" class="svg-sub">with Bob's PUBLIC key</text>
+          <rect x="540" y="36" width="140" height="52" rx="10" class="svg-box brand"/>
+          <text x="610" y="60" text-anchor="middle" class="svg-label">Bob</text>
+          <text x="610" y="78" text-anchor="middle" class="svg-sub">decrypts, PRIVATE key</text>
+          <path d="M152 62 L226 62" class="svg-line accent" marker-end="url(#ak)"/>
+          <path d="M462 62 L536 62" class="svg-line accent" marker-end="url(#ak)"/>
+
+          <text x="20" y="150" class="svg-label">Proving authorship &mdash; uses the SENDER's key pair</text>
+          <rect x="20" y="162" width="130" height="52" rx="10" class="svg-box"/>
+          <text x="85" y="186" text-anchor="middle" class="svg-label">Alice</text>
+          <text x="85" y="204" text-anchor="middle" class="svg-sub">sender</text>
+          <rect x="230" y="162" width="230" height="52" rx="10" class="svg-box warn"/>
+          <text x="345" y="186" text-anchor="middle" class="svg-label">Sign</text>
+          <text x="345" y="204" text-anchor="middle" class="svg-sub">with Alice's PRIVATE key</text>
+          <rect x="540" y="162" width="140" height="52" rx="10" class="svg-box brand"/>
+          <text x="610" y="186" text-anchor="middle" class="svg-label">Bob</text>
+          <text x="610" y="204" text-anchor="middle" class="svg-sub">verifies, Alice's PUBLIC</text>
+          <path d="M152 188 L226 188" class="svg-line brand" marker-end="url(#bk)"/>
+          <path d="M462 188 L536 188" class="svg-line brand" marker-end="url(#bk)"/>
+          <defs>
+            <marker id="ak" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker>
+            <marker id="bk" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-brand"/></marker>
+          </defs>
+          <text x="350" y="256" text-anchor="middle" class="svg-sub">The public key always does what anyone may do. The private key does what only the owner may do.</text>
+          <text x="350" y="276" text-anchor="middle" class="svg-sub">A signed message is still readable by everyone &mdash; signing hides nothing.</text>
+        </svg>
+        <figcaption>Encryption uses the recipient's keys; signing uses the sender's.</figcaption>
+      </figure>
+      <div class="interactive-demo">
+        <h3>Which key? Decision helper</h3>
+        <p>Choose a goal and a party, and see which key is used and why.</p>
+        <div class="chips" role="group" aria-label="Cryptographic goal">
+          <button type="button" class="chip on" data-action="keyGoal" data-goal="secret" aria-pressed="true">Send a secret</button>
+          <button type="button" class="chip off" data-action="keyGoal" data-goal="sign" aria-pressed="false">Prove authorship</button>
+          <button type="button" class="chip off" data-action="keyGoal" data-goal="both" aria-pressed="false">Both at once</button>
+        </div>
+        <div class="readout" id="keyReadout" aria-live="polite">
+          <span class="readout__verdict allow">RECIPIENT'S PUBLIC KEY</span>
+          <span class="readout__why">Alice encrypts with Bob's public key. Only Bob's private key can undo it.</span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Hybrid cryptography: how it works in practice</h3>
+        <p>Real systems use both. Asymmetric cryptography solves the
+        introduction; symmetric cryptography does the work. Every HTTPS
+        connection you make follows this pattern:</p>
+        <div class="terminal">1. Client and server use asymmetric crypto to agree on a shared secret
+2. That shared secret becomes a symmetric session key
+3. All actual page data is encrypted symmetrically with that session key
+4. The session key is discarded when the connection closes</div>
+      <figure class="figure">
+        <svg viewBox="0 0 700 210" role="img" aria-labelledby="yTitle yDesc">
+          <title id="yTitle">Hybrid cryptography in a TLS session</title>
+          <desc id="yDesc">Asymmetric cryptography is used once to agree a shared session key, then symmetric encryption protects all the actual data for the rest of the session.</desc>
+          <rect x="20" y="30" width="300" height="80" rx="12" class="svg-box brand"/>
+          <text x="170" y="58" text-anchor="middle" class="svg-label">Asymmetric &mdash; the introduction</text>
+          <text x="170" y="78" text-anchor="middle" class="svg-sub">slow, used once</text>
+          <text x="170" y="96" text-anchor="middle" class="svg-mono">agree a shared session key</text>
+          <rect x="380" y="30" width="300" height="80" rx="12" class="svg-box accent"/>
+          <text x="530" y="58" text-anchor="middle" class="svg-label">Symmetric &mdash; the actual work</text>
+          <text x="530" y="78" text-anchor="middle" class="svg-sub">fast, used continuously</text>
+          <text x="530" y="96" text-anchor="middle" class="svg-mono">encrypt every page and request</text>
+          <path d="M322 70 L376 70" class="svg-line accent" marker-end="url(#ay)"/>
+          <defs><marker id="ay" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="150" text-anchor="middle" class="svg-sub">"Bulk data" or "large file" in a question points to symmetric.</text>
+          <text x="350" y="170" text-anchor="middle" class="svg-sub">"Establishing a channel with a new party" points to asymmetric.</text>
+          <text x="350" y="190" text-anchor="middle" class="svg-sub">The session key is discarded when the connection closes.</text>
+        </svg>
+        <figcaption>Asymmetric solves the introduction; symmetric does the work.</figcaption>
+      </figure>
+        <p>This is why questions describing "bulk data encryption" or "encrypting
+        a large file" point to symmetric answers, while questions about
+        "establishing a secure channel with a new party" point to asymmetric.</p>
+        <p><span class="term" data-term="perfect forward secrecy">Perfect forward
+        secrecy</span> extends this: a fresh session key is negotiated for every
+        connection and never reused, so an attacker who later steals the server's
+        private key still cannot decrypt yesterday's recorded traffic.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Practice: pick the primitive</h3>
+        <p>Read each requirement and choose the tool and the property it delivers.</p>
+        <div class="classifier" data-classifier="primitive"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Key length and algorithm strength</h3>
+        <p>Longer keys mean more possible values and therefore more work to brute
+        force. But key lengths are not comparable across algorithm families: a
+        256-bit ECC key is roughly equivalent to a 3072-bit RSA key, because they
+        rest on different mathematical problems. A question comparing a 256-bit
+        symmetric key to a 2048-bit RSA key and asking which is stronger is
+        testing whether you know the comparison is invalid.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="hashing" data-icon="&#129518;" role="tabpanel"
+             aria-labelledby="tab-hashing" tabindex="-1">
+      <h2 class="section-title">Hashing, Salting, and Key Stretching</h2>
+
+      <div class="subsection">
+        <h3>What a hash is</h3>
+        <p>A <span class="term" data-term="hash">hash function</span> takes input
+        of any size and produces a fixed-length output. The same input always
+        produces the same output, and any change to the input - even one bit -
+        produces a completely different result. Critically, the function runs one
+        way only: you cannot work backwards from a hash to recover the input.</p>
+        <p>Common algorithms are SHA-256 and SHA-512, both from the SHA-2 family,
+        with SHA-3 available and MD5 and SHA-1 both deprecated. MD5 and SHA-1 are
+        broken because practical collisions have been found - two different
+        inputs producing the same hash - which destroys the integrity guarantee.
+        Expect them as wrong answers.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#129516;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Blending a smoothie</p>
+        <p>Put in specific fruit and you get a specific smoothie. Put in exactly
+        the same fruit tomorrow and you get an identical smoothie. Swap one
+        strawberry for a raspberry and the result is visibly different.</p>
+        <p>But no amount of skill reconstructs the original fruit from the glass.
+        That is what one-way means, and it is why hashing is not encryption -
+        encryption is designed to be reversed by whoever holds the key, and
+        hashing is designed to be irreversible by anyone.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> two
+        different fruit combinations could plausibly yield a similar-looking
+        smoothie. In a sound hash function that is a <em>collision</em>, and it is
+        considered a fatal flaw rather than an acceptable coincidence - which is
+        exactly why MD5 was retired.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Why passwords are hashed and never encrypted</h3>
+        <p>This is a high-yield distinction. Encryption is reversible by design,
+        so a system that encrypts passwords must store the decryption key
+        somewhere, and an attacker who reaches the database can usually reach the
+        key too. Hashing has no key to steal.</p>
+        <p>When you set a password, the system stores only its hash. When you log
+        in, the system hashes what you typed and compares. It never needs to know
+        your actual password, which is why a well-built service genuinely cannot
+        tell you what your password is - only reset it.</p>
+
+        <div class="callout danger">
+          <span class="tag">[RED FLAG]</span>
+          If a service emails you your existing password, it is storing it in a
+          recoverable form. That is a finding in any security assessment, and on
+          the exam it is always the wrong practice.
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Salting and rainbow tables</h3>
+        <p>Plain hashing has a weakness. Because the same input always gives the
+        same output, two users with the password <code>Summer2026</code> have
+        identical hashes in the database. Attackers exploit this with
+        <em>rainbow tables</em>: enormous precomputed lists of common passwords
+        and their hashes. Cracking becomes a lookup rather than a computation.</p>
+        <p>A <span class="term" data-term="salt">salt</span> is a unique random
+        value generated per user and combined with the password before hashing.
+        Two users with identical passwords now have completely different stored
+        hashes. The salt is not secret - it is stored alongside the hash - because
+        its purpose is not concealment. Its purpose is to make precomputation
+        useless, since an attacker would need a separate rainbow table for every
+        possible salt.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127859;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A secret ingredient in every portion</p>
+        <p>Imagine a caterer who adds a different rare spice to each individual
+        meal. Two customers ordering the identical dish receive plates that taste
+        measurably different. An industrial spy with a catalogue of standard
+        recipes cannot match either plate to a known dish, because no catalogue
+        anticipated that spice.</p>
+        <p>The spice is not hidden - it is printed on the ticket. It does not need
+        to be secret, because its job is to make the attacker's precomputed
+        catalogue worthless. They must now analyse every plate individually, which
+        is precisely the economics a salt is designed to impose.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="hTitle hDesc">
+          <title id="hTitle">How a salted password hash is stored and checked</title>
+          <desc id="hDesc">A password is combined with a unique random salt, passed through a slow key-stretching function, and only the salt and resulting hash are stored. At login the same process runs and the hashes are compared.</desc>
+          <rect x="20" y="40" width="130" height="56" rx="10" class="svg-box"/>
+          <text x="85" y="64" text-anchor="middle" class="svg-label">Password</text>
+          <text x="85" y="82" text-anchor="middle" class="svg-sub">never stored</text>
+          <rect x="195" y="40" width="120" height="56" rx="10" class="svg-box accent"/>
+          <text x="255" y="64" text-anchor="middle" class="svg-label">+ Salt</text>
+          <text x="255" y="82" text-anchor="middle" class="svg-sub">unique, not secret</text>
+          <rect x="360" y="40" width="160" height="56" rx="10" class="svg-box warn"/>
+          <text x="440" y="64" text-anchor="middle" class="svg-label">Key stretching</text>
+          <text x="440" y="82" text-anchor="middle" class="svg-sub">bcrypt / Argon2, slow</text>
+          <rect x="565" y="40" width="115" height="56" rx="10" class="svg-box brand"/>
+          <text x="622" y="64" text-anchor="middle" class="svg-label">Hash</text>
+          <text x="622" y="82" text-anchor="middle" class="svg-sub">stored with salt</text>
+          <g class="svg-line accent">
+            <path d="M152 68 L191 68" marker-end="url(#ah)"/>
+            <path d="M317 68 L356 68" marker-end="url(#ah)"/>
+            <path d="M522 68 L561 68" marker-end="url(#ah)"/>
+          </g>
+          <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <rect x="20" y="140" width="660" height="72" rx="10" class="svg-box" opacity="0.6"/>
+          <text x="40" y="166" class="svg-label">At login</text>
+          <text x="40" y="188" class="svg-sub">The same salt is retrieved, the same slow function runs on what was typed,</text>
+          <text x="40" y="206" class="svg-sub">and the two hashes are compared. The stored hash is never reversed &mdash; it cannot be.</text>
+        </svg>
+        <figcaption>The salt defeats precomputation; the slow function defeats brute force. They solve different problems.</figcaption>
+      </figure>
+      <div class="interactive-demo">
+        <h3>The avalanche effect and salting</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="hash">Run comparison</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="hash">Clear</button>
+        </div>
+        <div class="terminal" id="demo-hash" aria-live="polite" aria-label="Hashing demonstration output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="key stretching">Key stretching</span></h3>
+        <p>Modern hardware computes billions of SHA-256 hashes per second, so
+        even salted hashes of weak passwords fall to brute force. Key stretching
+        answers this by making the hash deliberately slow and memory-hungry,
+        applying the function thousands or millions of times.</p>
+        <p>The names to recognise are <strong>PBKDF2</strong>,
+        <strong>bcrypt</strong>, <strong>scrypt</strong>, and
+        <strong>Argon2</strong>. These are the correct answers for password
+        storage. Plain SHA-256 is a correct answer for file integrity but a wrong
+        answer for password storage, and the exam tests that difference directly.</p>
+        <p>The asymmetry is the point: a legitimate login can afford 200
+        milliseconds, but that same cost multiplied across billions of guesses
+        makes large-scale cracking economically impractical.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128274;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A deliberately stiff lock</p>
+        <p>A lock that takes a full second to turn is mildly annoying when you
+        come home twice a day. For a burglar trying thousands of keys in
+        sequence, that same second is ruinous - what would have taken an hour now
+        takes weeks.</p>
+        <p>Key stretching engineers exactly this asymmetry. The cost is
+        negligible for the one legitimate use and prohibitive for the attacker's
+        millions.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>HMAC: hashing with a key</h3>
+        <p>A plain hash proves the data has not changed, but not who produced it -
+        an attacker who alters a file can simply recompute its hash. HMAC
+        (hash-based message authentication code) fixes this by mixing a shared
+        secret key into the hash. Only someone holding the key can generate a
+        valid HMAC.</p>
+        <p>Note the ladder carefully, because the exam tests each rung:</p>
+        <table>
+          <thead><tr><th>Mechanism</th><th>Integrity</th><th>Authentication</th><th>Non-repudiation</th></tr></thead>
+          <tbody>
+            <tr><td>Hash</td><td>Yes</td><td>No</td><td>No</td></tr>
+            <tr><td>HMAC</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Digital signature</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          </tbody>
+        </table>
+        <p>HMAC stops at authentication because the key is <em>shared</em>: either
+        party could have produced the code, so neither can prove the other did it.
+        A digital signature uses a private key held by exactly one party, which is
+        what adds non-repudiation.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="pki" data-icon="&#128220;" role="tabpanel"
+             aria-labelledby="tab-pki" tabindex="-1">
+      <h2 class="section-title">Public Key Infrastructure</h2>
+
+      <div class="subsection">
+        <h3>The problem PKI solves</h3>
+        <p>Asymmetric cryptography lets you encrypt a message with someone's
+        public key. It does not tell you whether the public key you just
+        downloaded actually belongs to them. An attacker who substitutes their own
+        public key for your bank's receives everything you thought you were
+        sending securely - and you would notice nothing, because the encryption
+        works perfectly. It is simply protecting the wrong conversation.</p>
+        <p><span class="term" data-term="pki">Public key infrastructure</span> is
+        the system of authorities, certificates, and procedures that binds a
+        public key to a verified identity, so that you can trust a key belongs to
+        who it claims.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128499;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A passport, not a homemade ID card</p>
+        <p>Anyone can print a card with their photograph and name on it. A border
+        officer will not accept it, because the card vouches for nothing beyond
+        the claim of the person holding it. A passport is accepted because a
+        government the officer already trusts verified the identity and issued the
+        document with features that are hard to forge.</p>
+        <p>A certificate authority is that government. It checks that you control
+        the domain you claim, then issues a certificate binding your public key to
+        that name. Browsers accept it because they already trust the authority -
+        not because they know anything about you.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> you hold
+        one passport from one country. A browser ships with a trust store of
+        well over a hundred root authorities, and a compromise at <em>any</em> of
+        them can produce a certificate your browser will accept for any site.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The chain of trust</h3>
+        <p>Trust is not established directly. It is delegated down a chain from a
+        small number of root authorities, through intermediates, to the
+        certificate on an individual server.</p>
+        <p>Root CA private keys are extraordinarily valuable, so they are kept
+        offline in physically secured hardware and used rarely. Roots sign
+        intermediate certificates, and intermediates do the day-to-day work of
+        signing server certificates. If an intermediate is compromised it can be
+        revoked without invalidating the root and every certificate beneath it.</p>
+        <p>When your browser validates a certificate it walks this chain upward,
+        checking at each step that the signature is valid, the certificate has not
+        expired, the name matches the site, and the certificate has not been
+        revoked. It stops when it reaches a root already in its trust store. If
+        the chain cannot be completed to a trusted root, you get a warning.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Certificate lifecycle</h3>
+        <table>
+          <thead><tr><th>Stage</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>Key generation</td><td>The subject generates a key pair; the private key never leaves their control</td></tr>
+            <tr><td>CSR</td><td>A certificate signing request carries the public key and identity details to the CA</td></tr>
+            <tr><td>Validation</td><td>The CA verifies the requester controls the domain or organization</td></tr>
+            <tr><td>Issuance</td><td>The CA signs the certificate with its own private key</td></tr>
+            <tr><td>Deployment</td><td>The certificate is installed on the server</td></tr>
+            <tr><td>Renewal</td><td>Certificates expire deliberately, forcing periodic revalidation</td></tr>
+            <tr><td>Revocation</td><td>Trust is withdrawn early if the private key is compromised</td></tr>
+          </tbody>
+        </table>
+        <p>Note what the CSR does <em>not</em> contain: the private key. A CSR
+        carries only the public key and identifying information. An exam option
+        describing a CSR that transmits the private key to the CA is always
+        wrong.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 290" role="img" aria-labelledby="cTitle cDesc">
+          <title id="cTitle">Certificate chain of trust</title>
+          <desc id="cDesc">A root certificate authority kept offline signs an intermediate authority, which signs the server certificate. A browser validates upward from the server certificate until it reaches a root already in its trust store.</desc>
+          <rect x="230" y="20" width="240" height="60" rx="10" class="svg-box brand"/>
+          <text x="350" y="44" text-anchor="middle" class="svg-label">Root CA</text>
+          <text x="350" y="63" text-anchor="middle" class="svg-sub">offline, in the browser trust store</text>
+          <rect x="230" y="115" width="240" height="60" rx="10" class="svg-box accent"/>
+          <text x="350" y="139" text-anchor="middle" class="svg-label">Intermediate CA</text>
+          <text x="350" y="158" text-anchor="middle" class="svg-sub">does the day-to-day signing</text>
+          <rect x="230" y="210" width="240" height="60" rx="10" class="svg-box warn"/>
+          <text x="350" y="234" text-anchor="middle" class="svg-label">Server certificate</text>
+          <text x="350" y="253" text-anchor="middle" class="svg-sub">CN=bank.example.com</text>
+          <path d="M350 82 L350 112" class="svg-line brand" marker-end="url(#ac2)"/>
+          <path d="M350 177 L350 207" class="svg-line accent" marker-end="url(#ac2)"/>
+          <text x="486" y="102" class="svg-mono">signs</text>
+          <text x="486" y="197" class="svg-mono">signs</text>
+          <path d="M215 240 C 120 240, 120 55, 215 50" class="svg-line" stroke-dasharray="5 4" marker-end="url(#ac2)"/>
+          <text x="30" y="145" class="svg-mono">browser</text>
+          <text x="30" y="162" class="svg-mono">validates</text>
+          <text x="30" y="179" class="svg-mono">upward</text>
+          <defs><marker id="ac2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+        </svg>
+        <figcaption>Revoking a compromised intermediate does not invalidate the root, which is why roots stay offline.</figcaption>
+      </figure>
+      <div class="interactive-demo">
+        <h3>Certificate validation walkthrough</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="cert">Validate certificate</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="cert">Clear</button>
+        </div>
+        <div class="terminal" id="demo-cert" aria-live="polite" aria-label="Certificate validation output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Revocation: CRL and OCSP</h3>
+        <p>A certificate is valid until it expires - unless it is revoked first,
+        which happens when a private key is stolen or a certificate was issued in
+        error. Two mechanisms communicate revocation.</p>
+        <p>A <strong>certificate revocation list (CRL)</strong> is a signed list
+        of revoked serial numbers published periodically by the CA. It is simple
+        but grows large and is only as current as the last publication.</p>
+        <p><strong>OCSP</strong> (Online Certificate Status Protocol) queries the
+        CA about one specific certificate in real time. It is current, but it
+        makes the CA a dependency on every connection and leaks which sites a user
+        visits. <strong>OCSP stapling</strong> resolves both problems: the server
+        periodically fetches a signed, timestamped status for its own certificate
+        and presents it during the handshake, so the client gets fresh status
+        without contacting the CA.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128179;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A cancelled credit card</p>
+        <p>Your card carries an expiry date, but it can also be cancelled long
+        before it. Merchants once consulted a printed booklet of cancelled card
+        numbers delivered weekly - a certificate revocation list. A card cancelled
+        on Tuesday still worked until the next booklet arrived.</p>
+        <p>Modern terminals phone the bank for each transaction, which is OCSP.
+        And OCSP stapling is the merchant obtaining a dated letter from the bank
+        each morning confirming the card is good, then showing that letter to the
+        customer - current enough to be useful, without a call every time.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Certificate types worth recognising</h3>
+        <table>
+          <thead><tr><th>Type</th><th>Covers</th><th>Typical use</th></tr></thead>
+          <tbody>
+            <tr><td>Domain validation (DV)</td><td>Control of the domain only</td><td>Most public websites</td></tr>
+            <tr><td>Organization validation (OV)</td><td>Domain plus verified organization</td><td>Business sites</td></tr>
+            <tr><td>Extended validation (EV)</td><td>Rigorous organizational vetting</td><td>Financial institutions</td></tr>
+            <tr><td>Wildcard</td><td>All first-level subdomains of one domain</td><td>Many subdomains, one certificate</td></tr>
+            <tr><td>SAN</td><td>Several explicitly listed names</td><td>Multiple distinct domains</td></tr>
+            <tr><td>Self-signed</td><td>Nothing external; signed by its own key</td><td>Internal systems and testing</td></tr>
+          </tbody>
+        </table>
+        <p>A wildcard certificate for <code>*.example.com</code> covers
+        <code>mail.example.com</code> and <code>vpn.example.com</code> but not
+        <code>example.com</code> itself, and not
+        <code>a.b.example.com</code>. Its convenience carries a real cost: one
+        stolen private key compromises every subdomain at once.</p>
+        <p>Self-signed certificates provide encryption but no verified identity,
+        which is why browsers warn on them. They are appropriate for internal
+        systems where an organization runs its own CA and distributes its root to
+        managed devices - not for anything public-facing.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="obfuscation" data-icon="&#127917;" role="tabpanel"
+             aria-labelledby="tab-obfuscation" tabindex="-1">
+      <h2 class="section-title">Obfuscation and Data Protection</h2>
+
+      <p>Encryption is not the only way to reduce the value of data. This family
+      of techniques hides, replaces, or conceals information, and the exam tests
+      whether you can tell them apart - they look similar in a list and behave
+      very differently.</p>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="steganography">Steganography</span></h3>
+        <p>Steganography conceals the <em>existence</em> of a message rather than
+        its contents. Data is hidden inside an ordinary-looking carrier - subtle
+        adjustments to the pixels of an image, unused audio frequencies, or
+        whitespace in a document - so that a casual observer sees only a holiday
+        photograph.</p>
+        <p>The contrast with encryption is the point. Encrypted data is obviously
+        encrypted; anyone inspecting it knows a secret exists and can compel or
+        attack the key. Steganographic data does not announce itself at all.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128220;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Invisible ink versus a sealed safe</p>
+        <p>A sealed safe in the middle of a room advertises that something
+        valuable is inside. Everyone can see it; the protection rests entirely on
+        nobody being able to open it. That is encryption.</p>
+        <p>A letter about the weather, with a second message written between the
+        lines in lemon juice, attracts no attention at all. Nobody tries to open
+        it, because nobody suspects there is anything to open. That is
+        steganography.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> invisible
+        ink offers no protection once someone thinks to warm the page.
+        Steganography is concealment, not strength - which is why serious use
+        encrypts the message <em>before</em> hiding it.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="tokenization">Tokenization</span></h3>
+        <p>Tokenization replaces sensitive data with a meaningless substitute
+        value - a token - while the real data is held in a separate, heavily
+        protected vault. The token has no mathematical relationship to the
+        original, so it cannot be reversed by computation. It can only be
+        exchanged by an authorised lookup.</p>
+        <p>This is the standard approach for payment cards. A merchant stores
+        tokens rather than card numbers, so a breach of the merchant's database
+        yields nothing usable, and the merchant's systems fall largely outside
+        the scope of card industry compliance.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127915;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A coat check ticket</p>
+        <p>You hand over your coat and receive ticket 47. The ticket is worthless
+        on its own - it is not a small coat, and no amount of study reveals
+        anything about the coat. Someone who steals the ticket has stolen a piece
+        of card.</p>
+        <p>Only the cloakroom's register connects 47 to your coat, and only staff
+        can consult it. This is exactly the difference from encryption:
+        ciphertext is derived from the plaintext and can be reversed with the key,
+        but a token is arbitrary and reversible only by lookup.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Data masking</h3>
+        <p>Masking replaces part of a value with placeholder characters, leaving
+        just enough for the data to remain useful. A support agent sees
+        <code>**** **** **** 4471</code>, which is enough to confirm which card a
+        caller means but not enough to make a purchase.</p>
+        <p>Masking is usually irreversible in the view where it appears, and it is
+        the standard answer for scenarios about giving staff or test environments
+        realistic data without exposing the real values.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Telling them apart</h3>
+        <table>
+          <thead><tr><th>Technique</th><th>What it does</th><th>Reversible?</th><th>Typical scenario</th></tr></thead>
+          <tbody>
+            <tr><td>Encryption</td><td>Transforms data with a key</td><td>Yes, with the key</td><td>Protecting data at rest or in transit</td></tr>
+            <tr><td>Hashing</td><td>One-way fingerprint</td><td>No</td><td>Password storage, integrity checks</td></tr>
+            <tr><td>Tokenization</td><td>Substitutes an unrelated value</td><td>Only by vault lookup</td><td>Payment card storage</td></tr>
+            <tr><td>Masking</td><td>Hides part of the value</td><td>Typically no</td><td>Support screens, test data</td></tr>
+            <tr><td>Steganography</td><td>Hides that data exists</td><td>Yes, if you know the method</td><td>Covert transfer, watermarking</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="module-section" id="applied-crypto" data-icon="&#9881;" role="tabpanel"
+             aria-labelledby="tab-applied-crypto" tabindex="-1">
+      <h2 class="section-title">Keys, Hardware, and Applied Practice</h2>
+
+      <p>Cryptography fails in practice far more often through key management
+      than through broken mathematics. Nobody breaks AES; they find the key in a
+      configuration file committed to a public repository.</p>
+
+      <div class="subsection">
+        <h3>The key lifecycle</h3>
+        <p>Every key passes through the same stages, and each is a place things go
+        wrong.</p>
+        <table>
+          <thead><tr><th>Stage</th><th>The risk if handled badly</th></tr></thead>
+          <tbody>
+            <tr><td>Generation</td><td>Weak randomness produces predictable keys</td></tr>
+            <tr><td>Distribution</td><td>Keys intercepted while being shared</td></tr>
+            <tr><td>Storage</td><td>Keys in source code, config files, or repositories</td></tr>
+            <tr><td>Rotation</td><td>A key used indefinitely means indefinite exposure</td></tr>
+            <tr><td>Revocation</td><td>A compromised key still trusted by relying parties</td></tr>
+            <tr><td>Destruction</td><td>Copies surviving in backups after retirement</td></tr>
+          </tbody>
+        </table>
+        <p>Generation deserves emphasis. Cryptographic strength assumes keys are
+        genuinely unpredictable, so they must come from a cryptographically secure
+        random source. Keys derived from timestamps or ordinary random number
+        generators have been the root cause of real, large-scale failures.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Hardware that protects keys</h3>
+        <table>
+          <thead><tr><th>Technology</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td><strong>TPM</strong></td><td>A chip on a motherboard storing keys for that specific device; underpins disk encryption and boot integrity</td></tr>
+            <tr><td><strong>HSM</strong></td><td>A dedicated appliance generating and storing keys for an organization at scale</td></tr>
+            <tr><td><strong>Secure enclave</strong></td><td>An isolated processor region shielding data even from the operating system</td></tr>
+            <tr><td><strong>Key management system</strong></td><td>Software governing the full lifecycle across many systems</td></tr>
+          </tbody>
+        </table>
+        <p>The shared principle is that the key never leaves the protected
+        boundary. You send data <em>in</em> to be signed or decrypted and get the
+        result back out; the key itself is never exposed to the operating system,
+        the application, or an administrator.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127974;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A bank teller behind armoured glass</p>
+        <p>You slide a document through the slot and it comes back stamped. The
+        stamp never leaves the teller's side of the glass, and you never touch it.
+        You cannot steal what you are never handed.</p>
+        <p>An HSM works this way. Software asks it to sign something; the HSM
+        signs and returns the signature. Even an attacker with full administrative
+        control of the server never obtains the key - the most they can do is
+        request signatures while their access lasts, which is a bounded and
+        detectable problem rather than a permanent compromise.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Key escrow</h3>
+        <p>Key escrow places a copy of a key with a trusted third party so that
+        encrypted data can be recovered if the original is lost. Organizations use
+        it so that an employee's departure does not permanently orphan their
+        encrypted files.</p>
+        <p>The tension is genuine, and the exam expects you to see both sides.
+        Escrow protects availability - encrypted data stays recoverable - while
+        weakening confidentiality, because a second party now holds the means to
+        decrypt. It is the CIA trade-off from Module 1 in a specific technical
+        form.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128273;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A spare key with your solicitor</p>
+        <p>Leaving a spare with a solicitor means being locked out is an
+        inconvenience rather than a catastrophe. It also means a second party can
+        open your door, and your security now depends on their filing cabinet as
+        well as your lock.</p>
+        <p>Whether that is wise depends entirely on what is behind the door and
+        how much you trust the solicitor - which is the same judgement an
+        organization makes about escrow.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Blockchain and the open public ledger</h3>
+        <p>A blockchain is a ledger of transactions in which each block contains a
+        hash of the previous block. Altering a past record changes its hash, which
+        invalidates every block after it, so tampering is immediately visible.
+        Copies are distributed across many participants, so there is no single
+        record to corrupt.</p>
+        <p>For the exam, note what property this delivers. Blockchain provides
+        <strong>integrity</strong> and transparency through an open public ledger.
+        It does not provide confidentiality - on a public chain every transaction
+        is visible to everyone.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128213;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A ledger every villager copies</p>
+        <p>Imagine a village where every transaction is read aloud and each of two
+        hundred residents writes it in their own book, and each entry references
+        the one before. Altering your record of last March's sale is pointless:
+        199 other books disagree, and every subsequent entry in your book no
+        longer lines up.</p>
+        <p>Notice what this does and does not give you. Nobody can rewrite
+        history - that is integrity. But everyone knows everyone's business, which
+        is the opposite of confidentiality.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Common cryptographic failures</h3>
+        <table>
+          <thead><tr><th>Failure</th><th>Why it happens</th></tr></thead>
+          <tbody>
+            <tr><td>Hard-coded keys</td><td>Convenient during development, then committed to a repository</td></tr>
+            <tr><td>Deprecated algorithms</td><td>MD5, SHA-1, DES, or RC4 left in place long after being broken</td></tr>
+            <tr><td>Encrypted passwords</td><td>Reversible storage where hashing was required</td></tr>
+            <tr><td>Expired certificates</td><td>No inventory and no renewal ownership</td></tr>
+            <tr><td>Weak randomness</td><td>Predictable key generation</td></tr>
+            <tr><td>Downgrade attacks</td><td>Legacy protocol versions still enabled for compatibility</td></tr>
+          </tbody>
+        </table>
+        <p>Every one of these is an implementation or management failure rather
+        than a mathematical one. That is the section's central lesson, and it is
+        the reason scenario questions rarely ask you to break a cipher and often
+        ask you to spot a key in the wrong place.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="&#129514;" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        Analysis labs - nothing to install. Answers save in this browser as you
+        type, and each lab generates a Word document you can submit. Graded lab
+        assignments and due dates are posted in Canvas.
+      </div>
+
+      <div class="lab" data-lab="pick-primitive"></div>
+      <div class="lab" data-lab="cert-chain"></div>
+      <div class="lab" data-lab="key-postmortem"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers live in this browser only. Generate the report and save the file
+        when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "symmetric encryption": "One key both encrypts and decrypts. Fast, and used for the bulk of real encryption work, but requires both parties to already share the key.",
+    "asymmetric encryption": "A mathematically linked key pair. What one key does only the other can undo, so the public key can be published freely while the private key stays secret.",
+    "perfect forward secrecy": "A fresh session key for every connection, never reused. An attacker who later steals the server's private key still cannot decrypt previously recorded traffic.",
+    "hash": "A one-way function turning any input into a fixed-length output. The same input always gives the same result, and the result cannot be reversed to recover the input.",
+    "salt": "A unique random value added to each password before hashing, so identical passwords produce different stored hashes. Not secret - its job is to make precomputed rainbow tables useless.",
+    "key stretching": "Deliberately slowing a hash by applying it many times, so legitimate logins stay fast enough while large-scale cracking becomes impractical. PBKDF2, bcrypt, scrypt, Argon2.",
+    "pki": "Public key infrastructure: the authorities, certificates, and procedures that bind a public key to a verified identity so you can trust the key belongs to who it claims.",
+    "steganography": "Concealing the existence of a message inside an ordinary-looking carrier such as an image, rather than concealing its contents.",
+    "tokenization": "Replacing sensitive data with an unrelated substitute value. The token has no mathematical link to the original and is reversible only by an authorised vault lookup.",
+    "certificate authority": "An organization that verifies identity and signs certificates. Browsers trust certificates because they already trust the authority that issued them.",
+    "csr": "Certificate signing request: carries the public key and identity details to a CA. It never contains the private key.",
+    "ocsp": "Online Certificate Status Protocol: a real-time query asking a CA whether one specific certificate has been revoked.",
+    "hsm": "Hardware security module: a dedicated appliance that generates and stores keys and performs operations internally, so the key never leaves the protected boundary."
+  };
+
+  window.MODALS = {
+    "key-table": {
+      title: "Which key, and whose?",
+      body:
+        "<table><thead><tr><th>Goal</th><th>Operation</th><th>Key</th><th>Owner</th></tr></thead><tbody>" +
+        "<tr><td>Send a secret</td><td>Encrypt</td><td>Public</td><td>Recipient</td></tr>" +
+        "<tr><td>Read the secret</td><td>Decrypt</td><td>Private</td><td>Recipient</td></tr>" +
+        "<tr><td>Prove authorship</td><td>Sign</td><td>Private</td><td>Sender</td></tr>" +
+        "<tr><td>Check authorship</td><td>Verify</td><td>Public</td><td>Sender</td></tr>" +
+        "</tbody></table><p>Encryption uses the recipient's keys. Signing uses the " +
+        "sender's. In both cases the public key does what anyone may do, and the " +
+        "private key does what only the owner may do.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "hash": [
+      { text: "$ sha256 \"Summer2026\"", cls: "prompt", delay: 320 },
+      { text: "  8f4a1c...e77b2d", cls: "output", delay: 380 },
+      { text: "$ sha256 \"Summer2027\"        # one character changed", cls: "prompt", delay: 520 },
+      { text: "  b219d4...03fa91", cls: "output", delay: 380 },
+      { text: "[NOTE] Completely different. This is the avalanche effect.", cls: "warning", delay: 620 },
+      { text: "", cls: "output", delay: 200 },
+      { text: "$ compare-users --unsalted", cls: "prompt", delay: 420 },
+      { text: "  alice  Summer2026 -> 8f4a1c...e77b2d", cls: "output", delay: 360 },
+      { text: "  bob    Summer2026 -> 8f4a1c...e77b2d   IDENTICAL", cls: "error", delay: 420 },
+      { text: "[RISK] One rainbow table lookup cracks both accounts.", cls: "error", delay: 560 },
+      { text: "", cls: "output", delay: 200 },
+      { text: "$ compare-users --salted", cls: "prompt", delay: 420 },
+      { text: "  alice  salt=9c2f + Summer2026 -> 41ba07...c8d3e1", cls: "output", delay: 380 },
+      { text: "  bob    salt=e70a + Summer2026 -> d5c19f...2b6047", cls: "output", delay: 380 },
+      { text: "[OK] Same password, unrelated hashes. Precomputation is useless.", cls: "info", delay: 620 }
+    ],
+    "cert": [
+      { text: "$ validate-cert https://bank.example.com", cls: "prompt", delay: 320 },
+      { text: "Leaf certificate: CN=bank.example.com", cls: "info", delay: 420 },
+      { text: "  [1] name matches requested host ......... PASS", cls: "output", delay: 380 },
+      { text: "  [2] within validity dates ............... PASS", cls: "output", delay: 340 },
+      { text: "  [3] signature verifies against issuer ... PASS", cls: "output", delay: 340 },
+      { text: "  [4] revocation status (OCSP stapled) .... GOOD", cls: "output", delay: 380 },
+      { text: "Walking the chain upward...", cls: "info", delay: 420 },
+      { text: "  Issuer: Example Intermediate CA G3 ...... verified", cls: "output", delay: 380 },
+      { text: "  Issuer: Example Root CA X1 .............. IN TRUST STORE", cls: "output", delay: 420 },
+      { text: "[OK] Chain complete. Connection trusted.", cls: "info", delay: 520 },
+      { text: "", cls: "output", delay: 200 },
+      { text: "$ validate-cert https://internal.example.local", cls: "prompt", delay: 460 },
+      { text: "  [3] signature verifies against issuer ... SELF-SIGNED", cls: "warning", delay: 420 },
+      { text: "[FAIL] No path to a trusted root. Browser shows a warning.", cls: "error", delay: 560 },
+      { text: "Encryption still works - identity is what cannot be verified.", cls: "warning", delay: 560 }
+    ]
+  };
+
+  // ---- which-key decision helper ----
+  var keyGoal = "secret";
+  function keyEvaluate() {
+    var v, cls, why;
+    if (keyGoal === "secret") {
+      v = "RECIPIENT'S PUBLIC KEY"; cls = "allow";
+      why = "Alice encrypts with Bob's public key. Only Bob's private key can undo it, so only Bob can read the message. Encrypting with her own public key would let anyone decrypt it.";
+    } else if (keyGoal === "sign") {
+      v = "SENDER'S PRIVATE KEY"; cls = "step";
+      why = "Alice signs with her own private key. Anyone can verify using her published public key, which proves she wrote it and that it has not changed. The message is still readable by all.";
+    } else {
+      v = "BOTH KEY PAIRS"; cls = "deny";
+      why = "Two operations. Alice signs with her private key, then encrypts with Bob's public key. Bob decrypts with his private key, then verifies with Alice's public key. No single key does both.";
+    }
+    var el = document.getElementById("keyReadout");
+    if (el) {
+      el.innerHTML = '<span class="readout__verdict ' + cls + '">' + v +
+        '</span><span class="readout__why">' + why + "</span>";
+    }
+    return v;
+  }
+
+  window.MODULE_ACTIONS = {
+    keyGoal: function (el) {
+      keyGoal = el.dataset.goal;
+      document.querySelectorAll('[data-action="keyGoal"]').forEach(function (b) {
+        var on = b.dataset.goal === keyGoal;
+        b.setAttribute("aria-pressed", String(on));
+        b.classList.toggle("on", on);
+        b.classList.toggle("off", !on);
+      });
+      var v = keyEvaluate();
+      if (window.MODULE) window.MODULE.announce(v);
+    }
+  };
+
+  // ---- classifier: pick the right primitive ----
+  window.CLASSIFIERS = {
+    primitive: {
+      axes: [
+        { name: "tool", label: "Primitive", options: ["Symmetric encryption", "Asymmetric encryption", "Hashing", "Digital signature"] },
+        { name: "prop", label: "Property delivered", options: ["Confidentiality", "Integrity", "Non-repudiation", "Availability"] }
+      ],
+      items: [
+        { scenario: "A laptop's entire drive must be unreadable if the device is stolen. The same machine encrypts and decrypts it.",
+          answers: { tool: "Symmetric encryption", prop: "Confidentiality" },
+          explain: "One device, one key, large volume of data - symmetric. It conceals contents, so confidentiality." },
+        { scenario: "A software vendor must let customers confirm an installer genuinely came from them and was not modified in transit.",
+          answers: { tool: "Digital signature", prop: "Non-repudiation" },
+          explain: "Signing with the vendor's private key proves origin and integrity, and the vendor cannot later deny it. That last part is non-repudiation." },
+        { scenario: "A web application must store user passwords so that a database breach does not expose them, and staff must never be able to read them.",
+          answers: { tool: "Hashing", prop: "Integrity" },
+          explain: "Passwords are hashed, never encrypted, because hashing has no key to steal and is irreversible. Use a key-stretching function such as bcrypt or Argon2." },
+        { scenario: "Two servers that have never communicated need to agree on a shared secret across an untrusted network.",
+          answers: { tool: "Asymmetric encryption", prop: "Confidentiality" },
+          explain: "This is the key distribution problem. Asymmetric cryptography solves the introduction; the agreed symmetric key then does the bulk work." },
+        { scenario: "A forensic examiner must show that a disk image is byte-for-byte identical to the original seized drive.",
+          answers: { tool: "Hashing", prop: "Integrity" },
+          explain: "Matching hashes before and after prove nothing changed. No key is involved and nothing is concealed." },
+        { scenario: "A backup archive of several terabytes must be encrypted before being written to tape.",
+          answers: { tool: "Symmetric encryption", prop: "Confidentiality" },
+          explain: "Bulk data always points to symmetric. Asymmetric is hundreds of times slower and is not used for volume encryption." }
+      ]
+    }
+  };
+
+  // ---- labs ----
+  window.LABS = {
+    "pick-primitive": {
+      title: "Lab 1 - Choose the right primitive",
+      time: "~25 minutes",
+      objective: "Match cryptographic tools to requirements and explain which key performs which operation - the distinction behind most wrong answers in this domain.",
+      steps: [
+        {
+          type: "match",
+          prompt: "For each requirement, choose the correct primitive and the property it delivers.",
+          hint: "Ask two questions: is there a key, and is the operation reversible? Then ask whether the goal is secrecy, proof of change, or proof of authorship.",
+          columns: [
+            { name: "tool", label: "Primitive", options: ["Symmetric", "Asymmetric", "Hashing", "Digital signature"] },
+            { name: "prop", label: "Property", options: ["Confidentiality", "Integrity", "Non-repudiation"] }
+          ],
+          items: [
+            { text: "Encrypt a 4 TB backup archive before writing it to tape", answers: { tool: "Symmetric", prop: "Confidentiality" } },
+            { text: "Store user passwords so nobody, including staff, can read them", answers: { tool: "Hashing", prop: "Integrity" } },
+            { text: "Let customers confirm a downloaded installer came from the vendor", answers: { tool: "Digital signature", prop: "Non-repudiation" } },
+            { text: "Establish a secure channel with a server never contacted before", answers: { tool: "Asymmetric", prop: "Confidentiality" } },
+            { text: "Prove a forensic disk image matches the seized original", answers: { tool: "Hashing", prop: "Integrity" } },
+            { text: "Protect a VPN tunnel carrying continuous traffic", answers: { tool: "Symmetric", prop: "Confidentiality" } }
+          ],
+          explain: "Bulk data and continuous streams are always symmetric. Passwords are hashed rather than encrypted because hashing has no key to steal. Signatures are the only primitive here delivering non-repudiation, because only one party holds the signing key."
+        },
+        {
+          type: "choice",
+          prompt: "Alice wants to send Bob a message that only Bob can read <em>and</em> that Bob can prove came from Alice. Select every statement that is true.",
+          hint: "This needs two operations. Track whose key is used at each step.",
+          options: [
+            "Alice signs with her own private key",
+            "Alice encrypts with her own public key",
+            "Alice encrypts with Bob's public key",
+            "Bob decrypts with his own private key",
+            "Bob verifies the signature with Alice's public key",
+            "A single operation can achieve both goals"
+          ],
+          correct: [0, 2, 3, 4],
+          explain: "Encryption uses the recipient's keys; signing uses the sender's. Encrypting with her own public key would let anyone decrypt with her published public key. No single operation delivers both secrecy and proof of origin."
+        },
+        {
+          type: "choice",
+          prompt: "A developer proposes storing passwords using SHA-256 with no salt. Select every accurate criticism.",
+          hint: "Think about what identical passwords produce, and how fast modern hardware runs SHA-256.",
+          options: [
+            "Identical passwords produce identical hashes, so one crack breaks many accounts",
+            "SHA-256 is broken and must never be used for anything",
+            "Rainbow tables can be precomputed against unsalted hashes",
+            "SHA-256 is far too fast, making brute force cheap",
+            "Passwords should be encrypted rather than hashed",
+            "A key-stretching function such as bcrypt or Argon2 should be used instead"
+          ],
+          correct: [0, 2, 3, 5],
+          explain: "SHA-256 is not broken - it is the right tool for file integrity and the wrong tool for passwords, because it is fast by design. And passwords must never be encrypted: encryption is reversible, which is exactly what you are trying to avoid."
+        },
+        {
+          type: "text",
+          prompt: "In your own words, explain why a hash provides integrity but not non-repudiation.",
+          hint: "Three or four sentences. The answer turns on who is capable of producing the value."
+        }
+      ]
+    },
+
+    "cert-chain": {
+      title: "Lab 2 - Trace the chain of trust",
+      time: "~20 minutes",
+      objective: "Follow certificate validation end to end and interpret what a browser warning actually tells you.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Put the certificate lifecycle into the correct order.",
+          hint: "Use the arrows. Think about what must exist before the next step is possible.",
+          items: [
+            "The subject generates a key pair, keeping the private key",
+            "A CSR carrying the public key and identity is sent to the CA",
+            "The CA validates that the requester controls the domain",
+            "The CA signs the certificate with its own private key",
+            "The certificate is deployed to the server",
+            "The certificate is renewed before expiry, or revoked if the key is compromised"
+          ],
+          explain: "The key pair must exist before a CSR can carry the public key. Validation precedes signing - a CA that signs before verifying is the failure mode behind several real-world CA compromises."
+        },
+        {
+          type: "choice",
+          prompt: "A browser shows a certificate warning for an internal server using a self-signed certificate. Select every true statement.",
+          hint: "Separate what is encrypted from what is verified.",
+          options: [
+            "Traffic to the server is unencrypted",
+            "Traffic is encrypted, but the server's identity is unverified",
+            "The chain cannot be completed to a trusted root",
+            "The certificate is necessarily expired",
+            "Running an internal CA and distributing its root would resolve the warning",
+            "Self-signed certificates are acceptable for public-facing sites"
+          ],
+          correct: [1, 2, 4],
+          explain: "Self-signed certificates provide encryption but no third-party verification of identity, so the chain cannot reach a trusted root. Distributing an internal root to managed devices is the standard fix. Nothing here implies expiry, and self-signed is never appropriate publicly."
+        },
+        {
+          type: "match",
+          prompt: "Match each certificate concept to what it covers.",
+          hint: "Wildcards and SAN certificates are the pair most often confused.",
+          columns: [
+            { name: "scope", label: "Covers", options: ["One named host", "All first-level subdomains", "Several listed names", "Nothing verified externally"] }
+          ],
+          items: [
+            { text: "Wildcard certificate for *.example.com", answers: { scope: "All first-level subdomains" } },
+            { text: "SAN certificate", answers: { scope: "Several listed names" } },
+            { text: "Self-signed certificate", answers: { scope: "Nothing verified externally" } },
+            { text: "Standard DV certificate", answers: { scope: "One named host" } }
+          ],
+          explain: "A wildcard for *.example.com covers mail.example.com but not example.com itself, nor a.b.example.com. A SAN certificate lists distinct names explicitly, which is how one certificate serves several unrelated domains."
+        },
+        {
+          type: "text",
+          prompt: "A wildcard certificate is convenient. Explain the security cost, and when you would choose SAN instead.",
+          hint: "Think about what one stolen private key exposes."
+        }
+      ]
+    },
+
+    "key-postmortem": {
+      title: "Lab 3 - Key management post-mortem",
+      time: "~20 minutes",
+      objective: "Diagnose a real-shaped cryptographic failure. Almost none of them are mathematical.",
+      steps: [
+        {
+          type: "choice",
+          prompt: "<em>A company encrypts customer records with AES-256. An attacker exfiltrates the entire database and decrypts all of it within hours. The encryption key was stored in a configuration file in the same repository as the application, which had been public for eight months.</em><br><br>Select every accurate statement.",
+          hint: "Ask which part of the system actually failed.",
+          options: [
+            "AES-256 was broken by the attacker",
+            "The algorithm performed exactly as designed",
+            "This is a key storage failure, not a cryptographic one",
+            "A longer key would have prevented this",
+            "An HSM or key management service would have prevented key exposure",
+            "Key rotation would have limited the exposure window"
+          ],
+          correct: [1, 2, 4, 5],
+          explain: "Nobody breaks AES. The cipher worked perfectly and protected data whose key was published alongside it. Longer keys change nothing when the key is simply readable. This is the most common shape of real cryptographic failure."
+        },
+        {
+          type: "match",
+          prompt: "Match each key lifecycle stage to the failure that belongs to it.",
+          hint: "Each stage has one characteristic way of going wrong.",
+          columns: [
+            { name: "stage", label: "Lifecycle stage", options: ["Generation", "Storage", "Rotation", "Destruction"] }
+          ],
+          items: [
+            { text: "Keys derived from a timestamp, making them predictable", answers: { stage: "Generation" } },
+            { text: "A key committed to a public source repository", answers: { stage: "Storage" } },
+            { text: "The same key in continuous use for nine years", answers: { stage: "Rotation" } },
+            { text: "A retired key still present in old backup images", answers: { stage: "Destruction" } }
+          ],
+          explain: "Weak randomness is a generation failure and has caused large real-world breaches. Indefinite use is a rotation failure: it means indefinite exposure, and no way to bound the damage of an old compromise."
+        },
+        {
+          type: "text",
+          prompt: "Write the three remediation steps you would recommend first, in priority order, with a sentence justifying each.",
+          hint: "Consider what must happen immediately versus what prevents recurrence. Rotating the exposed key is not optional."
+        },
+        {
+          type: "text",
+          prompt: "Explain the trade-off in key escrow using the CIA triad from Module 1.",
+          hint: "Name which property improves and which is weakened, and who bears the risk."
+        }
+      ]
+    }
+  };
+
+  var QUESTIONS = [
+    { tier: "recall",
+      question: "Which key does a sender use to encrypt a message so that only the intended recipient can read it?",
+      options: ["The sender's private key", "The sender's public key", "The recipient's public key", "The recipient's private key"],
+      correct: 2,
+      explanation: "Encryption uses the recipient's keys. Locking with Bob's public key means only Bob's private key can open it. Using the sender's public key would let anyone decrypt with that same published key." },
+    { tier: "recall",
+      question: "Which key does a signer use to create a digital signature?",
+      options: ["Their own private key", "Their own public key", "The recipient's public key", "A shared symmetric key"],
+      correct: 0,
+      explanation: "Signing uses the sender's private key, which only they hold - that is what makes the signature proof of authorship. Anyone can then verify with the sender's public key." },
+    { tier: "recall",
+      question: "What is the primary purpose of a salt in password storage?",
+      options: ["To encrypt the password", "To make identical passwords produce different hashes", "To keep the hash secret", "To slow the hashing function"],
+      correct: 1,
+      explanation: "A salt ensures two users with the same password have different stored hashes, defeating precomputed rainbow tables. It is not secret and does not slow anything - slowing is key stretching." },
+    { tier: "recall",
+      question: "Which of these is NOT contained in a certificate signing request?",
+      options: ["The public key", "The organization name", "The private key", "The common name"],
+      correct: 2,
+      explanation: "The private key never leaves the subject's control. A CSR carries the public key and identifying information only; any option describing a private key sent to a CA is wrong." },
+    { tier: "applied",
+      question: "Which algorithm family is appropriate for password storage?",
+      options: ["SHA-256", "AES-256", "bcrypt or Argon2", "RSA-4096"],
+      correct: 2,
+      explanation: "Key-stretching functions such as bcrypt and Argon2 are deliberately slow and memory-hard. SHA-256 is correct for file integrity but far too fast for passwords, and AES and RSA are encryption rather than hashing." },
+    { tier: "recall",
+      question: "What does OCSP stapling accomplish?",
+      options: ["It encrypts the certificate", "The server presents a recent signed revocation status during the handshake", "It extends certificate validity", "It replaces the chain of trust"],
+      correct: 1,
+      explanation: "The server periodically fetches a signed, timestamped status for its own certificate and staples it to the handshake, giving the client fresh revocation data without contacting the CA - which removes both the latency and the privacy leak of plain OCSP." },
+    { tier: "recall",
+      question: "Which security property does a public blockchain provide?",
+      options: ["Confidentiality", "Integrity", "Availability only", "Non-repudiation only"],
+      correct: 1,
+      explanation: "Each block references the hash of the previous one, so altering history is immediately detectable. On a public chain every transaction is visible to everyone, which is the opposite of confidentiality." },
+    { tier: "applied",
+      question: "An organization must encrypt a 5 TB nightly backup. Which approach is appropriate?",
+      options: ["RSA-4096 for the whole archive", "AES-256 for the archive", "SHA-512 for the archive", "A wildcard certificate"],
+      correct: 1,
+      explanation: "Bulk data always points to symmetric encryption. Asymmetric algorithms are hundreds of times slower and are used to exchange keys, not to encrypt volume. SHA-512 is a hash and does not encrypt anything." },
+    { tier: "applied",
+      question: "A developer stores passwords using unsalted SHA-256. What is the most significant weakness?",
+      options: ["SHA-256 has known collisions", "Identical passwords produce identical hashes, enabling rainbow table attacks", "SHA-256 output is too short", "Hashing is reversible"],
+      correct: 1,
+      explanation: "Without a salt, identical passwords give identical hashes and precomputed tables become effective. SHA-256 has no practical collisions and hashing is not reversible - both distractors describe things that are simply untrue." },
+    { tier: "applied",
+      question: "A browser warns that a site's certificate is not trusted. Which conclusion is best supported?",
+      options: ["Traffic to the site is unencrypted", "The chain could not be completed to a trusted root", "The site is definitely malicious", "The private key was stolen"],
+      correct: 1,
+      explanation: "The warning is about verification, not encryption - the session may well be encrypted. It means the browser could not build a path to a root in its trust store, which is exactly what a self-signed certificate produces." },
+    { tier: "applied",
+      question: "A team needs one certificate covering mail.example.com, vpn.example.com, and portal.example.com. Which is most appropriate?",
+      options: ["Three self-signed certificates", "A wildcard certificate for *.example.com", "An extended validation certificate", "A certificate revocation list"],
+      correct: 1,
+      explanation: "All three are first-level subdomains of one domain, which is precisely what a wildcard covers. A SAN certificate would also work and is preferable when the names span different domains or when limiting blast radius matters." },
+    { tier: "applied",
+      question: "Which statement about HMAC is correct?",
+      options: ["It provides non-repudiation", "It uses a shared secret key and provides integrity and authentication", "It is a form of asymmetric encryption", "It is used to encrypt bulk data"],
+      correct: 1,
+      explanation: "HMAC mixes a shared secret into a hash, giving integrity and authentication. It stops short of non-repudiation because both parties hold the same key, so neither can prove the other produced the code." },
+    { tier: "applied",
+      question: "An organization wants to store payment card data so a breach yields nothing usable, while still identifying repeat customers. Which fits best?",
+      options: ["Hashing the card numbers", "Tokenization", "Steganography", "Data masking"],
+      correct: 1,
+      explanation: "Tokenization substitutes an unrelated value, keeps the real data in a separate vault, and preserves the ability to recognise repeat use. Masking discards data permanently in the view, and hashing would prevent the lookup the scenario requires." },
+    { tier: "applied",
+      question: "Which scenario best describes perfect forward secrecy?",
+      options: ["Keys are escrowed with a third party", "A stolen server private key cannot decrypt previously recorded sessions", "Certificates are renewed annually", "Passwords are salted before hashing"],
+      correct: 1,
+      explanation: "Perfect forward secrecy negotiates a fresh session key per connection and never reuses it, so compromising the long-term private key later does not retroactively expose captured traffic." },
+    { tier: "scenario",
+      question: "An attacker exfiltrates an AES-256 encrypted database and decrypts it within hours. Investigation finds the key in a config file in a public repository. What is the correct characterisation?",
+      options: ["AES-256 is no longer secure", "A key management failure, not a cryptographic one", "The key length was insufficient", "Hashing should have been used instead"],
+      correct: 1,
+      explanation: "The cipher performed exactly as designed; the key was simply published alongside the data. A longer key changes nothing when the key is readable, and hashing would make the records permanently unusable to the business too." },
+    { tier: "scenario",
+      question: "A hospital must let clinicians verify that imaging files have not been altered, and must prove which radiologist approved each one, but the files themselves are not confidential. What should be implemented?",
+      options: ["AES-256 encryption of each file", "Digital signatures on each file", "Tokenization of the file contents", "A wildcard certificate on the server"],
+      correct: 1,
+      explanation: "Signatures deliver integrity plus non-repudiation, which covers both requirements, and they leave the file readable - appropriate here since confidentiality is explicitly not required. Encryption would add secrecy nobody asked for and prove nothing about authorship." },
+    { tier: "applied",
+      question: "During an audit, a service is found to email users their existing password on request. What does this most strongly indicate?",
+      options: ["Passwords are salted correctly", "Passwords are stored in a recoverable form rather than hashed", "The service uses key stretching", "The service uses HMAC"],
+      correct: 1,
+      explanation: "Recovering an existing password requires storing it encrypted or in plaintext. A properly hashed password cannot be recovered by anyone, including the operator - which is why a well-built service can only reset it." },
+    { tier: "scenario",
+      question: "An organization deploys an HSM after a breach in which an administrator copied a signing key. What specifically does the HSM change?",
+      options: ["It makes the algorithm stronger", "The key never leaves the hardware boundary, so it cannot be copied out", "It removes the need for key rotation", "It encrypts the operating system"],
+      correct: 1,
+      explanation: "An HSM performs operations internally and returns results, so even a full administrator never obtains the key. An attacker with access can request signatures while it lasts, which is bounded and detectable - unlike a stolen key, which is permanent." },
+    { tier: "scenario",
+      question: "A retailer must give a new analytics team realistic customer data for testing, but the team must never see real card numbers or full addresses. Which approach fits best?",
+      options: ["Encrypt the test database with AES-256", "Data masking in the test dataset", "Sign each record with a digital signature", "Store the test data on a self-signed HTTPS server"],
+      correct: 1,
+      explanation: "Masking replaces part of each value with placeholders, leaving data that behaves realistically without exposing real values. Encryption would either block the team entirely or hand them the key, and signing addresses authorship rather than exposure." },
+    { tier: "scenario",
+      question: "A company implements key escrow so departing employees' encrypted files remain recoverable. Which trade-off has it accepted?",
+      options: ["Improved integrity at the cost of availability", "Improved availability at some cost to confidentiality", "Improved confidentiality at the cost of integrity", "No trade-off - escrow has no downside"],
+      correct: 1,
+      explanation: "Escrow keeps data recoverable, which serves availability, while a second party now holds the means to decrypt, which weakens confidentiality. It is the Module 1 trade-off in a specific technical form." }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  if (document.getElementById("keyReadout")) keyEvaluate();
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>

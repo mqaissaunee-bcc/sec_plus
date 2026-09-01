@@ -1,0 +1,3122 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="1" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 1: Security Fundamentals and Controls</title>
+<meta name="description" content="The vocabulary of information security: the CIA triad, AAA, the control taxonomy, zero trust, and change management as a security process.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 1</p>
+    <h1>Security Fundamentals and Controls</h1>
+    <p class="subtitle">The vocabulary of information security: the CIA triad, AAA, the control taxonomy, zero trust, and change management as a security process.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="📋" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to explain the <span class="term" data-term="cia triad">CIA triad</span> and
+        <span class="term" data-term="non-repudiation">non-repudiation</span>; distinguish <span class="term" data-term="authentication">authentication</span>, <span class="term" data-term="authorization">authorization</span>, and <span class="term" data-term="accounting">accounting</span>;
+        classify a security control by both category and type; describe the zero
+        trust model and the split between control plane and data plane; and
+        explain why change management is a security process rather than a
+        paperwork exercise.
+      </div>
+
+      <p>Security+ is a vocabulary exam before it is a technical one. Roughly a
+      third of the questions you will miss on a practice test are not questions
+      about technology you do not understand - they are questions where two
+      answer choices are both technically true and only one matches the precise
+      term CompTIA is asking about. This module builds that vocabulary.</p>
+
+      <p>The concepts here map to exam objectives 1.1 through 1.3, which
+      together account for the bulk of the General Security Concepts domain
+      (12% of the exam). That understates their real weight. The control
+      taxonomy in particular reappears throughout Domains 3, 4, and 5: when a
+      later question asks you to select the best mitigation for a scenario, it
+      is testing whether you can classify controls.</p>
+
+      <div class="subsection">
+        <h3>How this module is organized</h3>
+        <p>Five teaching sections, then an assessment. The first two sections
+        cover the goals of security (what we are protecting, and how we know who
+        is acting). The middle two cover the means (what controls exist, and how
+        modern architectures decide whom to trust). The last covers the process
+        that keeps all of it from decaying over time.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Why this module carries more weight than 12%</h3>
+        <p>Domain 1 is the smallest domain by exam weight, and students routinely
+        treat it as a warm-up to get past on the way to the technical material.
+        That is a mistake, and it shows up in practice-test results in a specific
+        way: candidates score well on Domain 1 questions and then lose points
+        across Domains 3, 4, and 5 on questions that are secretly Domain 1
+        questions wearing different clothes.</p>
+        <p>Consider a Domain 4 question that describes a SIEM alerting on
+        anomalous logins and asks what kind of control the SIEM represents. The
+        subject matter is security operations, but the skill being tested is the
+        control taxonomy from this module. Or a Domain 5 question describing a
+        vendor who cannot meet an encryption requirement and asks what the
+        organization should implement instead. That is third-party risk on the
+        surface and compensating controls underneath.</p>
+        <p>The vocabulary you build here is the machinery you will use to answer
+        questions for the rest of the course. Learn it precisely now and the rest
+        of the exam gets easier. Learn it approximately and you will keep losing
+        points without understanding why.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        Watch for questions that give a scenario and ask for the control
+        <em>type</em> rather than the control itself. "A security guard" is a
+        physical control by category, but it can be deterrent, preventive, or
+        detective depending on what the scenario says the guard is doing.
+      </div>
+    </section>
+
+    <section class="module-section" id="cia-triad" data-icon="🔒" role="tabpanel"
+             aria-labelledby="tab-cia-triad" tabindex="-1">
+      <h2 class="section-title">The CIA Triad and Non-Repudiation</h2>
+
+      <p>Every security control that exists is ultimately protecting one of
+      three properties, and most protect one at the expense of another. The
+      triad is not a checklist to satisfy - it is a set of competing goals you
+      are constantly balancing.</p>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏦</span> Think of it like…</p><p class="analogy__title">A safe deposit box at a bank</p><p>The bank protects <strong>confidentiality</strong> - only you and the box's authorised signatories can see what is inside. It protects <strong>integrity</strong> because nobody can quietly swap your documents for forgeries. And it protects <strong>availability</strong> because you can walk in during business hours and retrieve your things.</p><p>Now notice the tension. The bank could make the box more confidential by requiring two forms of ID, a co-signer, and 48 hours' notice. Every one of those makes your documents harder for a thief to reach - and harder for you to reach. That is the trade-off in miniature, and it is the same trade-off behind every security decision you will study.</p><p class="analogy__limit"><strong>Where it breaks down:</strong> a bank vault has one physical location. Data can be copied perfectly and instantly, so a confidentiality failure means the information is now in two places at once, and you cannot take it back.</p></div>
+
+      <div class="subsection">
+        <h3>Confidentiality</h3>
+        <p>Information is available only to those authorized to see it. The
+        primary technical mechanism is encryption, supported by access control
+        and, in transit, by protocols like TLS. <span class="term" data-term="confidentiality">Confidentiality</span> failures are the
+        ones that make the news: a database of customer records exposed to the
+        internet, a laptop lost with unencrypted disk, an employee emailing a
+        spreadsheet to a personal account.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Integrity</h3>
+        <p>Information has not been altered by anyone unauthorized to alter it,
+        whether maliciously or accidentally. The primary mechanism is hashing:
+        a cryptographic hash of a file computed before and after transmission
+        will differ if even one bit changed. Digital signatures extend this by
+        binding the <span class="term" data-term="integrity">integrity</span> check to an identity.</p>
+        <p>Integrity failures are quieter than confidentiality failures and
+        often more damaging. A breach that exposes records is bad; a breach
+        that silently modifies financial records over months, leaving you unable
+        to say which numbers are true, can be worse.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Availability</h3>
+        <p>Information and systems are accessible when authorized users need
+        them. Mechanisms include redundancy, failover, backups, and capacity
+        planning. <span class="term" data-term="availability">Availability</span> is the property most often traded away by the
+        other two: every additional authentication step, every encryption
+        operation, every integrity check adds latency or a new failure mode.</p>
+
+        <div class="callout info">
+          <span class="tag">[NOTE]</span>
+          A system that is perfectly confidential and perfectly integral but
+          offline provides zero security value. Availability is a security
+          property, not an operational afterthought - which is why disaster
+          recovery sits inside the security curriculum.
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>The tension between the three</h3>
+        <figure class="figure">
+        <svg viewBox="0 0 620 300" role="img" aria-labelledby="ciaTitle ciaDesc">
+          <title id="ciaTitle">The CIA triad and its trade-offs</title>
+          <desc id="ciaDesc">A triangle with Confidentiality at the top left, Integrity at the top right, and Availability at the bottom centre. Each pair is joined by an edge labelled with the trade-off between them.</desc>
+          <polygon points="150,60 470,60 310,250" fill="none" class="svg-line accent" stroke-dasharray="0"/>
+          <g>
+            <rect x="60" y="30" width="180" height="58" rx="10" class="svg-box accent"/>
+            <text x="150" y="54" text-anchor="middle" class="svg-label">Confidentiality</text>
+            <text x="150" y="73" text-anchor="middle" class="svg-sub">Encryption, access control</text>
+          </g>
+          <g>
+            <rect x="380" y="30" width="180" height="58" rx="10" class="svg-box brand"/>
+            <text x="470" y="54" text-anchor="middle" class="svg-label">Integrity</text>
+            <text x="470" y="73" text-anchor="middle" class="svg-sub">Hashing, signatures</text>
+          </g>
+          <g>
+            <rect x="220" y="222" width="180" height="58" rx="10" class="svg-box warn"/>
+            <text x="310" y="246" text-anchor="middle" class="svg-label">Availability</text>
+            <text x="310" y="265" text-anchor="middle" class="svg-sub">Redundancy, backups</text>
+          </g>
+          <text x="310" y="52" text-anchor="middle" class="svg-mono">both protect the data itself</text>
+          <text x="185" y="170" text-anchor="middle" class="svg-mono">encryption</text>
+          <text x="185" y="185" text-anchor="middle" class="svg-mono">can lock you out</text>
+          <text x="440" y="170" text-anchor="middle" class="svg-mono">integrity checks</text>
+          <text x="440" y="185" text-anchor="middle" class="svg-mono">add latency</text>
+        </svg>
+        <figcaption>Every control strengthens one vertex, usually at the cost of another.</figcaption>
+      </figure>
+        <p>Exam scenarios frequently describe an organization that has over-
+        rotated on one property and ask what they have sacrificed. Reading the
+        scenario for which property is being <em>traded away</em> is usually
+        faster than reasoning about the control itself.</p>
+      </div>
+
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="cia-tradeoffs">
+        See three real trade-off cases</button></p>
+
+      <div class="subsection">
+        <h3>The three states of data</h3>
+        <p>Confidentiality controls differ depending on where the data is at the
+        moment you protect it, and the exam expects you to match the state to the
+        mechanism.</p>
+        <table>
+          <thead><tr><th>State</th><th>Meaning</th><th>Typical protection</th></tr></thead>
+          <tbody>
+            <tr><td>At rest</td><td>Stored on disk, in a database, on backup media</td>
+                <td>Full-disk or file-level encryption, access control</td></tr>
+            <tr><td>In transit</td><td>Moving across a network</td>
+                <td>TLS, IPsec, VPN tunnels</td></tr>
+            <tr><td>In use</td><td>Loaded in memory and being processed</td>
+                <td>Trusted execution environments, memory encryption</td></tr>
+          </tbody>
+        </table>
+        <p>Data in use is the hardest of the three and the one most often
+        overlooked. To compute on data, a processor generally has to see it in
+        plaintext, which means an attacker with sufficient access to a running
+        system can read it regardless of how well it was encrypted on disk or
+        over the wire. This is why scenarios describing memory-scraping malware
+        are describing an attack on data in use, and why the standard answers
+        involve hardware-backed enclaves rather than more encryption.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">✉️</span> Think of it like…</p><p class="analogy__title">A letter you are sending</p><p><strong>At rest</strong>, the letter sits in a locked drawer. <strong>In transit</strong>, it travels in a sealed envelope through the postal system. <strong>In use</strong>, someone has opened it and is reading it aloud in a room.</p><p>You can lock the drawer and seal the envelope, but you cannot protect the letter while it is being read - the words have to be visible to whoever is reading them. That is exactly the problem with data in use: a processor generally needs plaintext to compute on, so the protection has to come from controlling the room rather than the paper.</p><p class="analogy__limit"><strong>Where it breaks down:</strong> a letter is read once and put away. Data in use may sit in memory for hours, giving an attacker a much wider window.</p></div>
+
+      <div class="subsection">
+        <h3>What these failures look like in practice</h3>
+        <p>The abstract definitions become much easier to apply once you have
+        concrete failure shapes in mind.</p>
+        <p><strong>A confidentiality failure is loud and immediate.</strong> A
+        misconfigured cloud storage bucket exposes customer records; the data is
+        intact and the service is running normally, but people who should not
+        have seen the data have seen it. You cannot un-disclose information, which
+        is what makes confidentiality failures irreversible in a way the other two
+        often are not. Notification obligations, regulatory penalties, and
+        reputational damage all follow from that irreversibility.</p>
+        <p><strong>An integrity failure is quiet and corrosive.</strong> An
+        attacker with database access modifies transaction amounts over several
+        months. Nothing appears broken. Reports run, systems respond, and users
+        notice nothing. The damage surfaces only when someone reconciles against
+        an external source, and by then the organization faces a worse problem
+        than the original modification: it cannot say which records are
+        trustworthy. Restoring from backup does not help if you do not know when
+        the corruption began.</p>
+        <p><strong>An availability failure is obvious and urgent.</strong>
+        Ransomware encrypts file shares, or a volumetric attack saturates the
+        connection. Everyone knows immediately, executive attention is total, and
+        the recovery path is usually well understood even when it is painful.
+        Availability failures generate the most noise and, often, the least
+        lasting harm - which is precisely why organizations over-invest in
+        availability and under-invest in integrity.</p>
+
+        <div class="callout warn">
+          <span class="tag">[EXAM]</span>
+          When a scenario describes damage that was not noticed for a long time,
+          integrity is almost always the intended answer. When it describes
+          immediate disruption, think availability. When it describes disclosure,
+          think confidentiality.
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Non-repudiation</h3>
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">✍️</span> Think of it like…</p><p class="analogy__title">A notarised signature versus a typed name</p><p>Anyone can type your name at the bottom of a document - that proves nothing, because anyone could have typed it. That is a plain hash: it confirms the text has not changed, but not who stood behind it.</p><p>A notarised signature is different. The notary verifies identity and stamps the document, so you cannot later claim someone else signed it. That is a digital signature: because signing requires a private key only you hold, a valid signature is evidence that you acted.</p></div>
+
+        <p>Non-repudiation means a party cannot credibly deny having performed
+        an action. It is not part of the triad but is tested alongside it. The
+        mechanism is the <span class="term" data-term="digital signature">digital signature</span>: because signing requires a private
+        key that only one party holds, a valid signature is evidence that party
+        acted.</p>
+        <p>Note the distinction the exam cares about. A hash provides integrity
+        but not non-repudiation - anyone can compute a hash. A digital
+        signature provides integrity <em>and</em> non-repudiation, because it
+        binds the integrity check to a specific private key holder.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="aaa" data-icon="🔑" role="tabpanel"
+             aria-labelledby="tab-aaa" tabindex="-1">
+      <h2 class="section-title">Authentication, Authorization, and Accounting</h2>
+
+      <p>AAA answers three separate questions that are easy to conflate: who are
+      you, what may you do, and what did you do. Exam questions often describe a
+      failure and ask which of the three broke down.</p>
+
+      <div class="subsection">
+        <h3>The three stages in order</h3>
+        <figure class="figure">
+        <svg viewBox="0 0 700 240" role="img" aria-labelledby="aaaTitle aaaDesc">
+          <title id="aaaTitle">The three AAA stages in order</title>
+          <desc id="aaaDesc">Three stages in sequence: Authentication proves identity, Authorization grants rights, and Accounting records activity. Each stage depends on the one before it.</desc>
+          <g>
+            <rect x="20" y="50" width="190" height="90" rx="12" class="svg-box accent"/>
+            <text x="115" y="80" text-anchor="middle" class="svg-label">1. Authentication</text>
+            <text x="115" y="102" text-anchor="middle" class="svg-sub">Who are you?</text>
+            <text x="115" y="121" text-anchor="middle" class="svg-mono">password, MFA, cert</text>
+          </g>
+          <g>
+            <rect x="255" y="50" width="190" height="90" rx="12" class="svg-box brand"/>
+            <text x="350" y="80" text-anchor="middle" class="svg-label">2. Authorization</text>
+            <text x="350" y="102" text-anchor="middle" class="svg-sub">What may you do?</text>
+            <text x="350" y="121" text-anchor="middle" class="svg-mono">roles, ACLs, policy</text>
+          </g>
+          <g>
+            <rect x="490" y="50" width="190" height="90" rx="12" class="svg-box warn"/>
+            <text x="585" y="80" text-anchor="middle" class="svg-label">3. Accounting</text>
+            <text x="585" y="102" text-anchor="middle" class="svg-sub">What did you do?</text>
+            <text x="585" y="121" text-anchor="middle" class="svg-mono">logs, audit trail</text>
+          </g>
+          <path d="M215 95 L250 95" class="svg-line accent" marker-end="url(#arrowA)"/>
+          <path d="M450 95 L485 95" class="svg-line brand" marker-end="url(#arrowB)"/>
+          <defs>
+            <marker id="arrowA" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker>
+            <marker id="arrowB" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-brand"/></marker>
+          </defs>
+          <text x="350" y="185" text-anchor="middle" class="svg-sub">Order matters: authorization without authentication is meaningless,</text>
+          <text x="350" y="204" text-anchor="middle" class="svg-sub">and accounting without authentication cannot attribute an action to a person.</text>
+        </svg>
+        <figcaption>A failure at any stage looks different to the user. "Logged in but denied" is stage 2.</figcaption>
+      </figure>
+        <p>The ordering matters. Authorization without prior authentication is
+        meaningless, and accounting without authentication cannot attribute
+        actions to a person. A system that logs "a file was deleted" has
+        accounting; a system that logs "user jsmith deleted the file" has
+        accounting built on authentication.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Tracing an access attempt through AAA</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="aaa">Trace login</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="aaa">Clear</button>
+        </div>
+        <div class="terminal" id="demo-aaa" aria-live="polite" aria-label="AAA trace output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Authenticating people versus authenticating systems</h3>
+        <p>People authenticate with something they know, have, or are.
+        Systems and services cannot do any of that - there is no human present
+        to enter a password. Machines authenticate with certificates, API keys,
+        or managed service identities.</p>
+        <p>This distinction drives a category of exam question about service
+        accounts. When a scenario describes a scheduled task or an application
+        connecting to a database, the correct answer usually involves
+        certificate-based or managed identity authentication rather than a
+        stored password, precisely because no human can respond to an MFA
+        prompt at 3 a.m.</p>
+
+        <div class="callout warn">
+          <span class="tag">[WARNING]</span>
+          Service accounts with static passwords that never expire and hold
+          broad privileges are one of the most common real-world findings in
+          security assessments. They fail authentication hygiene and
+          authorization least-privilege simultaneously.
+        </div>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">✈️</span> Think of it like…</p><p class="analogy__title">Getting on a flight</p><p><strong>Authentication</strong> happens at check-in, where you show ID to prove you are who you claim. <strong>Authorization</strong> is your boarding pass: it does not just say you may fly, it says which flight, which seat, and whether you may enter the lounge. <strong>Accounting</strong> is the passenger manifest recording who actually boarded.</p><p>This makes the failure modes obvious. Being turned away at check-in with a bad ID is an authentication failure. Being waved through check-in but stopped at the lounge door is an authorization failure - the airline knows exactly who you are, you simply are not permitted there. And a manifest that lists only a seat number without a name is accounting that cannot attribute anything to a person, which is what a shared admin account gives you.</p></div>
+
+      <div class="subsection">
+        <h3>The three authentication factors</h3>
+        <p>Authentication factors are conventionally grouped into three
+        categories, and multifactor authentication means combining factors from
+        <em>different</em> categories - not simply requiring two things.</p>
+        <table>
+          <thead><tr><th>Factor</th><th>Category</th><th>Examples</th><th>Principal weakness</th></tr></thead>
+          <tbody>
+            <tr><td>Something you know</td><td>Knowledge</td><td>Password, PIN, security question</td>
+                <td>Can be guessed, phished, or reused across sites</td></tr>
+            <tr><td>Something you have</td><td>Possession</td><td>Hardware token, phone, smart card</td>
+                <td>Can be lost, stolen, or intercepted (SMS)</td></tr>
+            <tr><td>Something you are</td><td>Inherence</td><td>Fingerprint, face, iris</td>
+                <td>Cannot be changed once compromised</td></tr>
+          </tbody>
+        </table>
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">💳</span> Think of it like…</p><p class="analogy__title">An ATM withdrawal</p><p>An ATM requires your card (something you <em>have</em>) and your PIN (something you <em>know</em>). That is genuine multifactor authentication: a pickpocket with your card cannot withdraw cash, and a shoulder-surfer with your PIN cannot either. An attacker needs both, acquired in two different ways.</p><p>Now imagine an ATM that asked for your PIN and then your mother's maiden name. Two prompts, but both are things you know - so a single successful phishing call captures both. That is why a password plus a security question is not multifactor. Adding your fingerprint would be, because it comes from a third category entirely.</p></div>
+
+        <p>The distinction matters for a specific class of exam question. A
+        password plus a security question is <em>not</em> multifactor: both are
+        knowledge factors, so a single successful phishing attempt captures both.
+        A password plus a push notification to a registered phone is multifactor,
+        because compromising the password does not put the phone in the
+        attacker's hands.</p>
+        <p>Biometrics carry a distinctive risk worth understanding. A leaked
+        password is an inconvenience because you change it. A leaked fingerprint
+        template is permanent - you have nine replacements and then you are out.
+        This is why biometrics are generally deployed as one factor among
+        several, and typically as a convenient local unlock rather than a remote
+        authentication mechanism.</p>
+        <p>You will also see location and behaviour described as supplementary
+        signals. These are not usually counted as true factors on their own, but
+        they feed the adaptive identity model you will meet in the zero trust
+        section: the same credentials presented from an unexpected place produce
+        a weaker trust signal.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Why accounting is the stage that gets cut</h3>
+        <p>Accounting is the least glamorous of the three and the first to be
+        under-resourced. Logging costs storage, generates noise, and produces no
+        visible benefit until something goes wrong. The result is a predictable
+        pattern in incident response: an organization can confirm that a breach
+        happened but cannot establish what the attacker touched.</p>
+        <p>Two properties separate useful accounting from box-ticking. Logs must
+        be <em>attributable</em>, meaning tied to an authenticated identity rather
+        than a shared account or an IP address alone. And they must be
+        <em>tamper-evident</em>, because an attacker with administrative access
+        will edit logs to cover their tracks. Forwarding logs to a separate
+        system that the compromised host cannot write to is the standard answer,
+        and it is why centralized logging appears in Domain 4 as an architectural
+        requirement rather than an operational nicety.</p>
+        <p>Shared accounts break attribution completely. If five administrators
+        use one <code>admin</code> login, accounting can tell you that
+        <code>admin</code> deleted the records but not which human did it. That is
+        why scenarios describing shared credentials are usually testing
+        accountability rather than password strength.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Gap analysis</h3>
+        <p>A <span class="term" data-term="gap analysis">gap analysis</span> compares the current security state against a target
+        state - a framework, a policy, or a regulatory requirement - and
+        documents the difference. The output is a prioritized list of gaps, not
+        a pass/fail verdict. Gap analysis appears in objective 1.1 because it is
+        the process that connects the abstract concepts in this module to a
+        concrete remediation plan.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="security-controls" data-icon="🛡️" role="tabpanel"
+             aria-labelledby="tab-security-controls" tabindex="-1">
+      <h2 class="section-title">Security Control Categories and Types</h2>
+
+      <p>This is the highest-yield content in the module. CompTIA classifies
+      every control along two independent axes, and questions routinely give you
+      a control and ask for its position on one axis while offering distractors
+      from the other.</p>
+
+      <div class="subsection">
+        <h3>Axis 1 - Category: who or what implements it</h3>
+        <table>
+          <thead><tr><th>Category</th><th>Implemented by</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td>Technical</td><td>Technology</td><td>Firewall, encryption, MFA, antivirus</td></tr>
+            <tr><td>Managerial</td><td>Policy and planning</td><td>Risk assessments, security policy, SDLC review</td></tr>
+            <tr><td>Operational</td><td>People executing procedures</td><td>Security awareness training, guard rotation, incident response</td></tr>
+            <tr><td>Physical</td><td>Tangible barriers</td><td>Fences, locks, badge readers, bollards, lighting</td></tr>
+          </tbody>
+        </table>
+        <p>The distinction students most often miss is operational versus
+        managerial. Managerial controls are about <em>deciding and documenting</em>;
+        operational controls are about <em>people doing the work day to day</em>.
+        Writing the incident response plan is managerial. Running the incident
+        response is operational.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏡</span> Think of it like…</p><p class="analogy__title">Protecting your home</p><p>Every control type has a household equivalent. The <strong>deadbolt</strong> is preventive - it stops entry. The <strong>alarm company sign</strong> on the lawn is deterrent - it changes the burglar's mind before they try. The <strong>camera</strong> is detective - it tells you what happened. <strong>Insurance</strong> is corrective - it restores you afterwards. And the <strong>house rule</strong> that the last person out locks up is directive - it instructs behaviour.</p><p>Compensating controls fit too. If you live in a listed building and are not permitted to fit a modern deadbolt, you add a door chain, a camera, and a motion light instead. The required control is unavailable, so you assemble a substitute that reduces the risk comparably. That is precisely the unpatchable-legacy-system scenario in professional dress.</p><p class="analogy__limit"><strong>Where it breaks down:</strong> your house has one owner making decisions. In an organization, the person choosing the control, the person installing it, and the person living with the inconvenience are usually three different people - which is why change management exists.</p></div>
+
+      <div class="subsection">
+        <h3>Axis 2 - Type: what it does about the threat</h3>
+        <table>
+          <thead><tr><th>Type</th><th>Function</th><th>Timing</th></tr></thead>
+          <tbody>
+            <tr><td>Preventive</td><td>Stops the event from occurring</td><td>Before</td></tr>
+            <tr><td>Deterrent</td><td>Discourages the attempt</td><td>Before</td></tr>
+            <tr><td>Detective</td><td>Identifies that it occurred</td><td>During or after</td></tr>
+            <tr><td>Corrective</td><td>Fixes damage and restores state</td><td>After</td></tr>
+            <tr><td>Compensating</td><td>Substitutes when the primary control is not feasible</td><td>Any</td></tr>
+            <tr><td>Directive</td><td>Instructs or mandates behavior</td><td>Before</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>The two axes are independent</h3>
+        <p>Any category can pair with any type. This is the source of most
+        confusion, so work through the same control across types:</p>
+        <figure class="figure">
+        <svg viewBox="0 0 720 300" role="img" aria-labelledby="mxTitle mxDesc">
+          <title id="mxTitle">Control category and type are independent axes</title>
+          <desc id="mxDesc">A grid with four control categories across the top - technical, managerial, operational, physical - and six control types down the side - preventive, deterrent, detective, corrective, compensating, directive. Any category can pair with any type.</desc>
+          <text x="20" y="24" class="svg-label">Category (who implements it)</text>
+          <g class="svg-mono">
+            <rect x="170" y="36" width="130" height="30" rx="6" class="svg-box brand"/>
+            <text x="235" y="56" text-anchor="middle" class="svg-label">Technical</text>
+            <rect x="308" y="36" width="130" height="30" rx="6" class="svg-box brand"/>
+            <text x="373" y="56" text-anchor="middle" class="svg-label">Managerial</text>
+            <rect x="446" y="36" width="130" height="30" rx="6" class="svg-box brand"/>
+            <text x="511" y="56" text-anchor="middle" class="svg-label">Operational</text>
+            <rect x="584" y="36" width="120" height="30" rx="6" class="svg-box brand"/>
+            <text x="644" y="56" text-anchor="middle" class="svg-label">Physical</text>
+          </g>
+          <text x="20" y="96" class="svg-label">Type (what it does)</text>
+          <g>
+            <rect x="20" y="106" width="140" height="26" rx="6" class="svg-box accent"/>
+            <text x="90" y="124" text-anchor="middle" class="svg-sub">Preventive</text>
+            <rect x="20" y="138" width="140" height="26" rx="6" class="svg-box accent"/>
+            <text x="90" y="156" text-anchor="middle" class="svg-sub">Deterrent</text>
+            <rect x="20" y="170" width="140" height="26" rx="6" class="svg-box accent"/>
+            <text x="90" y="188" text-anchor="middle" class="svg-sub">Detective</text>
+            <rect x="20" y="202" width="140" height="26" rx="6" class="svg-box accent"/>
+            <text x="90" y="220" text-anchor="middle" class="svg-sub">Corrective</text>
+            <rect x="20" y="234" width="140" height="26" rx="6" class="svg-box accent"/>
+            <text x="90" y="252" text-anchor="middle" class="svg-sub">Compensating</text>
+            <rect x="20" y="266" width="140" height="26" rx="6" class="svg-box accent"/>
+            <text x="90" y="284" text-anchor="middle" class="svg-sub">Directive</text>
+          </g>
+          <g class="svg-line" opacity="0.55">
+            <path d="M170 106 L704 106"/><path d="M170 138 L704 138"/><path d="M170 170 L704 170"/>
+            <path d="M170 202 L704 202"/><path d="M170 234 L704 234"/><path d="M170 266 L704 266"/>
+            <path d="M170 292 L704 292"/>
+            <path d="M170 106 L170 292"/><path d="M308 106 L308 292"/>
+            <path d="M446 106 L446 292"/><path d="M584 106 L584 292"/><path d="M704 106 L704 292"/>
+          </g>
+          <text x="437" y="200" text-anchor="middle" class="svg-sub">Any cell is a valid combination</text>
+        </svg>
+        <figcaption>24 valid combinations. Questions often give you a control and ask for one axis while offering distractors from the other.</figcaption>
+      </figure>
+        <p>Nothing about the camera changed. The <em>type</em> changed with what
+        the scenario says the camera accomplishes. When an exam question offers
+        two types for the same device, reread the scenario for the outcome.</p>
+
+        <div class="callout warn">
+          <span class="tag">[EXAM]</span>
+          Deterrent and preventive are the most commonly confused pair. A
+          deterrent affects an attacker's decision to try. A preventive control
+          stops them whether or not they try. A warning banner is deterrent; a
+          locked door is preventive.
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Defence in depth</h3>
+        <p>No single control is trusted to hold. Defence in depth layers controls
+        so that the failure of any one does not produce a breach, and the layers
+        are deliberately drawn from different categories - a technical control and
+        a physical control fail for different reasons, so they are unlikely to
+        fail simultaneously.</p>
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏰</span> Think of it like…</p><p class="analogy__title">A medieval castle</p><p>A castle never relied on one wall. An attacker faced a moat, then an outer wall, then a gate with a portcullis, then guards in the courtyard, and only then the keep. Each layer was independent: a ladder that defeated the wall did nothing about the moat, and bribing a guard did not open the portcullis.</p><p>That independence is the point of defence in depth, and it is why the layers are drawn from different control categories. A technical control and a physical control fail for different reasons, so they are unlikely to fail on the same day.</p></div>
+
+        <p>Consider protecting a database of customer records. A single control
+        would be a password on the database. Layered, the same asset might be
+        protected by network segmentation restricting which hosts can reach it, a
+        firewall rule limiting the ports, authentication requiring valid
+        credentials, authorization limiting which tables an account can read,
+        encryption at rest so stolen disks are useless, monitoring alerting on
+        unusual query volume, and backups enabling recovery. An attacker must
+        defeat each layer in turn, and the monitoring layer means the attempt is
+        likely to be noticed partway through.</p>
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏨</span> Think of it like…</p><p class="analogy__title">A hotel keycard</p><p>Your keycard opens your room, the gym, and the pool. It does not open other guests' rooms, the manager's office, or the safe behind reception. Housekeeping's card opens every guest room but not the office. The manager's opens nearly everything.</p><p>Nobody is being distrusted - each card simply carries the access its job requires. And when a card is lost, the damage is bounded by what that card could open. Least privilege does not stop the card being stolen; it decides how bad the theft is.</p></div>
+
+        <p>The related principle is <span class="term" data-term="least privilege">least
+        privilege</span>: every account gets the minimum access needed for its
+        function, and nothing more. Least privilege limits blast radius. It does
+        not prevent compromise, but it determines how much a compromise is worth.
+        A helpdesk account that can reset passwords is damaging; a helpdesk
+        account with domain administrator rights is catastrophic, and the
+        difference is a configuration decision rather than an attacker capability.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Choosing a control: the reasoning the exam expects</h3>
+        <p>Scenario questions rarely ask which control is strongest. They ask
+        which is <em>most appropriate</em> given a stated constraint, and the
+        constraint is the key to the answer. Work in this order:</p>
+        <table>
+          <thead><tr><th>Step</th><th>Question to ask</th></tr></thead>
+          <tbody>
+            <tr><td>1. Identify the asset</td><td>What is actually being protected, and how much is it worth?</td></tr>
+            <tr><td>2. Identify the threat</td><td>What specifically goes wrong, and who causes it?</td></tr>
+            <tr><td>3. Read the constraint</td><td>Budget, uptime, legacy system, regulation, timeline - there is always one</td></tr>
+            <tr><td>4. Match type to timing</td><td>Stop it, discourage it, notice it, or recover from it?</td></tr>
+            <tr><td>5. Check feasibility</td><td>If the obvious control is blocked by the constraint, the answer is compensating</td></tr>
+          </tbody>
+        </table>
+        <p>Step three is where most wrong answers come from. A scenario that
+        mentions a system which "cannot be taken offline" or software that "the
+        vendor no longer supports" has told you that the textbook answer is
+        unavailable, and any option proposing it is a distractor no matter how
+        technically sound it sounds.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Borderline classifications worth memorising</h3>
+        <p>A handful of controls are consistently misclassified. These are worth
+        committing to memory because they recur.</p>
+        <table>
+          <thead><tr><th>Control</th><th>Correct classification</th><th>Common error</th></tr></thead>
+          <tbody>
+            <tr><td>Backups</td><td>Technical, corrective</td><td>Called preventive - they prevent nothing, they restore</td></tr>
+            <tr><td>Security awareness training</td><td>Operational, directive</td><td>Called managerial - the policy requiring it is managerial, the delivery is operational</td></tr>
+            <tr><td>Warning banner at login</td><td>Technical, deterrent</td><td>Called preventive - it stops nobody determined to proceed</td></tr>
+            <tr><td>Encryption at rest</td><td>Technical, preventive</td><td>Called detective - it prevents disclosure, it detects nothing</td></tr>
+            <tr><td>Log review</td><td>Operational, detective</td><td>Called technical - the SIEM is technical, a human reviewing output is operational</td></tr>
+            <tr><td>Separation of duties</td><td>Managerial, preventive</td><td>Called operational - it is a policy decision about role design</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Practice: classify the control</h3>      <div class="subsection">
+        <h3>Practice: classify the control</h3>
+        <p>Read each scenario and choose both axes. The same device can change
+        type depending on what the scenario says it accomplishes, so read for the
+        outcome rather than the hardware.</p>
+        <div class="classifier" data-classifier="controls"></div>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Classification walkthrough</h3>
+        <p>Step through how one control changes type as the scenario changes.</p>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="controls">Run walkthrough</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="controls">Clear</button>
+        </div>
+        <div class="terminal" id="demo-controls" aria-live="polite" aria-label="Control classification walkthrough output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Compensating controls</h3>
+        <p>A <span class="term" data-term="compensating control">compensating control</span> is used when the required control cannot be
+        implemented. Scenarios describing legacy systems that cannot be patched
+        are almost always leading to a compensating control answer: the system
+        cannot be patched, so it is isolated on a segmented network with
+        restricted access and enhanced monitoring.</p>
+        <p>Note the exam's framing: compensating controls are a legitimate,
+        documented response to a constraint, not a failure. What makes them
+        acceptable is that they are chosen deliberately and provide comparable
+        risk reduction.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="zero-trust" data-icon="🚦" role="tabpanel"
+             aria-labelledby="tab-zero-trust" tabindex="-1">
+      <h2 class="section-title">Zero Trust and Physical Security</h2>
+
+      <div class="subsection">
+        <h3>Why the perimeter model failed</h3>
+        <p>Traditional network security assumed a trusted inside and an untrusted
+        outside, separated by a firewall. Once authenticated at the perimeter, a
+        user or device was broadly trusted. Cloud services, remote work, and
+        mobile devices dissolved the perimeter, and the model's core weakness
+        became decisive: an attacker who gets inside once inherits that broad
+        trust and moves laterally without further challenge.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The <span class="term" data-term="zero trust">zero trust</span> principle</h3>
+        <p>Zero trust removes implicit trust based on network location. Every
+        request is authenticated, authorized, and evaluated against policy
+        regardless of where it originates. The working summary is
+        <em>never trust, always verify</em> - trust is never inherited from a
+        prior decision or a network position.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏢</span> Think of it like…</p><p class="analogy__title">Badging into an office building</p><p>The old perimeter model is the lobby turnstile. You badge in once at the front door, and from then on you can walk into any office, any meeting room, and the server closet, because being inside the building <em>is</em> the authorisation. Anyone who tailgates through the turnstile inherits exactly the same freedom.</p><p>Zero trust replaces this with a badge reader on every interior door. Your badge is checked at each one, every time, and the system asks more than whether the badge is valid: is this person normally on this floor, at this hour, and is their access still current? A single tailgater now reaches the lobby and nowhere else.</p><p class="analogy__limit"><strong>Where it breaks down:</strong> a building has a fixed set of doors. A network has services appearing and disappearing constantly, which is why zero trust needs an accurate inventory before it can enforce anything.</p></div>
+
+      <div class="subsection">
+        <h3>Control plane and data plane</h3>
+        <p>CompTIA splits the zero trust architecture into two planes, and the
+        objective names specific components you should recognize.</p>
+        <figure class="figure">
+        <svg viewBox="0 0 700 320" role="img" aria-labelledby="ztTitle ztDesc">
+          <title id="ztTitle">Zero trust control plane and data plane</title>
+          <desc id="ztDesc">A subject sends a request to a policy enforcement point in the data plane. The enforcement point asks the control plane, containing the policy engine and policy administrator, for a decision, then allows or blocks access to the resource.</desc>
+          <rect x="20" y="20" width="660" height="118" rx="12" class="svg-box brand" opacity="0.35"/>
+          <text x="40" y="44" class="svg-label">Control plane &mdash; decides</text>
+          <rect x="120" y="56" width="200" height="62" rx="10" class="svg-box brand"/>
+          <text x="220" y="80" text-anchor="middle" class="svg-label">Policy Engine</text>
+          <text x="220" y="100" text-anchor="middle" class="svg-sub">evaluates the request</text>
+          <rect x="370" y="56" width="220" height="62" rx="10" class="svg-box brand"/>
+          <text x="480" y="80" text-anchor="middle" class="svg-label">Policy Administrator</text>
+          <text x="480" y="100" text-anchor="middle" class="svg-sub">issues the decision</text>
+
+          <rect x="20" y="176" width="660" height="126" rx="12" class="svg-box accent" opacity="0.35"/>
+          <text x="40" y="200" class="svg-label">Data plane &mdash; enforces</text>
+          <rect x="40" y="216" width="150" height="60" rx="10" class="svg-box"/>
+          <text x="115" y="243" text-anchor="middle" class="svg-label">Subject</text>
+          <text x="115" y="262" text-anchor="middle" class="svg-sub">user or device</text>
+          <rect x="265" y="216" width="170" height="60" rx="10" class="svg-box accent"/>
+          <text x="350" y="240" text-anchor="middle" class="svg-label">Enforcement Point</text>
+          <text x="350" y="260" text-anchor="middle" class="svg-sub">allows or blocks</text>
+          <rect x="510" y="216" width="150" height="60" rx="10" class="svg-box"/>
+          <text x="585" y="243" text-anchor="middle" class="svg-label">Resource</text>
+          <text x="585" y="262" text-anchor="middle" class="svg-sub">app or data</text>
+
+          <path d="M192 246 L262 246" class="svg-line accent" marker-end="url(#az)"/>
+          <text x="227" y="238" text-anchor="middle" class="svg-mono">request</text>
+          <path d="M437 246 L507 246" class="svg-line accent" marker-end="url(#az)"/>
+          <path d="M350 214 L350 122" class="svg-line brand" marker-end="url(#bz)" stroke-dasharray="5 4"/>
+          <text x="362" y="172" class="svg-mono">asks for a decision</text>
+          <defs>
+            <marker id="az" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker>
+            <marker id="bz" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-brand"/></marker>
+          </defs>
+        </svg>
+        <figcaption>Trust is never inherited from a prior decision or a network position.</figcaption>
+      </figure>
+        <p>The mental model: the control plane <em>decides</em>, the data plane
+        <em>enforces</em>. The policy enforcement point sits in the traffic path
+        and asks the control plane whether to allow each request.</p>
+
+        <div class="callout info">
+          <span class="tag">[NOTE]</span>
+          Adaptive identity means the confidence in an identity changes with
+          context - the same credentials from an unrecognized device in an
+          unusual location produce a weaker trust signal and may trigger
+          additional verification.
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Microsegmentation and the end of the flat network</h3>
+        <p>The practical expression of zero trust inside a network is
+        microsegmentation: dividing the environment into small zones with policy
+        enforced between them, rather than maintaining one large trusted interior.
+        On a flat network, an attacker who compromises a receptionist's workstation
+        can reach the finance server because both sit inside the perimeter. With
+        microsegmentation, that workstation can reach only the specific services
+        its role requires, and an attempt to reach anything else is both blocked
+        and logged.</p>
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🚢</span> Think of it like…</p><p class="analogy__title">Watertight compartments in a ship</p><p>Ships are built with sealed bulkheads dividing the hull into compartments. A breach floods the compartment it happened in - not the whole vessel. The ship survives damage that would sink an open hull.</p><p>Microsegmentation is the same design applied to a network. A compromised receptionist's workstation floods one compartment. Without it, the network is an open hull and a single leak reaches the engine room.</p></div>
+
+        <p>This directly attacks lateral movement, which is the phase where most
+        breaches escalate from a single compromised endpoint into an
+        organization-wide incident. The initial compromise is often unremarkable -
+        a phishing click, a reused password. What turns it into a breach is the
+        attacker's ability to move sideways toward something valuable.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Why zero trust migrations are difficult</h3>
+        <p>Exam questions increasingly describe organizations partway through a
+        zero trust migration, so it helps to understand why the destination is
+        rarely reached cleanly.</p>
+        <p>The first obstacle is inventory. You cannot write policy for traffic you
+        do not know exists. Most organizations discover during migration that they
+        have undocumented dependencies - a reporting server that quietly reaches
+        into a production database at 3 a.m., a legacy integration nobody
+        remembers building. Enforcing policy before mapping these breaks
+        production, which is why zero trust rollouts typically begin in a
+        monitor-only mode that logs what <em>would</em> have been blocked.</p>
+        <p>The second is legacy systems. Zero trust assumes every component can
+        participate in authentication and policy evaluation. Older systems often
+        cannot: they support no modern authentication, cannot present device
+        posture, and break when placed behind a proxy. These become the
+        compensating-control cases from the previous section - isolated,
+        restricted, and monitored rather than fully integrated.</p>
+        <p>The third is cultural. Zero trust removes standing access that people
+        have relied on for years, and every removal is felt as friction by someone
+        with a legitimate job to do. Migrations that ignore this produce shadow IT
+        as staff route around the controls, which leaves the organization less
+        secure than before it started.</p>
+
+        <div class="callout info">
+          <span class="tag">[NOTE]</span>
+          Zero trust is an architecture and a strategy, not a product. Vendors
+          sell components that support it, but no purchase makes an organization
+          zero trust. Any exam option describing a single product as the complete
+          answer is a distractor.
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Zero trust decision simulator</h3>      <div class="interactive-demo">
+        <h3>Zero trust decision simulator</h3>
+        <p>Toggle the context signals and watch the policy decision change. Notice
+        that valid credentials alone never produce an allow.</p>
+        <div class="chips" role="group" aria-label="Request context signals">
+          <button type="button" class="chip on" data-action="ztToggle" data-sig="creds" aria-pressed="true">Valid credentials</button>
+          <button type="button" class="chip on" data-action="ztToggle" data-sig="device" aria-pressed="true">Managed device</button>
+          <button type="button" class="chip on" data-action="ztToggle" data-sig="location" aria-pressed="true">Known location</button>
+          <button type="button" class="chip on" data-action="ztToggle" data-sig="hours" aria-pressed="true">Business hours</button>
+          <button type="button" class="chip on" data-action="ztToggle" data-sig="mfa" aria-pressed="true">MFA satisfied</button>
+        </div>
+        <div class="readout" id="ztReadout" aria-live="polite">
+          <span class="readout__verdict allow">ALLOW</span>
+          <span class="readout__why">All signals strong.</span>
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Evaluating a request under zero trust</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="ztna">Evaluate request</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="ztna">Clear</button>
+        </div>
+        <div class="terminal" id="demo-ztna" aria-live="polite" aria-label="Zero trust evaluation output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Physical security</h3>
+        <p>Objective 1.2 lists physical controls alongside zero trust because
+        logical access control is undone by physical access. An attacker at the
+        console of a server bypasses most network controls entirely.</p>
+        <table>
+          <thead><tr><th>Control</th><th>Primary function</th></tr></thead>
+          <tbody>
+            <tr><td>Bollards</td><td>Prevent vehicle approach to a building</td></tr>
+            <tr><td>Access control vestibule</td><td>Prevents tailgating by admitting one person at a time</td></tr>
+            <tr><td>Fencing</td><td>Deters and delays approach</td></tr>
+            <tr><td>Video surveillance</td><td>Deters, and detects when recorded</td></tr>
+            <tr><td>Security guard</td><td>Deters, detects, and can intervene</td></tr>
+            <tr><td>Access badge</td><td>Authenticates identity at a physical boundary</td></tr>
+            <tr><td>Lighting</td><td>Deters and improves detection</td></tr>
+            <tr><td>Sensors</td><td>Detect via infrared, pressure, microwave, or ultrasonic</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Deception and disruption technology</h3>
+        <p>These controls deliberately present false targets to attackers.</p>
+        <table>
+          <thead><tr><th>Technology</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td>Honeypot</td><td>A decoy system that appears to be a legitimate target</td></tr>
+            <tr><td>Honeynet</td><td>A network of honeypots simulating a full environment</td></tr>
+            <tr><td>Honeyfile</td><td>A decoy file that triggers an alert when accessed</td></tr>
+            <tr><td>Honeytoken</td><td>Fake credentials or data whose use signals a breach</td></tr>
+          </tbody>
+        </table>
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🗺️</span> Think of it like…</p><p class="analogy__title">Trap streets on a map</p><p>Cartographers historically inserted a fictitious street into their maps. The street served no navigational purpose - it existed solely so that if it appeared on a competitor's map, the copying was proven. No honest mapmaker could have surveyed a road that was never built.</p><p>A honeytoken works identically. Fake credentials sitting in a config file serve no legitimate purpose, so any use of them is proof of compromise. This is why deception controls produce almost no false positives while most detective controls drown analysts in noise.</p></div>
+
+        <p>Their shared value is detection quality. There is no legitimate reason
+        to access a honeyfile, so an access is a high-confidence indicator of
+        compromise with almost no false positives - unlike most detective
+        controls, which drown analysts in noise.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="change-management" data-icon="🔄" role="tabpanel"
+             aria-labelledby="tab-change-management" tabindex="-1">
+      <h2 class="section-title">Change Management</h2>
+
+      <p>Change management gets its own objective (1.3) because uncontrolled
+      change is a leading cause of both outages and security gaps. A firewall
+      rule added at 2 a.m. to resolve an incident, never documented and never
+      removed, is a permanent hole nobody knows exists.</p>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🔨</span> Think of it like…</p><p class="analogy__title">Renovating a house</p><p>You do not knock down a wall because it is in your way. You first check whether it is load-bearing - that is <strong>impact analysis</strong>. You pull a permit rather than deciding alone, because the consequences land on other people - that is <strong>approval</strong>. You schedule the noisy work when the household can tolerate it - a <strong>maintenance window</strong>. And when you are finished you update the blueprints, so the next person who opens that wall knows what is behind it.</p><p>Skipping the last step is how houses end up with wiring nobody can explain and pipes in unexpected places. Skipping it in a network is how an organization ends up with a firewall rule nobody can account for - which is exactly the scenario in Lab 3.</p></div>
+
+      <div class="subsection">
+        <h3>The business process</h3>
+        <figure class="figure">
+        <svg viewBox="0 0 720 220" role="img" aria-labelledby="cmTitle cmDesc">
+          <title id="cmTitle">The change management process</title>
+          <desc id="cmDesc">Six sequential stages: request, impact analysis, approval by a change advisory board, test, implement, and document. Each stage lists what it produces.</desc>
+          <g>
+            <rect x="10" y="60" width="105" height="66" rx="10" class="svg-box"/>
+            <text x="62" y="88" text-anchor="middle" class="svg-label">Request</text>
+            <text x="62" y="107" text-anchor="middle" class="svg-sub">owner named</text>
+            <rect x="130" y="60" width="115" height="66" rx="10" class="svg-box"/>
+            <text x="187" y="88" text-anchor="middle" class="svg-label">Impact</text>
+            <text x="187" y="107" text-anchor="middle" class="svg-sub">what breaks?</text>
+            <rect x="260" y="60" width="115" height="66" rx="10" class="svg-box brand"/>
+            <text x="317" y="88" text-anchor="middle" class="svg-label">Approval</text>
+            <text x="317" y="107" text-anchor="middle" class="svg-sub">CAB signs off</text>
+            <rect x="390" y="60" width="105" height="66" rx="10" class="svg-box"/>
+            <text x="442" y="88" text-anchor="middle" class="svg-label">Test</text>
+            <text x="442" y="107" text-anchor="middle" class="svg-sub">backout plan</text>
+            <rect x="510" y="60" width="105" height="66" rx="10" class="svg-box warn"/>
+            <text x="562" y="88" text-anchor="middle" class="svg-label">Implement</text>
+            <text x="562" y="107" text-anchor="middle" class="svg-sub">in a window</text>
+            <rect x="630" y="60" width="80" height="66" rx="10" class="svg-box accent"/>
+            <text x="670" y="88" text-anchor="middle" class="svg-label">Document</text>
+            <text x="670" y="107" text-anchor="middle" class="svg-sub">update all</text>
+          </g>
+          <g class="svg-line">
+            <path d="M117 93 L128 93" marker-end="url(#ac)"/><path d="M247 93 L258 93" marker-end="url(#ac)"/>
+            <path d="M377 93 L388 93" marker-end="url(#ac)"/><path d="M497 93 L508 93" marker-end="url(#ac)"/>
+            <path d="M617 93 L628 93" marker-end="url(#ac)"/>
+          </g>
+          <defs><marker id="ac" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+          <text x="360" y="170" text-anchor="middle" class="svg-sub">The final stage is the one most often skipped &mdash; and the one that causes harm during an incident,</text>
+          <text x="360" y="189" text-anchor="middle" class="svg-sub">when responders trust a diagram that no longer matches reality.</text>
+        </svg>
+        <figcaption>Skipping documentation is what turns a routine change into a permanent undocumented hole.</figcaption>
+      </figure>
+        <p>Key terms the exam uses:</p>
+        <table>
+          <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Approval process</td><td>Formal authorization, typically by a change advisory board</td></tr>
+            <tr><td>Ownership</td><td>The identified party accountable for the change</td></tr>
+            <tr><td>Stakeholders</td><td>Everyone affected, who must be informed</td></tr>
+            <tr><td>Impact analysis</td><td>Assessment of what the change could break</td></tr>
+            <tr><td>Test results</td><td>Evidence the change works before production</td></tr>
+            <tr><td>Backout plan</td><td>Documented path to revert if it fails</td></tr>
+            <tr><td>Maintenance window</td><td>Scheduled time when disruption is acceptable</td></tr>
+            <tr><td>Standard operating procedure</td><td>Documented repeatable process</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Technical implications</h3>
+        <p>The objective names specific technical consequences of change:</p>
+        <table>
+          <thead><tr><th>Implication</th><th>Concern</th></tr></thead>
+          <tbody>
+            <tr><td>Allow and deny lists</td><td>Change may require updating both</td></tr>
+            <tr><td>Restricted activities</td><td>Some changes are out of scope for the window</td></tr>
+            <tr><td>Downtime</td><td>Availability impact must be planned</td></tr>
+            <tr><td>Service and application restart</td><td>Dependencies may not recover cleanly</td></tr>
+            <tr><td>Legacy applications</td><td>May break in ways modern software would not</td></tr>
+            <tr><td>Dependencies</td><td>Changing one component affects others</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Who approves, and why a board exists</h3>
+        <p>The change advisory board exists to bring the people who will be
+        affected into the decision before it is made. A typical board includes
+        representation from operations, security, the application owner, and the
+        business unit that depends on the service. The composition is the point:
+        an engineer evaluating their own change will assess technical risk
+        accurately and business risk poorly, because they do not know that
+        Thursday is payroll processing.</p>
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">⚕️</span> Think of it like…</p><p class="analogy__title">A surgical team briefing</p><p>Before an operation the team pauses to confirm the patient, the procedure, and the site aloud. The surgeon already knows all of it. The briefing exists because the surgeon is not the only person whose knowledge matters, and because the one time assumptions diverge is the time it matters most.</p><p>A change advisory board serves the same function. The engineer understands the technical risk better than anyone in the room. What they do not know is that Thursday is payroll processing, or that another team's release depends on the same component.</p></div>
+
+        <p>Boards also standardise the treatment of routine work. Most mature
+        processes define pre-approved standard changes - low-risk, well-understood,
+        repeatedly executed - that proceed without individual review. This matters
+        because a process that requires a board meeting to patch a workstation
+        will be bypassed within a month, and a bypassed process protects nothing.
+        Right-sizing the approval burden is what keeps the process alive.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>What a change can break</h3>
+        <p>The objective lists technical implications, but they are easier to
+        remember as a set of questions to ask before implementing.</p>
+        <table>
+          <thead><tr><th>Implication</th><th>Question to ask beforehand</th></tr></thead>
+          <tbody>
+            <tr><td>Allow and deny lists</td><td>Does this change an address, port, or certificate referenced elsewhere?</td></tr>
+            <tr><td>Restricted activities</td><td>Is any part of this out of scope for the approved window?</td></tr>
+            <tr><td>Downtime</td><td>Who cannot work while this runs, and have they been told?</td></tr>
+            <tr><td>Service restart</td><td>Will dependent services reconnect on their own, or need manual intervention?</td></tr>
+            <tr><td>Application restart</td><td>Are in-flight transactions lost, and does that matter?</td></tr>
+            <tr><td>Legacy applications</td><td>Is anything here unsupported and likely to fail in unexpected ways?</td></tr>
+            <tr><td>Dependencies</td><td>What else consumes this component, and was it tested?</td></tr>
+          </tbody>
+        </table>
+        <p>Dependencies cause the most incidents because they are the hardest to
+        enumerate. A certificate renewal that looks like a single-server change can
+        take down six services that pinned that certificate, none of which appeared
+        in the change record. This is why impact analysis is a distinct stage
+        rather than a paragraph in the request.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Documentation and version control</h3>      <div class="subsection">
+        <h3>Documentation and version control</h3>
+        <p>Two outputs must survive every change: updated diagrams and updated
+        policies or procedures. A network diagram that no longer matches reality
+        actively causes harm during an incident, when responders trust it and
+        act on stale information.</p>
+        <p>Version control tracks changes over time so any modification can be
+        identified, attributed, and reverted. Applied to infrastructure as code
+        and configuration files, it makes the change history itself an audit
+        trail - which is why version control appears in a security exam rather
+        than only a development one.</p>
+
+        <p>Version control also underpins the ability to answer the question an
+        auditor actually asks, which is not "is this configuration correct" but
+        "who changed it, when, and who approved it." A configuration file in
+        version control answers all three from the commit history. The same file
+        edited directly on a production host answers none of them.</p>
+
+        <div class="callout warn">
+          <span class="tag">[EXAM]</span>
+          Emergency changes are the exception the exam likes to probe. An urgent
+          fix may legitimately bypass advance approval, but it never bypasses
+          documentation. The expected answer is retroactive review: the change is
+          made, then submitted to the change advisory board after the fact so the
+          record is complete and the temporary fix does not become permanent.
+        </div>
+
+        <div class="callout ok">
+          <span class="tag">[OK]</span>
+          A useful test for whether change management is working: pick a
+          production firewall rule at random and ask who requested it, when, and
+          why. If nobody can answer, the process exists on paper only.
+        </div>
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="🧪" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        These are analysis labs, not software labs - nothing to install. Your
+        answers save in this browser as you type, and each lab generates a Word
+        document you can submit. Graded lab assignments and due dates are posted
+        in Canvas; these activities are the preparation for them.
+      </div>
+
+      <div class="lab" data-lab="control-inventory"></div>
+      <div class="lab" data-lab="cia-tradeoff"></div>
+      <div class="lab" data-lab="change-postmortem"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers are stored in this browser only. If you clear browsing data, use a
+        different computer, or work in private browsing, they will not follow you.
+        Generate the report and save the file when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "cia triad": "Confidentiality, Integrity, and Availability - the three competing properties every security control protects, usually at some cost to the other two.",
+    "confidentiality": "Information is available only to those authorized to see it. Primary mechanism: encryption, supported by access control.",
+    "integrity": "Information has not been altered by anyone unauthorized to alter it. Primary mechanism: cryptographic hashing.",
+    "availability": "Information and systems are accessible when authorized users need them. Mechanisms: redundancy, failover, backups, capacity planning.",
+    "non-repudiation": "A party cannot credibly deny having performed an action. Requires a digital signature, not merely a hash.",
+    "digital signature": "A hash encrypted with the signer's private key. Provides integrity AND non-repudiation, because only one party holds that key.",
+    "authentication": "Proving identity - the first AAA stage. Something you know, have, or are.",
+    "authorization": "Determining what an authenticated identity is permitted to do. The second AAA stage.",
+    "accounting": "Recording what was done, and by whom. The third AAA stage; useless for attribution without authentication.",
+    "gap analysis": "Comparing current security state against a target state (framework, policy, or regulation) and documenting the difference as a prioritized remediation list.",
+    "zero trust": "Removing implicit trust based on network location. Every request is authenticated and authorized regardless of origin - never trust, always verify.",
+    "policy enforcement point": "The data plane component that sits in the traffic path and enforces the allow-or-block decision made by the control plane.",
+    "adaptive identity": "Trust in an identity varies with context. The same credentials from an unrecognized device or unusual location produce a weaker signal and may trigger extra verification.",
+    "compensating control": "A substitute control used when the required control cannot be implemented - for example isolating a legacy system that cannot be patched.",
+    "least privilege": "Every account gets the minimum access its function requires and nothing more. It does not prevent compromise; it determines how much a compromise is worth.",
+    "defense in depth": "Layering controls from different categories so the failure of any one does not produce a breach.",
+    "data in use": "Data loaded in memory and being processed. The hardest state to protect, since a processor generally needs plaintext to compute on it.",
+    "lateral movement": "An attacker moving sideways through a network from an initial foothold toward something valuable. The phase microsegmentation is designed to block.",
+    "honeytoken": "Fake credentials or data whose use signals a breach. High-confidence detection with almost no false positives, since there is no legitimate reason to use one."
+  };
+
+  window.MODALS = {
+    "cia-tradeoffs": {
+      title: "Three trade-off cases",
+      body:
+        "<p>Each case shows one property strengthened at another's expense.</p>" +
+        "<table><thead><tr><th>Decision</th><th>Gained</th><th>Lost</th></tr></thead><tbody>" +
+        "<tr><td>Full-disk encryption on all laptops</td><td>Confidentiality: a lost device leaks nothing</td>" +
+        "<td>Availability: a lost key means unrecoverable data</td></tr>" +
+        "<tr><td>MFA on every internal application</td><td>Confidentiality: stolen passwords alone are useless</td>" +
+        "<td>Availability: a lost token locks out a legitimate user mid-shift</td></tr>" +
+        "<tr><td>Replicating records to five regions</td><td>Availability: no single site failure is fatal</td>" +
+        "<td>Confidentiality: five times the surface to secure and audit</td></tr>" +
+        "</tbody></table>" +
+        "<p>Exam scenarios often describe an organization that over-rotated on one " +
+        "property. Identifying which property was traded away is usually faster than " +
+        "reasoning about the control itself.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "controls": [
+      { text: "$ classify --control 'security camera'", cls: "prompt", delay: 320 },
+      { text: "Category: PHYSICAL (a tangible device)", cls: "info", delay: 520 },
+      { text: "Type depends entirely on what the scenario says it accomplishes:", cls: "output", delay: 620 },
+      { text: "  visible + warning sign, meant to discourage  -> DETERRENT", cls: "output", delay: 560 },
+      { text: "  recording to storage for later review        -> DETECTIVE", cls: "output", delay: 560 },
+      { text: "  monitored live by a guard who intervenes     -> PREVENTIVE", cls: "output", delay: 560 },
+      { text: "[NOTE] Nothing about the device changed - only its stated purpose.", cls: "warning", delay: 640 },
+      { text: "Exam tactic: reread the scenario for the OUTCOME, not the hardware.", cls: "info", delay: 500 }
+    ],
+    "aaa": [
+      { text: "$ trace-access --user jsmith --resource //fs01/payroll", cls: "prompt", delay: 320 },
+      { text: "[1] AUTHENTICATION  password + TOTP verified", cls: "info", delay: 520 },
+      { text: "    -> identity established: jsmith", cls: "output", delay: 420 },
+      { text: "[2] AUTHORIZATION   group membership: Finance-Read", cls: "info", delay: 520 },
+      { text: "    -> payroll share requires Finance-Write", cls: "output", delay: 420 },
+      { text: "    -> ACCESS DENIED", cls: "error", delay: 460 },
+      { text: "[3] ACCOUNTING      logged: jsmith, denied, 14:02:11", cls: "info", delay: 520 },
+      { text: "[NOTE] Authentication SUCCEEDED. Authorization failed.", cls: "warning", delay: 620 },
+      { text: "Questions describing 'logged in but cannot open the file' are", cls: "output", delay: 480 },
+      { text: "authorization problems, not authentication problems.", cls: "output", delay: 440 }
+    ],
+    "ztna": [
+      { text: "$ evaluate --subject jsmith --device laptop-4471", cls: "prompt", delay: 320 },
+      { text: "PEP intercepts request (data plane)", cls: "info", delay: 480 },
+      { text: "  -> forwards context to Policy Engine (control plane)", cls: "output", delay: 460 },
+      { text: "Policy Engine evaluating:", cls: "info", delay: 440 },
+      { text: "    device compliant ......... PASS", cls: "output", delay: 380 },
+      { text: "    location ................. unrecognized (Lagos)", cls: "warning", delay: 420 },
+      { text: "    time ..................... 03:14 local", cls: "warning", delay: 400 },
+      { text: "  -> adaptive identity: trust signal WEAK", cls: "warning", delay: 500 },
+      { text: "Policy Administrator: step-up verification required", cls: "info", delay: 520 },
+      { text: "PEP enforces: request HELD pending MFA challenge", cls: "output", delay: 500 },
+      { text: "[NOTE] Prior successful login granted no standing trust.", cls: "warning", delay: 620 }
+    ]
+  };
+
+
+
+  // ---- lab activities ----
+  var CAT = ["Technical", "Managerial", "Operational", "Physical"];
+  var TYP = ["Preventive", "Deterrent", "Detective", "Corrective", "Compensating", "Directive"];
+
+  window.LABS = {
+    "control-inventory": {
+      title: "Lab 1 - Build a control matrix",
+      time: "~25 minutes",
+      objective: "Classify real controls on both axes, including the cases most often got wrong, then defend a borderline call in your own words.",
+      steps: [
+        {
+          type: "match",
+          prompt: "Classify each control on both axes.",
+          hint: "Category asks who or what implements it. Type asks what it does about the threat, and when. Check your work when every row is filled.",
+          columns: [
+            { name: "cat", label: "Category", options: CAT },
+            { name: "type", label: "Type", options: TYP }
+          ],
+          items: [
+            { text: "Nightly encrypted backups to offsite storage", answers: { cat: "Technical", type: "Corrective" } },
+            { text: "Quarterly phishing awareness training run by the security team", answers: { cat: "Operational", type: "Directive" } },
+            { text: "Login banner warning that access is monitored", answers: { cat: "Technical", type: "Deterrent" } },
+            { text: "Access control vestibule at the data centre entrance", answers: { cat: "Physical", type: "Preventive" } },
+            { text: "Annual risk assessment presented to leadership", answers: { cat: "Managerial", type: "Directive" } },
+            { text: "File integrity monitoring alerting the SOC on binary changes", answers: { cat: "Technical", type: "Detective" } },
+            { text: "Isolating an unpatchable controller on a restricted VLAN", answers: { cat: "Technical", type: "Compensating" } },
+            { text: "Separation of duties between who requests and who approves payments", answers: { cat: "Managerial", type: "Preventive" } }
+          ],
+          explain: "Backups restore rather than prevent, so they are corrective. Training delivery is operational while the policy requiring it is managerial. A banner discourages but stops nobody, so it is deterrent. Separation of duties is a policy decision about role design, making it managerial."
+        },
+        {
+          type: "choice",
+          prompt: "A hospital runs an imaging system the vendor no longer supports. It cannot be patched, cannot be replaced for two years, and must stay online for patient care. Select every response that is appropriate.",
+          hint: "More than one is correct. Watch for options the stated constraints have already ruled out.",
+          options: [
+            "Place the system on an isolated network segment with strict ACLs",
+            "Apply the latest vendor security patches",
+            "Increase monitoring and logging around the system",
+            "Disconnect the system from the network entirely",
+            "Restrict which accounts can reach the system to a named list",
+            "Document the risk and set a review date"
+          ],
+          correct: [0, 2, 4, 5],
+          explain: "Patching is impossible by the scenario's own terms, and full disconnection breaks patient care, so both are ruled out by the constraints. The remaining four are the standard compensating-control package: isolate, monitor, restrict, and document."
+        },
+        {
+          type: "text",
+          prompt: "Pick the row from step 1 you found hardest and explain what made it ambiguous.",
+          hint: "Three or four sentences. Name what tipped your decision - the exam rewards being able to articulate this."
+        },
+        {
+          type: "text",
+          prompt: "List three controls you personally encounter in a typical week and classify each on both axes.",
+          hint: "Look beyond IT: a badge reader, a locked cabinet, or a required training module all count."
+        }
+      ]
+    },
+
+    "cia-tradeoff": {
+      title: "Lab 2 - Diagnose the trade-off",
+      time: "~20 minutes",
+      objective: "Practise the reasoning exam scenarios test: spotting which security property an organization sacrificed to strengthen another.",
+      steps: [
+        {
+          type: "match",
+          prompt: "For each decision, identify which property it strengthens and which it weakens.",
+          hint: "Every one of these trades something away. Availability is the most commonly sacrificed.",
+          columns: [
+            { name: "up", label: "Strengthens", options: ["Confidentiality", "Integrity", "Availability"] },
+            { name: "down", label: "Weakens", options: ["Confidentiality", "Integrity", "Availability"] }
+          ],
+          items: [
+            { text: "Full-disk encryption on all field laptops", answers: { up: "Confidentiality", down: "Availability" } },
+            { text: "Replicating the customer database to five regions", answers: { up: "Availability", down: "Confidentiality" } },
+            { text: "Requiring digital signatures on every config change", answers: { up: "Integrity", down: "Availability" } },
+            { text: "Publishing a read-only public status API with no auth", answers: { up: "Availability", down: "Confidentiality" } },
+            { text: "Locking accounts after three failed login attempts", answers: { up: "Confidentiality", down: "Availability" } }
+          ],
+          explain: "Encryption and lockouts both protect access at the cost of legitimate users getting locked out. Replication and open publishing both improve reach while widening the surface that must be secured. Signing every change catches tampering but adds a step that can fail."
+        },
+        {
+          type: "choice",
+          prompt: "A finance team discovers transaction records were altered over several months and nobody noticed. Select every statement that is true of this incident.",
+          hint: "Think about which property failed and what makes this class of failure distinctive.",
+          options: [
+            "This is primarily an integrity failure",
+            "Restoring from backup fully resolves it",
+            "The organization now cannot say which records are trustworthy",
+            "Digital signatures would have supported attribution",
+            "This is primarily an availability failure",
+            "The delay in detection made the damage worse"
+          ],
+          correct: [0, 2, 3, 5],
+          explain: "Silent modification is the signature of an integrity failure. Backup restore does not resolve it, because without knowing when corruption began you do not know which backup is clean. Signatures would have bound each change to a key holder, supporting attribution through non-repudiation."
+        },
+        {
+          type: "text",
+          prompt: "Describe a security decision you have seen or read about, then argue the case against it in three or four sentences.",
+          hint: "Arguing the opposing side is the point. If you cannot state the strongest counter-argument, you do not yet fully understand the decision."
+        }
+      ]
+    },
+
+    "change-postmortem": {
+      title: "Lab 3 - Reconstruct the failure",
+      time: "~20 minutes",
+      objective: "Trace an operational failure back to the specific change management stage that was skipped - exactly how exam scenarios are built.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Put the change management stages into the correct order.",
+          hint: "Use the arrows to move each row. Think about what has to be known before the next stage can happen.",
+          items: [
+            "Request - someone proposes the change and is named as owner",
+            "Impact analysis - assess what could break",
+            "Approval - the change advisory board signs off",
+            "Test - verify in a non-production environment, prepare a backout plan",
+            "Implement - execute inside the maintenance window",
+            "Document - update diagrams, runbooks, and baselines"
+          ],
+          explain: "Impact analysis precedes approval because a board cannot evaluate what it has not been shown. Documentation comes last and is the stage most often skipped - and the one that causes harm months later."
+        },
+        {
+          type: "choice",
+          prompt: "<em>At 02:00 an engineer added a temporary firewall rule to resolve an outage. It was never documented or removed. Four months later an assessment found it exposing an internal management interface to the internet. Nobody could say who created it or why.</em><br><br>Select every stage that was skipped.",
+          hint: "The engineer was responding to a genuine outage. Consider which stages an emergency legitimately defers and which it never excuses.",
+          options: [
+            "Impact analysis",
+            "Approval (including retroactive review)",
+            "Implement",
+            "Test",
+            "Document",
+            "Assigning an owner"
+          ],
+          correct: [0, 1, 3, 4, 5],
+          explain: "Implement is the only stage that did happen. An emergency may legitimately defer advance approval, but it never excuses retroactive review, documentation, or naming an owner. The absence of an owner is why nobody could answer the auditor four months later."
+        },
+        {
+          type: "text",
+          prompt: "Write the retroactive change record this engineer should have filed.",
+          hint: "Include owner, rationale, impact, and a removal date. Four or five lines is enough. The removal date is what stops a temporary fix becoming permanent."
+        },
+        {
+          type: "text",
+          prompt: "Propose one control that would have caught this rule before the assessment did, and classify it on both axes.",
+          hint: "Consider periodic firewall rule review, configuration drift detection, or automatic expiry on temporary rules."
+        }
+      ]
+    }
+  };
+
+  // ---- classifier data: control category + type ----
+  window.CLASSIFIERS = {
+    controls: {
+      axes: [
+        { name: "cat", label: "Category", options: ["Technical", "Managerial", "Operational", "Physical"] },
+        { name: "type", label: "Type", options: ["Preventive", "Deterrent", "Detective", "Corrective", "Compensating", "Directive"] }
+      ],
+      items: [
+        {
+          scenario: "A sign at the perimeter reads <em>Video surveillance in use</em>. Management installed it hoping people will not attempt entry at all.",
+          answers: { cat: "Physical", type: "Deterrent" },
+          explain: "A sign is a tangible object, so physical. Its stated purpose is to discourage the attempt, which is deterrent rather than preventive - it stops nobody who decides to proceed anyway."
+        },
+        {
+          scenario: "Firewall rules block all inbound traffic to the database subnet except from the application tier.",
+          answers: { cat: "Technical", type: "Preventive" },
+          explain: "A firewall is technology, so technical. It stops the connection from occurring at all, which is preventive."
+        },
+        {
+          scenario: "The security team runs an annual risk assessment and publishes the results to leadership.",
+          answers: { cat: "Managerial", type: "Directive" },
+          explain: "Risk assessment is an administrative planning activity, so managerial. It directs what the organization should do about risk rather than blocking or detecting anything."
+        },
+        {
+          scenario: "After a ransomware incident, the team restores affected file shares from the previous night's backup.",
+          answers: { cat: "Technical", type: "Corrective" },
+          explain: "The restore is performed by technology, so technical. It repairs damage after the event, which is corrective. Backups are often mislabelled preventive - they prevent nothing, they restore."
+        },
+        {
+          scenario: "A legacy controller cannot be patched, so it is placed on an isolated VLAN with strict ACLs and additional monitoring.",
+          answers: { cat: "Technical", type: "Compensating" },
+          explain: "Segmentation and ACLs are technical. Because they substitute for the patching that cannot be performed, they are compensating rather than simply preventive."
+        },
+        {
+          scenario: "All staff complete quarterly phishing awareness training delivered by the security team.",
+          answers: { cat: "Operational", type: "Directive" },
+          explain: "Training is people carrying out a procedure, so operational rather than managerial - the policy requiring training would be managerial. It instructs behaviour, which is directive."
+        },
+        {
+          scenario: "A guard watches a live camera feed and dispatches staff to intercept anyone entering the loading bay.",
+          answers: { cat: "Physical", type: "Preventive" },
+          explain: "Same camera as scenario one, different outcome. Because someone intervenes and stops the event, this is preventive - the classic demonstration that type follows the scenario, not the device."
+        },
+        {
+          scenario: "File integrity monitoring alerts the SOC when a system binary changes unexpectedly.",
+          answers: { cat: "Technical", type: "Detective" },
+          explain: "Monitoring software is technical. It identifies that something occurred but does not stop it, which is detective."
+        }
+      ]
+    }
+  };
+
+  // ---- zero trust decision simulator ----
+  var ztSignals = { creds: true, device: true, location: true, hours: true, mfa: true };
+  function ztEvaluate() {
+    var s = ztSignals, verdict, cls, why;
+    if (!s.creds) {
+      verdict = "DENY"; cls = "deny";
+      why = "Authentication failed. No further evaluation occurs - identity is the precondition, not one signal among many.";
+    } else if (!s.device) {
+      verdict = "DENY"; cls = "deny";
+      why = "An unmanaged device cannot be assessed for compliance. Valid credentials do not compensate for an untrusted endpoint.";
+    } else if (!s.mfa) {
+      verdict = "STEP-UP"; cls = "step";
+      why = "Single-factor authentication is insufficient on its own. The policy engine requires an additional factor before issuing a decision.";
+    } else if (!s.location && !s.hours) {
+      verdict = "STEP-UP"; cls = "step";
+      why = "Two weak context signals together. Adaptive identity lowers confidence and requires re-verification even though credentials are valid.";
+    } else if (!s.location || !s.hours) {
+      verdict = "STEP-UP"; cls = "step";
+      why = "One anomalous context signal. Trust is recalculated per request, so a prior successful login grants nothing here.";
+    } else {
+      verdict = "ALLOW"; cls = "allow";
+      why = "All signals strong. Note that this decision applies to this request only and is not carried forward to the next one.";
+    }
+    var el = document.getElementById("ztReadout");
+    if (el) {
+      el.innerHTML = '<span class="readout__verdict ' + cls + '">' + verdict +
+        '</span><span class="readout__why">' + why + "</span>";
+    }
+    return verdict;
+  }
+
+  window.MODULE_ACTIONS = {
+    ztToggle: function (el) {
+      var k = el.dataset.sig;
+      ztSignals[k] = !ztSignals[k];
+      el.setAttribute("aria-pressed", String(ztSignals[k]));
+      el.classList.toggle("on", ztSignals[k]);
+      el.classList.toggle("off", !ztSignals[k]);
+      var v = ztEvaluate();
+      if (window.MODULE) window.MODULE.announce("Decision: " + v);
+    }
+  };
+
+
+  var QUESTIONS = [
+    {
+      tier: "recall",
+      question: "Which security property is directly protected by hashing a file before and after transmission?",
+      options: ["Confidentiality", "Integrity", "Availability", "Non-repudiation"],
+      correct: 1,
+      explanation: "Comparing hashes detects whether data changed, which is integrity. Confidentiality is wrong because a hash does not conceal content. Non-repudiation requires a digital signature, since anyone can compute a plain hash."
+    },
+    {
+      tier: "recall",
+      question: "In the AAA framework, which stage determines what an already-identified user is permitted to do?",
+      options: ["Authentication", "Authorization", "Accounting", "Attestation"],
+      correct: 1,
+      explanation: "Authorization grants or denies specific access rights after identity is established. Authentication is the prior stage that proves identity; accounting is the later stage that records what was done."
+    },
+    {
+      tier: "recall",
+      question: "Which control category is implemented primarily through policy and planning?",
+      options: ["Technical", "Operational", "Managerial", "Physical"],
+      correct: 2,
+      explanation: "Managerial controls are administrative decisions such as risk assessments and security policy. Operational is the common wrong answer: operational controls are people carrying out procedures day to day, while managerial controls are the decisions and documentation behind them."
+    },
+    {
+      tier: "recall",
+      question: "Which deception technology consists of fake credentials whose use signals a breach?",
+      options: ["Honeypot", "Honeynet", "Honeyfile", "Honeytoken"],
+      correct: 3,
+      explanation: "A honeytoken is fake data or credentials that should never be used legitimately, so any use is a high-confidence breach indicator. A honeyfile is a decoy file, a honeypot a decoy system, and a honeynet a network of honeypots."
+    },
+    {
+      tier: "recall",
+      question: "Which zero trust component evaluates a request and decides whether it should be permitted?",
+      options: ["Policy Enforcement Point", "Policy Engine", "Subject", "Access control vestibule"],
+      correct: 1,
+      explanation: "The Policy Engine evaluates requests against policy and is a control plane component. The Policy Enforcement Point sits in the data plane and enforces the decision but does not make it."
+    },
+    {
+      tier: "recall",
+      question: "What is the purpose of a gap analysis?",
+      options: ["To test whether backups restore correctly", "To compare current security state against a target state and document the difference", "To determine the root cause of an incident", "To rank vendors during procurement"],
+      correct: 1,
+      explanation: "A gap analysis measures the current state against a framework, policy, or regulation and produces a prioritized list of gaps. It is not a pass/fail verdict and is not incident-driven."
+    },
+    {
+      tier: "recall",
+      question: "Which physical control is specifically designed to prevent tailgating?",
+      options: ["Bollards", "Access control vestibule", "Fencing", "Lighting"],
+      correct: 1,
+      explanation: "An access control vestibule admits one person at a time, which defeats tailgating. Bollards stop vehicles, while fencing and lighting deter and delay but do nothing about a second person following through a door."
+    },
+    {
+      tier: "applied",
+      question: "A company encrypts all backup media and stores the only decryption key with a single administrator who then leaves without transferring it. Which property has been compromised?",
+      options: ["Confidentiality", "Integrity", "Availability", "Non-repudiation"],
+      correct: 2,
+      explanation: "The data is now unrecoverable, which is an availability failure. Confidentiality is arguably stronger than intended rather than compromised - a classic illustration of maximizing one property at the cost of another."
+    },
+    {
+      tier: "applied",
+      question: "A visible camera with a posted warning sign is installed specifically to discourage entry attempts. How is this control best classified?",
+      options: ["Physical category, deterrent type", "Technical category, detective type", "Physical category, detective type", "Operational category, preventive type"],
+      correct: 0,
+      explanation: "A camera is physical by category, and the stated purpose is to discourage the attempt, which is deterrent. Detective is the attractive distractor: the same camera would be detective if the scenario emphasized recording and later review."
+    },
+    {
+      tier: "applied",
+      question: "A legacy industrial system cannot be patched because the vendor no longer exists. It is isolated on a segmented network with restricted access and enhanced monitoring. What has been implemented?",
+      options: ["A corrective control", "A compensating control", "A directive control", "A deterrent control"],
+      correct: 1,
+      explanation: "A compensating control substitutes for a required control that cannot be implemented, matching the patching constraint. Corrective is wrong because nothing is being restored after an incident - this is a standing substitute."
+    },
+    {
+      tier: "applied",
+      question: "In a zero trust architecture, which component sits in the traffic path and enforces the allow-or-block decision?",
+      options: ["Policy Engine", "Policy Administrator", "Policy Enforcement Point", "Adaptive Identity"],
+      correct: 2,
+      explanation: "The Policy Enforcement Point is the data plane component that sits inline and enforces decisions. The Policy Engine and Policy Administrator are control plane components that decide rather than enforce."
+    },
+    {
+      tier: "applied",
+      question: "An application must authenticate to a database nightly with no human present. Which approach best fits?",
+      options: ["A shared password stored in the application config", "Multifactor authentication with a hardware token", "Certificate-based or managed service identity authentication", "A password the on-call administrator enters nightly"],
+      correct: 2,
+      explanation: "System-to-system authentication uses certificates or managed identities because no human can satisfy an interactive prompt. MFA with a hardware token fails for that reason, and a stored static password creates a long-lived credential that never rotates."
+    },
+    {
+      tier: "applied",
+      question: "A user authenticates successfully with password and TOTP but cannot open a payroll share. Where did the failure occur?",
+      options: ["Authentication", "Authorization", "Accounting", "Identity proofing"],
+      correct: 1,
+      explanation: "Authentication succeeded - the system knows who the user is. The denial came from insufficient permissions, which is authorization. Scenarios phrased as 'logged in but cannot access' are authorization problems."
+    },
+    {
+      tier: "applied",
+      question: "Which pairing correctly matches a control to its type?",
+      options: ["A warning banner at login is preventive", "A locked server room door is deterrent", "Restoring from backup after ransomware is corrective", "A security policy document is technical"],
+      correct: 2,
+      explanation: "Restoring from backup repairs damage after an event, which is corrective. A warning banner is deterrent rather than preventive, a locked door is preventive rather than deterrent, and a policy document is managerial rather than technical."
+    },
+    {
+      tier: "applied",
+      question: "An organization wants detection with almost no false positives. Which control best delivers that?",
+      options: ["A SIEM correlation rule on failed logins", "A honeyfile placed in a sensitive share", "An intrusion detection system in promiscuous mode", "Increased log retention"],
+      correct: 1,
+      explanation: "There is no legitimate reason to open a honeyfile, so any access is a high-confidence indicator. Failed-login rules and IDS signatures both generate substantial false positives, and retention alone detects nothing."
+    },
+    {
+      tier: "scenario",
+      question: "During an incident, responders act on a network diagram that no longer reflects a firewall change made months earlier and isolate the wrong segment. Which change management failure most directly caused this?",
+      options: ["No backout plan was documented", "Documentation was not updated after the change", "The change occurred outside a maintenance window", "No impact analysis was performed"],
+      correct: 1,
+      explanation: "The change was made but diagrams were never updated, which is the documentation step. A backout plan addresses reverting a failed change and impact analysis happens beforehand; neither would correct a stale diagram after the fact."
+    },
+    {
+      tier: "scenario",
+      question: "An auditor asks who requested a specific production firewall rule, when, and why. Nobody can answer. What does this most strongly indicate?",
+      options: ["The firewall is misconfigured", "Change management exists on paper but is not being followed", "The rule is a compensating control", "Accounting controls are functioning correctly"],
+      correct: 1,
+      explanation: "Every production change should have an owner, an approval, and a rationale on record. The inability to produce any of these shows the documented process is not being executed. Whether the rule is misconfigured is a separate question the audit has not answered."
+    },
+    {
+      tier: "scenario",
+      question: "A finance team finds transaction records were silently altered over months and cannot determine which figures are accurate. Beyond integrity, which capability would most have helped attribute the changes?",
+      options: ["Full disk encryption", "Non-repudiation through digital signatures", "Redundant storage and failover", "An access control vestibule"],
+      correct: 1,
+      explanation: "Digital signatures bind each change to a private key holder, supporting attribution through non-repudiation. Encryption protects confidentiality and redundancy protects availability; neither identifies who altered the records."
+    },
+    {
+      tier: "scenario",
+      question: "A remote worker's valid credentials are used from an unfamiliar country at 3 a.m. and the system demands additional verification rather than granting access. Which principle is operating?",
+      options: ["Accounting", "Adaptive identity under zero trust", "Compensating control", "Non-repudiation"],
+      correct: 1,
+      explanation: "Trust in the identity varies with context: unusual location and time weaken the signal and trigger step-up verification. That is adaptive identity. A prior successful login confers no standing trust under zero trust."
+    },
+    {
+      tier: "scenario",
+      question: "After a merger, an acquired subsidiary runs unsupported systems that cannot be patched for eighteen months. Leadership wants the fastest defensible path to reduce risk. What should be recommended first?",
+      options: ["Accept the risk formally and revisit after the migration", "Implement compensating controls: segmentation, restricted access, and enhanced monitoring", "Immediately disconnect the systems from all networks", "Replace the systems before integration completes"],
+      correct: 1,
+      explanation: "Compensating controls provide comparable risk reduction when the primary control is not feasible, which fits the eighteen-month constraint. Disconnecting entirely would break operations, replacement is not the fastest path, and formal acceptance alone reduces nothing."
+    }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  if (document.getElementById("ztReadout")) ztEvaluate();
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>

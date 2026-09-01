@@ -1,0 +1,3008 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="4" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 4: Vulnerabilities</title>
+<meta name="description" content="Application, web, system, virtualization, and cloud vulnerability classes - what causes each, how they are exploited in principle, and the defences that actually address them.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-box.danger{stroke:var(--danger);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 4</p>
+    <h1>Vulnerabilities</h1>
+    <p class="subtitle">Application, web, system, virtualization, and cloud vulnerability classes - what causes each, how they are exploited in principle, and the defences that actually address them.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="&#128203;" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to explain the major
+        application vulnerability classes and what causes each; describe how
+        injection and cross-site scripting work and why input validation is the
+        common defence; identify operating system, firmware, hardware, and mobile
+        weaknesses; explain virtualization and cloud-specific vulnerabilities
+        including the shared responsibility model; and describe what makes a
+        zero-day different from every other vulnerability.
+      </div>
+
+      <p>Module 3 covered who attacks you and how they arrive. This module covers
+      what they find once they get there. Objective 2.3 is a long list of
+      vulnerability types, and the temptation is to memorise the list. That
+      approach fails on scenario questions, which describe a symptom and expect
+      you to name the cause.</p>
+
+      <div class="subsection">
+        <h3>Vulnerability, exploit, and patch</h3>
+        <table>
+          <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Vulnerability</td><td>A weakness that could be exploited</td></tr>
+            <tr><td>Exploit</td><td>The technique or code that takes advantage of it</td></tr>
+            <tr><td>Patch</td><td>The vendor's correction that removes the weakness</td></tr>
+            <tr><td>Zero-day</td><td>A vulnerability with no patch available, because the vendor does not yet know</td></tr>
+          </tbody>
+        </table>
+        <p>A vulnerability with no known exploit still carries risk, because
+        someone may develop one. An exploit with no matching vulnerability in your
+        environment carries none. This is the threat-and-vulnerability
+        intersection from Module 3, applied to specifics.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The pattern beneath most of this module</h3>
+        <p>An unexpectedly large share of vulnerability classes reduce to one
+        idea: <strong>data supplied by a user was treated as an instruction</strong>.
+        Buffer overflows, SQL injection, cross-site scripting, and memory
+        injection are all versions of it. The system expected input and received
+        something that changed its behaviour instead.</p>
+        <p>Once you see that pattern, the defences stop looking like a list to
+        memorise. Input validation, parameterised queries, output encoding, and
+        bounds checking are all the same instruction in different contexts: decide
+        what input is acceptable, and treat everything else as data rather than
+        obeying it.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128221;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A form with instructions written in the margin</p>
+        <p>A clerk receives a form with a box marked "Name". A customer writes
+        "Jane Smith - <em>and also empty the safe</em>". A careful clerk copies
+        the whole string into the name field and finds it odd. A careless clerk
+        reads it as instructions and walks to the safe.</p>
+        <p>Every injection vulnerability is that careless clerk. The fix is never
+        to ask customers to stop writing strange things; it is to build a process
+        where anything in the Name box is treated as a name, whatever it says.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a clerk
+        can use judgement about a strange request. Software has none - it does
+        exactly what it is told, which is why the boundary between data and
+        instruction has to be enforced by design rather than by vigilance.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[LEGAL AND ETHICAL]</span>
+        This module explains how vulnerabilities work so you can find and fix
+        them. Testing any of it requires written authorization for the specific
+        systems in scope. Scanning or probing systems you do not own is unlawful
+        in most jurisdictions regardless of intent, and "I was learning" is not a
+        defence.
+      </div>
+    </section>
+
+    <section class="module-section" id="application-vulns" data-icon="&#129513;" role="tabpanel"
+             aria-labelledby="tab-application-vulns" tabindex="-1">
+      <h2 class="section-title">Application Vulnerabilities</h2>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="buffer overflow">Buffer overflow</span></h3>
+        <p>A buffer is a fixed-size region of memory reserved to hold data. A
+        buffer overflow occurs when a program writes more data than the buffer was
+        sized for, and the excess spills into adjacent memory that holds something
+        else - other variables, or the address the program will return to when the
+        current function finishes.</p>
+        <p>That return address is what makes overflows dangerous rather than
+        merely buggy. If an attacker can control what overwrites it, they can
+        redirect execution to code of their choosing. This is why buffer overflow
+        is classed as a memory-safety issue with potential for arbitrary code
+        execution rather than as a simple crash.</p>
+        <p>The root cause is a missing bounds check: the program accepted input
+        without verifying it fit. Languages such as C and C++ leave bounds
+        checking to the developer, which is why overflows are far more common
+        there than in memory-safe languages that check automatically.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="bfTitle bfDesc">
+          <title id="bfTitle">Memory before and after a buffer overflow</title>
+          <desc id="bfDesc">Before, a buffer holds the expected input and the adjacent return address is intact. After, oversized input fills the buffer and overwrites the return address, so the program returns to an address chosen by the attacker.</desc>
+          <text x="20" y="26" class="svg-label">Expected input &mdash; fits</text>
+          <rect x="20" y="40" width="200" height="46" rx="8" class="svg-box accent"/>
+          <text x="120" y="62" text-anchor="middle" class="svg-label">buffer (64 bytes)</text>
+          <text x="120" y="78" text-anchor="middle" class="svg-sub">"jsmith"</text>
+          <rect x="228" y="40" width="150" height="46" rx="8" class="svg-box brand"/>
+          <text x="303" y="62" text-anchor="middle" class="svg-label">return address</text>
+          <text x="303" y="78" text-anchor="middle" class="svg-sub">intact</text>
+          <text x="396" y="68" class="svg-sub">program returns where intended</text>
+
+          <text x="20" y="140" class="svg-label">Oversized input &mdash; overflows</text>
+          <rect x="20" y="154" width="200" height="46" rx="8" class="svg-box warn"/>
+          <text x="120" y="176" text-anchor="middle" class="svg-label">buffer (64 bytes)</text>
+          <text x="120" y="192" text-anchor="middle" class="svg-sub">filled to capacity</text>
+          <rect x="228" y="154" width="150" height="46" rx="8" class="svg-box danger"/>
+          <text x="303" y="176" text-anchor="middle" class="svg-label">return address</text>
+          <text x="303" y="192" text-anchor="middle" class="svg-sub">OVERWRITTEN</text>
+          <path d="M220 177 L226 177" class="svg-line accent" marker-end="url(#ab4)"/>
+          <text x="396" y="172" class="svg-sub">program returns to an address</text>
+          <text x="396" y="190" class="svg-sub">the attacker chose</text>
+          <defs><marker id="ab4" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="234" text-anchor="middle" class="svg-sub">The danger is not the corruption &mdash; it is that someone chose what the corruption contains.</text>
+        </svg>
+        <figcaption>The missing bounds check is simply measuring the input before writing it.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#9749;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Pouring into a cup that is already full</p>
+        <p>You have a cup that holds 250ml and you pour in 400ml. The first 250
+        go where you intended. The rest goes across the counter, into the sugar
+        bowl, and over the note reminding you where to go next.</p>
+        <p>The dangerous part is not the mess - it is that the note is now
+        unreadable, and if someone chose what spilled onto it, they chose where
+        you go next. That note is the return address, and the bounds check is
+        simply measuring before you pour.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Memory injection</h3>
+        <p>Memory injection is inserting code into the memory space of a running
+        process, so the malicious code executes with that process's identity and
+        privileges. Because the host process is legitimate and often trusted,
+        this evades controls that decide what to allow based on which program is
+        running.</p>
+        <p>The distinction from a buffer overflow is worth holding: an overflow is
+        a specific flaw allowing memory to be corrupted, while memory injection
+        describes the broader technique of getting code into another process's
+        space. An overflow may be the means; injection is the objective.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="race condition">Race conditions and TOCTOU</span></h3>
+        <p>A race condition occurs when the result of an operation depends on the
+        timing of events that were assumed to happen in a fixed order. The exam
+        focuses on one variety: <strong>time-of-check to time-of-use</strong>, or
+        TOCTOU.</p>
+        <p>The pattern is a program that checks a condition, then acts on the
+        result of that check - with a gap in between. If an attacker changes the
+        underlying state during that gap, the program acts on a fact that is no
+        longer true. It verified that a file was safe, then opened a file that had
+        been swapped in the meantime.</p>
+        <p>Race conditions are notoriously difficult to find in testing because
+        they depend on precise timing and may occur only under load. The
+        defensive approach is to make the check and the use a single atomic
+        operation, so no gap exists for an attacker to act in.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127916;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Booking the last cinema seat</p>
+        <p>Two people check the website at the same instant and both see "1 seat
+        remaining". Both click Buy. The check was accurate when each made it, and
+        the site sells a seat that does not exist - because between checking and
+        buying, the world changed.</p>
+        <p>Fixing this is not about checking more carefully. It is about making
+        the check and the purchase one indivisible step, so nothing can happen in
+        between. That is exactly the remedy for TOCTOU.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>A TOCTOU sequence</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="toctou">Run sequence</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="toctou">Clear</button>
+        </div>
+        <div class="terminal" id="demo-toctou" aria-live="polite" aria-label="Race condition sequence output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Integer overflow and privilege escalation</h3>
+        <p>An integer overflow occurs when an arithmetic result exceeds the
+        maximum a variable can hold and wraps around, so a very large number
+        becomes a very small or negative one. This matters when the result is
+        used as a size: a length calculation that wraps to a small value causes a
+        buffer to be allocated far smaller than the data about to be written into
+        it, producing an overflow that no explicit length check would catch,
+        because the check itself was fed the wrong number.</p>
+        <p><strong>Privilege escalation</strong> is the outcome most application
+        flaws are ultimately chasing. It comes in two directions.
+        <em>Vertical</em> escalation gains higher privileges than the account
+        holds - an ordinary user becoming an administrator. <em>Horizontal</em>
+        escalation gains access to another account at the same privilege level,
+        such as viewing a different customer's records by changing an identifier
+        in a request.</p>
+        <p>Horizontal escalation is worth attention because it is easy to
+        overlook. It involves no broken authentication and no elevated rights;
+        the application simply never checked that the record being requested
+        belonged to the person requesting it. The defence is an authorization
+        check on every object access, not merely at login.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Malicious update</h3>
+        <p>Update mechanisms are trusted by design - that is their purpose - which
+        makes them an attractive thing to subvert. A malicious update reaches the
+        target through the legitimate channel, signed and expected, exactly as in
+        the supply chain attacks from Module 3.</p>
+        <p>The defences are code signing so that updates are verifiably from the
+        vendor, staged rollouts so a bad update reaches a small population first,
+        and monitoring for unexpected behaviour after installation. Note the limit
+        of signing: it proves the update came from the vendor, not that the vendor
+        was uncompromised when they signed it.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="web-vulns" data-icon="&#127760;" role="tabpanel"
+             aria-labelledby="tab-web-vulns" tabindex="-1">
+      <h2 class="section-title">Web-Based Vulnerabilities</h2>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="sql injection">SQL injection</span></h3>
+        <p>Web applications build database queries using values supplied by users.
+        If those values are pasted directly into the query text, a user can supply
+        input that changes the structure of the query rather than merely its
+        parameters.</p>
+        <p>The classic illustration is a login form where the application builds a
+        query from the username and password fields. Supplying a value containing
+        <code>' OR '1'='1</code> can turn a condition that should match one
+        account into one that is always true, because the quote character ends the
+        intended value and everything after it is read as part of the query
+        instead.</p>
+        <p>The consequences range from bypassing authentication to reading,
+        modifying, or deleting the entire database, depending on the privileges
+        the application's database account holds.</p>
+
+        <div class="callout warn">
+          <span class="tag">[NOTE]</span>
+          The example above is shown to explain the mechanism - the quote
+          character escaping its intended context. Understanding that is what lets
+          you recognise the defence. Actual exploitation of a system you do not
+          own and have not been authorised to test is a criminal offence.
+        </div>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 260" role="img" aria-labelledby="sqTitle sqDesc">
+          <title id="sqTitle">Concatenated versus <span class="term" data-term="parameterised query">parameterised query</span> construction</title>
+          <desc id="sqDesc">With concatenation, user input joins the query text and can change its structure. With parameterisation, the structure is fixed first and the value is sent separately, so input is always treated as data.</desc>
+          <text x="20" y="26" class="svg-label">Concatenation &mdash; input joins the query text</text>
+          <rect x="20" y="40" width="150" height="44" rx="8" class="svg-box"/>
+          <text x="95" y="60" text-anchor="middle" class="svg-label">User input</text>
+          <text x="95" y="76" text-anchor="middle" class="svg-sub">may contain a quote</text>
+          <rect x="205" y="40" width="200" height="44" rx="8" class="svg-box danger"/>
+          <text x="305" y="60" text-anchor="middle" class="svg-label">Query text + input</text>
+          <text x="305" y="76" text-anchor="middle" class="svg-sub">joined as one string</text>
+          <rect x="440" y="40" width="240" height="44" rx="8" class="svg-box warn"/>
+          <text x="560" y="60" text-anchor="middle" class="svg-label">Database</text>
+          <text x="560" y="76" text-anchor="middle" class="svg-sub">cannot tell code from data</text>
+          <g class="svg-line"><path d="M172 62 L201 62" marker-end="url(#as4)"/><path d="M407 62 L436 62" marker-end="url(#as4)"/></g>
+
+          <text x="20" y="146" class="svg-label">Parameterisation &mdash; structure fixed first</text>
+          <rect x="20" y="160" width="150" height="44" rx="8" class="svg-box"/>
+          <text x="95" y="180" text-anchor="middle" class="svg-label">User input</text>
+          <text x="95" y="196" text-anchor="middle" class="svg-sub">sent separately</text>
+          <rect x="205" y="160" width="200" height="44" rx="8" class="svg-box accent"/>
+          <text x="305" y="180" text-anchor="middle" class="svg-label">Query with ? placeholder</text>
+          <text x="305" y="196" text-anchor="middle" class="svg-sub">structure already set</text>
+          <rect x="440" y="160" width="240" height="44" rx="8" class="svg-box accent"/>
+          <text x="560" y="180" text-anchor="middle" class="svg-label">Database</text>
+          <text x="560" y="196" text-anchor="middle" class="svg-sub">value is only ever a value</text>
+          <g class="svg-line accent"><path d="M172 182 L201 182" marker-end="url(#as4)"/><path d="M407 182 L436 182" marker-end="url(#as4)"/></g>
+          <defs><marker id="as4" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="244" text-anchor="middle" class="svg-sub">The fix is not better filtering. It is a design where data cannot become instruction.</text>
+        </svg>
+        <figcaption>Structure is decided before the value arrives, so a quote is simply a quote.</figcaption>
+      </figure>
+      <div class="subsection">
+        <h3>Why parameterised queries fix it</h3>
+        <p>The instinctive fix is to filter out dangerous characters. This is
+        fragile: encoding tricks, alternative syntax, and simple oversights defeat
+        blocklists routinely.</p>
+        <p>The robust fix is <strong>parameterised queries</strong>, also called
+        prepared statements. The query structure is defined first, with
+        placeholders where values go, and the values are supplied separately. The
+        database is told "this is the query, and these are data" as two distinct
+        things, so a value containing a quote is simply a value containing a quote.
+        It cannot alter structure because structure was already fixed.</p>
+        <p>This is the deepest lesson in the module: the fix is not better
+        filtering but a design in which data cannot become instruction.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Query construction: concatenated versus parameterised</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="sqli">Compare approaches</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="sqli">Clear</button>
+        </div>
+        <div class="terminal" id="demo-sqli" aria-live="polite" aria-label="Query construction comparison"></div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="cross-site scripting">Cross-site scripting</span></h3>
+        <p>Cross-site scripting, or XSS, occurs when an application includes
+        user-supplied content in a page without properly encoding it, so a browser
+        interprets that content as script rather than text. The script then runs
+        in the victim's browser with the privileges of the site it appears to come
+        from - which is what makes session theft and impersonation possible.</p>
+        <table>
+          <thead><tr><th>Type</th><th>Where the payload lives</th><th>Who is affected</th></tr></thead>
+          <tbody>
+            <tr><td>Reflected</td><td>In a crafted link or request; echoed back immediately</td><td>Whoever follows the link</td></tr>
+            <tr><td>Stored</td><td>Saved on the server, in a comment or profile field</td><td>Every visitor who views it</td></tr>
+            <tr><td>DOM-based</td><td>Never reaches the server; handled entirely by client-side script</td><td>Whoever triggers the client-side path</td></tr>
+          </tbody>
+        </table>
+        <p>Stored XSS is the most severe of the three because it requires no
+        interaction beyond visiting a legitimate page, and it affects everyone who
+        does. The distinguishing question in an exam scenario is where the payload
+        resides: in a link, in the database, or only in the browser.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128203;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A notice pinned to a trusted noticeboard</p>
+        <p>A community noticeboard is trusted because it is maintained by the
+        council. Someone pins a notice reading "Building policy has changed -
+        hand your keys to the man in the blue coat." Residents comply, because
+        they trust the board and never considered that anyone can pin anything
+        to it.</p>
+        <p>That is stored XSS. The malicious content is served by a site the
+        victim trusts, which is why their browser runs it with that site's
+        privileges. Reflected XSS is the same notice handed directly to one
+        person; DOM-based is a notice the reader assembles themselves from
+        instructions they were given.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Defending against XSS</h3>
+        <table>
+          <thead><tr><th>Defence</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Output encoding</td><td>Renders content as text rather than markup - the primary fix</td></tr>
+            <tr><td>Input validation</td><td>Rejects unexpected content on the way in</td></tr>
+            <tr><td>Content Security Policy</td><td>Tells the browser which script sources are permitted</td></tr>
+            <tr><td>HttpOnly cookies</td><td>Prevents script reading session cookies, limiting the damage</td></tr>
+          </tbody>
+        </table>
+        <p>Note that output encoding is the primary defence rather than input
+        validation. The same string may be harmless in one context and dangerous
+        in another, so the safest point to make that decision is where the content
+        is written into a page.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Cross-site request forgery</h3>
+        <p>Cross-site request forgery, or CSRF, exploits the fact that a browser
+        automatically attaches cookies to requests for a site. If a user is logged
+        into their bank in one tab and visits a malicious page in another, that
+        page can cause a request to be sent to the bank - and the browser
+        helpfully includes the session cookie, so the bank sees an authenticated
+        request the user never intended to make.</p>
+        <p>Note carefully how CSRF differs from XSS, since exam options often
+        offer both. XSS runs attacker script <em>within</em> the trusted site.
+        CSRF sends a request <em>to</em> the trusted site from elsewhere, and the
+        attacker never sees the response - they can cause an action but cannot
+        read the result. The defence is an anti-CSRF token: a value the
+        legitimate page includes that an attacker cannot predict or read.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Directory traversal and other injection</h3>
+        <p>Directory traversal manipulates file path input to reach files outside
+        the intended directory, typically using sequences that navigate upward
+        through the filesystem. It is the same failure in a different context:
+        input that was supposed to name a file within a folder instead described a
+        path elsewhere.</p>
+        <p>Injection as a family extends beyond SQL - command injection, LDAP
+        injection, and XML injection all follow the identical pattern. Recognising
+        the family is more useful than memorising each member.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#9993;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A signed blank cheque in your pocket</p>
+        <p>Your browser carries your session cookie the way you might carry a
+        signed cheque - it is attached automatically to anything sent to that
+        bank. A stranger who cannot reach into your pocket can still hand you a
+        letter that causes you to post the cheque to them.</p>
+        <p>That is CSRF. The attacker never holds your cheque and never sees what
+        the bank sends back. They simply arranged for a request to be made that
+        carried your signature. An anti-CSRF token is the bank additionally
+        requiring a reference number that only its own letters contain.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Practice: classify the vulnerability</h3>      <div class="subsection">
+        <h3>Practice: classify the vulnerability</h3>
+        <div class="classifier" data-classifier="vulns"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="system-vulns" data-icon="&#128421;" role="tabpanel"
+             aria-labelledby="tab-system-vulns" tabindex="-1">
+      <h2 class="section-title">Operating System, Hardware, and Mobile</h2>
+
+      <div class="subsection">
+        <h3>Operating system vulnerabilities</h3>
+        <p>The operating system sits beneath every application, so a flaw there
+        undermines everything above it. OS vulnerabilities matter
+        disproportionately for two reasons: kernel-level code runs with the
+        highest privilege, and the operating system is the component enforcing
+        separation between users and processes. A flaw that breaks that
+        separation defeats controls that were otherwise correctly configured.</p>
+        <p>Privilege escalation is the characteristic outcome. An attacker who
+        gains ordinary user access uses an OS flaw to become an administrator, at
+        which point most other controls on that host become advisory.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="firmware">Firmware</span></h3>
+        <p>Firmware is the low-level software embedded in hardware - the BIOS or
+        UEFI on a motherboard, the controller on a drive, the code inside a router
+        or camera. It runs before the operating system, which means malicious
+        firmware persists through reinstalling the OS and even through replacing
+        the disk.</p>
+        <p>Firmware is difficult in practice for reasons that have nothing to do
+        with its technical nature. It is rarely inventoried, updates are
+        inconsistent and often manual, and many organizations have never patched
+        the firmware on a device they have run for years.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127959;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">The foundations under a house</p>
+        <p>You repaint rooms, replace the boiler, and refit the kitchen. Nobody
+        inspects the foundations, because reaching them is disruptive and they
+        have always been fine. A problem down there is not fixed by redecorating -
+        every room above inherits it.</p>
+        <p>Firmware sits in that position. Reinstalling the operating system is
+        redecorating; it leaves the foundation exactly as it was, which is why
+        firmware implants are prized by sophisticated attackers.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>End-of-life and legacy systems</h3>
+        <p>An <strong>end-of-life</strong> system is one the vendor no longer
+        supports, so no patch will ever be issued for any vulnerability discovered
+        from that point onward. A <strong>legacy</strong> system is outdated but
+        may still receive limited support.</p>
+        <p>The distinction the exam draws is between a vulnerability that can be
+        fixed and one that structurally cannot. Every future flaw in an <span class="term" data-term="end-of-life">end-of-life</span>
+        system is permanent. This is the canonical compensating control scenario:
+        isolate the system on a restricted segment, limit which accounts can reach
+        it, and increase monitoring around it, because the primary control -
+        patching - is unavailable forever.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128663;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A car with no parts left in production</p>
+        <p>The car still drives. But when the brake assembly fails there is no
+        replacement, because the manufacturer stopped making them a decade ago.
+        You can drive it more carefully, keep it off motorways, and inspect it
+        more often - but you cannot fix the brakes.</p>
+        <p>Driving more carefully is the compensating control. It reduces risk
+        genuinely, and it is not the same as a repair, which is why end-of-life
+        systems belong on a replacement plan rather than a maintenance schedule.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Hardware and supply chain vulnerabilities</h3>
+        <p>Hardware can be vulnerable through design flaws in processors,
+        components that leak data through side channels, or tampering before
+        delivery. The objective names supply chain vulnerabilities across three
+        routes: <strong>service providers</strong> with access to your systems,
+        <strong>hardware providers</strong> whose components may be tampered with,
+        and <strong>software providers</strong> whose updates you trust.</p>
+        <p>Hardware supply chain compromise is the hardest to detect because the
+        organization has no realistic means of inspecting a component at the
+        silicon level. Defence relies on sourcing from vetted suppliers and
+        monitoring for unexpected behaviour rather than on inspection.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Mobile device vulnerabilities</h3>
+        <table>
+          <thead><tr><th>Issue</th><th>What it is</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Jailbreaking / rooting</td><td>Removing manufacturer restrictions to gain full control</td><td>Disables the sandboxing and signature checks the platform relies on</td></tr>
+            <tr><td>Sideloading</td><td>Installing applications from outside the official store</td><td>Bypasses the vetting the store performs</td></tr>
+            <tr><td>Outdated OS</td><td>Devices no longer receiving vendor updates</td><td>Known flaws remain permanently unpatched</td></tr>
+            <tr><td>Insecure connections</td><td>Automatic joining of open wireless networks</td><td>Exposes traffic to interception</td></tr>
+          </tbody>
+        </table>
+        <p>Jailbreaking is worth understanding properly. The security of a modern
+        mobile platform rests on the operating system enforcing that applications
+        cannot read each other's data and only signed code runs. Jailbreaking
+        removes those enforcement mechanisms, so a jailbroken device is not
+        slightly weaker - it has had its principal security architecture switched
+        off.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#9881;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Removing the guard from a machine</p>
+        <p>Industrial machinery ships with a guard over the blade. It is
+        inconvenient - it slows the work and gets in the way - and an experienced
+        operator can remove it and work faster for years without incident.</p>
+        <p>The guard was not there for the experienced operator on a good day. It
+        was there for the moment something slips. Jailbreaking removes the guard,
+        and the device works fine right up until the day it does not.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="cloud-virtualization" data-icon="&#9729;" role="tabpanel"
+             aria-labelledby="tab-cloud-virtualization" tabindex="-1">
+      <h2 class="section-title">Virtualization and Cloud</h2>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="vm escape">Virtual machine escape</span></h3>
+        <p>Virtualization runs multiple guest machines on one physical host, with
+        a hypervisor enforcing isolation between them. VM escape is a flaw
+        allowing code in a guest to break that isolation and reach the hypervisor
+        or other guests.</p>
+        <p>This is severe because the entire model assumes isolation holds.
+        Organizations routinely place workloads of different sensitivity on shared
+        infrastructure on exactly that assumption. An escape invalidates it, and
+        in a multi-tenant cloud the neighbouring guest may belong to a different
+        company entirely.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127976;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A tenant breaking through the wall</p>
+        <p>A block of flats works because the walls hold. Tenants accept living
+        beside strangers on the understanding that nobody can walk through
+        plasterboard into the next flat, or into the building manager's office
+        where every key is kept.</p>
+        <p>VM escape is a tenant who finds they can. The severity is not that one
+        flat was entered - it is that the assumption underpinning the entire
+        building was wrong, including for everyone who never met the attacker.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Resource reuse</h3>
+        <p>Cloud and virtualized platforms constantly reallocate memory and
+        storage between customers. <span class="term" data-term="resource reuse">Resource reuse</span> is the vulnerability that
+        arises when those resources are not properly cleared before reassignment,
+        so one tenant receives storage or memory still containing another
+        tenant's data.</p>
+        <p>Providers address this with sanitisation on release. The tenant-side
+        defence is encryption: data encrypted before it reaches shared
+        infrastructure remains unreadable even if a fragment surfaces elsewhere.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128717;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A hotel room that was never cleaned</p>
+        <p>You check in and find the previous guest's papers in the desk drawer.
+        Nobody broke in and nobody attacked you - housekeeping simply skipped a
+        step between occupancies.</p>
+        <p>That is resource reuse. It is also why the guest-side answer is to
+        carry nothing readable: if your papers were in a locked case, what
+        housekeeping missed would not matter.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Cloud-specific vulnerabilities and the shared responsibility model</h3>
+        <p>The most common cloud vulnerability is not exotic. It is
+        <strong>misconfiguration</strong>: storage left publicly accessible,
+        over-permissive identity policies, management interfaces exposed to the
+        internet, logging never enabled.</p>
+        <p>Misconfiguration is so prevalent partly because the
+        <span class="term" data-term="shared responsibility model">shared
+        responsibility model</span> is widely misunderstood. The provider secures
+        some layers and the customer secures others, and where the line falls
+        depends on the service model.</p>
+        <table>
+          <thead><tr><th>Model</th><th>Provider secures</th><th>Customer secures</th></tr></thead>
+          <tbody>
+            <tr><td>IaaS</td><td>Physical, network, hypervisor</td><td>OS, applications, data, access</td></tr>
+            <tr><td>PaaS</td><td>The above plus OS and runtime</td><td>Applications, data, access</td></tr>
+            <tr><td>SaaS</td><td>Nearly the whole stack</td><td>Data, access, and configuration</td></tr>
+          </tbody>
+        </table>
+        <p>Note the constant across all three rows: <strong>data and access
+        control are always the customer's responsibility</strong>. No service
+        model transfers them. Assuming the provider handles security generally is
+        the single most common origin of cloud breaches.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 300" role="img" aria-labelledby="clTitle clDesc">
+          <title id="clTitle">The shared responsibility model across service models</title>
+          <desc id="clDesc">Three columns for IaaS, PaaS and SaaS. Moving from IaaS to SaaS the provider takes on more layers, but data and access control remain the customer's responsibility in all three.</desc>
+          <text x="20" y="24" class="svg-label">Provider responsibility grows &rarr;</text>
+          <g class="svg-sub">
+            <text x="130" y="52" text-anchor="middle" class="svg-label">IaaS</text>
+            <text x="350" y="52" text-anchor="middle" class="svg-label">PaaS</text>
+            <text x="570" y="52" text-anchor="middle" class="svg-label">SaaS</text>
+          </g>
+          <g>
+            <rect x="40" y="64" width="180" height="40" rx="7" class="svg-box accent"/>
+            <text x="130" y="89" text-anchor="middle" class="svg-sub">Data &amp; access</text>
+            <rect x="40" y="110" width="180" height="40" rx="7" class="svg-box accent"/>
+            <text x="130" y="135" text-anchor="middle" class="svg-sub">Applications</text>
+            <rect x="40" y="156" width="180" height="40" rx="7" class="svg-box accent"/>
+            <text x="130" y="181" text-anchor="middle" class="svg-sub">Operating system</text>
+            <rect x="40" y="202" width="180" height="62" rx="7" class="svg-box brand"/>
+            <text x="130" y="228" text-anchor="middle" class="svg-sub">Hypervisor, network,</text>
+            <text x="130" y="246" text-anchor="middle" class="svg-sub">physical</text>
+
+            <rect x="260" y="64" width="180" height="40" rx="7" class="svg-box accent"/>
+            <text x="350" y="89" text-anchor="middle" class="svg-sub">Data &amp; access</text>
+            <rect x="260" y="110" width="180" height="40" rx="7" class="svg-box accent"/>
+            <text x="350" y="135" text-anchor="middle" class="svg-sub">Applications</text>
+            <rect x="260" y="156" width="180" height="108" rx="7" class="svg-box brand"/>
+            <text x="350" y="200" text-anchor="middle" class="svg-sub">OS, runtime, hypervisor,</text>
+            <text x="350" y="218" text-anchor="middle" class="svg-sub">network, physical</text>
+
+            <rect x="480" y="64" width="180" height="40" rx="7" class="svg-box accent"/>
+            <text x="570" y="89" text-anchor="middle" class="svg-sub">Data &amp; access</text>
+            <rect x="480" y="110" width="180" height="154" rx="7" class="svg-box brand"/>
+            <text x="570" y="180" text-anchor="middle" class="svg-sub">Nearly the whole stack</text>
+          </g>
+          <text x="350" y="288" text-anchor="middle" class="svg-sub">Data and access control never transfer &mdash; the top band is the customer's in every model.</text>
+        </svg>
+        <figcaption>No service model makes data and access somebody else's problem.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127968;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Renting a flat</p>
+        <p>The landlord maintains the roof, the structure, and the entrance door
+        to the building. You lock your own front door and decide who gets a key.
+        If you leave your door open and are burgled, the landlord's excellent roof
+        is not the issue.</p>
+        <p>Cloud misconfiguration is nearly always a door left open by the tenant.
+        The provider's infrastructure worked perfectly - which is why "the cloud
+        was breached" is usually an inaccurate description of what happened.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a tenant
+        can see their own front door. A cloud misconfiguration may be a permission
+        buried three levels deep in a policy nobody has read, which is why
+        automated configuration scanning matters more here than vigilance.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Containers and serverless</h3>
+        <p>Containers package an application with its dependencies and share the
+        host operating system kernel rather than running a full guest OS. That
+        makes them fast and light, and it also makes their isolation weaker than a
+        virtual machine's: containers on a host share a kernel, so a kernel flaw
+        can allow a container escape more readily than a hypervisor flaw allows a
+        VM escape.</p>
+        <p>Container-specific weaknesses cluster in a few places. Images are
+        frequently built on public base images that carry known vulnerabilities.
+        Containers are often run as root because it is simpler. And because
+        containers are treated as disposable, they are rebuilt from an image
+        rather than patched - which means an unpatched base image reproduces the
+        same vulnerability every time it is deployed.</p>
+        <p><strong>Serverless</strong> functions shift more responsibility to the
+        provider, since there is no operating system for the customer to manage.
+        The customer's remaining exposure concentrates in application code,
+        dependencies, and - most commonly - the permissions granted to the
+        function.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Over-permissive identity and API exposure</h3>
+        <p>Cloud identity policies are the most consequential configuration a
+        customer controls, and over-permissioning is endemic. Policies are often
+        granted broadly during development to make something work and never
+        narrowed, so a compromised function or instance can reach far more than
+        its job requires. This is least privilege from Module 1 applied to
+        machine identities, and it is the difference between a contained incident
+        and an account-wide one.</p>
+        <p>APIs deserve separate mention because cloud services are operated
+        almost entirely through them. An API endpoint exposed without
+        authentication, or with authentication but no authorization check on each
+        object, provides direct programmatic access to data. Horizontal privilege
+        escalation is especially common here, because APIs frequently accept an
+        identifier and return the corresponding record without verifying the
+        caller should see that particular one.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Where the responsibility line falls</h3>      <div class="interactive-demo">
+        <h3>Where the responsibility line falls</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="cloud">Trace a misconfiguration</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="cloud">Clear</button>
+        </div>
+        <div class="terminal" id="demo-cloud" aria-live="polite" aria-label="Cloud misconfiguration trace"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="countermeasures" data-icon="&#128737;" role="tabpanel"
+             aria-labelledby="tab-countermeasures" tabindex="-1">
+      <h2 class="section-title">Zero-Days and Countermeasures</h2>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="zero-day">Zero-day vulnerabilities</span></h3>
+        <p>A zero-day is a vulnerability unknown to the vendor, so no patch
+        exists. The name refers to the number of days the vendor has had to
+        respond. What makes it distinct is not that it is more severe
+        technically, but that the primary defence - patching - is unavailable to
+        anyone.</p>
+        <p>Zero-days are expensive to find and are therefore used selectively.
+        This connects directly to Module 3: an unskilled attacker will not have
+        one, while a nation-state may hold several. If a scenario describes an
+        organization compromised through a flaw with no available patch, it is
+        also telling you something about the actor.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128273;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A flaw the lock manufacturer has not heard of</p>
+        <p>Someone discovers that a particular lock opens if you turn the key a
+        certain way. The manufacturer does not know. No locksmith can help you,
+        because there is no recall and no replacement cylinder - the flaw is not
+        yet a known problem.</p>
+        <p>You can still put a bar across the door, keep valuables elsewhere, and
+        notice when the door opens at three in the morning. That is what defence
+        against zero-days looks like: not prevention of the unknown flaw, but
+        layers that limit and reveal its use.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The patch gap</h3>
+        <p>Most exploited vulnerabilities are not zero-days. They are flaws with
+        patches that were published months earlier and never applied. The window
+        between a patch being released and being deployed is the <span class="term" data-term="patch gap">patch gap</span>, and
+        publication of a patch often makes exploitation <em>easier</em> - the fix
+        reveals what the flaw was, and working exploits frequently appear within
+        days.</p>
+        <p>This produces a conclusion students find counter-intuitive but the exam
+        expects: patching promptly matters more than defending against unknown
+        flaws. The realistic threat is a known vulnerability you have not yet
+        closed.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Timeline of a vulnerability</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="patchgap">Trace the timeline</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="patchgap">Clear</button>
+        </div>
+        <div class="terminal" id="demo-patchgap" aria-live="polite" aria-label="Vulnerability timeline output"></div>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 220" role="img" aria-labelledby="zdTitle zdDesc">
+          <title id="zdTitle">Zero-day window versus patch gap</title>
+          <desc id="zdDesc">A timeline from discovery to remediation. The zero-day window runs from discovery until the vendor publishes a patch. The patch gap runs from publication until the organization applies it, and is often much longer.</desc>
+          <path d="M40 130 L660 130" class="svg-line"/>
+          <g class="svg-mono">
+            <circle cx="60" cy="130" r="6" class="svg-fill-warn"/><text x="46" y="156">day 0</text>
+            <circle cx="200" cy="130" r="6" class="svg-fill-warn"/><text x="176" y="156">day 14</text>
+            <circle cx="330" cy="130" r="6" class="svg-fill-accent"/><text x="306" y="156">day 61</text>
+            <circle cx="380" cy="130" r="6" class="svg-fill-warn"/><text x="356" y="176">day 63</text>
+            <circle cx="640" cy="130" r="6" class="svg-fill-accent"/><text x="612" y="156">day 190</text>
+          </g>
+          <g class="svg-sub">
+            <text x="60" y="112" text-anchor="middle">discovered</text>
+            <text x="200" y="112" text-anchor="middle">disclosed</text>
+            <text x="330" y="112" text-anchor="middle">patched</text>
+            <text x="392" y="96" text-anchor="middle">exploit published</text>
+            <text x="640" y="112" text-anchor="middle">applied</text>
+          </g>
+          <rect x="60" y="36" width="270" height="26" rx="6" class="svg-box warn"/>
+          <text x="195" y="54" text-anchor="middle" class="svg-sub">zero-day window &mdash; 61 days, nobody could patch</text>
+          <rect x="330" y="188" width="310" height="26" rx="6" class="svg-box danger"/>
+          <text x="485" y="206" text-anchor="middle" class="svg-sub">patch gap &mdash; 129 days, a fix existed</text>
+          <text x="350" y="20" text-anchor="middle" class="svg-sub">The avoidable window was more than twice the unavoidable one.</text>
+        </svg>
+        <figcaption>Most exploited vulnerabilities are not zero-days. They are known flaws nobody applied.</figcaption>
+      </figure>
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="defence-table">
+        Open the defence reference table</button></p>
+
+      <div class="subsection">
+        <h3>Countermeasures by vulnerability class</h3>
+        <table>
+          <thead><tr><th>Vulnerability</th><th>Primary defence</th></tr></thead>
+          <tbody>
+            <tr><td>Buffer overflow</td><td>Bounds checking; memory-safe languages; ASLR and DEP</td></tr>
+            <tr><td>SQL injection</td><td>Parameterised queries, not input filtering</td></tr>
+            <tr><td>Cross-site scripting</td><td>Output encoding, plus Content Security Policy</td></tr>
+            <tr><td>Race condition</td><td>Atomic operations, so no gap exists between check and use</td></tr>
+            <tr><td>Firmware</td><td>Inventory, update process, secure boot</td></tr>
+            <tr><td>End-of-life system</td><td>Replace; until then isolate, restrict, and monitor</td></tr>
+            <tr><td>VM escape</td><td>Patch the hypervisor; separate workloads by sensitivity</td></tr>
+            <tr><td>Resource reuse</td><td>Encrypt before data reaches shared infrastructure</td></tr>
+            <tr><td>Cloud misconfiguration</td><td>Automated configuration scanning; least privilege by default</td></tr>
+            <tr><td>Zero-day</td><td>Defence in depth, segmentation, behavioural detection</td></tr>
+          </tbody>
+        </table>
+        <p>Two entries carry the module's main lessons. SQL injection is fixed by
+        separating data from instruction rather than by filtering, and end-of-life
+        systems get compensating controls because the primary control is
+        permanently unavailable.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Running a patch management process</h3>
+        <p>Knowing that patching matters is not the same as being able to do it
+        at scale. A workable process has a recognisable shape.</p>
+        <table>
+          <thead><tr><th>Stage</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>Inventory</td><td>Know what you run, including versions and dependencies</td></tr>
+            <tr><td>Monitor</td><td>Track vendor advisories and vulnerability feeds</td></tr>
+            <tr><td>Prioritise</td><td>Rank by exploitability and exposure, not by score alone</td></tr>
+            <tr><td>Test</td><td>Verify the patch in a representative environment</td></tr>
+            <tr><td>Stage</td><td>Deploy to a small population first</td></tr>
+            <tr><td>Deploy</td><td>Roll out broadly within a defined window</td></tr>
+            <tr><td>Verify</td><td>Confirm the patch actually applied everywhere</td></tr>
+          </tbody>
+        </table>
+        <p>The last stage is skipped more often than any other, and it is where
+        organizations acquire false confidence. A patch that failed silently on
+        forty machines produces a report saying the vulnerability is closed while
+        forty systems remain exposed. Verification is what turns a patch
+        <em>deployment</em> into a patch <em>remediation</em>.</p>
+        <p>Prioritisation deserves a note too. A high-severity flaw in a system
+        with no network exposure may matter less than a medium-severity flaw in an
+        internet-facing service under active exploitation. Severity scores
+        describe the vulnerability in isolation; risk depends on your environment,
+        which is the Module 3 intersection again.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>When you cannot patch immediately</h3>
+        <p>Sometimes a patch exists but cannot be applied on the required
+        timescale - a system that cannot take downtime, an application the vendor
+        has not yet certified against the update, a change freeze. The interim
+        answer is <strong>virtual patching</strong>: blocking exploitation at a
+        layer in front of the vulnerable system, typically with a web application
+        firewall or IPS signature that recognises the exploit pattern.</p>
+        <p>Virtual patching buys time and does not fix anything. The
+        vulnerability remains, the workaround may be bypassed, and the exam treats
+        it the way it treats compensating controls generally - legitimate,
+        deliberate, and temporary. An answer presenting it as a permanent
+        substitute for patching is wrong.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>How vulnerabilities become known</h3>
+        <p>Vulnerabilities reach vendors through several routes, and the exam
+        expects you to distinguish them. <strong>Responsible disclosure</strong>
+        gives the vendor a private window to fix the flaw before details are
+        published. <strong>Bug bounty programmes</strong> formalise this by paying
+        researchers, which both encourages reporting and creates a legitimate
+        channel that would otherwise not exist. <strong>Full disclosure</strong>
+        publishes immediately, on the argument that users deserve to know and
+        vendors move faster under pressure - at the cost of arming attackers
+        before a fix exists.</p>
+        <p>A bug bounty is also a security control in a sense worth noticing: it
+        changes the economics of what a researcher does with a discovery, offering
+        a lawful and paid alternative to selling it.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Secure development practices</h3>      <div class="subsection">
+        <h3>Secure development practices</h3>
+        <table>
+          <thead><tr><th>Practice</th><th>What it catches</th></tr></thead>
+          <tbody>
+            <tr><td>Input validation</td><td>Unexpected content at the boundary</td></tr>
+            <tr><td>Output encoding</td><td>Content that would be interpreted as markup or code</td></tr>
+            <tr><td>Least privilege for service accounts</td><td>Limits damage when an application is compromised</td></tr>
+            <tr><td>Static analysis</td><td>Flaw patterns in source code before deployment</td></tr>
+            <tr><td>Dynamic analysis</td><td>Behaviour of a running application</td></tr>
+            <tr><td>Code review</td><td>Logic errors tools do not recognise</td></tr>
+            <tr><td>Dependency scanning</td><td>Known vulnerabilities in third-party libraries</td></tr>
+          </tbody>
+        </table>
+        <p>Dependency scanning deserves particular emphasis. Modern applications
+        are assembled largely from third-party libraries, so most of the code in a
+        typical application was written by someone else. A vulnerability in a
+        widely used library becomes a vulnerability in thousands of applications
+        at once, and organizations frequently do not know which of their systems
+        include it - which is the software equivalent of the missing asset
+        inventory from Module 3.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        When a scenario asks for the best defence against injection, prefer the
+        answer that changes the design (parameterised queries, output encoding)
+        over the one that adds filtering. Blocklists are consistently the weaker
+        option.
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="&#129514;" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        Analysis labs - nothing to install and nothing to exploit. Answers save in
+        this browser as you type, and each lab generates a Word document you can
+        submit. Graded lab assignments are posted in Canvas.
+      </div>
+
+      <div class="lab" data-lab="classify-vulns"></div>
+      <div class="lab" data-lab="injection-defence"></div>
+      <div class="lab" data-lab="cloud-responsibility"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers live in this browser only. Generate the report and save the file
+        when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "buffer overflow": "Writing more data than a fixed-size memory region was sized for, so the excess spills into adjacent memory - potentially including the address the program will return to.",
+    "race condition": "A flaw where the result depends on the timing of events assumed to happen in a fixed order. TOCTOU is the variety where state changes between a check and the use of that check.",
+    "sql injection": "Supplying input that changes the structure of a database query rather than only its values, because the input was pasted directly into the query text.",
+    "cross-site scripting": "Including user-supplied content in a page without encoding it, so the browser interprets it as script running with the trusted site's privileges.",
+    "firmware": "Low-level software embedded in hardware. It runs before the operating system, so malicious firmware survives an OS reinstall and even a disk replacement.",
+    "vm escape": "A flaw letting code in a guest virtual machine break hypervisor isolation and reach the host or other guests - invalidating the assumption the whole model rests on.",
+    "shared responsibility model": "The division of security duties between cloud provider and customer. Where the line falls varies by service model, but data and access control are always the customer's.",
+    "zero-day": "A vulnerability the vendor does not know about, so no patch exists. Expensive to find, therefore used selectively - which says something about the actor.",
+    "patch gap": "The window between a patch being published and being deployed. Publication often makes exploitation easier, because the fix reveals the flaw.",
+    "end-of-life": "A system the vendor no longer supports, so every future vulnerability in it is permanent. The canonical compensating control scenario.",
+    "parameterised query": "Defining query structure first with placeholders, then supplying values separately, so input cannot alter structure. The correct fix for injection.",
+    "resource reuse": "Memory or storage reassigned between tenants without being properly cleared, so one customer receives data belonging to another."
+  };
+
+  window.MODALS = {
+    "defence-table": {
+      title: "Defence by vulnerability class",
+      body:
+        "<table><thead><tr><th>Vulnerability</th><th>Primary defence</th></tr></thead><tbody>" +
+        "<tr><td>Buffer overflow</td><td>Bounds checking, memory-safe languages, ASLR/DEP</td></tr>" +
+        "<tr><td>SQL injection</td><td>Parameterised queries</td></tr>" +
+        "<tr><td>Cross-site scripting</td><td>Output encoding, CSP</td></tr>" +
+        "<tr><td>Race condition</td><td>Atomic operations</td></tr>" +
+        "<tr><td>End-of-life system</td><td>Replace; meanwhile isolate, restrict, monitor</td></tr>" +
+        "<tr><td>Cloud misconfiguration</td><td>Automated config scanning, least privilege</td></tr>" +
+        "<tr><td>Zero-day</td><td>Defence in depth, segmentation, behavioural detection</td></tr>" +
+        "</tbody></table><p>Prefer answers that change the design over answers that add filtering.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "toctou": [
+      { text: "$ trace --process backup-agent --watch /tmp/report.csv", cls: "prompt", delay: 320 },
+      { text: "t=0.000  CHECK   is /tmp/report.csv a regular file owned by the user?", cls: "info", delay: 460 },
+      { text: "t=0.001  RESULT  yes - safe to process", cls: "output", delay: 380 },
+      { text: "t=0.002  ...gap...", cls: "warning", delay: 420 },
+      { text: "t=0.003  [ATTACKER] replaces /tmp/report.csv with a link to /etc/shadow", cls: "error", delay: 520 },
+      { text: "t=0.004  USE     opens /tmp/report.csv with elevated privileges", cls: "output", delay: 420 },
+      { text: "t=0.005  RESULT  reads /etc/shadow", cls: "error", delay: 420 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "[NOTE] The check was correct when it ran. The world changed after it.", cls: "warning", delay: 600 },
+      { text: "[FIX] Make check and use one atomic operation - leave no gap to act in.", cls: "info", delay: 600 }
+    ],
+    "sqli": [
+      { text: "$ compare-query-construction", cls: "prompt", delay: 320 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "APPROACH A - concatenation (unsafe)", cls: "error", delay: 420 },
+      { text: "  query = \"SELECT * FROM users WHERE name = '\" + input + \"'\"", cls: "output", delay: 440 },
+      { text: "  input = \"jsmith\"", cls: "output", delay: 320 },
+      { text: "    -> ...WHERE name = 'jsmith'            structure intact", cls: "output", delay: 400 },
+      { text: "  input = \"' OR '1'='1\"", cls: "warning", delay: 420 },
+      { text: "    -> ...WHERE name = '' OR '1'='1'       STRUCTURE CHANGED", cls: "error", delay: 480 },
+      { text: "  [WHY] the quote ended the value; the rest was read as query", cls: "error", delay: 520 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "APPROACH B - parameterised (safe)", cls: "info", delay: 420 },
+      { text: "  query = \"SELECT * FROM users WHERE name = ?\"", cls: "output", delay: 400 },
+      { text: "  bind(1, input)          # sent separately as DATA", cls: "output", delay: 400 },
+      { text: "  input = \"' OR '1'='1\"", cls: "output", delay: 360 },
+      { text: "    -> searches for a user literally named: ' OR '1'='1", cls: "info", delay: 480 },
+      { text: "  [WHY] structure was fixed before the value arrived", cls: "info", delay: 520 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "[LESSON] The fix is not better filtering. It is a design where", cls: "info", delay: 540 },
+      { text: "data cannot become instruction.", cls: "info", delay: 460 }
+    ],
+    "cloud": [
+      { text: "$ audit-incident --case storage-exposure-4471", cls: "prompt", delay: 320 },
+      { text: "Finding: 2.1M customer records publicly readable", cls: "error", delay: 440 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "Provider layer ------------------------------", cls: "info", delay: 380 },
+      { text: "  physical security ............ OK", cls: "output", delay: 300 },
+      { text: "  hypervisor patching .......... OK", cls: "output", delay: 300 },
+      { text: "  network infrastructure ....... OK", cls: "output", delay: 300 },
+      { text: "Customer layer ------------------------------", cls: "info", delay: 380 },
+      { text: "  bucket access policy ......... PUBLIC-READ", cls: "error", delay: 440 },
+      { text: "  encryption at rest ........... not enabled", cls: "error", delay: 400 },
+      { text: "  access logging ............... not enabled", cls: "error", delay: 400 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "[VERDICT] No provider control failed. All three findings sit", cls: "warning", delay: 560 },
+      { text: "on the customer side of the shared responsibility line.", cls: "warning", delay: 500 },
+      { text: "[NOTE] Data and access control are the customer's in EVERY model.", cls: "info", delay: 600 }
+    ],
+    "patchgap": [
+      { text: "$ timeline --cve EXAMPLE-2026-0001", cls: "prompt", delay: 320 },
+      { text: "day   0   researcher discovers the flaw", cls: "output", delay: 380 },
+      { text: "day   0   [ZERO-DAY WINDOW OPENS] vendor unaware, no patch possible", cls: "error", delay: 500 },
+      { text: "day  14   responsible disclosure to the vendor", cls: "output", delay: 400 },
+      { text: "day  61   vendor publishes a patch", cls: "info", delay: 400 },
+      { text: "day  61   [ZERO-DAY WINDOW CLOSES]", cls: "info", delay: 380 },
+      { text: "day  63   working exploit published - the patch revealed the flaw", cls: "warning", delay: 500 },
+      { text: "day  64   mass scanning for unpatched systems begins", cls: "warning", delay: 440 },
+      { text: "day 190   this organization applies the patch", cls: "output", delay: 420 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "zero-day exposure ......... 61 days (nobody could patch)", cls: "output", delay: 460 },
+      { text: "patch gap exposure ........ 129 days (a fix existed)", cls: "error", delay: 500 },
+      { text: "[NOTE] The avoidable window was more than twice the unavoidable one.", cls: "warning", delay: 620 }
+    ]
+  };
+
+  window.MODULE_ACTIONS = {};
+
+  window.CLASSIFIERS = {
+    vulns: {
+      axes: [
+        { name: "cat", label: "Vulnerability class", options: ["Application", "Web", "Operating system", "Hardware / firmware", "Virtualization", "Cloud"] },
+        { name: "fix", label: "Primary defence", options: ["Parameterised queries", "Output encoding", "Bounds checking", "Atomic operations", "Patch and inventory", "Configuration scanning"] }
+      ],
+      items: [
+        { scenario: "A login form accepts input that is pasted directly into a database query, allowing a user to alter the query's structure.",
+          answers: { cat: "Web", fix: "Parameterised queries" },
+          explain: "SQL injection. Filtering characters is fragile; defining the structure first and supplying values separately removes the possibility entirely." },
+        { scenario: "A comment field stores user content that is later rendered into other visitors' pages, where their browsers execute it as script.",
+          answers: { cat: "Web", fix: "Output encoding" },
+          explain: "Stored cross-site scripting. Encoding at the point content is written into a page is the primary defence, because whether a string is dangerous depends on its context." },
+        { scenario: "A program copies user-supplied input into a fixed-size memory region without verifying the input fits, overwriting adjacent memory.",
+          answers: { cat: "Application", fix: "Bounds checking" },
+          explain: "A buffer overflow, caused by a missing length check. Memory-safe languages perform this check automatically." },
+        { scenario: "A backup process verifies a file is safe, then opens it a fraction of a second later - and an attacker swaps the file in between.",
+          answers: { cat: "Application", fix: "Atomic operations" },
+          explain: "TOCTOU. The check was accurate when made; the fix is to leave no gap between checking and using." },
+        { scenario: "A storage container holding customer records was left with a public-read access policy, and encryption was never enabled.",
+          answers: { cat: "Cloud", fix: "Configuration scanning" },
+          explain: "Cloud misconfiguration - the most common cloud vulnerability. Automated scanning catches what human review misses in deeply nested policies." },
+        { scenario: "A motherboard's UEFI contains malicious code that survives reinstalling the operating system and replacing the disk.",
+          answers: { cat: "Hardware / firmware", fix: "Patch and inventory" },
+          explain: "Firmware runs before the OS, so it persists through remediation aimed at the OS. It is rarely inventoried, which is why it goes unpatched for years." },
+        { scenario: "Code running inside a guest breaks hypervisor isolation and reads memory belonging to another tenant's machine on the same host.",
+          answers: { cat: "Virtualization", fix: "Patch and inventory" },
+          explain: "VM escape. Hypervisor patching is the direct control; separating workloads by sensitivity limits what an escape reaches." }
+      ]
+    }
+  };
+
+  window.LABS = {
+    "classify-vulns": {
+      title: "Lab 1 - Diagnose from the symptom",
+      time: "~25 minutes",
+      objective: "Name the vulnerability class from a described symptom and select the defence that actually addresses it - the reasoning scenario questions require.",
+      steps: [
+        {
+          type: "match",
+          prompt: "For each symptom, identify the vulnerability and its primary defence.",
+          hint: "Ask what the system was tricked into treating as an instruction, or what assumption it made that turned out to be false.",
+          columns: [
+            { name: "vuln", label: "Vulnerability", options: ["Buffer overflow", "SQL injection", "Cross-site scripting", "Race condition", "VM escape", "Cloud misconfiguration"] },
+            { name: "fix", label: "Primary defence", options: ["Bounds checking", "Parameterised queries", "Output encoding", "Atomic operations", "Hypervisor patching", "Configuration scanning"] }
+          ],
+          items: [
+            { text: "Input longer than expected overwrites the address a function will return to", answers: { vuln: "Buffer overflow", fix: "Bounds checking" } },
+            { text: "A username field alters the structure of a database query", answers: { vuln: "SQL injection", fix: "Parameterised queries" } },
+            { text: "A saved profile field runs as script in every visitor's browser", answers: { vuln: "Cross-site scripting", fix: "Output encoding" } },
+            { text: "A file is swapped between being checked as safe and being opened", answers: { vuln: "Race condition", fix: "Atomic operations" } },
+            { text: "A guest reads memory belonging to another tenant on the same host", answers: { vuln: "VM escape", fix: "Hypervisor patching" } },
+            { text: "A storage container of customer records is publicly readable", answers: { vuln: "Cloud misconfiguration", fix: "Configuration scanning" } }
+          ],
+          explain: "Four of these six are versions of one idea: data supplied by a user was treated as an instruction, or a fact checked earlier stopped being true. Recognising the pattern is more durable than memorising the list."
+        },
+        {
+          type: "choice",
+          prompt: "An organization runs a manufacturing system whose vendor ceased operations. It cannot be patched and cannot be replaced for two years. Select every appropriate response.",
+          hint: "One primary control is permanently unavailable. What is left?",
+          options: [
+            "Apply the latest vendor security patches",
+            "Isolate the system on a restricted network segment",
+            "Restrict which accounts can reach it to a named list",
+            "Increase monitoring and logging around it",
+            "Document the risk and set a review date",
+            "Treat this as a permanent solution rather than a replacement plan"
+          ],
+          correct: [1, 2, 3, 4],
+          explain: "Patching is impossible by the scenario's own terms. The remaining four are the compensating control package. The last option is the trap: compensating controls genuinely reduce risk but are not a repair, so the system belongs on a replacement plan."
+        },
+        {
+          type: "text",
+          prompt: "Explain in your own words why firmware compromise is harder to remediate than operating system compromise.",
+          hint: "Three or four sentences. Think about the order in which things load, and what reinstalling the OS actually replaces."
+        },
+        {
+          type: "text",
+          prompt: "A colleague says jailbreaking a phone 'just removes some restrictions'. Explain what is actually being switched off.",
+          hint: "What enforces that apps cannot read each other's data, and that only signed code runs?"
+        }
+      ]
+    },
+
+    "injection-defence": {
+      title: "Lab 2 - Separate data from instruction",
+      time: "~20 minutes",
+      objective: "Trace how injection works at the level of query structure, and explain why design changes beat filtering.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Put the stages of a SQL injection into the correct order.",
+          hint: "Use the arrows. The critical moment is when the boundary between value and query text is crossed.",
+          items: [
+            "The application builds a query by concatenating user input into query text",
+            "A user supplies input containing a quote character",
+            "The quote ends the intended value early",
+            "Text after the quote is parsed as part of the query rather than as data",
+            "The query's logic is now different from what the developer wrote",
+            "The database executes the altered query with the application's privileges"
+          ],
+          explain: "Every stage follows from the first. Because the query was assembled as text, there is no point at which the database can tell which characters the developer wrote and which the user supplied."
+        },
+        {
+          type: "choice",
+          prompt: "Which defences genuinely address SQL injection? Select all that apply.",
+          hint: "Prefer answers that remove the possibility over answers that try to recognise attacks.",
+          options: [
+            "Parameterised queries or prepared statements",
+            "Blocking the apostrophe character in all input fields",
+            "Least privilege on the application's database account",
+            "Stored procedures used with parameters",
+            "A web application firewall as the sole control",
+            "Input validation as defence in depth alongside parameterisation"
+          ],
+          correct: [0, 2, 3, 5],
+          explain: "Character blocklists are routinely defeated by encoding and alternative syntax, and they break legitimate input such as O'Brien. A WAF adds value but is a filter and fails as a sole control. Least privilege does not prevent injection - it limits what a successful one reaches, which is why it belongs here."
+        },
+        {
+          type: "match",
+          prompt: "Match each cross-site scripting variety to where its payload lives.",
+          hint: "The distinguishing question is always where the payload resides.",
+          columns: [
+            { name: "loc", label: "Payload location", options: ["In a crafted link, echoed back immediately", "Saved on the server and served to every visitor", "Never reaches the server; handled by client-side script"] }
+          ],
+          items: [
+            { text: "Reflected XSS", answers: { loc: "In a crafted link, echoed back immediately" } },
+            { text: "Stored XSS", answers: { loc: "Saved on the server and served to every visitor" } },
+            { text: "DOM-based XSS", answers: { loc: "Never reaches the server; handled by client-side script" } }
+          ],
+          explain: "Stored XSS is the most severe because it needs no interaction beyond visiting a legitimate page and affects everyone who does. DOM-based XSS is notable because server-side logging may show no evidence at all."
+        },
+        {
+          type: "text",
+          prompt: "Explain why output encoding rather than input validation is the primary defence against XSS.",
+          hint: "Consider whether the same string is dangerous in every context it might appear in."
+        }
+      ]
+    },
+
+    "cloud-responsibility": {
+      title: "Lab 3 - Draw the responsibility line",
+      time: "~20 minutes",
+      objective: "Apply the shared responsibility model correctly and distinguish zero-day exposure from the patch gap.",
+      steps: [
+        {
+          type: "match",
+          prompt: "For each item, identify who is responsible under an IaaS agreement.",
+          hint: "Two things never transfer to the provider under any service model.",
+          columns: [
+            { name: "who", label: "Responsible party", options: ["Cloud provider", "Customer"] }
+          ],
+          items: [
+            { text: "Physical security of the data centre", answers: { who: "Cloud provider" } },
+            { text: "Patching the hypervisor", answers: { who: "Cloud provider" } },
+            { text: "Patching the guest operating system", answers: { who: "Customer" } },
+            { text: "Configuring storage access policies", answers: { who: "Customer" } },
+            { text: "Encrypting data at rest", answers: { who: "Customer" } },
+            { text: "Managing user access and permissions", answers: { who: "Customer" } }
+          ],
+          explain: "Under IaaS the provider stops at the hypervisor. Data and access control are the customer's under every model including SaaS - which is why 'the cloud was breached' is usually an inaccurate description of a customer misconfiguration."
+        },
+        {
+          type: "choice",
+          prompt: "<em>A flaw is discovered on day 0. The vendor learns of it on day 14 and patches on day 61. A working exploit appears on day 63. The organization patches on day 190.</em><br><br>Select every accurate statement.",
+          hint: "Separate the window where no patch existed from the window where one did.",
+          options: [
+            "The zero-day window lasted 61 days",
+            "The zero-day window lasted 190 days",
+            "The patch gap was 129 days",
+            "Publication of the patch made exploitation easier",
+            "The avoidable exposure was longer than the unavoidable exposure",
+            "Nothing could have been done before day 61"
+          ],
+          correct: [0, 2, 3, 4],
+          explain: "The zero-day window closes when the patch ships, on day 61. Everything after that is the organization's own patch gap, at 129 days - more than twice the unavoidable window. Defence in depth and segmentation do help before day 61, so the last option is false."
+        },
+        {
+          type: "choice",
+          prompt: "Which statements about zero-days are accurate? Select all that apply.",
+          hint: "Think about cost, who can afford them, and what most real exploitation actually uses.",
+          options: [
+            "No patch exists because the vendor is unaware of the flaw",
+            "Most exploited vulnerabilities are zero-days",
+            "They are expensive to find, so they are used selectively",
+            "A scenario mentioning a zero-day suggests a well-resourced actor",
+            "Defence in depth offers no protection against them",
+            "Patching promptly matters more than defending against unknown flaws"
+          ],
+          correct: [0, 2, 3, 5],
+          explain: "Most exploitation uses known flaws with published patches that were never applied. And defence in depth absolutely helps: segmentation and behavioural detection limit and reveal an unknown exploit even when prevention is impossible."
+        },
+        {
+          type: "text",
+          prompt: "Your organization uses SaaS and assumes the provider handles security. Write three sentences correcting that assumption.",
+          hint: "Name specifically what remains yours even when the provider secures nearly the whole stack."
+        }
+      ]
+    }
+  };
+
+  var QUESTIONS = [
+    { tier: "recall",
+      question: "What is the root cause of a buffer overflow?",
+      options: ["Weak encryption", "Missing bounds checking on input length", "An expired certificate", "A misconfigured firewall"],
+      correct: 1,
+      explanation: "The program accepted input without verifying it fit the allocated region, so the excess overwrote adjacent memory. Memory-safe languages perform this check automatically." },
+    { tier: "recall",
+      question: "What does TOCTOU describe?",
+      options: ["A cryptographic protocol", "A gap between checking a condition and acting on it", "A cloud service model", "A type of malware"],
+      correct: 1,
+      explanation: "Time-of-check to time-of-use is a race condition where state changes between verification and use, so the program acts on a fact that is no longer true." },
+    { tier: "recall",
+      question: "Which XSS variety stores its payload on the server so every visitor is affected?",
+      options: ["Reflected", "Stored", "DOM-based", "Parameterised"],
+      correct: 1,
+      explanation: "Stored XSS is saved server-side and served to everyone who views the page, making it the most severe of the three because it needs no interaction beyond a normal visit." },
+    { tier: "recall",
+      question: "What defines a zero-day vulnerability?",
+      options: ["It is exploited within 24 hours", "The vendor is unaware, so no patch exists", "It affects zero systems", "It requires no user interaction"],
+      correct: 1,
+      explanation: "The name refers to the days the vendor has had to respond. What makes it distinct is that the primary defence - patching - is unavailable to anyone." },
+    { tier: "recall",
+      question: "Why does malicious firmware survive an operating system reinstall?",
+      options: ["It encrypts itself", "It runs before the operating system loads", "It hides in user documents", "It disables antivirus"],
+      correct: 1,
+      explanation: "Firmware sits beneath the OS and loads first, so replacing the OS leaves it untouched. Some firmware implants survive disk replacement entirely." },
+    { tier: "recall",
+      question: "Under the shared responsibility model, which items are always the customer's responsibility?",
+      options: ["Physical security and networking", "Data and access control", "Hypervisor patching", "Data centre power"],
+      correct: 1,
+      explanation: "Data and access control never transfer to the provider under any service model, including SaaS. Assuming otherwise is the most common origin of cloud breaches." },
+    { tier: "applied",
+      question: "A developer proposes blocking apostrophes in all input fields to prevent SQL injection. What is the best assessment?",
+      options: ["Effective and sufficient", "Fragile, and parameterised queries should be used instead", "Effective only for stored procedures", "It prevents cross-site scripting instead"],
+      correct: 1,
+      explanation: "Character blocklists are defeated by encoding and alternative syntax, and they break legitimate values such as O'Brien. Parameterised queries fix the structure before values arrive, removing the possibility." },
+    { tier: "applied",
+      question: "A backup process verifies a file is safe, and an attacker replaces it before the file is opened. What is this?",
+      options: ["Buffer overflow", "Race condition (TOCTOU)", "Cross-site scripting", "VM escape"],
+      correct: 1,
+      explanation: "The check was accurate when made, but the state changed in the gap before use. The fix is to make check and use a single atomic operation." },
+    { tier: "applied",
+      question: "Code inside a guest virtual machine reads memory belonging to another tenant on the same host. What has occurred?",
+      options: ["Resource reuse", "VM escape", "Directory traversal", "Privilege escalation within the guest"],
+      correct: 1,
+      explanation: "Hypervisor isolation was broken, which is VM escape. Resource reuse is different: it involves storage or memory reassigned without being cleared, not a break in isolation." },
+    { tier: "applied",
+      question: "An organization runs software whose vendor has ceased operations. Which approach is most appropriate?",
+      options: ["Apply the latest patches", "Isolate, restrict access, monitor, and plan replacement", "Accept the risk with no action", "Disconnect all systems immediately"],
+      correct: 1,
+      explanation: "No patch will ever exist, so compensating controls carry the risk until replacement. They genuinely reduce risk but are not a repair, which is why a replacement plan is part of the answer." },
+    { tier: "applied",
+      question: "A cloud storage container holding customer data was publicly readable. Whose control failed?",
+      options: ["The provider's physical security", "The customer's configuration of access policy", "The provider's hypervisor patching", "The provider's network segmentation"],
+      correct: 1,
+      explanation: "Access configuration sits on the customer side under every service model. No provider control failed, which is why describing this as a cloud breach misplaces the cause." },
+    { tier: "applied",
+      question: "Why is output encoding preferred over input validation as the primary XSS defence?",
+      options: ["It is faster to compute", "Whether content is dangerous depends on the context it is rendered into", "Input validation is never useful", "It removes the need for a Content Security Policy"],
+      correct: 1,
+      explanation: "The same string may be harmless in one context and executable in another, so the safest decision point is where content is written into a page. Input validation remains valuable as defence in depth." },
+    { tier: "applied",
+      question: "A jailbroken phone is connected to the corporate network. What is the most significant concern?",
+      options: ["Reduced battery life", "Platform sandboxing and code signature enforcement have been disabled", "It cannot receive email", "It uses more bandwidth"],
+      correct: 1,
+      explanation: "Mobile platform security rests on the OS enforcing app isolation and running only signed code. Jailbreaking removes those mechanisms, so the device has had its principal security architecture switched off." },
+    { tier: "applied",
+      question: "Which practice most directly addresses vulnerabilities in third-party libraries?",
+      options: ["Code review", "Dependency scanning", "Output encoding", "Bounds checking"],
+      correct: 1,
+      explanation: "Most code in a modern application was written by someone else. Dependency scanning identifies known vulnerabilities in those components, which organizations otherwise often do not know they include." },
+    { tier: "applied",
+      question: "A tenant receives cloud storage still containing another customer's data. What is this called?",
+      options: ["VM escape", "Resource reuse", "Directory traversal", "Memory injection"],
+      correct: 1,
+      explanation: "Resources were reassigned without being properly cleared. The tenant-side defence is encrypting data before it reaches shared infrastructure, so a surfacing fragment is unreadable." },
+    { tier: "scenario",
+      question: "A flaw is found on day 0, patched by the vendor on day 61, and applied by an organization on day 190. How should the exposure be characterised?",
+      options: ["190 days of zero-day exposure", "61 days of zero-day exposure and 129 days of patch gap", "129 days of zero-day exposure", "No exposure, since a patch existed"],
+      correct: 1,
+      explanation: "The zero-day window closes when the patch ships. Everything after is the organization's own patch gap - here more than twice the unavoidable window, which is why prompt patching outranks defending against unknown flaws." },
+    { tier: "scenario",
+      question: "After a breach, an organization argues that because it uses SaaS, the provider is responsible. Records were exposed through an over-permissive sharing setting. Is the argument sound?",
+      options: ["Yes, SaaS transfers all security responsibility", "No - access configuration and data remain the customer's under SaaS", "Yes, if the contract does not mention configuration", "Only if the provider had an outage"],
+      correct: 1,
+      explanation: "SaaS transfers most of the stack but never data or access control. An over-permissive sharing setting is a customer configuration decision regardless of how much the provider manages." },
+    { tier: "scenario",
+      question: "An application is compromised through injection, and the attacker reads every table in the database. Which additional control would most have limited the damage?",
+      options: ["A longer encryption key", "Least privilege on the application's database account", "More frequent password rotation", "A longer log retention period"],
+      correct: 1,
+      explanation: "Least privilege does not prevent injection but bounds what a successful one reaches. An application account restricted to the tables it actually needs turns a full database compromise into a partial one." },
+    { tier: "scenario",
+      question: "A security team finds a device whose firmware has never been updated in seven years of operation. What does this most likely indicate?",
+      options: ["The firmware is inherently secure", "Firmware is absent from the asset and patch inventory", "The device is not connected to a network", "Firmware cannot be updated"],
+      correct: 1,
+      explanation: "Firmware goes unpatched because it is rarely inventoried and updates are often manual, not because it is secure or unpatchable. This is the missing-inventory problem from Module 3 in a different form." },
+    { tier: "scenario",
+      question: "An organization asks how best to prepare for zero-day exploitation, since patching cannot help. What is the most appropriate advice?",
+      options: ["Nothing can be done until a patch exists", "Defence in depth, segmentation, and behavioural detection limit and reveal exploitation", "Buy a longer encryption key", "Disable all logging to reduce attack surface"],
+      correct: 1,
+      explanation: "Prevention of an unknown flaw is not possible, but layered controls limit what an exploit reaches and behavioural detection reveals its use. Note also that most real exploitation targets known flaws, so patching discipline remains the higher priority." }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>

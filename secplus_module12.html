@@ -1,0 +1,2863 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="12" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 12: Third-Party Risk, Compliance, Audits, and Awareness</title>
+<meta name="description" content="Assessing and monitoring vendors, compliance reporting and its consequences, privacy and data subject rights, audits and penetration testing, and building an awareness programme that changes behaviour.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-box.danger{stroke:var(--danger);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 12</p>
+    <h1>Third-Party Risk, Compliance, Audits, and Awareness</h1>
+    <p class="subtitle">Assessing and monitoring vendors, compliance reporting and its consequences, privacy and data subject rights, audits and penetration testing, and building an awareness programme that changes behaviour.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="&#128203;" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to assess and monitor
+        third-party risk and identify the right agreement type; explain compliance
+        reporting, monitoring, and the consequences of failure; apply privacy
+        concepts including data subject rights and retention; distinguish internal
+        from external audits and the penetration testing variants; and design a
+        security awareness programme that changes behaviour.
+      </div>
+
+      <p>This module completes Domain 5 and the course. It covers four objectives
+      that share a single premise: security depends on people and organizations
+      outside your direct control - your suppliers, your regulators, your
+      auditors, and every member of staff.</p>
+
+      <p>Everything in the previous eleven modules is a control you operate.
+      Everything here concerns assurance about things you do not operate, which is
+      a different problem requiring different instruments: contracts, audits,
+      questionnaires, and training rather than firewalls and patches.</p>
+
+      <div class="subsection">
+        <h3>The idea that unifies the four</h3>
+        <p>Accountability does not transfer. Module 11 established this for
+        insurance and outsourcing, and it is the thread through everything here. A
+        supplier's breach is your incident. A regulator's finding lands on your
+        organization, not your auditor's. And an employee who clicks a link
+        creates an exposure the organization owns.</p>
+        <p>What these objectives describe is how an organization gains reasonable
+        confidence about things it cannot directly control - and what it does when
+        that confidence turns out to be misplaced.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128477;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">The cleaner's copy of your key</p>
+        <p>You can fit the best locks available, set the alarm every time, and
+        never leave a window open. You have also given a key to a cleaning company
+        whose hiring practices you have never asked about, whose key cabinet you
+        have never seen, and whose staff turnover you do not know.</p>
+        <p>Your house is now exactly as secure as their weakest process. Nothing
+        about your own locks has changed, and nothing about them helps - which is
+        the entire subject of third-party risk in one sentence.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="third-party" data-icon="&#129309;" role="tabpanel"
+             aria-labelledby="tab-third-party" tabindex="-1">
+      <h2 class="section-title">Third-Party Risk</h2>
+
+      <div class="subsection">
+        <h3>Assessing a vendor</h3>
+        <p>Objective 5.3 names several assessment instruments, and they differ
+        sharply in how much assurance they actually provide.</p>
+        <table>
+          <thead><tr><th>Instrument</th><th>What it gives you</th><th>Assurance</th></tr></thead>
+          <tbody>
+            <tr><td>Questionnaire</td><td>The vendor's own answers about its practices</td><td>Lowest - self-declared</td></tr>
+            <tr><td>Evidence of internal audits</td><td>The vendor's own review findings</td><td>Low - the vendor chose what to share</td></tr>
+            <tr><td><span class="term" data-term="right-to-audit">Right-to-audit clause</span></td><td>Contractual entitlement to inspect</td><td>Moderate - if actually exercised</td></tr>
+            <tr><td>Independent assessment</td><td>Third-party review against a standard</td><td>High</td></tr>
+            <tr><td>Penetration testing</td><td>Demonstrated resistance to attack</td><td>High, and point-in-time</td></tr>
+            <tr><td>Supply chain analysis</td><td>Visibility of the vendor's own dependencies</td><td>Addresses the fourth-party problem</td></tr>
+          </tbody>
+        </table>
+        <p>The ordering matters more than the list. Questionnaires are the most
+        common instrument and the weakest, because they ask an organization to
+        grade itself with a contract at stake. They are still worth sending - the
+        answers create a documented record and reveal which vendors cannot answer
+        basic questions - but treating a completed questionnaire as assurance is
+        the mistake the exam probes.</p>
+        <p>A <strong>right-to-audit clause</strong> is only as useful as its
+        exercise. Organizations negotiate the clause, congratulate themselves, and
+        never invoke it - which delivers exactly the assurance of not having it,
+        with more paperwork.</p>
+        <p><strong>Supply chain analysis</strong> addresses what is sometimes
+        called fourth-party risk: your vendor's vendors. Module 3 established that
+        attackers target the weakest link, and that link is frequently two steps
+        away from you and entirely invisible without deliberately asking.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="tpTitle tpDesc">
+          <title id="tpTitle">The third-party risk lifecycle</title>
+          <desc id="tpDesc">Four stages: selection with due diligence, agreement setting terms, ongoing monitoring, and offboarding with data return and access revocation. Assurance instruments rise in strength from self-declared questionnaires to independent assessment.</desc>
+          <rect x="15" y="44" width="155" height="66" rx="10" class="svg-box brand"/>
+          <text x="92" y="70" text-anchor="middle" class="svg-label">Selection</text>
+          <text x="92" y="88" text-anchor="middle" class="svg-sub">due diligence,</text>
+          <text x="92" y="103" text-anchor="middle" class="svg-sub">conflict of interest</text>
+          <rect x="190" y="44" width="155" height="66" rx="10" class="svg-box accent"/>
+          <text x="267" y="70" text-anchor="middle" class="svg-label">Agreement</text>
+          <text x="267" y="88" text-anchor="middle" class="svg-sub">SLA, MSA, SOW,</text>
+          <text x="267" y="103" text-anchor="middle" class="svg-sub">NDA, right to audit</text>
+          <rect x="365" y="44" width="155" height="66" rx="10" class="svg-box accent"/>
+          <text x="442" y="70" text-anchor="middle" class="svg-label">Monitoring</text>
+          <text x="442" y="88" text-anchor="middle" class="svg-sub">due care, ongoing</text>
+          <text x="442" y="103" text-anchor="middle" class="svg-sub">not just at renewal</text>
+          <rect x="540" y="44" width="145" height="66" rx="10" class="svg-box warn"/>
+          <text x="612" y="70" text-anchor="middle" class="svg-label">Offboarding</text>
+          <text x="612" y="88" text-anchor="middle" class="svg-sub">data returned,</text>
+          <text x="612" y="103" text-anchor="middle" class="svg-sub">access revoked</text>
+          <g class="svg-line accent">
+            <path d="M172 77 L186 77" marker-end="url(#at12)"/>
+            <path d="M347 77 L361 77" marker-end="url(#at12)"/>
+            <path d="M522 77 L536 77" marker-end="url(#at12)"/>
+          </g>
+          <defs><marker id="at12" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="30" text-anchor="middle" class="svg-sub">A vendor assessed thoroughly in 2023 may since have been acquired, moved hosting, or lost its security staff.</text>
+          <text x="20" y="146" class="svg-label">Assurance strength</text>
+          <rect x="20" y="156" width="150" height="30" rx="6" class="svg-box danger"/>
+          <text x="95" y="176" text-anchor="middle" class="svg-mono">questionnaire</text>
+          <rect x="185" y="156" width="150" height="30" rx="6" class="svg-box warn"/>
+          <text x="260" y="176" text-anchor="middle" class="svg-mono">their internal audit</text>
+          <rect x="350" y="156" width="150" height="30" rx="6" class="svg-box brand"/>
+          <text x="425" y="176" text-anchor="middle" class="svg-mono">right to audit, used</text>
+          <rect x="515" y="156" width="165" height="30" rx="6" class="svg-box accent"/>
+          <text x="597" y="176" text-anchor="middle" class="svg-mono">independent assessment</text>
+          <path d="M20 200 L680 200" class="svg-line accent" marker-end="url(#at12)"/>
+          <text x="350" y="228" text-anchor="middle" class="svg-sub">Self-declared on the left, independently verified on the right. The question a scenario asks</text>
+          <text x="350" y="244" text-anchor="middle" class="svg-sub">is usually which of these the organization actually has.</text>
+        </svg>
+        <figcaption>Your house is as secure as the cleaning company's weakest process, and nothing about your own locks helps.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127859;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Self-declared hygiene versus an inspection</p>
+        <p>A restaurant filling in its own form about kitchen cleanliness will
+        report a clean kitchen. Not necessarily dishonestly - people genuinely
+        believe their own practices are fine, and nobody scrutinises what they do
+        every day.</p>
+        <p>An environmental health officer arriving unannounced produces different
+        information, and the difference is not the questions. It is who is
+        answering them and whether anyone checked.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Questionnaire against evidence</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="vendor">Assess a vendor</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="vendor">Clear</button>
+        </div>
+        <div class="terminal" id="demo-vendor" aria-live="polite" aria-label="Vendor assessment output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Vendor selection</h3>
+        <p><span class="term" data-term="due diligence"><strong>Due diligence</strong></span> is the investigation performed before
+        entering a relationship: financial stability, security posture, regulatory
+        history, and whether the vendor can actually do what it claims. It is
+        distinct from <span class="term" data-term="due care"><strong>due care</strong></span>, which is the ongoing exercise of
+        reasonable prudence once the relationship exists. Due diligence is
+        investigation; due care is maintenance.</p>
+        <p><strong>Conflict of interest</strong> appears in the objective because
+        selection decisions are vulnerable to influences that have nothing to do
+        with capability - an existing relationship, a personal connection, or a
+        selector who stands to benefit. The control is disclosure and separation:
+        anyone with an interest declares it and steps out of the decision.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🤝</span> Think of it like…</p><p class="analogy__title">Checking before you hire, and after</p><p>Before taking on a builder you check their references, look at previous work, and confirm they are insured. That is due diligence, and it happens once, before anything is signed.</p><p>Once they start, you look at the work as it goes up, ask about the bits that seem wrong, and notice when the insurance certificate expires. That is due care, and it never stops.</p><p>Organizations are usually good at the first and forget the second, because diligence produces a document and care produces nothing visible until something has already gone wrong.</p></div>
+
+      <div class="subsection">
+        <h3>Agreement types</h3>
+        <p>These are heavily tested and easily confused. The distinguishing
+        question is what each document is for.</p>
+        <table>
+          <thead><tr><th>Type</th><th>Full name</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="sla">SLA</span></td><td>Service level agreement</td><td>Defines measurable service standards and what happens if they are missed</td></tr>
+            <tr><td><span class="term" data-term="msa">MSA</span></td><td>Master service agreement</td><td>Overarching terms governing an ongoing relationship</td></tr>
+            <tr><td><span class="term" data-term="sow">SOW / WO</span></td><td>Statement of work / work order</td><td>The specific work, deliverables, and timeline under an MSA</td></tr>
+            <tr><td><span class="term" data-term="mou">MOU</span></td><td>Memorandum of understanding</td><td>States intent to cooperate; generally not binding</td></tr>
+            <tr><td>MOA</td><td>Memorandum of agreement</td><td>More formal than an MOU; may carry obligations</td></tr>
+            <tr><td><span class="term" data-term="nda">NDA</span></td><td>Non-disclosure agreement</td><td>Protects confidential information shared between parties</td></tr>
+            <tr><td>BPA</td><td>Business partnership agreement</td><td>Governs the terms of a partnership between organizations</td></tr>
+          </tbody>
+        </table>
+        <p>Two relationships resolve most questions. <strong>MSA and SOW work
+        together</strong>: the MSA is negotiated once and sets the terms, and each
+        piece of work gets an SOW describing what will be delivered. That is why a
+        scenario about defining deliverables for a specific project points to an
+        SOW rather than to renegotiating the MSA.</p>
+        <p>And <strong>an MOU is generally not binding</strong>, which is the
+        distinction most often tested. If a scenario requires enforceable
+        commitments with consequences, an MOU is the wrong answer.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 240" role="img" aria-labelledby="agTitle agDesc">
+          <title id="agTitle">How the agreement types relate</title>
+          <desc id="agDesc">The MSA sets overarching terms once, with individual statements of work beneath it defining specific deliverables. SLAs define measurable service standards. NDAs protect shared information. MOUs record intent and are generally not binding.</desc>
+          <rect x="140" y="30" width="420" height="44" rx="9" class="svg-box accent"/>
+          <text x="350" y="50" text-anchor="middle" class="svg-label">MSA &mdash; overarching terms, negotiated once</text>
+          <text x="350" y="67" text-anchor="middle" class="svg-sub">liability, IP ownership, commercial terms</text>
+          <rect x="140" y="94" width="130" height="44" rx="8" class="svg-box brand"/>
+          <text x="205" y="114" text-anchor="middle" class="svg-sub">SOW &mdash; project 1</text>
+          <text x="205" y="130" text-anchor="middle" class="svg-mono">deliverables, dates</text>
+          <rect x="285" y="94" width="130" height="44" rx="8" class="svg-box brand"/>
+          <text x="350" y="114" text-anchor="middle" class="svg-sub">SOW &mdash; project 2</text>
+          <text x="350" y="130" text-anchor="middle" class="svg-mono">deliverables, dates</text>
+          <rect x="430" y="94" width="130" height="44" rx="8" class="svg-box brand"/>
+          <text x="495" y="114" text-anchor="middle" class="svg-sub">SOW &mdash; project 3</text>
+          <text x="495" y="130" text-anchor="middle" class="svg-mono">deliverables, dates</text>
+          <g class="svg-line accent">
+            <path d="M280 76 L210 90" marker-end="url(#aa12)"/>
+            <path d="M350 76 L350 90" marker-end="url(#aa12)"/>
+            <path d="M420 76 L490 90" marker-end="url(#aa12)"/>
+          </g>
+          <defs><marker id="aa12" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+          <rect x="15" y="160" width="210" height="60" rx="9" class="svg-box"/>
+          <text x="120" y="182" text-anchor="middle" class="svg-label">SLA</text>
+          <text x="120" y="202" text-anchor="middle" class="svg-sub">measurable standards</text>
+          <text x="120" y="216" text-anchor="middle" class="svg-mono">+ consequences</text>
+          <rect x="245" y="160" width="210" height="60" rx="9" class="svg-box"/>
+          <text x="350" y="182" text-anchor="middle" class="svg-label">NDA</text>
+          <text x="350" y="202" text-anchor="middle" class="svg-sub">protects shared information</text>
+          <text x="350" y="216" text-anchor="middle" class="svg-mono">often signed first</text>
+          <rect x="475" y="160" width="210" height="60" rx="9" class="svg-box warn"/>
+          <text x="580" y="182" text-anchor="middle" class="svg-label">MOU</text>
+          <text x="580" y="202" text-anchor="middle" class="svg-sub">intent to cooperate</text>
+          <text x="580" y="216" text-anchor="middle" class="svg-mono">generally NOT binding</text>
+        </svg>
+        <figcaption>Terms once, deliverables per project. If a scenario needs enforceability, an MOU is the wrong answer.</figcaption>
+      </figure>
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="agreements">
+        Open the agreement types reference</button></p>
+
+      <div class="subsection">
+        <h3>Practice: choose the agreement</h3>
+        <div class="classifier" data-classifier="agreements"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Monitoring and rules of engagement</h3>
+        <p><strong>Vendor monitoring</strong> is ongoing rather than periodic
+        reassessment at renewal. A vendor assessed thoroughly in 2023 may since
+        have been acquired, moved its hosting, suffered a breach, or lost the
+        staff who ran its security programme. Continuous or at least recurring
+        review is the same argument Module 11 made for continuous risk
+        assessment.</p>
+        <p><span class="term" data-term="rules of engagement"><strong>Rules of engagement</strong></span> define the boundaries of an
+        assessment or test before it begins: what is in scope, what is explicitly
+        out, when testing may occur, what techniques are permitted, and who to
+        contact if something breaks. They protect both parties, and their absence
+        is how a penetration test becomes an incident, a legal dispute, or an
+        outage nobody expected.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="compliance" data-icon="&#9878;" role="tabpanel"
+             aria-labelledby="tab-compliance" tabindex="-1">
+      <h2 class="section-title">Compliance</h2>
+
+      <div class="subsection">
+        <h3>Reporting and monitoring</h3>
+        <p>Compliance reporting is <strong>internal</strong> - to management,
+        audit committees, and boards - or <strong>external</strong>, to regulators,
+        customers, and certification bodies. The audiences differ in what they can
+        do with the information, which is the Module 9 reporting lesson again.</p>
+        <p>Compliance monitoring is the ongoing verification that requirements are
+        actually being met, and the objective names its components.</p>
+        <table>
+          <thead><tr><th>Component</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>Due diligence</td><td>Investigating before committing</td></tr>
+            <tr><td>Due care</td><td>Exercising ongoing reasonable prudence</td></tr>
+            <tr><td>Attestation</td><td>A formal statement that a requirement is met</td></tr>
+            <tr><td>Acknowledgement</td><td>Confirmation that staff have received and understood policy</td></tr>
+            <tr><td>Internal and external</td><td>Self-verification and independent verification</td></tr>
+            <tr><td>Automation</td><td>Continuous technical checking rather than periodic manual review</td></tr>
+          </tbody>
+        </table>
+        <p>Acknowledgement is the element that connects to Module 11's acceptable
+        use policy. A signed acknowledgement is what demonstrates the organization
+        told someone what was expected, which is what makes enforcement
+        defensible.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Due diligence and due care, precisely</h3>
+        <p>These two are examined as a pair and are easy to blur, because in
+        ordinary speech both mean "being careful". In compliance they mark
+        different moments.</p>
+        <p><strong>Due diligence</strong> is investigation before commitment -
+        checking a vendor's financial stability and security posture before
+        signing, or assessing a regulatory requirement before entering a market.
+        <strong>Due care</strong> is the ongoing exercise of reasonable prudence
+        afterwards: monitoring the vendor, maintaining the controls, reviewing the
+        policy. Diligence answers "should we?"; care answers "are we still?".</p>
+        <p>The legal weight of the distinction is why it appears in the objective.
+        An organization that investigated properly and then did nothing for four
+        years has demonstrated diligence and failed at care - and it is failure of
+        the second that regulators encounter most often, because the first
+        produces a document and the second produces nothing visible until
+        something goes wrong.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Automating compliance monitoring</h3>
+        <p>Manual compliance checking has the same defect as the annual risk
+        assessment from Module 11: it describes a moment that has already passed.
+        An organization audited as compliant in March may have drifted by May, and
+        nothing detects it until the next review.</p>
+        <p>Automated monitoring applies the Module 8 configuration-enforcement
+        approach to compliance requirements. Technical controls that map to a
+        requirement - encryption enabled, logging retained for the mandated period,
+        access reviews completed on schedule - can be checked continuously and
+        reported as a live position rather than a periodic snapshot.</p>
+        <p>The limit is worth stating: not every requirement is technically
+        measurable. Whether staff understood a policy, whether a supplier's
+        practices match its claims, and whether a risk decision was appropriate all
+        require human judgement. Automation handles the checkable majority and
+        frees attention for the part that cannot be automated - which is the same
+        argument Module 10 made for automation generally.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Consequences of non-compliance</h3>      <div class="subsection">
+        <h3>Consequences of non-compliance</h3>
+        <table>
+          <thead><tr><th>Consequence</th><th>Nature</th></tr></thead>
+          <tbody>
+            <tr><td>Fines</td><td>Direct financial penalty, often scaled to revenue</td></tr>
+            <tr><td>Sanctions</td><td>Restrictions on how the organization may operate</td></tr>
+            <tr><td>Reputational damage</td><td>Loss of customer and partner confidence</td></tr>
+            <tr><td>Loss of licence</td><td>Removal of permission to operate at all</td></tr>
+            <tr><td>Contractual impacts</td><td>Breach of customer agreements, lost contracts, liability</td></tr>
+          </tbody>
+        </table>
+        <p>Loss of licence is the consequence that reframes the others. Fines are
+        survivable and reputational damage recovers over time. An organization
+        that cannot lawfully trade has no path back, which is why Module 11's
+        example of an expansionary appetite with near-zero tolerance for
+        regulatory risk is coherent rather than contradictory.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#11088;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A hygiene rating in the window</p>
+        <p>A poor rating costs a restaurant custom immediately, and everyone
+        walking past can see it. That is reputational damage, and it recovers
+        slowly if the kitchen improves.</p>
+        <p>Closure by the council is a different category. There is no gradual
+        recovery from being forbidden to open, and no amount of subsequent good
+        practice trades against it. That is what loss of licence means, and it is
+        why some risks are treated as absolute regardless of appetite elsewhere.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="privacy" data-icon="&#128271;" role="tabpanel"
+             aria-labelledby="tab-privacy" tabindex="-1">
+      <h2 class="section-title">Privacy</h2>
+
+      <div class="subsection">
+        <h3>The data subject and the roles</h3>
+        <p>A <span class="term" data-term="data subject">data subject</span> is
+        the living individual the personal data is about. This is the role Module
+        11 did not cover, and it matters because privacy law grants rights to the
+        subject rather than to the organization holding the data.</p>
+        <p>The controller and processor distinction from Module 11 applies
+        directly here: the controller decides the purpose and carries the primary
+        obligations to the subject, and the processor acts on instructions. When a
+        data subject exercises a right, they exercise it against the controller,
+        who must then ensure its processors comply.</p>
+        <p>The objective also names <strong>ownership</strong>, and this is where
+        an intuition needs correcting. An organization holding personal data does
+        not own it in the sense of being free to do as it wishes. It holds data
+        about a person, under obligations to that person, for purposes it declared.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🧾</span> Think of it like…</p><p class="analogy__title">Who the receipt belongs to</p><p>A shop keeps a record of what you bought. The record is in their system, written by their staff, on their premises - and it is about you. Both facts are true at once, and the second is the one privacy law builds on.</p><p>That is why 'ownership' is the wrong frame for personal data. An organization holds data about a person, under obligations to that person, for purposes it declared. Possession is not the same as freedom to do as it likes with it.</p></div>
+
+      <div class="subsection">
+        <h3>Legal implications across jurisdictions</h3>
+        <p>Privacy requirements arrive at local, regional, national, and global
+        levels simultaneously, and they do not agree. An organization operating
+        internationally faces different definitions of personal data, different
+        lawful bases for processing, different breach notification deadlines, and
+        different rules on transferring data across borders.</p>
+        <p>The practical consequence connects to Module 7's sovereignty material:
+        where data physically sits determines which laws apply, and cloud
+        replication can move it without anyone deciding to. Privacy compliance is
+        therefore an architectural constraint rather than a documentation exercise.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">📦</span> Think of it like…</p><p class="analogy__title">The boxes in the loft</p><p>Everyone knows roughly what is in the loft. Then the roof leaks and the insurer asks for a list, and it turns out nobody can say what is in the boxes at the back, when they went up, or whether anything up there still needs keeping.</p><p>A data inventory is that list, written before the leak. Every privacy obligation - answering a subject's request, deleting on schedule, reporting a breach accurately - depends on it, and an organization without one cannot even establish what it has lost.</p></div>
+
+      <div class="subsection">
+        <h3>Data inventory and retention</h3>
+        <p>Every privacy obligation depends on knowing what personal data you
+        hold, where it is, why you have it, and how long you intend to keep it.
+        This is the asset inventory problem from Module 8 applied to data, and it
+        fails the same way - through copies in places nobody catalogued.</p>
+        <p>Retention was covered in Module 7, and the privacy dimension sharpens
+        it: personal data should be kept no longer than necessary for the purpose
+        it was collected for. Data retained beyond that is a liability with no
+        offsetting value, and it is the material most likely to appear in a breach
+        that nobody needed to be exposed to.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The right to be forgotten</h3>
+        <p>The <span class="term" data-term="right to be forgotten">right to be
+        forgotten</span> - more precisely a right to erasure - allows a data
+        subject to request deletion of their personal data in defined
+        circumstances. It is not absolute: it yields where there is a legal
+        obligation to retain, an ongoing contract, or a legal claim.</p>
+        <p>Its technical difficulty is the part worth understanding. Deleting a
+        record from a production database is straightforward. Locating the same
+        person's data in backups, log files, analytics platforms, data warehouses,
+        and a processor's systems is not - and an organization without the data
+        inventory above cannot answer the request completely, or even know whether
+        it has.</p>
+        <p>This is also where Module 10's legal hold interacts: a live hold can
+        override an erasure request, and reconciling the two is a legal
+        determination rather than a technical one.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128218;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Asking a library to remove your name</p>
+        <p>A library agrees to delete your membership record. Straightforward -
+        one entry in one system.</p>
+        <p>Then you remember the borrowing history in the archive, the newsletter
+        list held by the mailing company, the door-entry logs, the photograph in
+        last year's annual report, and the spreadsheet a volunteer keeps for the
+        reading group. None of those were hidden. Nobody ever wrote down that they
+        existed.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a library
+        could reasonably search everywhere in a day. An organization holding
+        personal data across hundreds of systems and several processors cannot,
+        which is why the data inventory is the precondition for the right rather
+        than an administrative nicety.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="audits" data-icon="&#128269;" role="tabpanel"
+             aria-labelledby="tab-audits" tabindex="-1">
+      <h2 class="section-title">Audits, Assessments, and Penetration Testing</h2>
+
+      <div class="subsection">
+        <h3>Internal and external</h3>
+        <table>
+          <thead><tr><th>Type</th><th>Performed by</th><th>Primary value</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="self-assessment">Self-assessment</span></td><td>The team that operates the control</td><td>Cheap, frequent, lowest independence</td></tr>
+            <tr><td>Internal audit</td><td>An internal function independent of operations</td><td>Independent within the organization</td></tr>
+            <tr><td>Audit committee</td><td>A board-level body overseeing audit</td><td>Ensures findings reach people with authority</td></tr>
+            <tr><td>External / third-party audit</td><td>An independent firm</td><td>Credible to outside parties</td></tr>
+            <tr><td>Regulatory examination</td><td>A regulator</td><td>Compulsory; carries enforcement power</td></tr>
+          </tbody>
+        </table>
+        <p>The distinguishing property is <strong>independence</strong>, and it
+        rises down that list. A self-assessment is performed by people evaluating
+        their own work, which is useful for finding problems and worthless as
+        assurance to anyone else. An external audit carries weight precisely
+        because the auditor has no stake in the answer.</p>
+        <p>The audit committee exists to solve a structural problem: findings that
+        embarrass management tend not to reach the board if they travel through
+        management. Reporting to a board-level committee gives internal audit a
+        route that does not depend on the goodwill of the people being audited.</p>
+        <p><span class="term" data-term="attestation"><strong>Attestation</strong></span> in this context is a formal statement,
+        often by an independent party, that something is as claimed. It is what a
+        customer receives instead of being allowed to audit a provider directly.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128203;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Counting your own stock</p>
+        <p>A shopkeeper counting the stockroom finds genuine discrepancies and
+        fixes them. Useful work, and no bank lending against that inventory would
+        accept the shopkeeper's own count as evidence.</p>
+        <p>An external stocktaker produces a number of identical accuracy and
+        entirely different standing, because the difference was never about
+        arithmetic. It was about who had an interest in the result.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🔐</span> Think of it like…</p><p class="analogy__title">Whether the locksmith gets the floorplan</p><p>Hire a locksmith to test your building and tell them nothing, and you learn what a stranger could manage in a week. Much of that week goes on working out where the doors are.</p><p>Give them the plans, the key schedule, and access to the alarm panel, and they spend the whole week on locks rather than on cartography. You will hear about far more weaknesses.</p><p>Neither is more rigorous. They answer different questions - and an organization that wants to know what is actually wrong, rather than what a stranger would find first, usually wants the plans handed over.</p></div>
+
+      <div class="subsection">
+        <h3>Penetration testing variants</h3>
+        <p>Objective 5.5 names several dimensions, and they are independent of
+        each other.</p>
+        <table>
+          <thead><tr><th>Dimension</th><th>Variants</th></tr></thead>
+          <tbody>
+            <tr><td>Knowledge given</td><td>Known, partially known, unknown environment</td></tr>
+            <tr><td>Posture</td><td>Offensive, defensive, integrated</td></tr>
+            <tr><td>Target</td><td>Physical, network, application, personnel</td></tr>
+            <tr><td>Reconnaissance</td><td>Passive, active</td></tr>
+          </tbody>
+        </table>
+        <p>The knowledge spectrum replaces the older black, grey, and white box
+        terminology. An <span class="term" data-term="unknown environment"><strong>unknown environment</strong></span> test simulates an
+        external attacker with no inside information, and spends much of its
+        budget on discovery. A <strong>known environment</strong> test provides
+        full documentation and access, which finds more issues per pound because
+        no time is spent rediscovering what the organization already knows. A
+        <strong>partially known</strong> test sits between them.</p>
+        <p>Which is appropriate depends on the question being asked. To learn what
+        an external attacker could achieve, restrict the knowledge. To find as
+        many weaknesses as possible, provide everything - and organizations
+        wanting genuine assurance usually want the second, however much the first
+        appeals.</p>
+        <p><strong>Integrated</strong> testing runs offensive and defensive teams
+        together so that the defenders learn to detect what the attackers do,
+        rather than receiving a report weeks later.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Reconnaissance</h3>
+        <p><span class="term" data-term="passive reconnaissance"><strong>Passive reconnaissance</strong></span> gathers information without
+        interacting with the target: public records, job advertisements revealing
+        technologies in use, social media, DNS records, and published documents.
+        It is undetectable by the target because nothing touches their systems.</p>
+        <p><strong>Active reconnaissance</strong> interacts directly - scanning
+        ports, probing services, enumerating hosts. It yields far more and is
+        detectable, and it is the point at which authorisation genuinely matters,
+        which is why rules of engagement are agreed first.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="ptTitle ptDesc">
+          <title id="ptTitle">Penetration test knowledge levels and reconnaissance</title>
+          <desc id="ptDesc">Knowledge given to testers runs from unknown environment, simulating an external attacker, through partially known, to known environment with full documentation. Passive reconnaissance is undetectable; active reconnaissance interacts with the target and requires written authorisation.</desc>
+          <text x="20" y="26" class="svg-label">Knowledge given to the tester</text>
+          <rect x="20" y="38" width="205" height="72" rx="10" class="svg-box danger"/>
+          <text x="122" y="62" text-anchor="middle" class="svg-label">Unknown</text>
+          <text x="122" y="82" text-anchor="middle" class="svg-sub">simulates external attacker</text>
+          <text x="122" y="100" text-anchor="middle" class="svg-mono">budget goes on discovery</text>
+          <rect x="245" y="38" width="205" height="72" rx="10" class="svg-box warn"/>
+          <text x="347" y="62" text-anchor="middle" class="svg-label">Partially known</text>
+          <text x="347" y="82" text-anchor="middle" class="svg-sub">some information provided</text>
+          <text x="347" y="100" text-anchor="middle" class="svg-mono">balanced</text>
+          <rect x="470" y="38" width="210" height="72" rx="10" class="svg-box accent"/>
+          <text x="575" y="62" text-anchor="middle" class="svg-label">Known</text>
+          <text x="575" y="82" text-anchor="middle" class="svg-sub">full documentation, access</text>
+          <text x="575" y="100" text-anchor="middle" class="svg-mono">most issues per pound</text>
+          <text x="20" y="146" class="svg-label">Reconnaissance</text>
+          <rect x="20" y="158" width="320" height="62" rx="10" class="svg-box brand"/>
+          <text x="180" y="180" text-anchor="middle" class="svg-label">Passive</text>
+          <text x="180" y="199" text-anchor="middle" class="svg-sub">job adverts, DNS, public documents</text>
+          <text x="180" y="214" text-anchor="middle" class="svg-mono">target cannot detect it</text>
+          <rect x="360" y="158" width="320" height="62" rx="10" class="svg-box accent"/>
+          <text x="520" y="180" text-anchor="middle" class="svg-label">Active</text>
+          <text x="520" y="199" text-anchor="middle" class="svg-sub">scanning, probing, enumeration</text>
+          <text x="520" y="214" text-anchor="middle" class="svg-mono">detectable &mdash; needs authorisation</text>
+          <text x="350" y="240" text-anchor="middle" class="svg-sub">The line between the two boxes is the signed rules of engagement.</text>
+        </svg>
+        <figcaption>Reading the brochure, or walking round trying every door.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128270;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Reading the brochure or trying the doors</p>
+        <p>Studying a building's public planning application, its published
+        opening hours, and photographs of the lobby tells you a great deal, and
+        nobody inside has any way of knowing you did it. That is passive
+        reconnaissance.</p>
+        <p>Walking round the building trying each door tells you considerably
+        more. It is also visible on camera, and doing it without written
+        permission is a different activity with a different name - which is
+        precisely why rules of engagement exist.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Scoping a test</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="pentest">Agree the engagement</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="pentest">Clear</button>
+        </div>
+        <div class="terminal" id="demo-pentest" aria-live="polite" aria-label="Penetration test scoping output"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="countermeasures" data-icon="&#128737;" role="tabpanel"
+             aria-labelledby="tab-countermeasures" tabindex="-1">
+      <h2 class="section-title">Security Awareness</h2>
+
+      <p>Objective 5.6 is the last on the exam and, in practice, one of the most
+      consequential. Module 3 established that social engineering targets people
+      because people are reachable regardless of technical controls. Awareness is
+      the control applied to that surface.</p>
+
+      <div class="subsection">
+        <h3>Phishing campaigns</h3>
+        <p>Simulated phishing sends staff realistic but harmless phishing messages
+        to measure and improve recognition. Three points determine whether a
+        campaign helps or harms.</p>
+        <p><strong>The click rate is the less important number.</strong> The
+        <em>report</em> rate matters more, because an organization where thirty
+        percent click and sixty percent report is in a far stronger position than
+        one where five percent click and nobody says anything. Reporting is what
+        gives the security team the chance to act before the payload runs.</p>
+        <p><strong>Punitive campaigns backfire.</strong> Naming and shaming people
+        who click produces staff who conceal mistakes, which is precisely the
+        behaviour that turns a click into an undetected breach. This is the
+        blameless principle from Modules 3 and 10 applied to training.</p>
+        <p><strong>Responding to reports is part of the programme.</strong> Staff
+        who report suspicious messages and hear nothing back stop reporting.
+        Acknowledgement, and telling people what the message turned out to be,
+        sustains the behaviour the campaign exists to build.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128680;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A fire drill nobody is punished for</p>
+        <p>A building runs a drill and someone takes four minutes to leave. The
+        useful response is finding out why - a jammed door, an unclear sign, a
+        route nobody had walked. The useless response is disciplining them, after
+        which the next drill produces people who look prompt and a building nobody
+        has learned anything about.</p>
+        <p>Simulated phishing works the same way. The click is information. What
+        an organization does with it determines whether it gets more information
+        next time or less.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Reading campaign results</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="campaign">Review the numbers</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="campaign">Clear</button>
+        </div>
+        <div class="terminal" id="demo-campaign" aria-live="polite" aria-label="Phishing campaign results"></div>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🚶</span> Think of it like…</p><p class="analogy__title">The colleague who takes a shortcut across the car park</p><p>Someone consistently cuts across the car park instead of using the marked path. You can put up another sign, or you can notice that the marked path adds four minutes and goes the wrong way round a locked gate.</p><p>Risky behaviour is usually rational from where the person is standing. The sign treats the walking; the gate is why they walk there. Reinforcing a policy without addressing what made the shortcut attractive produces the same behaviour, taken more discreetly.</p></div>
+
+      <div class="subsection">
+        <h3>Recognising anomalous behaviour</h3>
+        <p>The objective distinguishes three kinds, and the distinction shapes the
+        response.</p>
+        <table>
+          <thead><tr><th>Type</th><th>Description</th><th>Response</th></tr></thead>
+          <tbody>
+            <tr><td>Risky</td><td>Knowingly taking a shortcut - sharing a password, disabling a control</td><td>Policy reinforcement; understand why the shortcut appealed</td></tr>
+            <tr><td>Unexpected</td><td>Activity outside a person's normal pattern</td><td>Investigate; may be compromise or may be legitimate</td></tr>
+            <tr><td>Unintentional</td><td>Genuine mistake - wrong recipient, misconfiguration</td><td>Process and design improvement, not blame</td></tr>
+          </tbody>
+        </table>
+        <p>Risky behaviour deserves the most thought, because it is usually
+        rational. Someone shares a password because the approved process takes
+        three days and their work is due tomorrow. Reinforcing the policy without
+        fixing the three days produces the same behaviour, conducted more
+        discreetly.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">📢</span> Think of it like…</p><p class="analogy__title">What the recruitment advert gives away</p><p>A job advert saying the team runs a specific version of a specific product, integrates with three named systems, and is migrating off a fourth is an honest, well-written advert. It is also a free technology inventory for anyone who reads it.</p><p>None of that is secret and none of it needs to be published together. Operational security is the habit of noticing what an ordinary, reasonable disclosure adds up to when someone collects all of them - which is exactly the passive reconnaissance described earlier in this module.</p></div>
+
+      <div class="subsection">
+        <h3>Training topics</h3>
+        <table>
+          <thead><tr><th>Topic</th><th>Connects to</th></tr></thead>
+          <tbody>
+            <tr><td>Policy and handbooks</td><td>Module 11 - acceptable use and acknowledgement</td></tr>
+            <tr><td>Situational awareness</td><td>Noticing what is out of place, physically and digitally</td></tr>
+            <tr><td>Insider threat</td><td>Module 3 - recognising and reporting concerns</td></tr>
+            <tr><td>Password management</td><td>Module 10 - managers, length, reuse</td></tr>
+            <tr><td>Removable media and cables</td><td>Module 3 - malicious USB devices and cables</td></tr>
+            <tr><td>Social engineering</td><td>Module 3 - pretexting, urgency, authority</td></tr>
+            <tr><td>Operational security</td><td>What staff reveal publicly that assists an attacker</td></tr>
+            <tr><td>Hybrid and remote work</td><td>Home networks, public Wi-Fi, physical security away from the office</td></tr>
+          </tbody>
+        </table>
+        <p>Operational security is the topic staff find most surprising. A job
+        advertisement naming specific software versions, a conference talk
+        describing internal architecture, or a photograph with a whiteboard behind
+        it all provide exactly the passive reconnaissance material described
+        earlier in this module.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="awTitle awDesc">
+          <title id="awTitle">The awareness programme lifecycle and what to measure</title>
+          <desc id="awDesc">Development, execution, and reporting form a cycle feeding back into development. Completion rates measure attendance, while report rate, time to report, and avoidable-error incidents measure whether behaviour actually changed.</desc>
+          <rect x="40" y="40" width="165" height="62" rx="10" class="svg-box brand"/>
+          <text x="122" y="66" text-anchor="middle" class="svg-label">Development</text>
+          <text x="122" y="86" text-anchor="middle" class="svg-sub">built for the actual risks</text>
+          <rect x="265" y="40" width="165" height="62" rx="10" class="svg-box accent"/>
+          <text x="347" y="66" text-anchor="middle" class="svg-label">Execution</text>
+          <text x="347" y="86" text-anchor="middle" class="svg-sub">initial and recurring</text>
+          <rect x="490" y="40" width="170" height="62" rx="10" class="svg-box accent"/>
+          <text x="575" y="66" text-anchor="middle" class="svg-label">Reporting</text>
+          <text x="575" y="86" text-anchor="middle" class="svg-sub">did behaviour change?</text>
+          <g class="svg-line accent">
+            <path d="M207 71 L261 71" marker-end="url(#aw12)"/>
+            <path d="M432 71 L486 71" marker-end="url(#aw12)"/>
+            <path d="M575 104 C 575 140, 122 140, 122 104" stroke-dasharray="5 4" marker-end="url(#aw12)"/>
+          </g>
+          <defs><marker id="aw12" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="136" text-anchor="middle" class="svg-mono">findings reshape the material</text>
+          <rect x="20" y="158" width="320" height="72" rx="10" class="svg-box danger"/>
+          <text x="180" y="180" text-anchor="middle" class="svg-label">Measures attendance</text>
+          <text x="180" y="200" text-anchor="middle" class="svg-sub">completion rate, modules published,</text>
+          <text x="180" y="216" text-anchor="middle" class="svg-sub">sessions delivered</text>
+          <rect x="360" y="158" width="320" height="72" rx="10" class="svg-box accent"/>
+          <text x="520" y="180" text-anchor="middle" class="svg-label">Measures behaviour</text>
+          <text x="520" y="200" text-anchor="middle" class="svg-sub">report rate, time to report,</text>
+          <text x="520" y="216" text-anchor="middle" class="svg-sub">avoidable-error incidents</text>
+        </svg>
+        <figcaption>Everyone attended the swimming lesson. How many can swim?</figcaption>
+      </figure>
+      <div class="subsection">
+        <h3>Development, execution, and measurement</h3>
+        <p>The objective treats a programme as having a lifecycle.
+        <strong>Development</strong> builds material suited to the actual risks and
+        the actual audience. <strong>Execution</strong> delivers it, initially at
+        onboarding and recurrently thereafter. <strong>Reporting and
+        monitoring</strong> measures whether behaviour changed.</p>
+        <p>That last point is where most programmes fail. Completion rates measure
+        attendance rather than effect. The measures that matter are behavioural:
+        phishing report rates, time to report, incidents caused by avoidable
+        error, and whether staff raise concerns at all. A programme with a
+        hundred percent completion rate and a two percent report rate is not
+        working, however good the compliance figure looks.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127891;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Everyone attended the swimming lesson</p>
+        <p>A school reports that every pupil attended the swimming course. The
+        figure is accurate and answers a question nobody asked. What anyone
+        actually wants to know is how many can now swim.</p>
+        <p>Completion rates are attendance. Report rates, time to report, and
+        avoidable-error incidents are the equivalent of getting in the water - and
+        they are the only numbers that tell you whether the programme did
+        anything.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        Three discriminators. A questionnaire is self-declared and an independent
+        assessment is not - know which a scenario is describing. An MOU is
+        generally not binding, so it is wrong wherever enforceability is required.
+        And in awareness programmes the report rate matters more than the click
+        rate.
+      </div>
+
+      <div class="callout info">
+        <span class="tag">[COURSE COMPLETE]</span>
+        That is the final objective. Across twelve modules you have covered all
+        five domains: security concepts and cryptography, threats and
+        vulnerabilities, architecture and resilience, security operations, and
+        programme management. Before the exam, work back through the assessment in
+        each module rather than rereading the material - retrieval practice is
+        substantially more effective than review, and the scenario-tier questions
+        are the closest match to what the exam actually asks.
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="&#129514;" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        Analysis labs - nothing to install. Answers save in this browser as you
+        type, and each lab generates a Word document you can submit. Graded lab
+        assignments are posted in Canvas.
+      </div>
+
+      <div class="lab" data-lab="vendor-assessment"></div>
+      <div class="lab" data-lab="audit-and-test"></div>
+      <div class="lab" data-lab="awareness-programme"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers live in this browser only. Generate the report and save the file
+        when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "right-to-audit": "A contractual entitlement to inspect a vendor's controls. Only as useful as its exercise - negotiated and never invoked, it delivers the assurance of not having it.",
+    "sla": "Service level agreement: defines measurable service standards and the consequences of missing them.",
+    "msa": "Master service agreement: overarching terms negotiated once, governing an ongoing relationship. Individual work is defined under it by statements of work.",
+    "sow": "Statement of work: the specific deliverables, scope, and timeline for a piece of work carried out under an MSA.",
+    "mou": "Memorandum of understanding: states intent to cooperate and is generally not binding. Wrong answer wherever enforceability is required.",
+    "nda": "Non-disclosure agreement: protects confidential information shared between parties.",
+    "due diligence": "Investigation performed before entering a relationship - financial stability, security posture, regulatory history.",
+    "due care": "The ongoing exercise of reasonable prudence once a relationship or obligation exists. Due diligence investigates; due care maintains.",
+    "data subject": "The living individual that personal data is about. Privacy law grants rights to the subject, exercised against the controller.",
+    "right to be forgotten": "A data subject's right to request erasure of their personal data in defined circumstances. Not absolute - it yields to legal retention obligations.",
+    "rules of engagement": "The boundaries agreed before an assessment: scope, timing, permitted techniques, and contacts. Their absence is how a test becomes an incident.",
+    "passive reconnaissance": "Gathering information without touching the target - public records, job adverts, DNS, social media. Undetectable, because nothing interacts with their systems.",
+    "unknown environment": "A penetration test conducted with no inside information, simulating an external attacker. Spends much of its budget on discovery.",
+    "attestation": "A formal statement, often by an independent party, that something is as claimed. What a customer receives instead of auditing a provider directly.",
+    "self-assessment": "Evaluation performed by the team that operates the control. Useful for finding problems, and worthless as assurance to anyone else."
+  };
+
+  window.MODALS = {
+    "agreements": {
+      title: "Agreement types at a glance",
+      body:
+        "<table><thead><tr><th>Type</th><th>Purpose</th></tr></thead><tbody>" +
+        "<tr><td>SLA</td><td>Measurable service standards and consequences</td></tr>" +
+        "<tr><td>MSA</td><td>Overarching terms for an ongoing relationship</td></tr>" +
+        "<tr><td>SOW / WO</td><td>The specific work and deliverables under an MSA</td></tr>" +
+        "<tr><td>MOU</td><td>Intent to cooperate &mdash; generally NOT binding</td></tr>" +
+        "<tr><td>MOA</td><td>More formal than an MOU; may carry obligations</td></tr>" +
+        "<tr><td>NDA</td><td>Protects confidential information shared</td></tr>" +
+        "<tr><td>BPA</td><td>Terms of a partnership between organizations</td></tr>" +
+        "</tbody></table><p>MSA and SOW work together: terms once, deliverables per project. " +
+        "If a scenario needs enforceable commitments, an MOU is the wrong answer.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "vendor": [
+      { text: "$ assess-vendor --name NorthbridgeData --tier critical", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "STAGE 1  security questionnaire (self-declared)", cls: "info", delay: 420 },
+      { text: "  encryption at rest .......... 'Yes, industry standard'", cls: "output", delay: 400 },
+      { text: "  access reviews .............. 'Performed regularly'", cls: "output", delay: 380 },
+      { text: "  incident response plan ...... 'Documented and tested'", cls: "output", delay: 380 },
+      { text: "  score ....................... 94 / 100", cls: "output", delay: 340 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "STAGE 2  independent assessment report requested", cls: "info", delay: 440 },
+      { text: "  encryption at rest .......... CONFIRMED", cls: "output", delay: 380 },
+      { text: "  access reviews .............. last performed 19 months ago", cls: "error", delay: 460 },
+      { text: "  IR plan tested .............. never; document dated 2022", cls: "error", delay: 460 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "STAGE 3  supply chain analysis (fourth parties)", cls: "info", delay: 420 },
+      { text: "  hosting subcontracted to .... an unnamed regional provider", cls: "warning", delay: 460 },
+      { text: "  -> not disclosed anywhere in the questionnaire", cls: "warning", delay: 440 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[NOTE] Nobody lied. 'Performed regularly' and 'documented and", cls: "warning", delay: 560 },
+      { text: "tested' felt true to the person answering.", cls: "warning", delay: 460 },
+      { text: "[LESSON] A questionnaire records claims. Only evidence tests them.", cls: "info", delay: 540 }
+    ],
+    "pentest": [
+      { text: "$ scope-engagement --client Meridian --type external", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "RULES OF ENGAGEMENT -------------------------", cls: "info", delay: 400 },
+      { text: "  in scope ......... 203.0.113.0/24, www.example.test", cls: "output", delay: 420 },
+      { text: "  OUT of scope ..... payment gateway, ICS network", cls: "error", delay: 400 },
+      { text: "  testing window ... 02:00-06:00 weekdays only", cls: "output", delay: 380 },
+      { text: "  prohibited ....... denial of service, social engineering staff", cls: "output", delay: 420 },
+      { text: "  emergency contact  ops-duty, +44 xxx  [24h]", cls: "output", delay: 380 },
+      { text: "  authorisation .... signed by CIO, dated, on file", cls: "info", delay: 400 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "KNOWLEDGE LEVEL ..... unknown environment", cls: "info", delay: 400 },
+      { text: "  -> simulates an external attacker; budget goes on discovery", cls: "output", delay: 460 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "PASSIVE RECON (no contact with target)", cls: "info", delay: 400 },
+      { text: "  job adverts .......... 3 roles naming specific software versions", cls: "warning", delay: 460 },
+      { text: "  DNS records .......... 14 subdomains, 2 undocumented", cls: "warning", delay: 420 },
+      { text: "  conference talk ...... internal architecture described in slides", cls: "warning", delay: 460 },
+      { text: "  [NOTE] target cannot detect any of this", cls: "info", delay: 440 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "ACTIVE RECON (authorised, detectable, in-window)", cls: "info", delay: 440 },
+      { text: "  port scan begins 02:00 ... within agreed scope only", cls: "output", delay: 440 },
+      { text: "[NOTE] The line between step 1 and step 2 is the signed authorisation.", cls: "warning", delay: 580 }
+    ],
+    "campaign": [
+      { text: "$ phishing-campaign --report Q3 --recipients 2400", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "TEAM A ------------------------------------", cls: "info", delay: 380 },
+      { text: "  clicked .............. 5%   (120 people)", cls: "output", delay: 400 },
+      { text: "  REPORTED ............. 3%   (72 people)", cls: "error", delay: 420 },
+      { text: "  mean time to report .. 4h 20m", cls: "error", delay: 380 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "TEAM B ------------------------------------", cls: "info", delay: 380 },
+      { text: "  clicked .............. 22%  (528 people)", cls: "warning", delay: 400 },
+      { text: "  REPORTED ............. 61%  (1,464 people)", cls: "info", delay: 420 },
+      { text: "  mean time to report .. 6 minutes", cls: "info", delay: 380 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[WHICH TEAM IS SAFER?]", cls: "warning", delay: 460 },
+      { text: "  Team A: a real campaign runs for hours before anyone says", cls: "output", delay: 460 },
+      { text: "  anything. The security team learns about it from the incident.", cls: "output", delay: 460 },
+      { text: "  Team B: 6 minutes to first report. Sender blocked, message", cls: "output", delay: 460 },
+      { text: "  pulled from 2,400 mailboxes before most people opened it.", cls: "output", delay: 460 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "[LESSON] Report rate beats click rate. Team A was disciplined", cls: "info", delay: 540 },
+      { text: "for clicking last year, and learned to stay quiet.", cls: "info", delay: 480 }
+    ]
+  };
+
+  window.MODULE_ACTIONS = {};
+
+  window.CLASSIFIERS = {
+    agreements: {
+      axes: [
+        { name: "doc", label: "Correct document", options: ["SLA", "MSA", "SOW", "MOU", "NDA", "BPA"] },
+        { name: "why", label: "Deciding characteristic", options: ["Measurable service standards", "Overarching ongoing terms", "Specific deliverables and timeline", "Intent only, not binding", "Protects shared confidential information", "Terms of a partnership"] }
+      ],
+      items: [
+        { scenario: "A hosting provider must maintain 99.95% availability, with service credits payable if it falls below that in any month.",
+          answers: { doc: "SLA", why: "Measurable service standards" },
+          explain: "A measurable standard with a defined consequence for missing it. That combination is what distinguishes an SLA from a general commitment." },
+        { scenario: "Two organizations agree they intend to collaborate on research and share findings, without creating enforceable obligations on either.",
+          answers: { doc: "MOU", why: "Intent only, not binding" },
+          explain: "An MOU records intent. If a scenario needs enforceable commitments with consequences, this is the wrong instrument." },
+        { scenario: "Before technical discussions begin, both parties sign a document preventing either from disclosing what they learn about the other's systems.",
+          answers: { doc: "NDA", why: "Protects shared confidential information" },
+          explain: "The NDA is often the first document signed, precisely because assessment requires disclosing information neither party wants public." },
+        { scenario: "A consultancy has been engaged for three years. The overall commercial terms, liability, and IP ownership were negotiated once at the outset.",
+          answers: { doc: "MSA", why: "Overarching ongoing terms" },
+          explain: "The MSA is negotiated once and governs the relationship. Individual pieces of work are then defined beneath it without renegotiating terms." },
+        { scenario: "Under that existing arrangement, a new project is defined: migrate the CRM, four named deliverables, completion by March.",
+          answers: { doc: "SOW", why: "Specific deliverables and timeline" },
+          explain: "This is the SOW working with the MSA above it. A scenario about defining deliverables for a specific project points here, not to renegotiating the MSA." }
+      ]
+    }
+  };
+
+  window.LABS = {
+    "vendor-assessment": {
+      title: "Lab 1 - Assess a vendor",
+      time: "~25 minutes",
+      objective: "Choose the right assurance instrument and the right agreement type, and recognise what a questionnaire cannot tell you.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Order these assurance instruments from weakest to strongest.",
+          hint: "Use the arrows. Ask in each case who is answering and whether anyone independent checked.",
+          items: [
+            "Vendor questionnaire - self-declared answers",
+            "Evidence of the vendor's own internal audits",
+            "Right-to-audit clause, actually exercised",
+            "Independent third-party assessment"
+          ],
+          explain: "Independence rises down the list. A questionnaire asks an organization to grade itself with a contract at stake - still worth sending for the record, and never assurance on its own."
+        },
+        {
+          type: "match",
+          prompt: "Match each situation to the correct agreement type.",
+          hint: "Ask what the document is for: a measurable standard, overarching terms, specific work, intent, or confidentiality.",
+          columns: [
+            { name: "doc", label: "Agreement", options: ["SLA", "MSA", "SOW", "MOU", "NDA", "BPA"] }
+          ],
+          items: [
+            { text: "99.95% availability with service credits if missed", answers: { doc: "SLA" } },
+            { text: "Overall commercial terms negotiated once for a three-year relationship", answers: { doc: "MSA" } },
+            { text: "Migrate the CRM: four deliverables, complete by March", answers: { doc: "SOW" } },
+            { text: "Two bodies state an intent to collaborate, without binding either", answers: { doc: "MOU" } },
+            { text: "Signed before technical discussions so neither party may disclose what it learns", answers: { doc: "NDA" } },
+            { text: "Governs the terms of a joint venture between two firms", answers: { doc: "BPA" } }
+          ],
+          explain: "MSA and SOW work together - terms once, deliverables per project. And an MOU is generally not binding, which is the distinction most often tested."
+        },
+        {
+          type: "choice",
+          prompt: "<em>A vendor questionnaire scores 94/100. An independent assessment then finds access reviews last performed 19 months ago and an untested IR plan dated 2022. Hosting is subcontracted to a provider the questionnaire never mentioned.</em><br><br>Select every accurate statement.",
+          hint: "Consider whether anyone necessarily lied, and what the undisclosed subcontractor represents.",
+          options: [
+            "The questionnaire recorded claims rather than testing them",
+            "The respondents may have believed their answers were accurate",
+            "The undisclosed subcontractor is fourth-party risk",
+            "Supply chain analysis is what surfaces dependencies like this",
+            "The high questionnaire score proves the vendor was dishonest",
+            "Independent assessment provides materially stronger assurance"
+          ],
+          correct: [0, 1, 2, 3, 5],
+          explain: "'Performed regularly' felt true to whoever wrote it - nobody scrutinises what they do every day. That is exactly why self-declaration is the weakest instrument, without anyone lying."
+        },
+        {
+          type: "text",
+          prompt: "Explain the difference between due diligence and due care, with an example of each in a vendor relationship.",
+          hint: "One happens before the relationship exists. The other continues throughout it."
+        }
+      ]
+    },
+
+    "audit-and-test": {
+      title: "Lab 2 - Audits and penetration testing",
+      time: "~20 minutes",
+      objective: "Distinguish audit types by independence and scope a penetration test correctly.",
+      steps: [
+        {
+          type: "match",
+          prompt: "Match each audit or assessment type to its defining characteristic.",
+          hint: "The organising property is independence - who performs it, and what stake they have in the result.",
+          columns: [
+            { name: "char", label: "Defining characteristic", options: ["Performed by the team that operates the control", "Independent function inside the organization", "Board-level body ensuring findings reach authority", "Independent firm, credible externally", "Compulsory, carries enforcement power"] }
+          ],
+          items: [
+            { text: "Self-assessment", answers: { char: "Performed by the team that operates the control" } },
+            { text: "Internal audit", answers: { char: "Independent function inside the organization" } },
+            { text: "Audit committee", answers: { char: "Board-level body ensuring findings reach authority" } },
+            { text: "External third-party audit", answers: { char: "Independent firm, credible externally" } },
+            { text: "Regulatory examination", answers: { char: "Compulsory, carries enforcement power" } }
+          ],
+          explain: "The audit committee solves a structural problem: findings that embarrass management do not reliably reach the board if they travel through management."
+        },
+        {
+          type: "choice",
+          prompt: "An organization wants to find as many exploitable weaknesses as possible within a fixed budget. Which test design fits, and why? Select all accurate statements.",
+          hint: "Ask where the budget goes under each knowledge level.",
+          options: [
+            "A known environment test, providing documentation and access",
+            "An unknown environment test, to simulate a real attacker",
+            "Unknown environment tests spend much of the budget on discovery",
+            "Known environment tests find more issues per pound spent",
+            "The choice depends on the question being asked",
+            "Unknown environment testing is always more rigorous"
+          ],
+          correct: [0, 2, 3, 4],
+          explain: "To learn what an external attacker could achieve, restrict knowledge. To find the most weaknesses, provide everything - organizations wanting genuine assurance usually want the second, however much the first appeals."
+        },
+        {
+          type: "choice",
+          prompt: "Which items belong in rules of engagement agreed before testing begins? Select all that apply.",
+          hint: "Consider what protects both parties, and what turns a test into an incident if left unstated.",
+          options: [
+            "What systems are in scope",
+            "What is explicitly out of scope",
+            "The permitted testing window",
+            "Prohibited techniques such as denial of service",
+            "A 24-hour emergency contact",
+            "Written authorisation from someone with authority to give it"
+          ],
+          correct: [0, 1, 2, 3, 4, 5],
+          explain: "All six. The signed authorisation is what separates active reconnaissance from an offence, which is why it is agreed before anything touches the target."
+        },
+        {
+          type: "text",
+          prompt: "Explain the difference between passive and active reconnaissance, and why the distinction matters legally.",
+          hint: "One of them the target can detect. Consider what that implies about permission."
+        }
+      ]
+    },
+
+    "awareness-programme": {
+      title: "Lab 3 - Design an awareness programme",
+      time: "~20 minutes",
+      objective: "Interpret phishing campaign results correctly and choose measures that reflect behaviour rather than attendance.",
+      steps: [
+        {
+          type: "choice",
+          prompt: "<em>Team A: 5% clicked, 3% reported, mean time to report 4h20m. Team B: 22% clicked, 61% reported, mean time to report 6 minutes.</em><br><br>Select every accurate statement.",
+          hint: "Ask what happens during a real campaign in each case.",
+          options: [
+            "Team B is in a stronger position despite the higher click rate",
+            "Team A's low click rate is the more important number",
+            "A 6-minute report lets the security team act before most people open it",
+            "Team A's security team would learn of a real attack from the incident",
+            "Report rate is a better indicator than click rate",
+            "Punitive handling of clicks tends to suppress reporting"
+          ],
+          correct: [0, 2, 3, 4, 5],
+          explain: "Reporting is what gives the security team a chance to act - block the sender, pull the message from mailboxes. A workforce that clicks less and says nothing offers no such window."
+        },
+        {
+          type: "match",
+          prompt: "Match each behaviour to its type and the appropriate response.",
+          hint: "Ask whether the person knew, and whether the behaviour was rational from where they stood.",
+          columns: [
+            { name: "type", label: "Type", options: ["Risky", "Unexpected", "Unintentional"] }
+          ],
+          items: [
+            { text: "Sharing a password because the approved process takes three days", answers: { type: "Risky" } },
+            { text: "An account accessing systems it has never touched, at 3 a.m.", answers: { type: "Unexpected" } },
+            { text: "Sending a spreadsheet to the wrong recipient", answers: { type: "Unintentional" } },
+            { text: "Disabling an endpoint control to make an application run", answers: { type: "Risky" } },
+            { text: "A misconfiguration made in good faith during a change", answers: { type: "Unintentional" } }
+          ],
+          explain: "Risky behaviour is usually rational from where the person stood. Reinforcing policy without fixing the three-day process produces the same behaviour, conducted more discreetly."
+        },
+        {
+          type: "choice",
+          prompt: "Which measures indicate whether an awareness programme is actually working? Select all that apply.",
+          hint: "Distinguish attendance from effect.",
+          options: [
+            "Phishing report rate",
+            "Mean time to report a suspicious message",
+            "Training completion rate",
+            "Incidents caused by avoidable error",
+            "Whether staff raise concerns at all",
+            "Number of training modules published"
+          ],
+          correct: [0, 1, 3, 4],
+          explain: "Completion rates measure attendance. A programme at 100% completion with a 2% report rate is not working, however good the compliance figure looks."
+        },
+        {
+          type: "text",
+          prompt: "Explain why disciplining staff who click simulated phishing links makes an organization less safe.",
+          hint: "Trace what happens to the behaviour the programme actually depends on."
+        }
+      ]
+    }
+  };
+
+  var QUESTIONS = [
+    { tier: "recall",
+      question: "Which vendor assurance instrument provides the weakest assurance?",
+      options: ["Independent third-party assessment", "Penetration test results", "A completed security questionnaire", "An exercised right-to-audit clause"],
+      correct: 2,
+      explanation: "A questionnaire is self-declared - it asks an organization to grade itself with a contract at stake. It creates a useful record and is not assurance on its own." },
+    { tier: "recall",
+      question: "Which agreement is generally not legally binding?",
+      options: ["SLA", "MSA", "MOU", "NDA"],
+      correct: 2,
+      explanation: "A memorandum of understanding records intent to cooperate. Wherever a scenario requires enforceable commitments, an MOU is the wrong instrument." },
+    { tier: "recall",
+      question: "What does a statement of work define?",
+      options: ["Overarching relationship terms", "Specific deliverables, scope, and timeline", "Confidentiality obligations", "Service availability targets"],
+      correct: 1,
+      explanation: "The SOW sits beneath an MSA. The MSA is negotiated once and each piece of work gets its own SOW, so terms are not renegotiated per project." },
+    { tier: "recall",
+      question: "Who is the data subject?",
+      options: ["The organization holding the data", "The living individual the personal data is about", "The processor", "The regulator"],
+      correct: 1,
+      explanation: "Privacy law grants rights to the individual, exercised against the controller - who must then ensure its processors comply." },
+    { tier: "recall",
+      question: "What distinguishes passive from active reconnaissance?",
+      options: ["Passive is faster", "Passive does not interact with the target and is undetectable by them", "Active is always unauthorised", "They are the same thing"],
+      correct: 1,
+      explanation: "Passive uses public sources - job adverts, DNS, published material - so nothing touches the target's systems. Active interacts directly and is detectable." },
+    { tier: "recall",
+      question: "Which audit type carries enforcement power?",
+      options: ["Self-assessment", "Internal audit", "Regulatory examination", "Audit committee review"],
+      correct: 2,
+      explanation: "A regulator's examination is compulsory and carries consequences. The others produce findings the organization chooses how to act on." },
+    { tier: "applied",
+      question: "A vendor questionnaire scores 94/100, but an independent assessment finds access reviews 19 months overdue. What does this best illustrate?",
+      options: ["The vendor lied deliberately", "Self-declaration records claims rather than testing them", "Questionnaires should never be used", "The assessment was wrong"],
+      correct: 1,
+      explanation: "Nobody necessarily lied - 'performed regularly' felt true to whoever answered, because people rarely scrutinise what they do every day. Only evidence tests a claim." },
+    { tier: "applied",
+      question: "An organization negotiates a right-to-audit clause and never invokes it over five years. What assurance has it gained?",
+      options: ["Substantial, because the clause deters poor practice", "Effectively none beyond not having the clause", "Complete assurance", "The same as an independent assessment"],
+      correct: 1,
+      explanation: "A right-to-audit clause is only as useful as its exercise. Negotiated and unused, it delivers paperwork rather than information." },
+    { tier: "applied",
+      question: "A vendor subcontracts hosting to a provider not named in its questionnaire. What is this, and what surfaces it?",
+      options: ["Insider threat; background checks", "Fourth-party risk; supply chain analysis", "Conflict of interest; disclosure", "Non-compliance; regulatory examination"],
+      correct: 1,
+      explanation: "Your vendor's vendors are frequently invisible without deliberately asking, and attackers target the weakest link - which is often two steps away from you." },
+    { tier: "applied",
+      question: "An organization wants to find as many exploitable weaknesses as possible on a fixed budget. Which test design fits?",
+      options: ["Unknown environment, to simulate a real attacker", "Known environment, providing documentation and access", "Physical penetration test only", "Passive reconnaissance only"],
+      correct: 1,
+      explanation: "Unknown environment testing spends much of the budget rediscovering what the organization already knows. Providing documentation finds more issues per pound." },
+    { tier: "applied",
+      question: "Which measure best indicates that an awareness programme is working?",
+      options: ["Training completion rate", "Number of modules published", "Phishing report rate and time to report", "Number of staff attending sessions"],
+      correct: 2,
+      explanation: "Completion measures attendance rather than effect. A programme at 100% completion with a 2% report rate is not changing behaviour." },
+    { tier: "applied",
+      question: "An employee shares a password because the approved access process takes three days. How should this be classified and addressed?",
+      options: ["Unintentional; retrain the individual", "Risky behaviour; address the three-day process as well as the policy", "Unexpected; investigate as compromise", "Malicious; begin disciplinary action"],
+      correct: 1,
+      explanation: "Risky behaviour is usually rational from where the person stood. Reinforcing policy without fixing the delay produces the same behaviour, conducted more discreetly." },
+    { tier: "applied",
+      question: "A self-assessment finds and fixes several control gaps. A customer asks for assurance. What is the limitation?",
+      options: ["Self-assessments find nothing useful", "It lacks independence, so it is not assurance to an outside party", "It should be repeated more often", "It must be performed by the regulator"],
+      correct: 1,
+      explanation: "Self-assessment is genuinely useful for finding problems and carries no weight externally, because the people evaluating the work performed it." },
+    { tier: "applied",
+      question: "A data subject requests erasure. Why is this technically difficult?",
+      options: ["Databases cannot delete records", "The same data exists in backups, logs, analytics, and processors' systems", "Erasure requests are always refused", "It requires regulator approval"],
+      correct: 1,
+      explanation: "Deleting the production record is straightforward. Finding every copy requires a data inventory - without one, an organization cannot know whether it complied." },
+    { tier: "scenario",
+      question: "Team A: 5% click, 3% report. Team B: 22% click, 61% report within 6 minutes. Which is better positioned against a real campaign?",
+      options: ["Team A, because fewer people click", "Team B, because rapid reporting lets the team act before most people open it", "Neither differs", "Team A, because click rate is the standard metric"],
+      correct: 1,
+      explanation: "Reporting creates the window to block the sender and pull the message. A workforce that clicks less and says nothing offers no such window - and is often a workforce that was punished for clicking." },
+    { tier: "scenario",
+      question: "An organization disciplines staff who click simulated phishing links. Click rates fall and reported incidents fall further. What has happened?",
+      options: ["The programme is succeeding", "Staff are concealing mistakes, which is what turns a click into an undetected breach", "The simulations became easier", "Nothing significant"],
+      correct: 1,
+      explanation: "Punitive handling produces people who look compliant and say nothing. This is the blameless principle from Modules 3 and 10 applied to awareness training." },
+    { tier: "scenario",
+      question: "A penetration test causes an outage on a system the client assumed was excluded. What was missing?",
+      options: ["A more skilled tester", "Rules of engagement defining scope, exclusions, timing, and contacts", "An NDA", "A regulatory examination"],
+      correct: 1,
+      explanation: "Rules of engagement protect both parties. Their absence is how a test becomes an incident, a dispute, or an outage nobody anticipated." },
+    { tier: "applied",
+      question: "An organization retains personal data long past the purpose it was collected for. What is the position?",
+      options: ["Retention is always beneficial", "It is a liability with no offsetting value, and it is exactly what appears in a breach unnecessarily", "It improves analytics", "It is required by privacy law"],
+      correct: 1,
+      explanation: "Privacy law requires personal data not be kept longer than necessary, and unneeded data still triggers notification obligations if breached. Deleting on schedule reduces risk and cost together." },
+    { tier: "scenario",
+      question: "Internal audit reports findings through the executives whose areas were audited, and unfavourable findings rarely reach the board. What structure addresses this?",
+      options: ["More frequent self-assessments", "An audit committee providing a board-level reporting route", "External penetration testing", "A right-to-audit clause"],
+      correct: 1,
+      explanation: "The audit committee exists precisely so findings do not depend on the goodwill of the people being audited to reach those with authority to act." },
+    { tier: "scenario",
+      question: "A supplier suffers a breach exposing the organization's customer data. The contract assigns liability to the supplier. What remains true?",
+      options: ["The organization has no obligations", "It is the organization's incident; accountability to customers and regulators does not transfer", "Only the supplier must notify", "The contract removes reputational impact"],
+      correct: 1,
+      explanation: "Contractual liability moves financial consequence, as Module 11 established for insurance. The organization still answers to its regulator and still owes its customers an explanation." }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>

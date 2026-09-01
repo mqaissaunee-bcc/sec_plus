@@ -1,0 +1,2948 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="3" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 3: Threat Actors and Attack Surfaces</title>
+<meta name="description" content="Who attacks organizations and why, the routes attacks travel, the social engineering family, and how attack surface is measured and reduced.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-box.danger{stroke:var(--danger);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 3</p>
+    <h1>Threat Actors and Attack Surfaces</h1>
+    <p class="subtitle">Who attacks organizations and why, the routes attacks travel, the social engineering family, and how attack surface is measured and reduced.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="&#128203;" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to compare the six threat
+        actor types by resources, sophistication, and position; explain the
+        motivations that drive each; identify the vectors through which attacks
+        arrive; recognise the social engineering family and what distinguishes
+        its members; and describe what an attack surface is and how it is
+        reduced.
+      </div>
+
+      <p>Domain 2 is the second-largest on the exam at 22%, and this module opens
+      it. The material is less technical than what follows, which leads students
+      to skim it. That is a mistake for a specific reason: nearly every scenario
+      question in Domain 2 begins by describing an adversary, and your first job
+      is to work out who you are dealing with. Get the actor wrong and the rest
+      of the reasoning follows the wrong path.</p>
+
+      <p>Consider two scenarios that look similar. In the first, an organization
+      finds credentials being sold on a criminal forum weeks after a breach. In
+      the second, an organization finds an intruder who has been present for
+      fourteen months, took nothing of monetary value, and specifically accessed
+      engineering documents. Both are breaches. But the first is organized crime
+      pursuing financial gain, and the second is a nation-state conducting
+      espionage - and almost every question that follows, from likely technique
+      to appropriate response, diverges from that point.</p>
+
+      <div class="subsection">
+        <h3>Threat, vulnerability, and risk</h3>
+        <p>These three words are used loosely in conversation and precisely on the
+        exam. Keep them separate.</p>
+        <table>
+          <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Threat</td><td>Something with the potential to cause harm</td><td>A ransomware group</td></tr>
+            <tr><td>Vulnerability</td><td>A weakness that could be exploited</td><td>An unpatched server</td></tr>
+            <tr><td>Risk</td><td>The likelihood and impact of a threat exploiting a vulnerability</td><td>Probability of that server being encrypted, and what it would cost</td></tr>
+          </tbody>
+        </table>
+        <p>A threat with no matching vulnerability produces little risk, and a
+        vulnerability nobody is interested in exploiting produces little risk
+        either. Risk is where the two intersect - which is why threat actor
+        analysis matters operationally and not just academically. Knowing who is
+        likely to target you determines which vulnerabilities actually matter.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127968;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A window on the ground floor</p>
+        <p>The unlocked window is the <strong>vulnerability</strong>. Burglars
+        operating in your area are the <strong>threat</strong>. The
+        <strong>risk</strong> is the chance that one of them tries your window,
+        multiplied by what they would take.</p>
+        <p>Notice how the pieces interact. The same unlocked window on a remote
+        island with no burglars carries almost no risk. The same burglars outside
+        a house with no windows carry almost no risk either. Security work is
+        mostly about finding where the two overlap.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        Questions frequently give you a scenario and ask which actor is
+        <em>most likely</em> responsible. The answer is driven by the combination
+        of what was taken, how long they were present, and how sophisticated the
+        method was - not by any single detail.
+      </div>
+    </section>
+
+    <section class="module-section" id="threat-actors" data-icon="&#127917;" role="tabpanel"
+             aria-labelledby="tab-threat-actors" tabindex="-1">
+      <h2 class="section-title">Threat Actors</h2>
+
+      <div class="subsection">
+        <h3>The three attributes that define an actor</h3>
+        <p>CompTIA describes actors along three attributes, and the exam uses
+        them as the distinguishing features between otherwise similar options.</p>
+        <table>
+          <thead><tr><th>Attribute</th><th>Question it answers</th></tr></thead>
+          <tbody>
+            <tr><td>Internal or external</td><td>Do they already have legitimate access?</td></tr>
+            <tr><td>Resources and funding</td><td>Can they sustain a long campaign, buy exploits, employ staff?</td></tr>
+            <tr><td>Level of sophistication</td><td>Do they write their own tools or download someone else's?</td></tr>
+          </tbody>
+        </table>
+        <p>Sophistication and resources usually travel together, but not always,
+        and the exception matters. An insider may have very low sophistication and
+        no funding whatsoever, yet cause enormous damage because their
+        <em>position</em> substitutes for both. They do not need to break in.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="nation-state">Nation-state actors</span></h3>
+        <p>Government-sponsored, effectively unlimited in funding, and the most
+        sophisticated adversary in the catalogue. They employ full-time staff,
+        develop custom tooling, and can afford to acquire or discover zero-day
+        vulnerabilities. Crucially, they are patient: a nation-state campaign may
+        run for years.</p>
+        <p>This is where the term <span class="term" data-term="apt">advanced
+        persistent threat</span> comes from, and each word is doing work.
+        <em>Advanced</em> refers to capability. <em>Persistent</em> means the goal
+        is long-term access rather than a quick score. <em>Threat</em> signals a
+        human adversary adapting to your defences rather than automated malware
+        running a script.</p>
+        <p>Typical targets are government systems, defence contractors, critical
+        infrastructure, and any organization holding intellectual property of
+        strategic value. Typical motivations are espionage, war, and disruption -
+        rarely direct financial gain.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128100;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A houseguest who never leaves</p>
+        <p>A burglar is in and out in ten minutes and you know immediately, because
+        the television is gone. Now imagine someone who moves into your spare room,
+        takes nothing you would notice, learns your routine, copies your documents
+        as you file them, and stays for a year.</p>
+        <p>You would not detect that by counting your possessions, because nothing
+        is missing. That is what persistent means, and it is why nation-state
+        intrusions are typically discovered by noticing unusual behaviour rather
+        than by noticing loss.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a
+        houseguest is one person in one house. A nation-state campaign may run
+        against hundreds of organizations at once, and may compromise your
+        supplier specifically to reach you.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Unskilled attackers</h3>
+        <p>Formerly called script kiddies, these are individuals using tools built
+        by others without understanding how they work. Sophistication is low and
+        resources are minimal. Motivations are typically curiosity, reputation
+        among peers, or simple disruption.</p>
+        <p>Low sophistication does not mean low impact. Prebuilt tooling is
+        genuinely powerful, and booter or stresser services will run a denial of
+        service attack for a small fee. An unskilled attacker with a rented botnet
+        can take an unprepared organization offline. What they cannot do is adapt
+        when the obvious approach fails, which is the practical distinction.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128295;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A power tool without the training</p>
+        <p>Someone who buys a professional lock-picking gun online can open a
+        cheap lock on their first attempt. The tool encodes the expertise, and the
+        result on that lock is the same as a professional's.</p>
+        <p>But the moment they meet a lock the tool does not handle, they stop.
+        They cannot diagnose why it failed or improvise, because the knowledge was
+        never theirs. That is precisely the boundary between an unskilled attacker
+        and a sophisticated one - not what they can do on a good day, but what
+        they do when the first approach fails.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Hacktivists</h3>
+        <p>Hacktivists are driven by political or philosophical belief rather than
+        profit. Sophistication varies widely, from loosely coordinated volunteers
+        to genuinely skilled operators. Their defining characteristic is that
+        <em>publicity is part of the objective</em>. A criminal wants the breach
+        unnoticed for as long as possible; a <span class="term" data-term="hacktivist">hacktivist</span> frequently announces it.</p>
+        <p>Common techniques are website defacement, denial of service against a
+        symbolic target, and doxing - publishing private information to embarrass
+        or endanger. Targets are chosen for what they represent, which means an
+        organization's risk from hacktivism depends on its public profile rather
+        than its assets.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Insider threats</h3>
+        <p>An <span class="term" data-term="insider threat">insider</span> is anyone with legitimate access: an employee, contractor,
+        or partner. They bypass the perimeter entirely because they were invited
+        through it, and they know where valuable data is and which controls exist.</p>
+        <p>The exam expects you to distinguish two kinds. A <strong>malicious
+        insider</strong> acts deliberately, motivated by revenge after a
+        disciplinary action, financial gain from selling data, or ideology. An
+        <strong>unintentional insider</strong> causes harm through error -
+        misconfiguring a storage bucket, falling for a phish, or emailing a
+        spreadsheet to the wrong recipient. Unintentional insiders cause far more
+        incidents; malicious insiders cause more damage per incident.</p>
+
+        <div class="callout warn">
+          <span class="tag">[EXAM]</span>
+          Insider scenarios often mention a recent negative employment event -
+          a demotion, a poor review, an announced redundancy. That detail is
+          rarely incidental. It is signalling motive.
+        </div>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128273;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">The locksmith who fitted your locks</p>
+        <p>Every external control you own assumes the threat is outside. The
+        locksmith was never outside. They know which door is weakest, which window
+        was never rewired into the alarm, and when you go on holiday - because you
+        told them.</p>
+        <p>No amount of strengthening the perimeter addresses this. The answers
+        are different in kind: least privilege so their access is bounded,
+        separation of duties so no single person can complete a harmful action
+        alone, and monitoring so unusual behaviour is visible.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Organized crime</h3>
+        <p>Organized crime operates as a business, and the exam expects you to
+        recognise that framing. These groups are well funded, moderately to highly
+        sophisticated, and motivated almost entirely by money. They employ
+        developers, run help desks for ransomware victims, and offer
+        ransomware-as-a-service to affiliates who lack the skill to build their
+        own.</p>
+        <p>Because the motive is financial, targeting is largely opportunistic and
+        driven by return on investment. They pursue whoever is likely to pay,
+        which is why healthcare, local government, and mid-sized businesses are
+        disproportionately affected - not because they hold the most valuable
+        data, but because downtime is intolerable and defences are often thinner
+        than in large enterprises.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Shadow IT</h3>
+        <p>Shadow IT is technology used within an organization without approval or
+        the knowledge of the IT function: an unsanctioned cloud storage account, a
+        departmental SaaS subscription bought on a corporate card, a personal
+        device holding company data.</p>
+        <p>The distinction the exam draws is that <span class="term" data-term="shadow it">shadow IT</span> is almost never
+        malicious. It arises when official systems are too slow or too restrictive
+        and staff route around them to do their jobs. That makes it a symptom as
+        much as a cause. It still creates real exposure, because it is unmonitored,
+        unpatched, and invisible to the security team - assets nobody knows about
+        cannot be protected.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 340" role="img" aria-labelledby="amTitle amDesc">
+          <title id="amTitle">Threat actors plotted by resources and sophistication</title>
+          <desc id="amDesc">A chart with resources on the horizontal axis and sophistication on the vertical. Unskilled attackers sit low on both. Hacktivists sit low to middle. Organized crime sits high on resources and medium to high on sophistication. Nation-states sit highest on both. Insiders are plotted separately because their position, not their resources, is what matters.</desc>
+          <path d="M70 280 L660 280" class="svg-line"/>
+          <path d="M70 280 L70 30" class="svg-line"/>
+          <text x="365" y="308" text-anchor="middle" class="svg-sub">Resources and funding &rarr;</text>
+          <text x="24" y="155" text-anchor="middle" class="svg-sub" transform="rotate(-90 24 155)">Sophistication &rarr;</text>
+          <g>
+            <circle cx="150" cy="245" r="9" class="svg-fill-warn"/>
+            <text x="166" y="242" class="svg-label">Unskilled attacker</text>
+            <text x="166" y="259" class="svg-sub">rented tools, cannot adapt</text>
+            <circle cx="255" cy="175" r="9" class="svg-fill-brand"/>
+            <text x="271" y="172" class="svg-label">Hacktivist</text>
+            <text x="271" y="189" class="svg-sub">variable skill, wants publicity</text>
+            <circle cx="450" cy="120" r="10" class="svg-fill-warn"/>
+            <text x="466" y="117" class="svg-label">Organized crime</text>
+            <text x="466" y="134" class="svg-sub">funded, operates as a business</text>
+            <circle cx="580" cy="60" r="11" class="svg-fill-accent"/>
+            <text x="450" y="46" class="svg-label">Nation-state</text>
+            <text x="404" y="63" class="svg-sub">unlimited funding, patient, custom tooling</text>
+          </g>
+          <rect x="90" y="46" width="215" height="62" rx="10" class="svg-box accent"/>
+          <text x="197" y="70" text-anchor="middle" class="svg-label">Insider</text>
+          <text x="197" y="88" text-anchor="middle" class="svg-sub">plotted off-axis: position,</text>
+          <text x="197" y="102" text-anchor="middle" class="svg-sub">not resources, is the threat</text>
+        </svg>
+        <figcaption>Sophistication and resources usually travel together. The insider is the exception - they were invited through the perimeter.</figcaption>
+      </figure>
+      <div class="subsection">
+        <h3>Comparing the actors</h3>
+        <table>
+          <thead><tr><th>Actor</th><th>Position</th><th>Resources</th><th>Sophistication</th><th>Primary motivation</th></tr></thead>
+          <tbody>
+            <tr><td>Nation-state</td><td>External</td><td>Very high</td><td>Very high</td><td>Espionage, war, disruption</td></tr>
+            <tr><td>Organized crime</td><td>External</td><td>High</td><td>Medium to high</td><td>Financial gain</td></tr>
+            <tr><td>Hacktivist</td><td>External</td><td>Low to medium</td><td>Variable</td><td>Political or philosophical belief</td></tr>
+            <tr><td>Insider</td><td>Internal</td><td>Variable</td><td>Variable</td><td>Revenge, money, or error</td></tr>
+            <tr><td>Unskilled attacker</td><td>External</td><td>Very low</td><td>Low</td><td>Curiosity, reputation, chaos</td></tr>
+            <tr><td>Shadow IT</td><td>Internal</td><td>N/A</td><td>N/A</td><td>Convenience, not malice</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="actor-matrix">
+        Open the actor comparison table</button></p>
+
+      <div class="subsection">
+        <h3>Practice: identify the actor</h3>
+        <p>Read each scenario and choose the most likely actor and motivation.</p>
+        <div class="classifier" data-classifier="actors"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="motivations" data-icon="&#127919;" role="tabpanel"
+             aria-labelledby="tab-motivations" tabindex="-1">
+      <h2 class="section-title">Motivations</h2>
+
+      <p>Motivation is what an attacker wants, and it is the most useful single
+      clue in a scenario question. It shapes what they take, how long they stay,
+      and whether they want you to know.</p>
+
+      <div class="subsection">
+        <h3>The motivations named in the objective</h3>
+        <table>
+          <thead><tr><th>Motivation</th><th>What it looks like</th><th>Typical actor</th></tr></thead>
+          <tbody>
+            <tr><td>Financial gain</td><td>Ransomware, fraud, selling stolen data</td><td>Organized crime</td></tr>
+            <tr><td>Data exfiltration</td><td>Bulk copying of records or documents</td><td>Crime or nation-state</td></tr>
+            <tr><td>Espionage</td><td>Long-term theft of strategic information</td><td>Nation-state</td></tr>
+            <tr><td>Blackmail</td><td>Threatening release of stolen data</td><td>Organized crime</td></tr>
+            <tr><td>Service disruption</td><td>Denial of service, destructive attacks</td><td>Hacktivist, nation-state</td></tr>
+            <tr><td>Philosophical or political</td><td>Defacement, doxing, symbolic targets</td><td>Hacktivist</td></tr>
+            <tr><td>Revenge</td><td>Sabotage after a personal grievance</td><td>Insider</td></tr>
+            <tr><td>Chaos or disruption</td><td>Damage for its own sake</td><td>Unskilled attacker</td></tr>
+            <tr><td>War</td><td>Attacks on infrastructure supporting a conflict</td><td>Nation-state</td></tr>
+            <tr><td>Ethical</td><td>Disclosure intended to prompt a fix</td><td>Researcher</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127970;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Three break-ins at the same shop</p>
+        <p>In the first, the till is emptied and the thief is gone in four
+        minutes. In the second, nothing is missing at all, but the safe holding
+        the product designs was opened and photographed, and it happened eleven
+        months ago. In the third, nothing is stolen and the windows are smashed
+        with a slogan painted across the shutter.</p>
+        <p>Same premises, three entirely different adversaries. The evidence that
+        identifies them is not how they got in - it is what they wanted. Financial
+        gain, espionage, and political statement leave visibly different scenes.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Reading motivation from evidence</h3>
+        <p>Scenario questions describe an incident and expect you to infer. These
+        signals are the ones the exam uses most.</p>
+        <table>
+          <thead><tr><th>Evidence in the scenario</th><th>Points toward</th></tr></thead>
+          <tbody>
+            <tr><td>Long <span class="term" data-term="dwell time">dwell time</span>, nothing obviously stolen</td><td>Espionage, nation-state</td></tr>
+            <tr><td>Rapid encryption and a ransom demand</td><td>Financial gain, organized crime</td></tr>
+            <tr><td>Public announcement, defacement, a manifesto</td><td>Political belief, hacktivist</td></tr>
+            <tr><td>Targeted at engineering or research data specifically</td><td>Espionage or IP theft</td></tr>
+            <tr><td>Damage timed to a departure or disciplinary action</td><td>Revenge, insider</td></tr>
+            <tr><td>Widely available tooling, no attempt to hide</td><td>Unskilled attacker</td></tr>
+            <tr><td>Attack on utilities during a geopolitical conflict</td><td>War, nation-state</td></tr>
+          </tbody>
+        </table>
+        <p>The strongest single discriminator is <strong>dwell time</strong>. A
+        criminal wants to monetise quickly and leaves. A spy wants to remain. When
+        a scenario mentions how long an intruder was present, that number is
+        almost always the intended clue.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Dwell time and what it reveals</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="dwell">Compare two intrusions</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="dwell">Clear</button>
+        </div>
+        <div class="terminal" id="demo-dwell" aria-live="polite" aria-label="Dwell time comparison output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Why motivation changes the response</h3>
+        <p>This is not an academic exercise. If an intrusion is criminal and
+        financially motivated, the priority is containment, restoration, and
+        preventing payment pressure from driving bad decisions. If it is
+        espionage, containment alone is inadequate: an actor who has been present
+        for a year has likely established multiple footholds, and rebuilding
+        systems without a thorough hunt simply invites them back through a door
+        you never found.</p>
+        <p>If the actor is an insider, the response involves human resources and
+        legal counsel from the first hour, and evidence handling matters far more
+        because the matter may end in employment tribunal or prosecution.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="threat-vectors" data-icon="&#128371;" role="tabpanel"
+             aria-labelledby="tab-threat-vectors" tabindex="-1">
+      <h2 class="section-title">Threat Vectors</h2>
+
+      <p>A <span class="term" data-term="threat vector">threat vector</span> is
+      the route an attack takes to reach you. Objective 2.2 lists them
+      explicitly, and the exam tests whether you can name the vector from a
+      description of how something arrived.</p>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128682;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Every opening in a building</p>
+        <p>A building has a front door, a loading bay, fire exits, windows,
+        ventilation ducts, and a mail slot. Each is a route inside. Some are
+        watched, some are locked, and some nobody has thought about in years.</p>
+        <p>An attacker does not care which one you consider the main entrance.
+        They will use whichever is least defended, which is why counting your
+        openings honestly matters more than reinforcing the one you already
+        watch.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 330" role="img" aria-labelledby="vTitle vDesc">
+          <title id="vTitle">Threat vectors into an organization</title>
+          <desc id="vDesc">An organization at the centre with eight vectors arriving from around it: message-based, voice, removable devices, unsecure networks, open ports, default credentials, vulnerable software, and the supply chain.</desc>
+          <rect x="255" y="130" width="190" height="70" rx="12" class="svg-box accent"/>
+          <text x="350" y="160" text-anchor="middle" class="svg-label">Organization</text>
+          <text x="350" y="180" text-anchor="middle" class="svg-sub">the attack surface</text>
+          <g class="svg-sub">
+            <rect x="20" y="20" width="150" height="40" rx="8" class="svg-box brand"/>
+            <text x="95" y="45" text-anchor="middle" class="svg-label">Message / email</text>
+            <rect x="200" y="20" width="120" height="40" rx="8" class="svg-box brand"/>
+            <text x="260" y="45" text-anchor="middle" class="svg-label">Voice call</text>
+            <rect x="350" y="20" width="150" height="40" rx="8" class="svg-box brand"/>
+            <text x="425" y="45" text-anchor="middle" class="svg-label">Removable media</text>
+            <rect x="530" y="20" width="150" height="40" rx="8" class="svg-box brand"/>
+            <text x="605" y="45" text-anchor="middle" class="svg-label">Unsecure network</text>
+            <rect x="20" y="270" width="150" height="40" rx="8" class="svg-box warn"/>
+            <text x="95" y="295" text-anchor="middle" class="svg-label">Open ports</text>
+            <rect x="200" y="270" width="160" height="40" rx="8" class="svg-box warn"/>
+            <text x="280" y="295" text-anchor="middle" class="svg-label">Default credentials</text>
+            <rect x="390" y="270" width="150" height="40" rx="8" class="svg-box warn"/>
+            <text x="465" y="295" text-anchor="middle" class="svg-label">Vulnerable software</text>
+            <rect x="560" y="270" width="120" height="40" rx="8" class="svg-box danger"/>
+            <text x="620" y="295" text-anchor="middle" class="svg-label">Supply chain</text>
+          </g>
+          <g class="svg-line brand">
+            <path d="M95 64 L270 126" marker-end="url(#av)"/>
+            <path d="M260 64 L315 126" marker-end="url(#av)"/>
+            <path d="M425 64 L385 126" marker-end="url(#av)"/>
+            <path d="M605 64 L432 126" marker-end="url(#av)"/>
+          </g>
+          <g class="svg-line accent">
+            <path d="M95 266 L270 204" marker-end="url(#av)"/>
+            <path d="M280 266 L318 204" marker-end="url(#av)"/>
+            <path d="M465 266 L390 204" marker-end="url(#av)"/>
+            <path d="M620 266 L438 204" marker-end="url(#av)"/>
+          </g>
+          <defs><marker id="av" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+        </svg>
+        <figcaption>An attacker uses whichever opening is least defended, not the one you consider the main entrance.</figcaption>
+      </figure>
+      <div class="subsection">
+        <h3>Message-based vectors</h3>
+        <p>Email remains the dominant delivery route for attacks, joined by SMS
+        and instant messaging. The message may carry a malicious attachment, a
+        link to a credential-harvesting page, or simply an instruction to a human
+        - a request to change bank details, which needs no malware at all.</p>
+        <p>Related is the <strong>image-based</strong> vector, where malicious
+        content is embedded in image files, and the <strong>file-based</strong>
+        vector, covering documents with malicious macros, archives, and
+        installers.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Voice calls</h3>
+        <p>Telephone-based attacks exploit the immediacy and social pressure of a
+        live conversation. A caller impersonating IT support or a senior executive
+        can extract credentials or push someone into an action they would question
+        in writing. Attackers increasingly combine channels - an email that
+        primes the target, followed by a call that closes.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Removable devices</h3>
+        <p>A USB drive bypasses every network control by physically crossing the
+        perimeter. The classic technique is leaving infected drives where staff
+        will find them, relying on curiosity. Some devices are worse than they
+        appear: a malicious USB may present itself as a keyboard and type commands
+        the moment it is inserted, so the user need not open anything at all.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128189;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A dropped wallet on the pavement</p>
+        <p>Most people who find a wallet will open it - not to steal, but to find
+        out whose it is. The impulse is helpful rather than careless.</p>
+        <p>USB drops exploit exactly that impulse. The label says "Payroll Q3" or
+        "Redundancies", and the person who plugs it in is often trying to return
+        it to the right owner. This is why the countermeasure is technical
+        (blocking removable media) rather than an instruction to be more
+        suspicious - the behaviour being exploited is a good one.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Vulnerable and unsupported software</h3>
+        <p>Software with known vulnerabilities is a standing invitation, and the
+        objective distinguishes <strong>client-based</strong> from
+        <strong>agentless</strong> approaches to managing it. Client-based
+        requires software installed on each endpoint, giving deep visibility but
+        requiring deployment and maintenance. Agentless requires no installation
+        but sees less.</p>
+        <p><strong>Unsupported systems and applications</strong> are a distinct
+        and worse case. A vulnerable system can be patched; an end-of-life system
+        cannot, because no patch will ever be written. This is the compensating
+        control scenario from Module 1 in its most common real form.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Unsecure networks</h3>
+        <p>The objective names wireless, wired, and Bluetooth. Open or weakly
+        encrypted wireless allows interception; unsecured wired ports in publicly
+        accessible areas allow direct network access; and Bluetooth carries its
+        own family of attacks against pairing and discovery.</p>
+        <p>Public wireless deserves particular attention because an attacker can
+        operate a network that looks entirely legitimate - a rogue access point
+        named identically to a coffee shop's - and see everything not otherwise
+        encrypted.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Open service ports and default credentials</h3>
+        <p>Every listening service is a potential entry point, and services are
+        routinely exposed unintentionally through misconfiguration. Internet-wide
+        scanning is continuous and automated, so a newly exposed service is
+        typically discovered within minutes, not weeks.</p>
+        <p>Default credentials are the simplest vector in the entire list and
+        remain among the most effective. Default usernames and passwords for
+        essentially every device are published and searchable. A device deployed
+        without changing them is not so much vulnerable as openly available.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Supply chain</h3>
+        <p>Rather than attacking a well-defended target directly, an attacker
+        compromises something the target already trusts - a software vendor, a
+        managed service provider, or a hardware supplier. The malicious code then
+        arrives through a legitimate, signed, expected channel.</p>
+        <p>The objective names three routes: <strong>managed service
+        providers</strong>, who hold privileged access to many client networks at
+        once; <strong>vendors</strong>, whose software updates are trusted
+        implicitly; and <strong>suppliers</strong>, including hardware that can be
+        tampered with before delivery.</p>
+        <p>Supply chain attacks are efficient in a way that makes them
+        structurally attractive: compromising one MSP may deliver access to
+        hundreds of downstream organizations, each of which had no realistic
+        opportunity to detect the compromise upstream.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128666;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Contaminating the ingredient, not the meal</p>
+        <p>Poisoning one restaurant means getting past that restaurant's kitchen
+        staff. Contaminating a spice sold to four hundred restaurants means
+        getting past one supplier's quality control, and every kitchen then serves
+        the dish willingly - because the ingredient arrived through the proper
+        channel with the right paperwork.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a
+        restaurant can inspect an ingredient on arrival. Most organizations cannot
+        meaningfully inspect a signed software update, which is why supply chain
+        defence relies on vendor assessment and monitoring for unusual behaviour
+        after installation rather than on inspection.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Anatomy of a supply chain compromise</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="supply">Trace the attack</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="supply">Clear</button>
+        </div>
+        <div class="terminal" id="demo-supply" aria-live="polite" aria-label="Supply chain attack trace"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="social-engineering" data-icon="&#127907;" role="tabpanel"
+             aria-labelledby="tab-social-engineering" tabindex="-1">
+      <h2 class="section-title">Social Engineering</h2>
+
+      <p>Social engineering attacks the person rather than the system. It is
+      listed as a human vector in objective 2.2 and appears throughout the exam,
+      because it remains the most common initial access method in real breaches.
+      No technical control is bypassed when a legitimate user is persuaded to open
+      the door.</p>
+
+      <div class="subsection">
+        <h3>The principles being exploited</h3>
+        <table>
+          <thead><tr><th>Principle</th><th>How it is used</th></tr></thead>
+          <tbody>
+            <tr><td>Authority</td><td>The message appears to come from an executive or the police</td></tr>
+            <tr><td>Urgency</td><td>Act now or the account closes, the payment fails, the deal collapses</td></tr>
+            <tr><td>Scarcity</td><td>Limited slots, limited time, act before it is gone</td></tr>
+            <tr><td>Familiarity</td><td>The sender seems to know you or your colleagues</td></tr>
+            <tr><td>Trust</td><td>Built over several harmless exchanges before the request</td></tr>
+            <tr><td>Intimidation</td><td>Threats of consequences for non-compliance</td></tr>
+            <tr><td>Social proof</td><td>Everyone else has already done this</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Urgency combined with authority</strong> is the most common
+        pairing by a wide margin, because together they suppress the verification
+        step. A message from the chief executive demanding action in the next ten
+        minutes is engineered specifically to prevent the recipient from picking
+        up a phone.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The phishing family</h3>
+        <table>
+          <thead><tr><th>Term</th><th>Channel</th><th>Targeting</th></tr></thead>
+          <tbody>
+            <tr><td>Phishing</td><td>Email</td><td>Mass, untargeted</td></tr>
+            <tr><td>Spear phishing</td><td>Email</td><td>Specific individual or small group, researched</td></tr>
+            <tr><td>Whaling</td><td>Email</td><td>Senior executives specifically</td></tr>
+            <tr><td>Vishing</td><td>Voice call</td><td>Either</td></tr>
+            <tr><td>Smishing</td><td>SMS</td><td>Either</td></tr>
+          </tbody>
+        </table>
+        <p>Two axes only: <strong>channel</strong> and <strong>how targeted it
+        is</strong>. Vishing is voice, smishing is SMS, spear phishing is
+        researched, whaling is aimed at the top. Exam questions distinguish these
+        by naming the channel or describing the level of personalisation, and
+        options will offer several members of the family at once.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="pTitle pDesc">
+          <title id="pTitle">The phishing family by channel and targeting</title>
+          <desc id="pDesc">Phishing varies on two axes only. By channel: email is phishing, voice is vishing, SMS is smishing. By targeting: mass and untargeted is phishing, researched at one person is spear phishing, aimed at executives is whaling.</desc>
+          <text x="20" y="26" class="svg-label">Axis 1 &mdash; channel</text>
+          <rect x="20" y="40" width="200" height="56" rx="10" class="svg-box brand"/>
+          <text x="120" y="64" text-anchor="middle" class="svg-label">Phishing</text>
+          <text x="120" y="82" text-anchor="middle" class="svg-sub">email</text>
+          <rect x="245" y="40" width="200" height="56" rx="10" class="svg-box brand"/>
+          <text x="345" y="64" text-anchor="middle" class="svg-label">Vishing</text>
+          <text x="345" y="82" text-anchor="middle" class="svg-sub">voice call</text>
+          <rect x="470" y="40" width="200" height="56" rx="10" class="svg-box brand"/>
+          <text x="570" y="64" text-anchor="middle" class="svg-label">Smishing</text>
+          <text x="570" y="82" text-anchor="middle" class="svg-sub">SMS</text>
+
+          <text x="20" y="140" class="svg-label">Axis 2 &mdash; how targeted</text>
+          <rect x="20" y="154" width="200" height="56" rx="10" class="svg-box"/>
+          <text x="120" y="178" text-anchor="middle" class="svg-label">Phishing</text>
+          <text x="120" y="196" text-anchor="middle" class="svg-sub">mass, untargeted</text>
+          <rect x="245" y="154" width="200" height="56" rx="10" class="svg-box accent"/>
+          <text x="345" y="178" text-anchor="middle" class="svg-label">Spear phishing</text>
+          <text x="345" y="196" text-anchor="middle" class="svg-sub">researched, one target</text>
+          <rect x="470" y="154" width="200" height="56" rx="10" class="svg-box warn"/>
+          <text x="570" y="178" text-anchor="middle" class="svg-label">Whaling</text>
+          <text x="570" y="196" text-anchor="middle" class="svg-sub">senior executives</text>
+          <text x="350" y="238" text-anchor="middle" class="svg-sub">Questions distinguish these by naming the channel or describing the level of personalisation.</text>
+        </svg>
+        <figcaption>Two axes only. Everything else in the family is a combination of them.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127907;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A net versus a spear</p>
+        <p>Phishing casts a net. Ten thousand identical letters go out and a
+        handful of people respond; the sender never knew any of their names.</p>
+        <p>Spear phishing throws a spear at one fish. The message references your
+        actual project, names your actual manager, and arrives the week your
+        actual renewal is due - because the attacker read your website, your
+        LinkedIn, and your press releases first. Whaling is the same spear aimed
+        at the largest fish in the water, where a single success is worth the
+        research.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Business email compromise</h3>
+        <p><span class="term" data-term="business email compromise">Business email compromise</span> deserves separate attention because it involves no malware at all,
+        which makes it invisible to controls that look for malicious files. An
+        attacker either compromises or convincingly impersonates a legitimate
+        business account and uses it to request a payment or a change of bank
+        details.</p>
+        <p>Because the request arrives from a real or realistic address, uses the
+        organization's own language, and often references a genuine transaction,
+        it defeats both technical filtering and casual scepticism. The standard
+        countermeasure is procedural rather than technical: out-of-band
+        verification, where any change to payment details is confirmed by phoning
+        a number already on file rather than one supplied in the message.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Impersonation, <span class="term" data-term="pretexting">pretexting</span>, and watering holes</h3>
+        <p><strong>Impersonation</strong> is claiming to be someone else -
+        IT support, a delivery driver, an auditor. <strong>Pretexting</strong> is
+        the fabricated backstory that makes the request plausible; the two usually
+        appear together, with the pretext supplying the reason the impersonated
+        person would be asking.</p>
+        <p>A <strong>watering hole attack</strong> compromises a third-party site
+        the intended victims are known to visit - an industry forum, a local news
+        site, a supplier's portal - and waits. The attacker never contacts the
+        target directly, which is what makes it difficult to detect from the
+        target's perspective.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#129415;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Waiting at the waterhole</p>
+        <p>A predator that chases prey across the plain expends enormous energy
+        and is visible the whole time. A predator that waits where the herd must
+        eventually drink expends almost nothing and is not visible until it is too
+        late.</p>
+        <p>That is the <span class="term" data-term="watering hole">watering hole</span> attack exactly. Rather than attacking a
+        hardened target, compromise the industry forum its engineers read every
+        morning and let them come to you.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Brand impersonation, <span class="term" data-term="typosquatting">typosquatting</span>, and misinformation</h3>
+        <p><strong>Brand impersonation</strong> replicates a trusted company's
+        visual identity to make a fraudulent message credible.
+        <strong>Typosquatting</strong> registers domains that are near-misses for
+        real ones - a transposed letter, a different suffix - to catch mistyped
+        addresses or to make a link survive a glance.</p>
+        <p>The objective also names <strong>misinformation and
+        disinformation</strong>. The distinction is intent: misinformation is
+        false information spread without knowing it is false, while disinformation
+        is deliberately created and spread to deceive. Disinformation campaigns
+        are typically a nation-state technique aimed at influence rather than
+        access.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127978;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A shop that opens next door with almost your name</p>
+        <p>A customer looking for <em>Harrison &amp; Co</em> walks into
+        <em>Harisson &amp; Co</em>, which has the same signage, the same colours,
+        and a similar shopfront. They will hand over their money without ever
+        registering the missing letter, because they were not reading the sign -
+        they were recognising it.</p>
+        <p>Typosquatting works because humans pattern-match rather than parse.
+        That is also why hovering over a link before clicking is genuinely
+        effective advice: it converts recognition into reading.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Dissecting a phishing message</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="phish">Analyse message</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="phish">Clear</button>
+        </div>
+        <div class="terminal" id="demo-phish" aria-live="polite" aria-label="Phishing analysis output"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="countermeasures" data-icon="&#128737;" role="tabpanel"
+             aria-labelledby="tab-countermeasures" tabindex="-1">
+      <h2 class="section-title">Attack Surface and Countermeasures</h2>
+
+      <div class="subsection">
+        <h3>What an attack surface is</h3>
+        <p>An organization's <span class="term" data-term="attack surface">attack
+        surface</span> is the total set of points where an attacker could attempt
+        entry. It includes every internet-facing service, every endpoint, every
+        employee who can be contacted, every third party with access, and every
+        system nobody remembers owning.</p>
+        <p>The important property is that attack surface grows on its own. Every
+        new SaaS subscription, every new integration, every new hire expands it.
+        Reduction is deliberate work; expansion is the default.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127981;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Bricking up the doors you no longer use</p>
+        <p>An old factory converted over decades has doors that once served
+        loading bays, offices, and a canteen that closed in 1994. Each is a
+        maintenance burden and a way in, and nobody has checked most of them in
+        years.</p>
+        <p>Attack surface reduction is walking the building, finding every
+        opening, and bricking up the ones that serve no current purpose. The doors
+        that remain get proper locks and are actually watched. Notice the
+        prerequisite: you cannot brick up a door you do not know exists, which is
+        why asset inventory precedes everything else.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 260" role="img" aria-labelledby="sTitle sDesc">
+          <title id="sTitle">Attack surface before and after reduction</title>
+          <desc id="sDesc">Before reduction an organization exposes many entry points including forgotten and unowned systems. After reduction, unused systems are decommissioned, ports closed and defaults changed, leaving fewer entry points that are actually monitored.</desc>
+          <text x="20" y="26" class="svg-label">Before</text>
+          <rect x="20" y="40" width="300" height="150" rx="12" class="svg-box warn"/>
+          <g class="svg-sub">
+            <circle cx="60" cy="75" r="7" class="svg-fill-warn"/><text x="76" y="79">forgotten test server</text>
+            <circle cx="60" cy="105" r="7" class="svg-fill-warn"/><text x="76" y="109">camera, default password</text>
+            <circle cx="60" cy="135" r="7" class="svg-fill-warn"/><text x="76" y="139">end-of-life application</text>
+            <circle cx="60" cy="165" r="7" class="svg-fill-warn"/><text x="76" y="169">unapproved file sharing</text>
+          </g>
+          <text x="170" y="212" text-anchor="middle" class="svg-sub">many openings, few watched</text>
+
+          <text x="380" y="26" class="svg-label">After</text>
+          <rect x="380" y="40" width="300" height="150" rx="12" class="svg-box accent"/>
+          <g class="svg-sub">
+            <circle cx="420" cy="90" r="7" class="svg-fill-accent"/><text x="436" y="94">sanctioned services only</text>
+            <circle cx="420" cy="130" r="7" class="svg-fill-accent"/><text x="436" y="134">credentials rotated, ports closed</text>
+          </g>
+          <text x="530" y="212" text-anchor="middle" class="svg-sub">fewer openings, all monitored</text>
+          <path d="M330 115 L372 115" class="svg-line accent" marker-end="url(#as3)"/>
+          <defs><marker id="as3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="244" text-anchor="middle" class="svg-sub">You cannot brick up a door you do not know exists &mdash; asset inventory comes first.</text>
+        </svg>
+        <figcaption>Reduction is deliberate work. Expansion is the default.</figcaption>
+      </figure>
+      <div class="subsection">
+        <h3>Reducing the surface</h3>
+        <table>
+          <thead><tr><th>Measure</th><th>What it removes</th></tr></thead>
+          <tbody>
+            <tr><td>Asset inventory</td><td>Unknown systems - the prerequisite for everything else</td></tr>
+            <tr><td>Decommissioning</td><td>Systems still running with no owner or purpose</td></tr>
+            <tr><td>Closing unused ports and services</td><td>Listening services nobody needs</td></tr>
+            <tr><td>Changing default credentials</td><td>The simplest and most reliable vector</td></tr>
+            <tr><td>Patching and upgrading</td><td>Known exploitable vulnerabilities</td></tr>
+            <tr><td>Network segmentation</td><td>The ability to move laterally after entry</td></tr>
+            <tr><td>Least privilege</td><td>The value of any single compromised account</td></tr>
+            <tr><td>Blocking removable media</td><td>The physical bypass of network controls</td></tr>
+            <tr><td>Sanctioned alternatives to shadow IT</td><td>The incentive to route around IT</td></tr>
+          </tbody>
+        </table>
+        <p>Note the last row. Shadow IT is not solved by prohibition, because it
+        exists as a response to friction. Blocking a file-sharing service without
+        supplying a workable alternative moves the behaviour somewhere less
+        visible rather than stopping it.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Countering social engineering</h3>
+        <p>Because social engineering targets people, the countermeasures are a
+        mix of human and technical, and the exam expects both.</p>
+        <table>
+          <thead><tr><th>Countermeasure</th><th>What it addresses</th></tr></thead>
+          <tbody>
+            <tr><td>Security awareness training</td><td>Recognition of common patterns</td></tr>
+            <tr><td>Simulated phishing campaigns</td><td>Measured behaviour rather than claimed knowledge</td></tr>
+            <tr><td>Out-of-band verification</td><td>Business email compromise and payment fraud</td></tr>
+            <tr><td>A blameless reporting channel</td><td>Delay between click and disclosure</td></tr>
+            <tr><td>Email authentication (SPF, DKIM, DMARC)</td><td>Spoofed sender domains</td></tr>
+            <tr><td>Multifactor authentication</td><td>Value of harvested credentials</td></tr>
+            <tr><td>Link and attachment filtering</td><td>Delivery of malicious content</td></tr>
+          </tbody>
+        </table>
+        <p>The reporting channel is more important than its position on that list
+        suggests. The damage from a phish is largely a function of how long it
+        takes to be reported, and an employee who fears punishment will delay or
+        stay silent. A culture that thanks people for reporting their own mistakes
+        detects incidents in minutes rather than weeks - which is why blame-free
+        reporting is a security control and not merely a nicety.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        When a scenario describes payment fraud or a change to bank details, the
+        expected answer is almost always out-of-band verification using contact
+        details already held - not better filtering, and not more training.
+      </div>
+
+      <div class="subsection">
+        <h3>Defending against each actor</h3>
+        <p>Different adversaries call for different emphasis, which is the
+        practical payoff of the whole module.</p>
+        <table>
+          <thead><tr><th>Actor</th><th>Where defence should concentrate</th></tr></thead>
+          <tbody>
+            <tr><td>Nation-state</td><td>Detection and threat hunting; assume entry and look for persistence</td></tr>
+            <tr><td>Organized crime</td><td>Backups, segmentation, and tested recovery - make ransom unnecessary</td></tr>
+            <tr><td>Hacktivist</td><td>Availability, public-facing hardening, and communications planning</td></tr>
+            <tr><td>Insider</td><td>Least privilege, separation of duties, monitoring, offboarding discipline</td></tr>
+            <tr><td>Unskilled attacker</td><td>Patching and basic hygiene - prebuilt tools use known vulnerabilities</td></tr>
+            <tr><td>Shadow IT</td><td>Discovery, plus usable sanctioned alternatives</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="&#129514;" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        Analysis labs - nothing to install. Answers save in this browser as you
+        type, and each lab generates a Word document you can submit. Graded lab
+        assignments and due dates are posted in Canvas.
+      </div>
+
+      <div class="lab" data-lab="actor-profiling"></div>
+      <div class="lab" data-lab="phish-triage"></div>
+      <div class="lab" data-lab="surface-audit"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers live in this browser only. Generate the report and save the file
+        when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "nation-state": "A government-sponsored actor with effectively unlimited funding and the highest sophistication. Patient, and motivated by espionage, war, or disruption rather than money.",
+    "apt": "Advanced persistent threat. Advanced means capable, persistent means aiming for long-term access rather than a quick score, and threat means a human adversary who adapts to your defences.",
+    "threat vector": "The route an attack takes to reach you - email, a USB drive, an open port, a compromised supplier.",
+    "attack surface": "The total set of points where an attacker could attempt entry. It grows by default with every new service, integration, and employee.",
+    "insider threat": "Anyone with legitimate access who causes harm, whether deliberately or by mistake. They bypass the perimeter because they were invited through it.",
+    "shadow it": "Technology used without IT approval or knowledge. Almost never malicious - it arises when sanctioned systems are too slow or restrictive.",
+    "hacktivist": "An actor driven by political or philosophical belief rather than profit, for whom publicity is usually part of the objective.",
+    "watering hole": "Compromising a third-party site the intended victims are known to visit, then waiting, rather than contacting the target directly.",
+    "typosquatting": "Registering domains that are near-misses for real ones, exploiting the fact that people recognise names rather than reading them.",
+    "business email compromise": "Fraud using a compromised or convincingly spoofed business account to request a payment or a change of bank details. Involves no malware, so file-based controls never see it.",
+    "pretexting": "The fabricated backstory that makes an impersonated request plausible.",
+    "dwell time": "How long an intruder is present before detection. The single strongest clue to motivation - criminals monetise and leave, spies remain."
+  };
+
+  window.MODALS = {
+    "actor-matrix": {
+      title: "Actor comparison at a glance",
+      body:
+        "<table><thead><tr><th>Actor</th><th>Position</th><th>Resources</th><th>Sophistication</th><th>Motivation</th></tr></thead><tbody>" +
+        "<tr><td>Nation-state</td><td>External</td><td>Very high</td><td>Very high</td><td>Espionage, war</td></tr>" +
+        "<tr><td>Organized crime</td><td>External</td><td>High</td><td>Med-high</td><td>Financial gain</td></tr>" +
+        "<tr><td>Hacktivist</td><td>External</td><td>Low-med</td><td>Variable</td><td>Political belief</td></tr>" +
+        "<tr><td>Insider</td><td>Internal</td><td>Variable</td><td>Variable</td><td>Revenge, money, error</td></tr>" +
+        "<tr><td>Unskilled</td><td>External</td><td>Very low</td><td>Low</td><td>Curiosity, chaos</td></tr>" +
+        "<tr><td>Shadow IT</td><td>Internal</td><td>N/A</td><td>N/A</td><td>Convenience</td></tr>" +
+        "</tbody></table><p>Sophistication and resources usually travel together. The " +
+        "insider is the exception: position substitutes for both.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "dwell": [
+      { text: "$ compare-intrusions --case A --case B", cls: "prompt", delay: 320 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "CASE A -------------------------------------", cls: "info", delay: 380 },
+      { text: "  first access .............. day 0", cls: "output", delay: 300 },
+      { text: "  encryption deployed ....... day 0 + 6 hours", cls: "output", delay: 340 },
+      { text: "  ransom note ............... day 0 + 6 hours", cls: "output", delay: 300 },
+      { text: "  dwell time ................ 6 HOURS", cls: "warning", delay: 420 },
+      { text: "  data taken ................ everything, indiscriminately", cls: "output", delay: 360 },
+      { text: "  [READ] fast monetisation -> organized crime, financial gain", cls: "info", delay: 620 },
+      { text: "", cls: "output", delay: 200 },
+      { text: "CASE B -------------------------------------", cls: "info", delay: 380 },
+      { text: "  first access .............. day 0", cls: "output", delay: 300 },
+      { text: "  additional footholds ...... days 3, 41, 120, 260", cls: "output", delay: 380 },
+      { text: "  detected .................. day 427", cls: "output", delay: 340 },
+      { text: "  dwell time ................ 14 MONTHS", cls: "error", delay: 420 },
+      { text: "  data taken ................ engineering documents only", cls: "output", delay: 380 },
+      { text: "  [READ] patience + selectivity -> nation-state, espionage", cls: "info", delay: 620 },
+      { text: "", cls: "output", delay: 200 },
+      { text: "[NOTE] Case B cannot be resolved by restoring backups.", cls: "warning", delay: 560 },
+      { text: "Five footholds were established. Rebuild without a hunt and they return.", cls: "warning", delay: 560 }
+    ],
+    "supply": [
+      { text: "$ trace-attack --target defence-contractor.example", cls: "prompt", delay: 320 },
+      { text: "Direct attack surface assessment:", cls: "info", delay: 400 },
+      { text: "  perimeter .............. hardened, monitored", cls: "output", delay: 340 },
+      { text: "  staff training ......... quarterly, tested", cls: "output", delay: 320 },
+      { text: "  [BLOCKED] direct approach is expensive", cls: "warning", delay: 460 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "Pivoting to supply chain...", cls: "info", delay: 420 },
+      { text: "  step 1  compromise build server at software vendor", cls: "output", delay: 400 },
+      { text: "  step 2  insert backdoor BEFORE the code is signed", cls: "error", delay: 440 },
+      { text: "  step 3  vendor signs the update - signature is VALID", cls: "error", delay: 440 },
+      { text: "  step 4  target installs it through normal patching", cls: "output", delay: 400 },
+      { text: "  step 5  backdoor executes with the software's privileges", cls: "output", delay: 400 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "[NOTE] Every control at the target behaved correctly.", cls: "warning", delay: 560 },
+      { text: "The update was authentic, signed, and expected. Trust was the vector.", cls: "warning", delay: 560 },
+      { text: "[DEFENCE] vendor assessment + behaviour monitoring after install", cls: "info", delay: 560 }
+    ],
+    "phish": [
+      { text: "$ analyse-message --id 88213", cls: "prompt", delay: 320 },
+      { text: "From:    \"A. Whitfield, CFO\" <a.whitfield@harisson-co.com>", cls: "output", delay: 420 },
+      { text: "Reply-To: finance.dept.secure@mail-relay.co", cls: "warning", delay: 420 },
+      { text: "Subject: URGENT - wire release needed before 4pm", cls: "output", delay: 360 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "Indicators:", cls: "info", delay: 320 },
+      { text: "  [1] display name matches a real executive .......... SPOOFED", cls: "warning", delay: 400 },
+      { text: "  [2] sender domain harisson-co.com vs harrison-co.com", cls: "error", delay: 440 },
+      { text: "      -> typosquatted, registered 6 days ago", cls: "error", delay: 400 },
+      { text: "  [3] Reply-To differs from From ..................... REDIRECT", cls: "error", delay: 420 },
+      { text: "  [4] urgency + authority + payment request .......... BEC pattern", cls: "error", delay: 440 },
+      { text: "  [5] no attachment, no link ......................... no malware", cls: "warning", delay: 420 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "[NOTE] Attachment scanning would find nothing here.", cls: "warning", delay: 540 },
+      { text: "[ACTION] verify by phoning a number already on file - never one in the message", cls: "info", delay: 600 }
+    ]
+  };
+
+  window.MODULE_ACTIONS = {};
+
+  window.CLASSIFIERS = {
+    actors: {
+      axes: [
+        { name: "actor", label: "Most likely actor", options: ["Nation-state", "Organized crime", "Hacktivist", "Insider", "Unskilled attacker", "Shadow IT"] },
+        { name: "motive", label: "Primary motivation", options: ["Financial gain", "Espionage", "Political belief", "Revenge", "Chaos", "Convenience"] }
+      ],
+      items: [
+        { scenario: "An intruder is found to have been present for 14 months. Nothing of monetary value was taken, but engineering drawings were repeatedly accessed. Five separate persistence mechanisms were discovered.",
+          answers: { actor: "Nation-state", motive: "Espionage" },
+          explain: "Long dwell time, selective targeting of intellectual property, and multiple footholds are the signature of a patient, well-resourced actor pursuing espionage rather than money." },
+        { scenario: "File shares are encrypted overnight and a note demands payment in cryptocurrency within 72 hours. A support portal is provided for victims.",
+          answers: { actor: "Organized crime", motive: "Financial gain" },
+          explain: "Rapid monetisation and a professionalised victim support process are hallmarks of criminal enterprise operating as a business." },
+        { scenario: "A company's public website is defaced with a political slogan, and the group responsible announces it on social media within the hour.",
+          answers: { actor: "Hacktivist", motive: "Political belief" },
+          explain: "Publicity is part of the objective. A criminal or spy wants the intrusion unnoticed; a hacktivist announces it, because the message is the point." },
+        { scenario: "Two days after being told his role is redundant, a systems administrator deletes several production databases using his still-active credentials.",
+          answers: { actor: "Insider", motive: "Revenge" },
+          explain: "Legitimate access plus a triggering employment event. The mention of a redundancy notice is the motive signal, and the still-active credentials point to an offboarding failure." },
+        { scenario: "A marketing team, frustrated by slow IT provisioning, signs up for a cloud file-sharing service on a company card and begins storing customer lists there.",
+          answers: { actor: "Shadow IT", motive: "Convenience" },
+          explain: "No malice at all - this is friction avoidance. It still creates real exposure because the data is now outside monitoring, backup, and access control." },
+        { scenario: "A teenager rents a booter service for a small fee and takes a local council website offline for an afternoon, then boasts about it in a forum.",
+          answers: { actor: "Unskilled attacker", motive: "Chaos" },
+          explain: "Rented tooling, no custom capability, and reputation-seeking. Note that low sophistication did not prevent real impact - the tool supplied the capability." }
+      ]
+    }
+  };
+
+  window.LABS = {
+    "actor-profiling": {
+      title: "Lab 1 - Profile the adversary",
+      time: "~25 minutes",
+      objective: "Infer actor and motivation from incident evidence, then explain why the response differs by actor. This is the reasoning almost every Domain 2 scenario question requires.",
+      steps: [
+        {
+          type: "match",
+          prompt: "For each incident, identify the most likely actor and motivation.",
+          hint: "Weigh three things together: dwell time, what was taken, and whether the attacker wanted to be seen.",
+          columns: [
+            { name: "actor", label: "Actor", options: ["Nation-state", "Organized crime", "Hacktivist", "Insider", "Unskilled attacker"] },
+            { name: "motive", label: "Motivation", options: ["Financial gain", "Espionage", "Political belief", "Revenge", "Chaos"] }
+          ],
+          items: [
+            { text: "18 months of undetected access; only research files touched; several persistence mechanisms", answers: { actor: "Nation-state", motive: "Espionage" } },
+            { text: "Systems encrypted in six hours; ransom demanded; victim support portal provided", answers: { actor: "Organized crime", motive: "Financial gain" } },
+            { text: "Homepage replaced with a manifesto; group claims credit publicly the same day", answers: { actor: "Hacktivist", motive: "Political belief" } },
+            { text: "Databases deleted three days after a disciplinary hearing, using valid credentials", answers: { actor: "Insider", motive: "Revenge" } },
+            { text: "Website taken offline for two hours using a rented stresser service; boasted about online", answers: { actor: "Unskilled attacker", motive: "Chaos" } },
+            { text: "Payroll records copied and later offered for sale on a criminal forum", answers: { actor: "Organized crime", motive: "Financial gain" } }
+          ],
+          explain: "Dwell time is the strongest discriminator: criminals monetise fast and leave, spies stay. Publicity separates hacktivists from everyone else. A triggering employment event points to an insider."
+        },
+        {
+          type: "choice",
+          prompt: "Which characteristics are genuinely typical of an advanced persistent threat? Select all that apply.",
+          hint: "Take each word of the term seriously, and think about what an APT is not.",
+          options: [
+            "Long-term access is the objective rather than a quick score",
+            "Custom tooling, sometimes including zero-day exploits",
+            "Immediate ransom demand once access is achieved",
+            "Multiple persistence mechanisms so removal of one does not evict them",
+            "Automated malware operating without human direction",
+            "Targets chosen for strategic value rather than ability to pay"
+          ],
+          correct: [0, 1, 3, 5],
+          explain: "An immediate ransom is the opposite of persistent - it announces presence and ends the access. And the T in APT is threat: a human adversary who adapts, which is precisely what distinguishes it from automated malware."
+        },
+        {
+          type: "text",
+          prompt: "An organization suffers a breach with 14 months of dwell time. Explain why restoring from backups is an inadequate response here, and what must happen instead.",
+          hint: "Think about what an attacker establishes over 14 months, and what a backup taken during that period contains."
+        },
+        {
+          type: "text",
+          prompt: "Explain why an insider with low technical skill can cause more damage than a highly sophisticated external attacker.",
+          hint: "The three actor attributes are position, resources, and sophistication. Which one is doing the work here?"
+        }
+      ]
+    },
+
+    "phish-triage": {
+      title: "Lab 2 - Triage a suspicious message",
+      time: "~20 minutes",
+      objective: "Identify the specific social engineering technique from evidence and recommend the countermeasure that actually addresses it.",
+      steps: [
+        {
+          type: "choice",
+          prompt: "<em>An email appears to come from the CFO, display name correct, from the domain harisson-co.com (the real domain is harrison-co.com, and the lookalike was registered six days ago). The Reply-To address is different from the From address. It requests an urgent wire transfer before 4pm. There is no attachment and no link.</em><br><br>Select every indicator or technique present.",
+          hint: "There is more than one technique layered here. Also consider what is notably absent.",
+          options: [
+            "Typosquatting",
+            "Business email compromise",
+            "Urgency combined with authority",
+            "Mismatched Reply-To address",
+            "Malicious attachment",
+            "Brand or identity impersonation"
+          ],
+          correct: [0, 1, 2, 3, 5],
+          explain: "Every technique here is present except the attachment - and that absence is the important part. There is no malware, so attachment scanning and file-based controls would find nothing at all."
+        },
+        {
+          type: "match",
+          prompt: "Match each technique to its defining characteristic.",
+          hint: "The phishing family varies on two axes only: channel and how targeted it is.",
+          columns: [
+            { name: "def", label: "Defining characteristic", options: ["Voice call", "SMS message", "Researched, aimed at one person", "Aimed at senior executives", "Compromising a site victims visit", "Mass and untargeted"] }
+          ],
+          items: [
+            { text: "Vishing", answers: { def: "Voice call" } },
+            { text: "Smishing", answers: { def: "SMS message" } },
+            { text: "Spear phishing", answers: { def: "Researched, aimed at one person" } },
+            { text: "Whaling", answers: { def: "Aimed at senior executives" } },
+            { text: "Watering hole attack", answers: { def: "Compromising a site victims visit" } },
+            { text: "Phishing", answers: { def: "Mass and untargeted" } }
+          ],
+          explain: "Vishing is voice and smishing is SMS - both describe channel. Spear phishing and whaling describe targeting. A watering hole is different in kind: the attacker never contacts the victim at all."
+        },
+        {
+          type: "choice",
+          prompt: "Which countermeasures would actually have prevented loss in the wire transfer scenario? Select all that apply.",
+          hint: "Ask what each control inspects. If there is no malicious file, what is left to catch?",
+          options: [
+            "Out-of-band verification using a phone number already on file",
+            "Attachment sandboxing",
+            "A dual-approval requirement for wire transfers over a threshold",
+            "DMARC enforcement to reject spoofed sender domains",
+            "Annual security awareness training covering payment fraud",
+            "Blocking all removable media"
+          ],
+          correct: [0, 2, 3, 4],
+          explain: "Attachment sandboxing inspects files, and there are none. Removable media is an unrelated vector. DMARC helps but note its limit here - the lookalike domain is genuinely controlled by the attacker, so it can pass its own authentication checks. Out-of-band verification is the control that actually closes this."
+        },
+        {
+          type: "text",
+          prompt: "Write the two-sentence guidance you would give the finance team to prevent this specific fraud.",
+          hint: "Be concrete and procedural. 'Be careful' is not a control; naming which number to call is."
+        }
+      ]
+    },
+
+    "surface-audit": {
+      title: "Lab 3 - Reduce the attack surface",
+      time: "~20 minutes",
+      objective: "Trace a supply chain compromise and prioritise attack surface reduction where it actually changes outcomes.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Put the stages of a supply chain compromise into the correct order.",
+          hint: "Use the arrows. The critical question is where in the sequence the code gets signed.",
+          items: [
+            "The attacker finds the target too well defended to approach directly",
+            "The attacker compromises the software vendor's build server",
+            "A backdoor is inserted into the source before it is compiled and signed",
+            "The vendor signs the update, producing a valid signature",
+            "The target installs the update through its normal patching process",
+            "The backdoor executes with the trusted software's privileges"
+          ],
+          explain: "Insertion must happen before signing - that is the whole point. A backdoor added after signing would invalidate the signature and be rejected. Because it arrives signed and expected, every control at the target behaves correctly."
+        },
+        {
+          type: "choice",
+          prompt: "Which measures genuinely reduce attack surface? Select all that apply.",
+          hint: "Ask what each one removes. One of these is a detective control rather than a reduction.",
+          options: [
+            "Decommissioning systems with no current owner or purpose",
+            "Closing listening ports that no service requires",
+            "Changing default credentials on newly deployed devices",
+            "Increasing log retention from 30 to 90 days",
+            "Providing a sanctioned alternative to an unapproved file-sharing tool",
+            "Removing end-of-life software that can no longer be patched"
+          ],
+          correct: [0, 1, 2, 4, 5],
+          explain: "Longer retention improves investigation after the fact but removes no entry point - it is detective, not reductive. Note why the sanctioned alternative counts: shadow IT is friction avoidance, so removing the friction removes the incentive."
+        },
+        {
+          type: "match",
+          prompt: "Match each threat vector to the control that most directly addresses it.",
+          hint: "Look for the control that removes the route, not one that merely detects use of it.",
+          columns: [
+            { name: "ctrl", label: "Most direct control", options: ["Block removable media", "Change default credentials", "Out-of-band verification", "Vendor assessment and post-install monitoring", "Decommission or isolate"] }
+          ],
+          items: [
+            { text: "Infected USB drives left in the staff car park", answers: { ctrl: "Block removable media" } },
+            { text: "An internet-facing camera deployed with its factory password", answers: { ctrl: "Change default credentials" } },
+            { text: "A request to change a supplier's bank details", answers: { ctrl: "Out-of-band verification" } },
+            { text: "A trojanised update from a trusted software vendor", answers: { ctrl: "Vendor assessment and post-install monitoring" } },
+            { text: "An end-of-life server the vendor no longer supports", answers: { ctrl: "Decommission or isolate" } }
+          ],
+          explain: "Each vector has a control that removes the route rather than merely noticing it was used. The supply chain case is the weakest of the five, which is exactly why it is attractive to attackers."
+        },
+        {
+          type: "text",
+          prompt: "Your organization has no complete asset inventory. Explain why this undermines every other item in the reduction table.",
+          hint: "Consider the factory analogy: what can you not do to a door you do not know exists?"
+        }
+      ]
+    }
+  };
+
+  var QUESTIONS = [
+    { tier: "recall",
+      question: "Which threat actor is characterised by government sponsorship, very high resources, and patience measured in months or years?",
+      options: ["Organized crime", "Hacktivist", "Nation-state", "Unskilled attacker"],
+      correct: 2,
+      explanation: "Nation-state actors have effectively unlimited funding and pursue long-term access. Organized crime is well funded but monetises quickly, because its motive is financial rather than strategic." },
+    { tier: "recall",
+      question: "What does the 'persistent' in advanced persistent threat refer to?",
+      options: ["The malware reinstalls itself", "The goal is long-term access rather than a quick score", "The attacker repeatedly sends phishing emails", "The attack runs continuously without pause"],
+      correct: 1,
+      explanation: "Persistent describes the objective: maintaining access over an extended period. The 'threat' likewise signals a human adversary who adapts, rather than automated malware." },
+    { tier: "recall",
+      question: "Which term describes technology used within an organization without IT approval or knowledge?",
+      options: ["Insider threat", "Shadow IT", "Supply chain risk", "Hacktivism"],
+      correct: 1,
+      explanation: "Shadow IT is unsanctioned technology, and it is almost never malicious - it arises when official systems are too slow or restrictive. It still creates exposure because it is unmonitored and unpatched." },
+    { tier: "recall",
+      question: "What distinguishes smishing from vishing?",
+      options: ["Smishing uses SMS; vishing uses voice calls", "Smishing targets executives; vishing targets staff", "Smishing uses malware; vishing does not", "There is no difference"],
+      correct: 0,
+      explanation: "Both describe channel only. Smishing is SMS, vishing is voice. Targeting is described by different terms - spear phishing and whaling." },
+    { tier: "recall",
+      question: "Which term describes registering a domain that is a near-miss for a legitimate one?",
+      options: ["Watering hole attack", "Typosquatting", "Pretexting", "Business email compromise"],
+      correct: 1,
+      explanation: "Typosquatting exploits the fact that people recognise domain names rather than reading them character by character, so a transposed letter survives a glance." },
+    { tier: "recall",
+      question: "In a supply chain attack against a software vendor, when must the backdoor be inserted?",
+      options: ["After the update is signed", "Before the code is compiled and signed", "During installation at the target", "After installation at the target"],
+      correct: 1,
+      explanation: "Insertion must precede signing so the malicious code carries a valid signature. Modification after signing would break the signature and be rejected - which is exactly why the attack is so effective." },
+    { tier: "applied",
+      question: "An intruder is discovered after 14 months. Nothing of monetary value was taken, but research files were repeatedly accessed. Which actor is most likely?",
+      options: ["Unskilled attacker", "Organized crime", "Nation-state", "Hacktivist"],
+      correct: 2,
+      explanation: "Long dwell time and selective interest in intellectual property indicate espionage. Criminals monetise quickly, and a hacktivist would have publicised the intrusion." },
+    { tier: "applied",
+      question: "A systems administrator deletes production databases two days after being informed of redundancy. Which combination best describes this?",
+      options: ["External attacker, financial gain", "Insider threat, revenge", "Hacktivist, political belief", "Shadow IT, convenience"],
+      correct: 1,
+      explanation: "Legitimate access plus a triggering employment event. The redundancy notice is the motive signal, and still-active credentials indicate an offboarding failure." },
+    { tier: "applied",
+      question: "An email from a lookalike domain requests an urgent wire transfer. It has no attachment and no link. Which control most directly prevents loss?",
+      options: ["Attachment sandboxing", "Out-of-band verification using a number already on file", "Blocking removable media", "Longer log retention"],
+      correct: 1,
+      explanation: "With no malicious file, controls that inspect attachments have nothing to examine. Confirming the request through a separately held contact number defeats the fraud regardless of how convincing the message is." },
+    { tier: "applied",
+      question: "An attacker compromises an industry forum that a target's engineers read daily, rather than contacting the target. What is this called?",
+      options: ["Spear phishing", "Watering hole attack", "Business email compromise", "Typosquatting"],
+      correct: 1,
+      explanation: "A watering hole compromises a third-party site the victims already visit and waits. The attacker never contacts the target directly, which is what makes it hard to detect from the target's side." },
+    { tier: "applied",
+      question: "A marketing team stores customer lists in an unapproved cloud service because IT provisioning is slow. What is the most appropriate response?",
+      options: ["Discipline the team for policy violation", "Block the service and take no further action", "Provide a sanctioned alternative alongside discovery and policy", "Accept the risk without action"],
+      correct: 2,
+      explanation: "Shadow IT is friction avoidance rather than malice. Blocking without an alternative moves the behaviour somewhere less visible; removing the friction removes the incentive." },
+    { tier: "applied",
+      question: "Which statement best captures why unskilled attackers still pose real risk?",
+      options: ["They have significant funding", "Prebuilt and rented tooling supplies capability they lack", "They usually have insider access", "They are highly patient"],
+      correct: 1,
+      explanation: "Booter services and prebuilt exploit kits encode expertise the operator does not have. What they cannot do is adapt when the obvious approach fails - that is the practical boundary." },
+    { tier: "applied",
+      question: "Which measure does NOT reduce attack surface?",
+      options: ["Decommissioning systems with no owner", "Closing unused listening ports", "Increasing log retention from 30 to 90 days", "Changing default credentials"],
+      correct: 2,
+      explanation: "Longer retention improves investigation after an incident but removes no entry point. It is a detective control rather than a reduction." },
+    { tier: "applied",
+      question: "Which pairing of motivation and evidence is most consistent?",
+      options: ["Espionage - immediate ransom demand", "Financial gain - 18 months of dwell time with nothing taken", "Political belief - public defacement and a claimed credit", "Revenge - widely available tooling used by a stranger"],
+      correct: 2,
+      explanation: "Publicity is part of the hacktivist objective. The other three invert their evidence: espionage does not demand ransoms, financial gain does not wait 18 months, and revenge implies a personal connection rather than a stranger." },
+    { tier: "scenario",
+      question: "After a breach with 14 months of dwell time, an organization restores all systems from backup and declares the incident closed. What is the most significant flaw?",
+      options: ["Backups may be slow to restore", "Multiple persistence mechanisms likely remain, and backups may already contain the compromise", "Restoring violates chain of custody", "Backups should have been encrypted"],
+      correct: 1,
+      explanation: "An actor present for over a year establishes several footholds, and backups taken during that period may themselves be compromised. Restoration without threat hunting invites the attacker back through a door nobody found." },
+    { tier: "scenario",
+      question: "A defence contractor with a hardened perimeter and tested staff training is compromised through a signed update from a trusted software vendor. What does this demonstrate?",
+      options: ["The contractor's controls failed", "Trust in a legitimate channel was the vector, and the controls behaved correctly", "The signature must have been forged", "Staff training was inadequate"],
+      correct: 1,
+      explanation: "The update was authentic, signed, and expected, so every control did exactly what it was designed to do. This is why supply chain defence relies on vendor assessment and post-install behaviour monitoring rather than inspection." },
+    { tier: "scenario",
+      question: "An organization wants to reduce the time between a successful phish and its being reported. Which change is most likely to help?",
+      options: ["Increasing the penalty for clicking a phishing link", "Establishing a blame-free reporting channel", "Reducing training frequency", "Extending log retention"],
+      correct: 1,
+      explanation: "Damage from a phish is largely a function of reporting delay, and an employee who fears punishment stays silent. Blame-free reporting is a genuine security control, not merely a cultural nicety." },
+    { tier: "scenario",
+      question: "A hospital and a defence contractor face different primary adversaries. Where should each concentrate defensive effort?",
+      options: ["Both should prioritise threat hunting equally", "Hospital: backups and tested recovery. Contractor: detection and hunting for persistence", "Hospital: public communications. Contractor: availability", "Both should focus on hacktivist defence"],
+      correct: 1,
+      explanation: "Hospitals are disproportionately targeted by ransomware because downtime is intolerable, so tested recovery removes the pressure to pay. A defence contractor faces espionage, where the assumption must be that entry has already occurred." },
+    { tier: "scenario",
+      question: "During offboarding, an employee's accounts remain active for three weeks after departure. Which risk does this most directly create?",
+      options: ["Increased shadow IT", "An insider threat with retained legitimate access", "Greater supply chain exposure", "Higher likelihood of a watering hole attack"],
+      correct: 1,
+      explanation: "Retained credentials mean a former employee still bypasses the perimeter legitimately. Offboarding discipline is one of the highest-value insider controls precisely because it is so often incomplete." },
+    { tier: "scenario",
+      question: "An organization discovers it has no complete asset inventory. Why does this undermine attack surface reduction generally?",
+      options: ["Inventories are required by regulation", "Unknown systems cannot be patched, decommissioned, or monitored", "Inventories reduce licensing cost", "It only affects incident response"],
+      correct: 1,
+      explanation: "Every reduction measure presumes you know the asset exists. An unknown system is unpatched, unmonitored, and has nobody responsible for it - which is why inventory is the prerequisite rather than one item among many." }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>

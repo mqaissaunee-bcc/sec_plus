@@ -1,0 +1,2903 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="7" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 7: Data Protection, Resilience, and Recovery</title>
+<meta name="description" content="Data types and classification, sovereignty and protection methods, high availability, backup strategy against recovery objectives, and the site and testing decisions that make continuity real.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-box.danger{stroke:var(--danger);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 7</p>
+    <h1>Data Protection, Resilience, and Recovery</h1>
+    <p class="subtitle">Data types and classification, sovereignty and protection methods, high availability, backup strategy against recovery objectives, and the site and testing decisions that make continuity real.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="&#128203;" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to classify data by type and
+        sensitivity and select handling requirements accordingly; explain data
+        sovereignty and geographic restriction; compare high availability
+        approaches including load balancing and clustering; design a backup
+        strategy against stated recovery objectives; and choose between hot, warm,
+        and cold sites and the exercises that test them.
+      </div>
+
+      <p>This module completes Domain 3 and covers the two halves of protecting
+      what an organization holds. Objective 3.3 asks how data is classified and
+      guarded. Objective 3.4 asks how systems survive failure and how quickly they
+      come back.</p>
+
+      <p>These pair naturally because they answer opposite halves of the same
+      question. Data protection is largely about confidentiality and integrity;
+      resilience and recovery are entirely about availability. Together they
+      complete the triad from Module 1, which is why this module reads as a
+      summation of Domain 3 rather than a new topic.</p>
+
+      <div class="subsection">
+        <h3>What carries over from earlier modules</h3>
+        <p>Several protection methods named in objective 3.3 were covered in
+        depth in Module 2 - encryption, hashing, tokenization, masking, and
+        obfuscation. They appear here as items in a selection problem rather than
+        as mechanisms to explain.</p>
+        <p>The shift in question is worth noticing, because it is the shift that
+        defines Domain 3. Module 2 asked how tokenization works. This module asks
+        when you would choose it over masking, and the answer depends on whether
+        the original value must ever be recoverable. If you need the mechanism
+        again, reread Module 2 rather than relearning it.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Two numbers that govern this whole module</h3>
+        <p>Recovery decisions are driven by two objectives, and almost every
+        question in the second half of this module turns on them.</p>
+        <table>
+          <thead><tr><th>Objective</th><th>Question it answers</th><th>Determined by</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="rpo">RPO</span> - recovery point objective</td><td>How much data can we afford to lose?</td><td>Backup frequency</td></tr>
+            <tr><td><span class="term" data-term="rto">RTO</span> - recovery time objective</td><td>How long can we afford to be down?</td><td>Recovery method and site readiness</td></tr>
+          </tbody>
+        </table>
+        <p>Keeping these apart is the single highest-yield distinction here. RPO
+        looks <em>backward</em> from the incident and is set by how often you back
+        up. RTO looks <em>forward</em> from the incident and is set by how fast you
+        can restore. An organization backing up nightly has a 24-hour RPO no
+        matter how quickly it can restore, and an organization with instant
+        replication still has a poor RTO if nobody has tested the failover.</p>
+        <p>These are formally defined alongside business impact analysis in
+        Module 11. Here they function as design inputs.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 230" role="img" aria-labelledby="rpTitle rpDesc">
+          <title id="rpTitle">Recovery point objective and recovery time objective</title>
+          <desc id="rpDesc">A timeline with the incident in the centre. RPO measures backward from the incident to the last good backup and is set by backup frequency. RTO measures forward from the incident to service restoration and is set by recovery method.</desc>
+          <path d="M40 120 L660 120" class="svg-line"/>
+          <circle cx="180" cy="120" r="7" class="svg-fill-brand"/>
+          <circle cx="350" cy="120" r="9" class="svg-fill-warn"/>
+          <circle cx="600" cy="120" r="7" class="svg-fill-accent"/>
+          <text x="180" y="146" text-anchor="middle" class="svg-sub">last good backup</text>
+          <text x="350" y="146" text-anchor="middle" class="svg-label">INCIDENT</text>
+          <text x="600" y="146" text-anchor="middle" class="svg-sub">service restored</text>
+          <rect x="180" y="52" width="170" height="30" rx="6" class="svg-box brand"/>
+          <text x="265" y="72" text-anchor="middle" class="svg-sub">RPO &mdash; data lost</text>
+          <path d="M180 96 L350 96" class="svg-line brand"/>
+          <rect x="350" y="52" width="250" height="30" rx="6" class="svg-box accent"/>
+          <text x="475" y="72" text-anchor="middle" class="svg-sub">RTO &mdash; time down</text>
+          <path d="M350 96 L600 96" class="svg-line accent"/>
+          <text x="265" y="180" text-anchor="middle" class="svg-mono">set by BACKUP FREQUENCY</text>
+          <text x="475" y="180" text-anchor="middle" class="svg-mono">set by RECOVERY METHOD</text>
+          <text x="350" y="212" text-anchor="middle" class="svg-sub">Improving one does nothing for the other. Two objectives, two separate fixes.</text>
+        </svg>
+        <figcaption>RPO looks backward from the incident. RTO looks forward.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128221;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Losing a document you were writing</p>
+        <p>Your machine crashes mid-document. Two separate questions follow. How
+        much writing did you lose - ten minutes, or the whole afternoon? That is
+        <strong>RPO</strong>, and it depends entirely on how often the file was
+        saved.</p>
+        <p>Then: how long before you can write again - a reboot, or three days
+        waiting for a replacement machine? That is <strong>RTO</strong>, and
+        saving more often does nothing for it.</p>
+        <p>Confusing the two produces expensive mistakes in both directions:
+        buying faster hardware when the problem was backup frequency, or backing
+        up more often when the problem was having no spare machine.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="data-types" data-icon="&#128193;" role="tabpanel"
+             aria-labelledby="tab-data-types" tabindex="-1">
+      <h2 class="section-title">Data Types and Classification</h2>
+
+      <div class="subsection">
+        <h3>Data types</h3>
+        <p>Objective 3.3 names several types, and they are categories of
+        <em>what the data is</em> rather than how sensitive it is.</p>
+        <table>
+          <thead><tr><th>Type</th><th>Description</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Regulated</td><td>Governed by law or industry rule - health, payment, personal data</td><td>Handling is legally mandated, not discretionary</td></tr>
+            <tr><td>Trade secret</td><td>Information deriving value from being secret</td><td>Legal protection depends on you actually protecting it</td></tr>
+            <tr><td>Intellectual property</td><td>Patents, designs, source code, creative work</td><td>Often an organization's principal asset</td></tr>
+            <tr><td>Legal information</td><td>Contracts, case material, privileged communication</td><td>Disclosure may forfeit privilege</td></tr>
+            <tr><td>Financial information</td><td>Accounts, forecasts, transactions</td><td>Regulatory and market-sensitive</td></tr>
+            <tr><td>Human-readable</td><td>Text a person can read directly</td><td>Immediately usable if exposed</td></tr>
+            <tr><td>Non-human-readable</td><td>Binary, encoded, or machine formats</td><td>Not protection - obscurity is not security</td></tr>
+          </tbody>
+        </table>
+        <p>Trade secret carries a distinctive property worth knowing. Unlike a
+        patent, its legal protection depends on the holder having taken reasonable
+        steps to keep it secret. An organization that fails to protect a trade
+        secret may lose the legal status itself, which makes access control here a
+        legal requirement rather than merely good practice.</p>
+        <p>And the human-readable distinction is a trap. Data being in a binary or
+        encoded format is not protection - anyone with the right tool reads it
+        trivially. Encoding is not encryption, and an exam option treating a
+        non-human-readable format as a safeguard is wrong.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="data classification">Classification</span></h3>
+        <p>Classification labels data by sensitivity so that handling requirements
+        follow automatically. Schemes vary between organizations, and CompTIA
+        names these levels.</p>
+        <table>
+          <thead><tr><th>Level</th><th>Meaning</th><th>Typical handling</th></tr></thead>
+          <tbody>
+            <tr><td>Public</td><td>No harm from disclosure</td><td>No restriction</td></tr>
+            <tr><td>Private</td><td>Internal, personal, or non-public</td><td>Internal access only</td></tr>
+            <tr><td>Sensitive</td><td>Harm if disclosed</td><td>Encryption, controlled access</td></tr>
+            <tr><td>Confidential</td><td>Significant harm if disclosed</td><td>Strong access control, logging</td></tr>
+            <tr><td>Restricted</td><td>Severe harm; often regulated</td><td>Need-to-know, strict audit</td></tr>
+            <tr><td>Critical</td><td>Essential to operations</td><td>Availability and integrity emphasis</td></tr>
+          </tbody>
+        </table>
+        <p>Note that <strong>critical</strong> is doing something different from
+        the others. The rest describe the harm of disclosure - a confidentiality
+        scale. Critical describes the harm of <em>losing</em> the data, which is
+        an availability judgement. A public price list can be critical: no harm if
+        a competitor sees it, and the business stops if it disappears.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128218;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Sections of a library</p>
+        <p>The open shelves are public - anyone browses freely. The reference room
+        requires a card. The rare books room requires an appointment and a
+        supervised desk. The archive requires a documented reason and a
+        countersignature.</p>
+        <p>Nobody decides these rules book by book. A book is assigned to a
+        section, and the section's rules apply automatically. That is what
+        classification buys you: label once, and handling follows without a fresh
+        judgement for every file.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a book
+        sits in one room. A spreadsheet is copied into email, a laptop, a backup,
+        and a supplier's system within a week - which is why classification must
+        travel with the data rather than describe where it lives.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Why classification often fails in practice</h3>
+        <p>Classification schemes fail for predictable reasons, and the exam
+        expects you to recognise them.</p>
+        <p><strong>Too many levels.</strong> A scheme with seven tiers produces
+        inconsistent labelling because nobody can reliably distinguish adjacent
+        ones. Three or four well-understood levels outperform a precise scheme
+        nobody applies correctly.</p>
+        <p><strong>No owner.</strong> Someone must decide a given dataset's
+        classification, and that someone should be the business owner rather than
+        the security team, who do not know what the data is worth.</p>
+        <p><strong>No consequences to the label.</strong> If confidential and
+        private are handled identically in practice, the label is decoration.
+        Classification only works when each level maps to specific, enforced
+        handling requirements.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Who decides, and what a label must carry</h3>
+        <p>Classification is a business decision implemented technically, and the
+        exam expects you to know the split. The <strong>data owner</strong> is a
+        senior business figure accountable for a dataset who determines its
+        classification, because only they know what its loss would cost. The
+        <strong>data custodian</strong> is the technical role implementing the
+        resulting controls. Security advises; it does not decide.</p>
+        <p>These roles are defined formally in Module 12 alongside privacy
+        obligations. What matters here is the principle: a security team choosing
+        classifications for data it does not understand produces labels that are
+        either uniformly high, which makes them meaningless, or arbitrary.</p>
+        <p>For a label to do any work it must travel with the data. A
+        classification recorded only in a spreadsheet describes where the data was
+        when someone last looked. Labels applied to the file itself - through
+        metadata, headers, or document properties - survive copying, which is what
+        allows automated controls such as data loss prevention to act on them.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Retention and disposal</h3>
+        <p>Classification governs how long data is kept as well as how it is
+        protected. Retention requirements come from two directions that frequently
+        conflict: regulation mandating that certain records be held for a defined
+        period, and privacy law requiring that personal data not be kept longer
+        than necessary.</p>
+        <p>The security consequence is that data kept beyond its useful life is
+        pure liability. It can still be breached, still triggers notification
+        obligations, and still appears in discovery - while providing no
+        operational value. Deleting data on schedule is a security control, and it
+        is one of the few that reduces risk and cost simultaneously.</p>
+        <p>Disposal must match the classification. Restricted data on retired
+        media requires sanitisation or physical destruction with certification,
+        not simply deletion - a file marked deleted is generally still present
+        until overwritten.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Practice: classify and protect</h3>      <div class="subsection">
+        <h3>Practice: classify and protect</h3>
+        <div class="classifier" data-classifier="dataprotect"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="data-protection" data-icon="&#128274;" role="tabpanel"
+             aria-labelledby="tab-data-protection" tabindex="-1">
+      <h2 class="section-title">Protecting Data</h2>
+
+      <div class="subsection">
+        <h3>Data states, briefly revisited</h3>
+        <p>Module 2 covered the three states in detail. In summary: data
+        <strong>at rest</strong> is protected by encryption and access control,
+        data <strong>in transit</strong> by TLS or IPSec, and data
+        <strong>in use</strong> is the difficult one, since a processor generally
+        needs plaintext to compute on it.</p>
+        <p>What matters here is that a complete protection strategy must address
+        all three. An organization encrypting disks and using TLS has covered two
+        states and often believes it has covered the problem. Memory-scraping
+        attacks target the third.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="data sovereignty">Data sovereignty</span> and geolocation</h3>
+        <p>Data sovereignty is the principle that data is subject to the laws of
+        the country in which it is physically stored. This is not a technical
+        constraint but a legal one, and it frequently dictates architecture.</p>
+        <p>The practical consequences are significant. An organization operating
+        internationally may be legally required to keep certain records within a
+        jurisdiction, which rules out providers or regions that cannot guarantee
+        it. Cloud complicates this because data may be replicated across regions
+        automatically for resilience - a feature that can create a compliance
+        breach nobody chose.</p>
+        <p><strong>Geographic restrictions</strong>, sometimes called geofencing,
+        are the corresponding control: limiting where data may be stored or from
+        where it may be accessed. Access-side restrictions are also a useful
+        security control in their own right, since blocking authentication from
+        countries where an organization has no staff removes a large volume of
+        attack traffic.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127760;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Property law follows the ground, not the owner</p>
+        <p>A building you own in another country obeys that country's planning
+        rules, tax code, and rights of access - regardless of your nationality or
+        where the deeds are kept. Your ownership does not exempt the building from
+        local law.</p>
+        <p>Data works the same way. Records physically stored in a jurisdiction
+        fall under its laws, including laws about government access, whoever owns
+        them. This is why "where is it stored" is a compliance question before it
+        is a technical one - and why automatic cross-region replication can
+        create a legal problem without anyone making a decision.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Choosing a protection method</h3>
+        <p>Objective 3.3 lists methods that Module 2 explained. The selection
+        question is what matters here.</p>
+        <table>
+          <thead><tr><th>Method</th><th>Original recoverable?</th><th>Choose it when</th></tr></thead>
+          <tbody>
+            <tr><td>Encryption</td><td>Yes, with the key</td><td>The data must be usable again by authorised parties</td></tr>
+            <tr><td>Hashing</td><td>No</td><td>You need to verify, never to read - passwords, integrity</td></tr>
+            <tr><td>Tokenization</td><td>Only by vault lookup</td><td>Systems must reference the record without holding it</td></tr>
+            <tr><td>Masking</td><td>Usually no, in that view</td><td>Partial visibility suffices - support screens, test data</td></tr>
+            <tr><td>Obfuscation</td><td>Varies</td><td>Raising effort, never as a primary control</td></tr>
+            <tr><td>Segmentation</td><td>N/A</td><td>Limiting which systems can reach the data at all</td></tr>
+            <tr><td>Permission restrictions</td><td>N/A</td><td>Limiting which people can reach it</td></tr>
+            <tr><td>Geographic restrictions</td><td>N/A</td><td>Sovereignty, or reducing access attack surface</td></tr>
+          </tbody>
+        </table>
+        <p>The deciding question in almost every case is the second column. If the
+        original value must be recoverable, hashing is eliminated immediately. If
+        systems must recognise a repeat customer without storing card numbers,
+        tokenization is the answer and masking is not, because masking discards
+        rather than substitutes.</p>
+        <p>The last three rows are worth separating from the first five. Those are
+        transformations applied to the data; these are restrictions on reaching
+        it. A complete strategy uses both, which is defence in depth applied to
+        data rather than to networks.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Selecting a method against a requirement</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="protect">Work through three cases</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="protect">Clear</button>
+        </div>
+        <div class="terminal" id="demo-protect" aria-live="polite" aria-label="Protection method selection output"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="high-availability" data-icon="&#9889;" role="tabpanel"
+             aria-labelledby="tab-high-availability" tabindex="-1">
+      <h2 class="section-title">High Availability</h2>
+
+      <div class="subsection">
+        <h3>Load balancing and clustering</h3>
+        <p>Load balancing and <span class="term" data-term="clustering">clustering</span> both improve availability, and the exam distinguishes them by what they
+        do with capacity.</p>
+        <table>
+          <thead><tr><th></th><th>Load balancing</th><th>Clustering</th></tr></thead>
+          <tbody>
+            <tr><td>Purpose</td><td>Distribute work across servers</td><td>Ensure the service survives a node failing</td></tr>
+            <tr><td>Nodes</td><td>All active, sharing traffic</td><td>Active-active or active-passive</td></tr>
+            <tr><td>Primary gain</td><td>Scalability, with availability as a by-product</td><td>Failover and continuity</td></tr>
+            <tr><td>State</td><td>Nodes often independent</td><td>Nodes coordinate and share state</td></tr>
+          </tbody>
+        </table>
+        <p>The distinction the exam tests is <strong>active-active versus
+        active-passive</strong>. In active-active every node carries traffic, so
+        the capacity is used and a failure reduces available capacity. In
+        active-passive a standby node does nothing until the primary fails, which
+        wastes capacity and gives a cleaner, more predictable failover.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="haTitle haDesc">
+          <title id="haTitle">Load balancing compared with clustering</title>
+          <desc id="haDesc">Load balancing distributes incoming traffic across several active servers to increase throughput. Clustering keeps a standby node ready to take over when the active node fails, so the service survives a loss.</desc>
+          <text x="20" y="24" class="svg-label">Load balancing &mdash; distribute work</text>
+          <rect x="20" y="38" width="90" height="40" rx="8" class="svg-box"/>
+          <text x="65" y="63" text-anchor="middle" class="svg-sub">traffic</text>
+          <rect x="135" y="38" width="90" height="40" rx="8" class="svg-box brand"/>
+          <text x="180" y="63" text-anchor="middle" class="svg-sub">balancer</text>
+          <g>
+            <rect x="255" y="20" width="80" height="26" rx="6" class="svg-box accent"/>
+            <text x="295" y="38" text-anchor="middle" class="svg-mono">active</text>
+            <rect x="255" y="52" width="80" height="26" rx="6" class="svg-box accent"/>
+            <text x="295" y="70" text-anchor="middle" class="svg-mono">active</text>
+            <rect x="255" y="84" width="80" height="26" rx="6" class="svg-box accent"/>
+            <text x="295" y="102" text-anchor="middle" class="svg-mono">active</text>
+          </g>
+          <text x="360" y="70" class="svg-sub">all nodes serving; goal is throughput</text>
+          <g class="svg-line accent">
+            <path d="M112 58 L131 58" marker-end="url(#ah7)"/>
+            <path d="M227 58 L251 34" marker-end="url(#ah7)"/>
+            <path d="M227 58 L251 65" marker-end="url(#ah7)"/>
+            <path d="M227 58 L251 96" marker-end="url(#ah7)"/>
+          </g>
+
+          <text x="20" y="150" class="svg-label">Clustering &mdash; survive a loss</text>
+          <rect x="20" y="164" width="90" height="40" rx="8" class="svg-box"/>
+          <text x="65" y="189" text-anchor="middle" class="svg-sub">traffic</text>
+          <rect x="180" y="158" width="120" height="30" rx="6" class="svg-box accent"/>
+          <text x="240" y="178" text-anchor="middle" class="svg-mono">active node</text>
+          <rect x="180" y="196" width="120" height="30" rx="6" class="svg-box warn"/>
+          <text x="240" y="216" text-anchor="middle" class="svg-mono">standby node</text>
+          <path d="M112 184 L176 173" class="svg-line accent" marker-end="url(#ah7)"/>
+          <path d="M240 190 L240 194" class="svg-line warn" stroke-dasharray="4 3"/>
+          <text x="320" y="180" class="svg-sub">standby takes over on failure;</text>
+          <text x="320" y="198" class="svg-sub">goal is continuity, not capacity</text>
+          <defs><marker id="ah7" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+        </svg>
+        <figcaption>One answers "can we handle more?"; the other answers "can we survive losing one?"</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128722;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Supermarket tills versus a relay team</p>
+        <p><strong>Load balancing</strong> is the person directing shoppers to
+        whichever till is shortest. Every till is open and serving; the point is
+        throughput, and if one closes the others absorb the queue more slowly.</p>
+        <p><strong>Clustering</strong> is a relay team. One runner carries the
+        baton and another is ready to take over mid-race if they fall. The second
+        runner is not making the team faster - they exist so the race does not
+        end.</p>
+        <p>That is why the two answer different questions. Load balancing is
+        primarily about handling more; clustering is primarily about surviving
+        loss.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Platform diversity</h3>
+        <p><span class="term" data-term="platform diversity">Platform diversity</span> means deliberately not standardising on a single
+        vendor, operating system, or product for everything. A vulnerability or a
+        vendor outage then affects part of the estate rather than all of it.</p>
+        <p>The trade-off is genuine and the exam expects both sides. Diversity
+        buys resilience against a common-mode failure and costs standardisation:
+        more expertise required, more patching processes, more configurations to
+        get right. Homogeneous estates are cheaper to run well and fail
+        completely when they fail.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127806;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Planting one crop across every field</p>
+        <p>A single variety planted everywhere is efficient - one set of
+        equipment, one schedule, one body of expertise. It is also why a single
+        blight can take an entire harvest, as has happened historically more than
+        once.</p>
+        <p>Mixed planting yields less per field and cannot fail all at once. The
+        farmer is buying insurance against a correlated failure, paying for it in
+        efficiency - which is exactly the platform diversity trade.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏦</span> Think of it like…</p><p class="analogy__title">Not keeping every account at one bank</p><p>Holding all your savings at a single bank is simple: one login, one statement, one set of rules to learn. It also means a failure, a freeze, or a dispute at that bank affects everything you have at once.</p><p>Spreading across two banks removes that single point of failure and costs you real effort - two sets of rules, two apps, two reconciliations, and twice the chance of getting one of them wrong through unfamiliarity.</p><p>Multi-cloud is the same bargain. Resilience against a correlated failure, paid for in complexity, which is itself a source of failure.</p></div>
+
+      <div class="subsection">
+        <h3>Multi-cloud</h3>
+        <p>Multi-cloud extends the same reasoning to providers, using more than
+        one so that a provider outage or a commercial dispute does not stop
+        everything. It also reduces vendor lock-in and improves negotiating
+        position.</p>
+        <p>The costs are substantial: each provider has different services,
+        different identity models, and different security controls, so teams must
+        maintain competence in all of them and reconcile policy across
+        environments that do not agree on basic concepts. Multi-cloud adopted for
+        resilience alone frequently produces more incidents than it prevents,
+        because complexity is itself a source of failure.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Capacity planning</h3>
+        <p>Objective 3.4 names three dimensions, and the first is the one
+        organizations neglect.</p>
+        <table>
+          <thead><tr><th>Dimension</th><th>The question</th><th>Failure mode</th></tr></thead>
+          <tbody>
+            <tr><td>People</td><td>Do we have enough trained staff?</td><td>One person who knows how it works</td></tr>
+            <tr><td>Technology</td><td>Is there enough compute, storage, bandwidth?</td><td>Saturation under load</td></tr>
+            <tr><td>Infrastructure</td><td>Enough power, cooling, space, connectivity?</td><td>Physical limits reached</td></tr>
+          </tbody>
+        </table>
+        <p>People capacity is the dimension exam scenarios use to catch you out. A
+        perfectly engineered failover is worthless at three in the morning if the
+        only person who understands it is unreachable. Cross-training,
+        documentation, and defined on-call rotation are availability controls, not
+        HR administration.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128100;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">The one person who knows how the boiler works</p>
+        <p>A building has an unusual heating system that one caretaker understands
+        completely. Everything runs beautifully for years. Then they retire, and
+        nobody can restart it after a power cut - because the knowledge was never
+        written down and nobody else was ever shown.</p>
+        <p>This is a capacity failure in the people dimension, and no amount of
+        redundant hardware addresses it. It is why documentation and
+        cross-training count as resilience measures.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Power</h3>
+        <p>Two technologies with distinct roles, and the exam tests whether you
+        know which covers which gap.</p>
+        <table>
+          <thead><tr><th>Technology</th><th>Covers</th><th>Duration</th></tr></thead>
+          <tbody>
+            <tr><td>UPS</td><td>Instantaneous failure; bridges the gap</td><td>Minutes</td></tr>
+            <tr><td>Generator</td><td>Extended outage</td><td>Hours to days, while fuel lasts</td></tr>
+          </tbody>
+        </table>
+        <p>They are complementary rather than alternatives. A generator takes
+        seconds to start and stabilise, during which everything would go down
+        without a UPS. The UPS carries the load across that gap and then across a
+        graceful shutdown if the generator fails to start.</p>
+        <p>The recurring real-world finding is that generators are installed,
+        never load-tested, and fail when finally needed - because a generator that
+        starts is not the same as a generator that carries the actual load. This
+        is the same lesson as untested backups, in a different medium.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="backups" data-icon="&#128190;" role="tabpanel"
+             aria-labelledby="tab-backups" tabindex="-1">
+      <h2 class="section-title">Backups and Recovery</h2>
+
+      <div class="subsection">
+        <h3>The considerations named in the objective</h3>
+        <table>
+          <thead><tr><th>Consideration</th><th>What it decides</th></tr></thead>
+          <tbody>
+            <tr><td>Onsite / offsite</td><td>Whether a site-level event destroys the backup too</td></tr>
+            <tr><td>Frequency</td><td>Your RPO - how much data a failure costs you</td></tr>
+            <tr><td>Encryption</td><td>Whether stolen backup media is a breach</td></tr>
+            <tr><td>Snapshots</td><td>Point-in-time state, usually on the same platform</td></tr>
+            <tr><td>Recovery</td><td>Whether restoration has actually been tested</td></tr>
+            <tr><td>Replication</td><td>Continuous copying to another location</td></tr>
+            <tr><td>Journaling</td><td>A record of every change, allowing precise point-in-time recovery</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Snapshots and replication are not backups</h3>
+        <p>This distinction is heavily tested and frequently misunderstood in
+        practice.</p>
+        <p>A <span class="term" data-term="snapshot"><strong>snapshot</strong></span> captures state at a moment, usually stored
+        on the same storage platform as the original. It is excellent for
+        reverting a bad change quickly and useless if the platform itself fails or
+        is encrypted by ransomware, because the snapshot is inside the blast
+        radius.</p>
+        <p><span class="term" data-term="replication"><strong>Replication</strong></span> copies data continuously to another
+        system. It gives excellent availability and faithfully replicates
+        mistakes: deleted records and encrypted files are copied to the replica
+        within seconds. Replication protects against a system failing, not against
+        data being damaged.</p>
+        <p>A backup is a separate copy, held apart, from which a known-good state
+        can be restored. The practical rule is <strong>3-2-1</strong>: three
+        copies, on two different media, with one offsite. Ransomware pushed many
+        organizations to add a further requirement - at least one copy immutable
+        or offline, since a backup reachable from a compromised network is a
+        backup an attacker can encrypt.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 230" role="img" aria-labelledby="bkTitle bkDesc">
+          <title id="bkTitle">The 3-2-1 backup rule with an immutable copy</title>
+          <desc id="bkDesc">Three copies of data on two different media with one held offsite. Ransomware led to a further requirement that at least one copy be immutable or offline, since a backup reachable from a compromised network can be encrypted.</desc>
+          <rect x="20" y="40" width="190" height="90" rx="12" class="svg-box"/>
+          <text x="115" y="68" text-anchor="middle" class="svg-label">3 copies</text>
+          <text x="115" y="90" text-anchor="middle" class="svg-sub">production + two backups</text>
+          <text x="115" y="112" text-anchor="middle" class="svg-mono">one failure is survivable</text>
+          <rect x="255" y="40" width="190" height="90" rx="12" class="svg-box brand"/>
+          <text x="350" y="68" text-anchor="middle" class="svg-label">2 media types</text>
+          <text x="350" y="90" text-anchor="middle" class="svg-sub">disk and tape, or cloud</text>
+          <text x="350" y="112" text-anchor="middle" class="svg-mono">one medium failing is survivable</text>
+          <rect x="490" y="40" width="190" height="90" rx="12" class="svg-box accent"/>
+          <text x="585" y="68" text-anchor="middle" class="svg-label">1 offsite</text>
+          <text x="585" y="90" text-anchor="middle" class="svg-sub">different location</text>
+          <text x="585" y="112" text-anchor="middle" class="svg-mono">site loss is survivable</text>
+          <rect x="150" y="152" width="400" height="44" rx="10" class="svg-box warn"/>
+          <text x="350" y="172" text-anchor="middle" class="svg-label">+ 1 immutable or offline</text>
+          <text x="350" y="189" text-anchor="middle" class="svg-sub">a backup an attacker can reach is a backup an attacker can encrypt</text>
+        </svg>
+        <figcaption>Snapshots and replicas do not count - both stay inside the blast radius.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128247;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A photograph in the same album</p>
+        <p>Photographing every page of an irreplaceable notebook and keeping the
+        photographs in the same drawer protects you if you spill ink on a page.
+        It protects you from nothing if the house burns down.</p>
+        <p>A <strong>snapshot</strong> is that photograph in the same drawer. A
+        <strong>backup</strong> is a copy at your sister's house in another town.
+        And <strong>replication</strong> is a machine that instantly reproduces
+        every stroke you make in a second notebook - including the ink you just
+        spilled.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">📋</span> Think of it like…</p><p class="analogy__title">How often you save the file</p><p>Backup frequency is not a technical preference dressed up as one. It is a direct statement of how much work the organization is willing to redo.</p><p>A team saving once a day has decided a day of work is an acceptable loss. If that is genuinely true, saving hourly is money spent buying something nobody needed. If it is not true, no amount of backup reliability rescues the decision - the frequency itself was the error.</p></div>
+
+      <div class="subsection">
+        <h3>Frequency and the recovery point</h3>
+        <p>Backup frequency is not a technical preference; it is the direct
+        expression of your RPO. Nightly backups mean that a failure at 16:00 loses
+        everything since the previous night. If the business can tolerate that,
+        nightly is correct and anything more frequent is wasted money. If it
+        cannot, the frequency is wrong regardless of how reliable the backups are.</p>
+        <p>Continuous data protection and <span class="term" data-term="journaling">journaling</span> exist for very low RPO
+        requirements, recording each change so recovery can target a precise
+        moment - immediately before a corrupting transaction, for example, rather
+        than the previous midnight.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Recovery objectives against a real incident</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="rpo">Work the timeline</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="rpo">Clear</button>
+        </div>
+        <div class="terminal" id="demo-rpo" aria-live="polite" aria-label="Recovery objective timeline"></div>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Testing a restore for the first time</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="restore">Attempt restore</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="restore">Clear</button>
+        </div>
+        <div class="terminal" id="demo-restore" aria-live="polite" aria-label="Restore test output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Full, incremental, and differential</h3>
+        <p>Three approaches trade backup speed against restore speed, and the
+        exam tests the restore side because that is what matters in an incident.</p>
+        <table>
+          <thead><tr><th>Type</th><th>Copies</th><th>Backup speed</th><th>Restore requires</th></tr></thead>
+          <tbody>
+            <tr><td>Full</td><td>Everything, every time</td><td>Slowest</td><td>The one full backup</td></tr>
+            <tr><td>Incremental</td><td>Changes since the last backup of any kind</td><td>Fastest</td><td>The full, plus every increment since</td></tr>
+            <tr><td>Differential</td><td>Changes since the last full backup</td><td>Middle</td><td>The full, plus one differential</td></tr>
+          </tbody>
+        </table>
+        <p>The distinction that decides exam questions is what a restore needs.
+        Incremental backups are quickest to take and slowest to restore, because
+        every increment in the chain must be applied in order - and a single
+        corrupt increment breaks everything after it. Differential backups grow
+        larger each day but need only two pieces to restore.</p>
+        <p>An organization optimising purely for backup window length chooses
+        incremental and discovers during an incident that restoration takes far
+        longer than planned. That is an RTO failure caused by a backup design
+        decision, which is why the two must be considered together.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The untested backup</h3>      <div class="subsection">
+        <h3>The untested backup</h3>
+        <p>The most common backup failure is not a missing backup. It is a backup
+        that exists, reports success every night for two years, and cannot be
+        restored - because the job was silently excluding a directory, the media
+        degraded, the encryption key was lost, or nobody knows the procedure.</p>
+        <p>A backup is a hypothesis until a restore is performed. Regular restore
+        testing is what converts it into a control, and the exam consistently
+        rewards the answer that involves testing recovery rather than merely
+        performing backups.</p>
+
+        <div class="callout warn">
+          <span class="tag">[EXAM]</span>
+          When a scenario describes backups that ran successfully but did not
+          help, the intended answer is almost always that restoration was never
+          tested - not that the backup software was inadequate.
+        </div>
+      </div>
+    </section>
+
+    <section class="module-section" id="countermeasures" data-icon="&#128737;" role="tabpanel"
+             aria-labelledby="tab-countermeasures" tabindex="-1">
+      <h2 class="section-title">Continuity, Sites, and Testing</h2>
+
+      <div class="subsection">
+        <h3>Site resilience</h3>
+        <p>If a facility becomes unusable, operations move somewhere else. The
+        three site types trade cost against recovery time, and this is the most
+        directly tested content in objective 3.4.</p>
+        <table>
+          <thead><tr><th>Site</th><th>State</th><th>Recovery time</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="hot site">Hot</span></td><td>Fully equipped, running, data current</td><td>Minutes to hours</td><td>Highest</td></tr>
+            <tr><td>Warm</td><td>Equipped, needs data and configuration</td><td>Hours to days</td><td>Moderate</td></tr>
+            <tr><td><span class="term" data-term="cold site">Cold</span></td><td>Space, power, connectivity only</td><td>Days to weeks</td><td>Lowest</td></tr>
+          </tbody>
+        </table>
+        <p>The selection rule is simply your RTO. An organization needing to be
+        operating within four hours cannot use a cold site whatever its budget,
+        and one that can tolerate a fortnight is wasting money on a hot site. When
+        a scenario gives you a recovery time requirement, it has given you the
+        answer.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 220" role="img" aria-labelledby="siTitle siDesc">
+          <title id="siTitle">Hot, warm, and cold sites compared</title>
+          <desc id="siDesc">Three site types trading cost against recovery time. A hot site is fully running and recovers in minutes to hours at the highest cost. A warm site is equipped but needs data and recovers in hours to days. A cold site has space and power only and recovers in days to weeks at the lowest cost.</desc>
+          <rect x="20" y="40" width="200" height="110" rx="12" class="svg-box accent"/>
+          <text x="120" y="68" text-anchor="middle" class="svg-label">Hot</text>
+          <text x="120" y="90" text-anchor="middle" class="svg-sub">running, data current</text>
+          <text x="120" y="112" text-anchor="middle" class="svg-mono">minutes - hours</text>
+          <text x="120" y="134" text-anchor="middle" class="svg-mono">highest cost</text>
+          <rect x="250" y="40" width="200" height="110" rx="12" class="svg-box warn"/>
+          <text x="350" y="68" text-anchor="middle" class="svg-label">Warm</text>
+          <text x="350" y="90" text-anchor="middle" class="svg-sub">equipped, needs data</text>
+          <text x="350" y="112" text-anchor="middle" class="svg-mono">hours - days</text>
+          <text x="350" y="134" text-anchor="middle" class="svg-mono">moderate cost</text>
+          <rect x="480" y="40" width="200" height="110" rx="12" class="svg-box"/>
+          <text x="580" y="68" text-anchor="middle" class="svg-label">Cold</text>
+          <text x="580" y="90" text-anchor="middle" class="svg-sub">space and power only</text>
+          <text x="580" y="112" text-anchor="middle" class="svg-mono">days - weeks</text>
+          <text x="580" y="134" text-anchor="middle" class="svg-mono">lowest cost</text>
+          <path d="M20 176 L680 176" class="svg-line accent" marker-end="url(#as7)"/>
+          <text x="30" y="198" class="svg-sub">faster and dearer</text>
+          <text x="670" y="198" text-anchor="end" class="svg-sub">slower and cheaper</text>
+          <defs><marker id="as7" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+        </svg>
+        <figcaption>A scenario that states a recovery time has effectively stated the site type.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128663;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Three ways to have a spare car</p>
+        <p>A <strong>hot site</strong> is a second car on the drive, fuelled,
+        insured, and started weekly. You are moving in two minutes, and you are
+        paying for a car you rarely drive.</p>
+        <p>A <strong>warm site</strong> is a car in the garage with a flat battery
+        and no current insurance. It is genuinely yours and you will be driving by
+        this afternoon.</p>
+        <p>A <strong>cold site</strong> is an empty parking space with your name
+        on it. Cheap, real, and useless until you buy a car - which is the point.
+        A cold site is a place to recover into, not a recovery.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🗝</span> Think of it like…</p><p class="analogy__title">The spare key under the same doormat</p><p>Keeping a spare key protects you against losing yours. Keeping it under the doormat of the door it opens protects you against nothing that matters, because whatever reaches the door reaches the key.</p><p>A recovery site in the same industrial park is that doormat. It shares the power grid, the flood plain, and the road that closes - so the single event you are planning for takes both.</p></div>
+
+      <div class="subsection">
+        <h3>Geographic dispersion</h3>
+        <p>An alternate site must be far enough away not to be affected by the
+        same event. A backup facility in the same industrial park shares its power
+        grid, its flood plain, and its transport links, so a single incident takes
+        both.</p>
+        <p>The tension is that distance costs latency, which limits synchronous
+        replication and complicates staff travel. The right distance is far enough
+        to escape a shared regional event and close enough to remain workable -
+        and "same city" is usually too close for anything but a building-level
+        failure.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">📚</span> Think of it like…</p><p class="analogy__title">Knowing the ending but not the middle</p><p>A plan that describes the restored systems in detail and says nothing about the intervening two days is a story with a beginning and an ending and no middle. The organization knows precisely what normal looks like on either side of the gap.</p><p>Continuity is the middle. Who takes orders on paper, who is authorised to approve them, and how the backlog is reconciled when systems return. Disaster recovery restores the technology; continuity keeps the organization alive while it is gone.</p></div>
+
+      <div class="subsection">
+        <h3>Continuity of operations</h3>
+        <p>A continuity of operations plan describes how the organization keeps
+        functioning when normal capability is unavailable. It is broader than
+        disaster recovery, which restores technology - continuity covers people,
+        premises, suppliers, and manual workarounds.</p>
+        <p>The element most often missing is the manual workaround. If an ordering
+        system is unavailable for two days, is there a paper process? Who is
+        authorised to use it? How is the resulting backlog reconciled afterwards?
+        Organizations plan the technology restoration thoroughly and leave the
+        intervening days undefined.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Testing</h3>
+        <p>A plan is a hypothesis until exercised. Objective 3.4 names four
+        methods, increasing in realism and in risk.</p>
+        <table>
+          <thead><tr><th>Method</th><th>What happens</th><th>Disruption</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="tabletop exercise">Tabletop</span></td><td>Participants talk through a scenario</td><td>None</td></tr>
+            <tr><td>Simulation</td><td>A realistic scenario is enacted without touching production</td><td>Low</td></tr>
+            <tr><td>Parallel processing</td><td>Recovery systems run alongside production; results compared</td><td>Moderate</td></tr>
+            <tr><td>Failover</td><td>Production is actually moved to the recovery site</td><td>High</td></tr>
+          </tbody>
+        </table>
+        <p>Each finds different problems. A tabletop reveals that nobody knows who
+        declares a disaster, or that the plan calls a supplier who is no longer
+        contracted. Only a real failover reveals that the recovery site's
+        certificate expired, its firewall rules were never updated, or its
+        capacity is half what production needs.</p>
+        <p>Organizations tend to do tabletops repeatedly and never a full failover,
+        because the tabletop is safe. This produces well-rehearsed confidence in a
+        capability nobody has demonstrated - which is the untested backup problem
+        at the scale of an entire site.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128293;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Discussing the fire escape versus walking it</p>
+        <p>A meeting where staff describe the evacuation route establishes that
+        people know the plan, and it is cheap and interrupts nothing. That is a
+        tabletop.</p>
+        <p>Actually walking out finds the fire door blocked by pallets, the
+        stairwell light out, and the assembly point now a building site. None of
+        that appears in the discussion, because everyone describes the building as
+        it was when the plan was written.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a fire
+        drill costs ten minutes. A full failover risks a genuine outage, which is
+        why organizations avoid it - and why the exam treats scheduling one as the
+        mature answer rather than an obvious one.</p>
+      </div>
+
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="recovery-map">
+        Open the requirement-to-control map</button></p>
+
+      <div class="subsection">
+        <h3>Putting the recovery picture together</h3>
+        <table>
+          <thead><tr><th>Requirement</th><th>What it drives</th></tr></thead>
+          <tbody>
+            <tr><td>Low RPO</td><td>Frequent backups, replication, journaling</td></tr>
+            <tr><td>Low RTO</td><td>Hot site, tested failover, standby capacity</td></tr>
+            <tr><td>Survive site loss</td><td>Offsite backups, geographic dispersion</td></tr>
+            <tr><td>Survive ransomware</td><td>Immutable or offline copies, segmentation</td></tr>
+            <tr><td>Survive vendor failure</td><td>Platform diversity, multi-cloud</td></tr>
+            <tr><td>Survive staff absence</td><td>Cross-training, documentation, on-call rotation</td></tr>
+            <tr><td>Survive power loss</td><td>UPS for the gap, generator for duration, both tested</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        Three discriminators to carry into the exam. RPO is set by backup
+        frequency and RTO by recovery method - keep them apart. Snapshots and
+        replication are not backups, because both stay inside the blast radius.
+        And when backups exist but did not help, the answer is that restoration
+        was never tested.
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="&#129514;" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        Design and analysis labs - nothing to install. Answers save in this
+        browser as you type, and each lab generates a Word document you can
+        submit. Graded lab assignments are posted in Canvas.
+      </div>
+
+      <div class="lab" data-lab="classify-data"></div>
+      <div class="lab" data-lab="design-availability"></div>
+      <div class="lab" data-lab="recovery-plan"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers live in this browser only. Generate the report and save the file
+        when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "rpo": "Recovery point objective: how much data an organization can afford to lose. Looks backward from the incident and is set entirely by backup frequency.",
+    "rto": "Recovery time objective: how long an organization can afford to be down. Looks forward from the incident and is set by recovery method and site readiness.",
+    "data classification": "Labelling data by sensitivity so handling requirements follow automatically, rather than being judged file by file.",
+    "data sovereignty": "The principle that data is subject to the laws of the country where it is physically stored, whoever owns it.",
+    "tabletop exercise": "A discussion-based test where participants talk through a scenario. Cheap and disruption-free; finds gaps in the plan but not in the infrastructure.",
+    "hot site": "A fully equipped alternate site, running with current data. Recovery in minutes to hours, at the highest cost.",
+    "cold site": "An alternate site providing space, power, and connectivity only. Cheapest, and a place to recover into rather than a recovery.",
+    "snapshot": "A point-in-time capture of state, usually on the same storage platform as the original - so it is inside the blast radius and is not a backup.",
+    "replication": "Continuous copying of data to another system. Protects against a system failing, not against data being damaged, since mistakes replicate too.",
+    "journaling": "Recording every change so recovery can target a precise moment, such as immediately before a corrupting transaction.",
+    "platform diversity": "Deliberately not standardising on one vendor or product, so a single vulnerability or outage affects part of the estate rather than all of it.",
+    "clustering": "Coordinated nodes that keep a service running when one fails. Active-active uses all capacity; active-passive keeps a standby for cleaner failover."
+  };
+
+  window.MODALS = {
+    "recovery-map": {
+      title: "Requirement to control",
+      body:
+        "<table><thead><tr><th>Requirement</th><th>What it drives</th></tr></thead><tbody>" +
+        "<tr><td>Low RPO</td><td>Frequent backups, replication, journaling</td></tr>" +
+        "<tr><td>Low RTO</td><td>Hot site, tested failover, standby capacity</td></tr>" +
+        "<tr><td>Survive site loss</td><td>Offsite backups, geographic dispersion</td></tr>" +
+        "<tr><td>Survive ransomware</td><td>Immutable or offline copies, segmentation</td></tr>" +
+        "<tr><td>Survive vendor failure</td><td>Platform diversity, multi-cloud</td></tr>" +
+        "<tr><td>Survive staff absence</td><td>Cross-training, documentation, on-call</td></tr>" +
+        "<tr><td>Survive power loss</td><td>UPS for the gap, generator for duration</td></tr>" +
+        "</tbody></table><p>RPO is set by backup frequency. RTO is set by recovery " +
+        "method and site readiness. Improving one does nothing for the other.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "protect": [
+      { text: "$ select-protection --requirement-set 3", cls: "prompt", delay: 320 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "CASE 1  support staff must confirm which card a caller used,", cls: "info", delay: 440 },
+      { text: "        but must never see the full number", cls: "info", delay: 380 },
+      { text: "  recoverable needed? .... NO, partial view suffices", cls: "output", delay: 420 },
+      { text: "  -> MASKING            **** **** **** 4471", cls: "info", delay: 440 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "CASE 2  the platform must recognise a repeat customer", cls: "info", delay: 440 },
+      { text: "        without storing card numbers anywhere in scope", cls: "info", delay: 380 },
+      { text: "  recoverable needed? .... YES, by authorised lookup only", cls: "output", delay: 440 },
+      { text: "  masking? ............... NO - discards, cannot match later", cls: "warning", delay: 440 },
+      { text: "  -> TOKENIZATION       token 8842 <-> vault", cls: "info", delay: 440 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "CASE 3  passwords must be verifiable and unreadable by staff", cls: "info", delay: 440 },
+      { text: "  recoverable needed? .... NO, and must be impossible", cls: "output", delay: 420 },
+      { text: "  encryption? ............ NO - reversible by design", cls: "warning", delay: 440 },
+      { text: "  -> HASHING + key stretching (bcrypt / Argon2)", cls: "info", delay: 460 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[LESSON] The deciding question is always the same:", cls: "warning", delay: 520 },
+      { text: "must the original value ever be recoverable, and by whom?", cls: "warning", delay: 480 }
+    ],
+    "rpo": [
+      { text: "$ analyse-incident --failure 16:00 --backup-schedule nightly-2300", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "23:00 (prev day)  last successful backup completed", cls: "output", delay: 400 },
+      { text: "09:00             trading day begins", cls: "output", delay: 320 },
+      { text: "16:00             storage array fails", cls: "error", delay: 400 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "DATA LOSS -------------------------------------", cls: "info", delay: 380 },
+      { text: "  work since last backup ........ 17 hours", cls: "error", delay: 420 },
+      { text: "  actual RPO achieved ........... 17 hours", cls: "error", delay: 380 },
+      { text: "  business stated RPO ........... 1 hour", cls: "warning", delay: 420 },
+      { text: "  [GAP] backup FREQUENCY is wrong, not backup quality", cls: "warning", delay: 540 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "DOWNTIME --------------------------------------", cls: "info", delay: 380 },
+      { text: "  hardware replacement .......... 26 hours", cls: "output", delay: 380 },
+      { text: "  restore from tape ............. 9 hours", cls: "output", delay: 360 },
+      { text: "  actual RTO achieved ........... 35 hours", cls: "error", delay: 400 },
+      { text: "  business stated RTO ........... 4 hours", cls: "warning", delay: 420 },
+      { text: "  [GAP] no standby capacity - a hot site addresses this", cls: "warning", delay: 540 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[NOTE] Two separate failures needing two separate fixes.", cls: "info", delay: 540 },
+      { text: "More frequent backups would not have shortened the outage by one minute.", cls: "info", delay: 520 }
+    ],
+    "restore": [
+      { text: "$ restore-test --job nightly-fileserver --last-verified never", cls: "prompt", delay: 340 },
+      { text: "backup job history ............ 731 consecutive successes", cls: "output", delay: 440 },
+      { text: "reported status ............... HEALTHY", cls: "output", delay: 360 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "beginning restore to isolated test host...", cls: "info", delay: 420 },
+      { text: "  reading media ............... OK", cls: "output", delay: 340 },
+      { text: "  decrypting archive .......... KEY NOT FOUND", cls: "error", delay: 460 },
+      { text: "  -> key rotated 14 months ago; old key not retained", cls: "error", delay: 460 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "second attempt, older media...", cls: "info", delay: 400 },
+      { text: "  decrypting archive .......... OK", cls: "output", delay: 340 },
+      { text: "  verifying contents .......... /finance EXCLUDED", cls: "error", delay: 460 },
+      { text: "  -> exclusion rule added during a 2024 change, never reviewed", cls: "error", delay: 480 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[RESULT] 731 successful backups. Zero successful restores.", cls: "error", delay: 560 },
+      { text: "[NOTE] A backup is a hypothesis until a restore is performed.", cls: "warning", delay: 560 }
+    ]
+  };
+
+  window.MODULE_ACTIONS = {};
+
+  window.CLASSIFIERS = {
+    dataprotect: {
+      axes: [
+        { name: "cls", label: "Classification", options: ["Public", "Private", "Sensitive", "Confidential", "Restricted", "Critical"] },
+        { name: "method", label: "Best protection method", options: ["Encryption", "Hashing", "Tokenization", "Masking", "Permission restrictions", "Geographic restrictions"] }
+      ],
+      items: [
+        { scenario: "User passwords for a customer portal. Staff must never be able to read them, and there is no scenario in which the original is needed.",
+          answers: { cls: "Restricted", method: "Hashing" },
+          explain: "Irrecoverability is the requirement, not merely secrecy - which eliminates encryption. Combine hashing with a key-stretching function such as bcrypt or Argon2, as in Module 2." },
+        { scenario: "Payment card numbers a retailer must reference to recognise repeat customers, without holding the numbers in systems that would fall in scope for compliance.",
+          answers: { cls: "Restricted", method: "Tokenization" },
+          explain: "The value must be resolvable by an authorised vault but must not be derivable. Masking would discard the data and break repeat-customer matching." },
+        { scenario: "A support screen showing enough of a card number to confirm which card a caller means, and no more.",
+          answers: { cls: "Confidential", method: "Masking" },
+          explain: "Partial visibility is exactly sufficient, and the original is never needed in that view. This is the standard support-desk answer." },
+        { scenario: "Health records that regulation requires to remain physically stored within the country of origin.",
+          answers: { cls: "Restricted", method: "Geographic restrictions" },
+          explain: "Data sovereignty makes this a legal constraint before a technical one. Note that automatic cross-region cloud replication can breach it without anyone deciding to." },
+        { scenario: "The company's published price list. Competitors seeing it causes no harm, but sales cannot operate without it.",
+          answers: { cls: "Critical", method: "Permission restrictions" },
+          explain: "Critical describes the harm of losing data rather than disclosing it. Public information can be critical, and here the emphasis is availability and integrity rather than secrecy." },
+        { scenario: "Internal engineering drawings kept as a trade secret, needing to remain usable by the design team.",
+          answers: { cls: "Confidential", method: "Encryption" },
+          explain: "The data must be recoverable by authorised users, so encryption rather than hashing. Note that trade secret status legally depends on demonstrably protecting it." }
+      ]
+    }
+  };
+
+  window.LABS = {
+    "classify-data": {
+      title: "Lab 1 - Classify, then choose the method",
+      time: "~25 minutes",
+      objective: "Assign classification and select a protection method from the requirement, which is the selection reasoning objective 3.3 tests.",
+      steps: [
+        {
+          type: "match",
+          prompt: "For each dataset, choose the protection method the requirement demands.",
+          hint: "The deciding question every time: must the original value ever be recoverable, and by whom?",
+          columns: [
+            { name: "method", label: "Protection method", options: ["Encryption", "Hashing", "Tokenization", "Masking", "Geographic restrictions", "Segmentation"] }
+          ],
+          items: [
+            { text: "Passwords that staff must never read and that are never needed in original form", answers: { method: "Hashing" } },
+            { text: "Card numbers that must be matchable to a repeat customer but not held in scope", answers: { method: "Tokenization" } },
+            { text: "A support screen needing only the last four digits", answers: { method: "Masking" } },
+            { text: "Engineering drawings the design team must open and edit daily", answers: { method: "Encryption" } },
+            { text: "Health records regulation requires to stay inside one country", answers: { method: "Geographic restrictions" } },
+            { text: "Plant controllers that must be unreachable from the corporate network", answers: { method: "Segmentation" } }
+          ],
+          explain: "The first four turn entirely on recoverability. The last two are restrictions on reaching the data rather than transformations of it - a complete strategy uses both."
+        },
+        {
+          type: "choice",
+          prompt: "An organization stores customer records with a cloud provider that automatically replicates data across regions for resilience. Select every accurate statement.",
+          hint: "Consider what a resilience feature can do to a compliance position.",
+          options: [
+            "Automatic cross-region replication may breach data sovereignty requirements",
+            "Data is subject to the laws of the country where it is physically stored",
+            "Ownership of the data exempts it from local law in the storage jurisdiction",
+            "Geographic restrictions can constrain where data is stored",
+            "This is a compliance question before it is a technical one",
+            "Encryption alone resolves any sovereignty requirement"
+          ],
+          correct: [0, 1, 3, 4],
+          explain: "Sovereignty follows physical location regardless of ownership, and encryption does not change where data sits - so it does not answer a requirement about location. The resilience feature creating the breach is the point: nobody decided to do it."
+        },
+        {
+          type: "text",
+          prompt: "Explain why a public price list can be classified as critical, and what that changes about how it is protected.",
+          hint: "Which security property does the 'critical' label speak to, compared with the other levels?"
+        },
+        {
+          type: "text",
+          prompt: "Give three reasons classification schemes fail in practice, with a sentence on each.",
+          hint: "Consider the number of levels, who decides, and whether the label changes anything."
+        }
+      ]
+    },
+
+    "design-availability": {
+      title: "Lab 2 - Design for availability",
+      time: "~20 minutes",
+      objective: "Match availability requirements to the right mechanism and recognise the dimension of capacity organizations neglect.",
+      steps: [
+        {
+          type: "match",
+          prompt: "Match each requirement to the mechanism that addresses it.",
+          hint: "Ask whether the requirement is about handling more work or about surviving a loss.",
+          columns: [
+            { name: "sol", label: "Mechanism", options: ["Load balancing", "Clustering", "Platform diversity", "Multi-cloud", "UPS", "Generator"] }
+          ],
+          items: [
+            { text: "Distribute web traffic across eight identical servers", answers: { sol: "Load balancing" } },
+            { text: "Keep a database service running when its primary node fails", answers: { sol: "Clustering" } },
+            { text: "Ensure one vendor's vulnerability cannot affect the whole estate", answers: { sol: "Platform diversity" } },
+            { text: "Continue operating through a full provider outage", answers: { sol: "Multi-cloud" } },
+            { text: "Carry the load for the seconds before backup power stabilises", answers: { sol: "UPS" } },
+            { text: "Sustain the data centre through a twelve-hour grid failure", answers: { sol: "Generator" } }
+          ],
+          explain: "Load balancing is primarily about throughput with availability as a by-product; clustering exists to survive loss. UPS and generator are complementary - the UPS covers the gap while the generator starts, which is why a generator alone is insufficient."
+        },
+        {
+          type: "choice",
+          prompt: "A perfectly engineered failover fails at 3 a.m. because the only engineer who understands it is unreachable. Select every accurate statement.",
+          hint: "Which of the three capacity dimensions has failed here?",
+          options: [
+            "This is a capacity planning failure in the people dimension",
+            "Additional redundant hardware would have prevented it",
+            "Cross-training is an availability control, not merely HR administration",
+            "Documentation of the failover procedure is a resilience measure",
+            "A defined on-call rotation addresses this directly",
+            "This is unrelated to security architecture"
+          ],
+          correct: [0, 2, 3, 4],
+          explain: "Capacity planning covers people, technology, and infrastructure, and people is the dimension organizations neglect. No quantity of redundant hardware substitutes for someone who knows how to use it."
+        },
+        {
+          type: "choice",
+          prompt: "Which statements about platform diversity and multi-cloud are accurate? Select all that apply.",
+          hint: "Both buy resilience against correlated failure. What do both cost?",
+          options: [
+            "Diversity protects against a single vulnerability affecting everything",
+            "Diversity costs standardisation, expertise, and operational simplicity",
+            "Multi-cloud reduces vendor lock-in",
+            "Multi-cloud is always the more secure choice",
+            "Complexity is itself a source of failure",
+            "Each provider has different identity models and security controls"
+          ],
+          correct: [0, 1, 2, 4, 5],
+          explain: "Multi-cloud adopted for resilience alone often produces more incidents than it prevents, because teams must maintain competence across environments that disagree on basic concepts. Resilience against correlated failure is bought with complexity."
+        },
+        {
+          type: "text",
+          prompt: "Explain the difference between active-active and active-passive clustering, and when each is preferable.",
+          hint: "Consider what happens to available capacity when a node fails in each arrangement."
+        }
+      ]
+    },
+
+    "recovery-plan": {
+      title: "Lab 3 - Build the recovery plan",
+      time: "~20 minutes",
+      objective: "Separate RPO from RTO, choose a site type, and recognise why backups that ran successfully still fail.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Order the four test methods from least disruptive to most.",
+          hint: "Use the arrows. Each finds problems the one before it cannot.",
+          items: [
+            "Tabletop - participants talk through a scenario",
+            "Simulation - a scenario is enacted without touching production",
+            "Parallel processing - recovery systems run alongside production",
+            "Failover - production is actually moved to the recovery site"
+          ],
+          explain: "Realism and risk rise together. A tabletop finds that nobody knows who declares a disaster; only a real failover finds that the recovery site's certificate expired or its capacity is half what production needs."
+        },
+        {
+          type: "choice",
+          prompt: "<em>A storage array fails at 16:00. The last backup completed at 23:00 the previous night. Replacement hardware and restoration take 35 hours. The business requires a 1-hour RPO and a 4-hour RTO.</em><br><br>Select every accurate statement.",
+          hint: "Two separate failures. Work out which fix addresses which.",
+          options: [
+            "17 hours of data was lost, so the RPO was missed",
+            "The RPO failure is caused by backup frequency",
+            "The 35-hour outage means the RTO was missed",
+            "More frequent backups would have shortened the outage",
+            "Standby capacity or a hot site addresses the RTO gap",
+            "A single change would fix both objectives"
+          ],
+          correct: [0, 1, 2, 4],
+          explain: "RPO is set by backup frequency and RTO by recovery method. Backing up hourly would have cut data loss to an hour and shortened the outage by nothing at all - two problems requiring two fixes."
+        },
+        {
+          type: "match",
+          prompt: "Match each requirement to the site type or measure that meets it.",
+          hint: "For sites, the stated recovery time is the whole answer.",
+          columns: [
+            { name: "ans", label: "Answer", options: ["Hot site", "Warm site", "Cold site", "Offsite immutable backup", "Geographic dispersion"] }
+          ],
+          items: [
+            { text: "Must be operating again within two hours", answers: { ans: "Hot site" } },
+            { text: "Can tolerate two or three days to resume", answers: { ans: "Warm site" } },
+            { text: "Can tolerate several weeks and needs the lowest cost", answers: { ans: "Cold site" } },
+            { text: "Backups must survive ransomware reaching the network", answers: { ans: "Offsite immutable backup" } },
+            { text: "The alternate site must not share a flood plain or power grid", answers: { ans: "Geographic dispersion" } }
+          ],
+          explain: "Site selection follows directly from RTO - a scenario stating a recovery time has stated the answer. And a backup reachable from a compromised network is a backup an attacker can encrypt, which is why immutability was added to the traditional 3-2-1 rule."
+        },
+        {
+          type: "text",
+          prompt: "A backup job reported success every night for two years, but restoration failed. Give two plausible causes and the single practice that would have caught them.",
+          hint: "Think about what a success message actually confirms, and what it does not."
+        }
+      ]
+    }
+  };
+
+  var QUESTIONS = [
+    { tier: "recall",
+      question: "What does the recovery point objective define?",
+      options: ["How long recovery may take", "How much data the organization can afford to lose", "How often failover is tested", "How many backup copies exist"],
+      correct: 1,
+      explanation: "RPO looks backward from the incident and is set by backup frequency. RTO is the forward-looking measure of acceptable downtime." },
+    { tier: "recall",
+      question: "Which site type provides space, power, and connectivity only?",
+      options: ["Hot site", "Warm site", "Cold site", "Mirror site"],
+      correct: 2,
+      explanation: "A cold site is a place to recover into rather than a recovery. It is the cheapest option and takes days to weeks to bring into service." },
+    { tier: "recall",
+      question: "What is data sovereignty?",
+      options: ["Ownership of data by its creator", "Data being subject to the laws of the country where it is physically stored", "The right to delete personal data", "A backup replication method"],
+      correct: 1,
+      explanation: "Sovereignty follows physical location regardless of who owns the data, which is why storage location is a compliance question before a technical one." },
+    { tier: "recall",
+      question: "Which classification level describes the harm of losing data rather than disclosing it?",
+      options: ["Confidential", "Restricted", "Critical", "Private"],
+      correct: 2,
+      explanation: "The other levels form a confidentiality scale. Critical is an availability judgement, which is why public information can be critical." },
+    { tier: "recall",
+      question: "What does a UPS provide that a generator does not?",
+      options: ["Power for several days", "Instantaneous coverage during the seconds before backup power stabilises", "Cooling", "Network redundancy"],
+      correct: 1,
+      explanation: "A generator takes seconds to start and stabilise, during which everything would go down. The two are complementary rather than alternatives." },
+    { tier: "recall",
+      question: "Which test method carries the highest disruption but reveals the most?",
+      options: ["Tabletop", "Simulation", "Parallel processing", "Failover"],
+      correct: 3,
+      explanation: "Only actually moving production to the recovery site reveals expired certificates, stale firewall rules, or insufficient capacity there." },
+    { tier: "applied",
+      question: "A snapshot is stored on the same platform as the original data. Why is it not a backup?",
+      options: ["Snapshots are too small", "It is inside the blast radius, so a platform failure or ransomware takes both", "Snapshots cannot be encrypted", "Snapshots take too long to create"],
+      correct: 1,
+      explanation: "Snapshots are excellent for reverting a bad change quickly and useless when the platform itself fails or is encrypted, because the copy shares the fate of the original." },
+    { tier: "applied",
+      question: "An organization replicates data continuously to a second site and considers itself protected against accidental deletion. What is wrong?",
+      options: ["Replication is too slow", "Replication faithfully copies mistakes, so the deletion propagates within seconds", "Replication cannot cross sites", "Nothing is wrong"],
+      correct: 1,
+      explanation: "Replication protects against a system failing, not against data being damaged. A separate point-in-time copy is what allows a known-good state to be restored." },
+    { tier: "applied",
+      question: "A retailer must recognise repeat customers without holding card numbers in scope. Which method fits?",
+      options: ["Masking", "Hashing", "Tokenization", "Obfuscation"],
+      correct: 2,
+      explanation: "The value must be resolvable by an authorised vault but not derivable from the token. Masking discards data permanently, breaking the repeat-customer match." },
+    { tier: "applied",
+      question: "Backups run nightly at 23:00. A failure occurs at 16:00. What RPO has actually been achieved?",
+      options: ["1 hour", "4 hours", "17 hours", "24 hours"],
+      correct: 2,
+      explanation: "Everything created since the 23:00 backup is lost - seventeen hours of work. Backup frequency alone determines this figure, however reliable the backups are." },
+    { tier: "applied",
+      question: "An organization must resume operations within two hours of losing its facility. Which site type is required?",
+      options: ["Cold site", "Warm site", "Hot site", "Any, with sufficient budget"],
+      correct: 2,
+      explanation: "Only a hot site, running with current data, recovers within hours. A stated recovery time in a scenario is effectively stating the site type." },
+    { tier: "applied",
+      question: "Which best describes the difference between load balancing and clustering?",
+      options: ["They are the same thing", "Load balancing distributes work for throughput; clustering exists so the service survives a node failing", "Clustering is only for web servers", "Load balancing requires identical hardware"],
+      correct: 1,
+      explanation: "Load balancing is primarily about handling more, with availability as a by-product. Clustering is primarily about surviving loss, with coordinated nodes and shared state." },
+    { tier: "applied",
+      question: "A backup facility is located in the same industrial park as the primary. What is the concern?",
+      options: ["Latency is too high", "Both share a power grid, flood plain, and transport links, so one event takes both", "The facility is too small", "Replication cannot function over short distances"],
+      correct: 1,
+      explanation: "Geographic dispersion exists so a regional event cannot affect both sites. The tension is that distance costs latency, so the right distance escapes shared events while remaining workable." },
+    { tier: "applied",
+      question: "An organization standardises entirely on one vendor's operating system and hardware. Which risk does this create?",
+      options: ["Higher licensing cost only", "A single vulnerability or vendor outage can affect the whole estate", "Inability to use cloud services", "Increased data sovereignty exposure"],
+      correct: 1,
+      explanation: "Homogeneous estates are cheaper to run well and fail completely when they fail. Platform diversity buys resilience against correlated failure and pays for it in standardisation." },
+    { tier: "scenario",
+      question: "A backup job reported success for 731 consecutive nights, but restoration failed because a directory had been silently excluded. What does this most demonstrate?",
+      options: ["The backup software was inadequate", "A backup is a hypothesis until a restore is tested", "Backups should be more frequent", "The media was faulty"],
+      correct: 1,
+      explanation: "A success message confirms the job ran, not that the data can be recovered. Regular restore testing is what converts a backup from an assumption into a control." },
+    { tier: "scenario",
+      question: "A failure loses 17 hours of data and causes 35 hours of downtime against a 1-hour RPO and 4-hour RTO. What should be recommended?",
+      options: ["More frequent backups alone", "Standby capacity alone", "More frequent backups for the RPO and standby capacity or a hot site for the RTO", "Longer backup retention"],
+      correct: 2,
+      explanation: "Two independent objectives were missed and each needs its own fix. Hourly backups would cut data loss to an hour and shorten the outage by nothing." },
+    { tier: "scenario",
+      question: "An organization runs tabletop exercises annually and has never performed a failover test. What is the most significant risk?",
+      options: ["Tabletops are worthless", "Well-rehearsed confidence in a capability nobody has demonstrated", "Staff will forget the plan", "Tabletops are too expensive"],
+      correct: 1,
+      explanation: "Tabletops find gaps in the plan; only a failover finds gaps in the infrastructure. Repeating the safe test produces documented confidence in something untested." },
+    { tier: "scenario",
+      question: "Ransomware encrypts a file server and also the backup repository, which was mounted on the network. What control would most have helped?",
+      options: ["More frequent backups", "At least one immutable or offline copy", "Faster restore hardware", "Longer retention"],
+      correct: 1,
+      explanation: "A backup reachable from a compromised network is a backup an attacker can encrypt. This is why immutability or an offline copy was added to the traditional 3-2-1 rule." },
+    { tier: "scenario",
+      question: "A cloud provider automatically replicates a hospital's records across regions for resilience, and regulation requires the records stay in one country. What has occurred?",
+      options: ["Improved resilience with no downside", "A potential sovereignty breach created by a resilience feature nobody chose", "A confidentiality breach only", "Nothing, since the data is encrypted"],
+      correct: 1,
+      explanation: "Sovereignty follows physical storage location, and encryption does not change where data sits. Geographic restrictions must be configured deliberately, because the default behaviour optimises for resilience rather than compliance." },
+    { tier: "applied",
+      question: "During a real outage, staff discover no manual process exists for taking orders while systems are restored. Which planning element was missing?",
+      options: ["Disaster recovery", "Continuity of operations, specifically manual workarounds", "Backup encryption", "Capacity planning for technology"],
+      correct: 1,
+      explanation: "Disaster recovery restores technology; continuity covers how the organization keeps functioning meanwhile. The intervening days are the part organizations most often leave undefined." }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>

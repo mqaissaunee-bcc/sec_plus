@@ -1,0 +1,2920 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="10" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 10: Identity, Automation, Incident Response, and Forensics</title>
+<meta name="description" content="Managing identity from provisioning to attestation, access control models and privileged access, automation and its costs, the incident response process, and handling digital evidence so it remains usable.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-box.danger{stroke:var(--danger);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 10</p>
+    <h1>Identity, Automation, Incident Response, and Forensics</h1>
+    <p class="subtitle">Managing identity from provisioning to attestation, access control models and privileged access, automation and its costs, the incident response process, and handling digital evidence so it remains usable.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="&#128203;" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to manage accounts from
+        provisioning through attestation to deprovisioning; compare the access
+        control models and select one for a scenario; apply MFA, password, and
+        privileged access controls; identify where automation helps and where it
+        adds risk; work the incident response process in the correct order; and
+        handle digital evidence so it remains usable.
+      </div>
+
+      <p>This module carries four objectives and completes Domain 4. It is the
+      densest in the course, and the four topics are genuinely connected: identity
+      decides who can act, automation decides what happens without a human,
+      incident response is what you do when those controls fail, and forensics is
+      how you establish what actually happened.</p>
+
+      <div class="callout warn">
+        <span class="tag">[STUDY NOTE]</span>
+        This module covers more ground than the others. If you are working
+        through it in one sitting, the natural break is after automation - the
+        first half is preventive controls, the second half is what happens after
+        something goes wrong.
+      </div>
+
+      <div class="subsection">
+        <h3>The thread connecting the four</h3>
+        <p>Identity is the control that matters most in practice, because nearly
+        every modern breach involves credentials rather than exploits. Automation
+        determines whether identity controls are applied consistently or depend on
+        someone remembering. Incident response assumes both will eventually fail.
+        And forensics determines whether you can prove what happened afterwards.</p>
+        <p>The connection is worth holding because exam scenarios move between
+        them. A question about an account that stayed active after an employee
+        left is an identity question, an automation question, and - once it is
+        used - an incident response question.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="identity" data-icon="&#129706;" role="tabpanel"
+             aria-labelledby="tab-identity" tabindex="-1">
+      <h2 class="section-title">Identity Management</h2>
+
+      <div class="subsection">
+        <h3>Provisioning and deprovisioning</h3>
+        <p>Provisioning creates an account with the access a role requires.
+        Deprovisioning removes it when the person leaves or changes role. The
+        second is where organizations fail, because nothing stops working when it
+        is skipped.</p>
+        <p>A missed deprovisioning produces an <strong>orphaned account</strong>:
+        valid credentials with no owner and nobody monitoring them. Module 3
+        established why this matters - a former employee with retained access
+        bypasses the perimeter legitimately, and the account's activity looks like
+        authorised use.</p>
+        <p>The related failure is <span class="term" data-term="privilege creep"><strong>privilege creep</strong></span>. Someone moves
+        from finance to operations to procurement over eight years, gaining access
+        at each step and losing none, and ends up with a combination of
+        permissions no role was ever designed to hold. Role changes require
+        removing old access as well as granting new, and that half is routinely
+        omitted because nobody complains about access they still have.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128477;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Keys issued and never handed back</p>
+        <p>Every new starter is issued keys for the doors their job needs. Nobody
+        objects, because they need them. When someone changes department they are
+        issued the new set - and asking for the old ones back is an awkward
+        conversation nobody schedules.</p>
+        <p>After a decade, long-serving staff carry keys to nearly every door in
+        the building, and departed staff have simply walked away with theirs. No
+        single decision caused this. It is the accumulated result of the returning
+        half of the process being the half nobody is accountable for.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>What deprovisioning misses</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="deprov">Audit a leaver</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="deprov">Clear</button>
+        </div>
+        <div class="terminal" id="demo-deprov" aria-live="polite" aria-label="Deprovisioning audit output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Identity proofing and attestation</h3>
+        <p><span class="term" data-term="identity proofing">Identity proofing</span>
+        establishes that a person is who they claim before an account is created.
+        Everything downstream depends on it: strong authentication protecting an
+        account issued to the wrong person protects the wrong person very well.</p>
+        <p><span class="term" data-term="attestation">Attestation</span> is the
+        periodic review in which managers and system owners confirm that each
+        person's access is still appropriate. It is the control that catches
+        privilege creep and orphaned accounts, and its characteristic failure is
+        rubber-stamping - a manager presented with two hundred entries and a
+        deadline approves them all.</p>
+        <p>Attestation works when it is scoped small enough to be read, when the
+        reviewer is someone who actually knows what the person does, and when
+        removing access is at least as easy as approving it.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏦</span> Think of it like…</p><p class="analogy__title">Opening an account at a bank</p><p>Before a bank issues you anything, it asks for documents and checks them. Everything afterwards - the card, the app, the fraud alerts - rests entirely on that first conversation being correct.</p><p>If the documents were forged and the account was opened in your name for someone else, the bank's excellent card security now protects a stranger very effectively. Identity proofing is that first conversation, and no amount of authentication strength compensates for getting it wrong.</p></div>
+
+      <div class="subsection">
+        <h3>Single sign-on and federation</h3>
+        <p><span class="term" data-term="sso">Single sign-on</span> allows one
+        authentication to grant access to multiple systems.
+        <span class="term" data-term="federation">Federation</span> extends this
+        across organizational boundaries, so an identity issued by one
+        organization is accepted by another.</p>
+        <p>The security argument runs both ways, and the exam expects both. SSO
+        reduces password reuse and fatigue, gives one place to enforce MFA, and
+        makes deprovisioning genuinely effective - disable the identity and access
+        ends everywhere. It also concentrates risk: compromising that single
+        identity opens everything at once, which is why SSO accounts require
+        strong MFA rather than merely benefiting from it.</p>
+        <table>
+          <thead><tr><th>Protocol</th><th>Purpose</th><th>Typical use</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="saml">SAML</span></td><td>Authentication - asserting who someone is</td><td>Enterprise web SSO</td></tr>
+            <tr><td><span class="term" data-term="oauth">OAuth</span></td><td>Authorisation - delegating access without sharing credentials</td><td>Third-party app access to your data</td></tr>
+            <tr><td>OpenID Connect</td><td>Authentication layer built on OAuth</td><td>Consumer sign-in with an existing account</td></tr>
+            <tr><td>LDAP</td><td>Directory access protocol</td><td>Querying an on-premises directory</td></tr>
+          </tbody>
+        </table>
+        <p>The SAML and OAuth distinction is the one most often confused. SAML
+        answers "who is this person"; OAuth answers "what may this application do
+        on their behalf". An application granted OAuth access to your calendar has
+        not been told who you are in any useful sense - it has been given
+        permission to read calendar entries.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 240" role="img" aria-labelledby="ssTitle ssDesc">
+          <title id="ssTitle">Single sign-on with SAML</title>
+          <desc id="ssDesc">A user requests an application, is redirected to an identity provider, authenticates once with multifactor authentication, and the identity provider returns a signed assertion that the application trusts. Disabling the identity ends access to every connected application at once.</desc>
+          <rect x="20" y="70" width="120" height="56" rx="10" class="svg-box"/>
+          <text x="80" y="94" text-anchor="middle" class="svg-label">User</text>
+          <text x="80" y="112" text-anchor="middle" class="svg-sub">one login</text>
+          <rect x="250" y="60" width="180" height="76" rx="12" class="svg-box accent"/>
+          <text x="340" y="88" text-anchor="middle" class="svg-label">Identity provider</text>
+          <text x="340" y="107" text-anchor="middle" class="svg-sub">authenticates, enforces MFA</text>
+          <text x="340" y="124" text-anchor="middle" class="svg-mono">issues signed assertion</text>
+          <g class="svg-sub">
+            <rect x="540" y="26" width="140" height="34" rx="7" class="svg-box brand"/><text x="610" y="48" text-anchor="middle">app A</text>
+            <rect x="540" y="68" width="140" height="34" rx="7" class="svg-box brand"/><text x="610" y="90" text-anchor="middle">app B</text>
+            <rect x="540" y="110" width="140" height="34" rx="7" class="svg-box brand"/><text x="610" y="132" text-anchor="middle">app C ... &times;41</text>
+          </g>
+          <g class="svg-line accent">
+            <path d="M142 98 L246 98" marker-end="url(#ad10)"/>
+            <path d="M432 90 L536 45" marker-end="url(#ad10)"/>
+            <path d="M432 98 L536 86" marker-end="url(#ad10)"/>
+            <path d="M432 106 L536 126" marker-end="url(#ad10)"/>
+          </g>
+          <defs><marker id="ad10" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <rect x="20" y="164" width="660" height="60" rx="10" class="svg-box warn"/>
+          <text x="350" y="186" text-anchor="middle" class="svg-label">The trade both ways</text>
+          <text x="350" y="206" text-anchor="middle" class="svg-sub">Disable the identity and access ends everywhere &mdash; and compromising it opens everything at once,</text>
+          <text x="350" y="220" text-anchor="middle" class="svg-sub">which is why SSO accounts require strong MFA rather than merely benefiting from it.</text>
+        </svg>
+        <figcaption>Systems that never joined SSO are the ones that survive deprovisioning.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128663;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A passport and a valet key</p>
+        <p><strong>SAML</strong> is a passport. It asserts identity, is issued by
+        an authority the other party already trusts, and the border officer
+        accepts it because of who issued it rather than because they know you.</p>
+        <p><strong>OAuth</strong> is a valet key. It opens the driver's door and
+        starts the engine and does not open the boot or the glovebox. It grants a
+        specific, limited capability - and the attendant never learns your name,
+        because that was never the point.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a valet
+        key stops working when you drive away. An OAuth grant persists until it is
+        revoked, which is why reviewing which applications hold access to your
+        accounts is a real control rather than housekeeping.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Interoperability</h3>
+        <p>Interoperability is whether identity systems can actually work
+        together. It appears in the objective because federation frequently fails
+        for unglamorous reasons: systems supporting different protocols, attributes
+        named differently on each side, or legacy applications that cannot
+        participate in modern authentication at all.</p>
+        <p>Those legacy applications are the practical problem. An organization
+        deploying SSO across ninety percent of its estate still has local accounts
+        on the remaining ten percent - and those are the accounts that survive
+        deprovisioning, because disabling the central identity does not touch
+        them.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="access-control" data-icon="&#128272;" role="tabpanel"
+             aria-labelledby="tab-access-control" tabindex="-1">
+      <h2 class="section-title">Access Control, MFA, and Privileged Access</h2>
+
+      <div class="subsection">
+        <h3>The access control models</h3>
+        <table>
+          <thead><tr><th>Model</th><th>Who decides</th><th>Characteristic use</th></tr></thead>
+          <tbody>
+            <tr><td>Mandatory (MAC)</td><td>The system, from labels; users cannot override</td><td>Military and classified environments</td></tr>
+            <tr><td>Discretionary (DAC)</td><td>The data owner grants access at their discretion</td><td>File shares, personal documents</td></tr>
+            <tr><td>Role-based (RBAC)</td><td>Access follows job role</td><td>Most enterprises</td></tr>
+            <tr><td>Rule-based</td><td>System-wide rules applied uniformly</td><td>Firewall and network policy</td></tr>
+            <tr><td>Attribute-based (ABAC)</td><td>Policy evaluating multiple attributes together</td><td>Fine-grained and contextual access</td></tr>
+          </tbody>
+        </table>
+        <p>Two distinctions decide most exam questions. <strong>MAC versus
+        DAC</strong> is about whether a user can share what they have access to:
+        under DAC they can, under MAC the system forbids it regardless of their
+        wishes. And <strong>RBAC versus ABAC</strong> is about how many factors
+        the decision considers - RBAC looks only at role, while ABAC can combine
+        role, device, location, time, and data classification in one policy.</p>
+        <p>ABAC is what makes the zero trust decisions from Module 1 expressible.
+        "Permit finance staff to read payroll from a managed device during
+        business hours from a recognised location" is a single ABAC policy and
+        cannot be written in RBAC at all.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="acTitle acDesc">
+          <title id="acTitle">Access control models compared</title>
+          <desc id="acDesc">MAC enforces system labels that users cannot override. DAC lets the owner decide and share. RBAC derives access from job role. ABAC evaluates several attributes together. The key questions are whether the owner can override, and how many factors the decision considers.</desc>
+          <rect x="20" y="40" width="155" height="88" rx="10" class="svg-box danger"/>
+          <text x="97" y="66" text-anchor="middle" class="svg-label">MAC</text>
+          <text x="97" y="86" text-anchor="middle" class="svg-sub">system labels decide</text>
+          <text x="97" y="104" text-anchor="middle" class="svg-mono">owner CANNOT</text>
+          <text x="97" y="119" text-anchor="middle" class="svg-mono">override</text>
+          <rect x="190" y="40" width="155" height="88" rx="10" class="svg-box warn"/>
+          <text x="267" y="66" text-anchor="middle" class="svg-label">DAC</text>
+          <text x="267" y="86" text-anchor="middle" class="svg-sub">owner decides</text>
+          <text x="267" y="104" text-anchor="middle" class="svg-mono">owner CAN share</text>
+          <rect x="360" y="40" width="155" height="88" rx="10" class="svg-box brand"/>
+          <text x="437" y="66" text-anchor="middle" class="svg-label">RBAC</text>
+          <text x="437" y="86" text-anchor="middle" class="svg-sub">role decides</text>
+          <text x="437" y="104" text-anchor="middle" class="svg-mono">one factor</text>
+          <rect x="530" y="40" width="150" height="88" rx="10" class="svg-box accent"/>
+          <text x="605" y="66" text-anchor="middle" class="svg-label">ABAC</text>
+          <text x="605" y="86" text-anchor="middle" class="svg-sub">attributes decide</text>
+          <text x="605" y="104" text-anchor="middle" class="svg-mono">many factors</text>
+          <rect x="20" y="150" width="325" height="44" rx="8" class="svg-box"/>
+          <text x="182" y="169" text-anchor="middle" class="svg-label">Question 1</text>
+          <text x="182" y="186" text-anchor="middle" class="svg-sub">Can the owner override? MAC no, DAC yes</text>
+          <rect x="360" y="150" width="320" height="44" rx="8" class="svg-box"/>
+          <text x="520" y="169" text-anchor="middle" class="svg-label">Question 2</text>
+          <text x="520" y="186" text-anchor="middle" class="svg-sub">How many factors? RBAC one, ABAC several</text>
+          <text x="350" y="222" text-anchor="middle" class="svg-sub">Only ABAC can express "finance staff, managed device, business hours, known location"</text>
+          <text x="350" y="240" text-anchor="middle" class="svg-sub">&mdash; which is what makes zero trust policy from Module 1 writable at all.</text>
+        </svg>
+        <figcaption>Two questions decide almost every access control question on the exam.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128104;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Four doorkeepers</p>
+        <p>The <strong>DAC</strong> doorkeeper works for whoever owns the room:
+        the owner says who may enter and can lend their key to a friend.</p>
+        <p>The <strong>MAC</strong> doorkeeper works for the institution. The room
+        is marked Secret, your clearance is Confidential, and the owner's opinion
+        is irrelevant - they cannot let you in even if they want to.</p>
+        <p>The <strong>RBAC</strong> doorkeeper reads your job title. Radiologists
+        enter, everyone else does not, and no further conversation occurs.</p>
+        <p>The <strong>ABAC</strong> doorkeeper checks your title, whether you are
+        on shift, which building you came from, and whether the room is currently
+        in restricted use. Same person, different answer on a different day.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Least privilege and time-of-day restrictions</h3>
+        <p>Least privilege was introduced in Module 1 and is implemented here.
+        Permission assignments should grant the minimum an account needs, and the
+        implications run further than students expect: permissions granted to a
+        service account become the permissions available to anything that
+        compromises that service.</p>
+        <p>Time-of-day restrictions limit when an account may be used. They are
+        cheap and surprisingly effective, because they convert the out-of-cycle
+        indicator from Module 5 from something you detect afterwards into
+        something that simply does not happen.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Multifactor authentication</h3>
+        <p>Module 1 established the three factor categories, and this objective
+        adds a fourth - <strong>somewhere you are</strong>, based on location -
+        and names specific implementations.</p>
+        <table>
+          <thead><tr><th>Implementation</th><th>Factor</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Biometrics</td><td>Something you are</td><td>Cannot be changed once compromised</td></tr>
+            <tr><td>Hard token</td><td>Something you have</td><td>Dedicated device generating codes</td></tr>
+            <tr><td>Soft token</td><td>Something you have</td><td>Application on a phone</td></tr>
+            <tr><td>Security key</td><td>Something you have</td><td>Hardware key; resistant to phishing</td></tr>
+            <tr><td>SMS code</td><td>Something you have</td><td>Weakest common option - interceptable, SIM swap</td></tr>
+          </tbody>
+        </table>
+        <p>Security keys deserve attention because they solve a problem other
+        methods do not. A user can be phished into typing a code from an
+        authenticator app into an attacker's page. A security key verifies the
+        site's identity cryptographically before responding, so it will not
+        authenticate to a lookalike domain - which is the typosquatting attack
+        from Module 3 defeated by the mechanism rather than by the user noticing.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🔐</span> Think of it like…</p><p class="analogy__title">A safe needing two different keys</p><p>A safe deposit box opens only when the customer's key and the bank's key are turned together. Neither party can open it alone, and that is deliberate - the security comes from the two keys being held by different people in different places.</p><p>Multifactor authentication is the same design. The point is not two obstacles but two obstacles an attacker must overcome in two different ways. A password plus a security question is one key turned twice.</p></div>
+
+      <div class="subsection">
+        <h3>Password concepts</h3>
+        <p>Guidance has shifted, and the exam reflects current thinking rather
+        than older habits.</p>
+        <table>
+          <thead><tr><th>Concept</th><th>Current guidance</th></tr></thead>
+          <tbody>
+            <tr><td>Length</td><td>The dominant factor; longer beats complex</td></tr>
+            <tr><td>Complexity</td><td>Useful, but composition rules produce predictable substitutions</td></tr>
+            <tr><td>Reuse</td><td>Prohibited - reuse is what makes credential stuffing work</td></tr>
+            <tr><td>Expiration</td><td>Forced periodic change is discouraged unless compromise is suspected</td></tr>
+            <tr><td>Age</td><td>Minimum age prevents cycling straight back to a favourite</td></tr>
+            <tr><td>Password managers</td><td>Recommended; make long unique passwords practical</td></tr>
+            <tr><td>Passwordless</td><td>Removes the password entirely, using keys or biometrics</td></tr>
+          </tbody>
+        </table>
+        <p>The expiration change surprises students. Forced ninety-day rotation
+        was standard for years and is now discouraged, because it produces
+        predictable behaviour - <code>Summer2026</code> becomes
+        <code>Autumn2026</code> - without meaningfully limiting an attacker who
+        exploits credentials within hours. Change on suspicion of compromise, not
+        on a calendar.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="pam">Privileged access management</span></h3>
+        <p>Administrative accounts are the highest-value targets in any
+        environment, and PAM tooling exists to reduce how much standing privilege
+        exists at all.</p>
+        <table>
+          <thead><tr><th>Technique</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Just-in-time permissions</td><td>Elevation granted for a specific task and window, then removed automatically</td></tr>
+            <tr><td>Password vaulting</td><td>Credentials held in a vault, checked out and rotated after use</td></tr>
+            <tr><td>Ephemeral credentials</td><td>Credentials created for one session and never reused</td></tr>
+          </tbody>
+        </table>
+        <p>The shared principle is that privilege should not sit waiting to be
+        stolen. An administrator holding permanent domain admin rights is a
+        permanent target; an administrator who requests elevation for twenty
+        minutes with an approval trail is a target for twenty minutes.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#9203;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A key that expires at four o'clock</p>
+        <p>A contractor needing access to the plant room could be given a master
+        key to keep. From that moment the key exists in a pocket, at home, in a
+        car, and in a coat left in a pub - and it opens the plant room for years.</p>
+        <p>Alternatively they collect a key that stops working at four, signed out
+        against their name. The work is identical. What differs is that the window
+        in which the key is worth stealing is three hours rather than the rest of
+        its existence.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Permission assignment in practice</h3>
+        <p>Objective 4.6 mentions permission assignments and their implications,
+        and two implications recur in exam scenarios.</p>
+        <p><strong>Group nesting.</strong> Permissions are granted to groups
+        rather than individuals so they scale, and groups are then placed inside
+        other groups for convenience. Several layers in, nobody can state what a
+        given group actually confers without tracing the chain, and someone added
+        to a helpful-sounding group inherits far more than anyone intended.
+        Attestation is the control that surfaces this, which is why the review
+        must show effective permissions rather than group names.</p>
+        <p><strong>Service account permissions.</strong> An account used by an
+        application holds whatever that application was granted, and it typically
+        has no password expiry, no MFA, and no human watching it. Whatever
+        compromises the application inherits those permissions in full. Service
+        accounts should be scoped tightly, and their credentials belong in a vault
+        rather than a configuration file - which is the Module 2 key management
+        failure repeated with a different kind of secret.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Practice: choose the model</h3>      <div class="subsection">
+        <h3>Practice: choose the model</h3>
+        <div class="classifier" data-classifier="access"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="automation" data-icon="&#9881;" role="tabpanel"
+             aria-labelledby="tab-automation" tabindex="-1">
+      <h2 class="section-title">Automation and Orchestration</h2>
+
+      <div class="subsection">
+        <h3>Where automation is applied</h3>
+        <p>Objective 4.7 names use cases, and they cluster into work that is
+        repetitive, must be consistent, or must happen faster than a human can
+        respond.</p>
+        <table>
+          <thead><tr><th>Use case</th><th>What automation delivers</th></tr></thead>
+          <tbody>
+            <tr><td>User provisioning and deprovisioning</td><td>Access granted and removed reliably, on the same day</td></tr>
+            <tr><td>Resource provisioning</td><td>Infrastructure built to a defined standard every time</td></tr>
+            <tr><td>Guard rails</td><td>Policy that prevents non-compliant configurations being created</td></tr>
+            <tr><td>Security groups</td><td>Membership derived from authoritative data rather than requests</td></tr>
+            <tr><td>Ticket creation and escalation</td><td>Findings routed to owners without manual triage</td></tr>
+            <tr><td>Enabling and disabling services</td><td>Rapid response actions applied consistently</td></tr>
+            <tr><td>Continuous integration and testing</td><td>Security checks run on every change</td></tr>
+            <tr><td>Integrations and APIs</td><td>Tools acting on each other's findings</td></tr>
+          </tbody>
+        </table>
+        <p>Deprovisioning is the highest-value item on that list. It is the
+        control that fails most often when performed manually, and it fails
+        silently - which makes it exactly the kind of work automation is for.
+        Connecting the identity system to the HR system means a leaving date
+        entered once removes access everywhere, without depending on a manager
+        remembering to raise a ticket.</p>
+        <p><span class="term" data-term="guard rail"><strong>Guard rails</strong></span> deserve separate mention because they
+        change when enforcement happens. Rather than detecting a public storage
+        container after it is created, a guard rail prevents it being created.
+        That is the difference between finding a problem and not having one.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128296;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A jig on a workbench</p>
+        <p>A skilled carpenter can cut the same joint by hand a hundred times, and
+        the hundred will vary slightly - more so at the end of a long day. A jig
+        holds the work so the cut can only be made one way. It does not make the
+        carpenter better; it makes the wrong cut difficult.</p>
+        <p>That is what a guard rail does. It is not a check performed after the
+        work, it is a constraint that makes the incorrect outcome hard to produce
+        in the first place.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">💳</span> Think of it like…</p><p class="analogy__title">Borrowing time you will repay with interest</p><p>A quick script written in an afternoon saves hours every week from then on. The saving is real and immediate, and the cost arrives later - when it becomes load-bearing, when the person who wrote it leaves, and when an API it depends on changes silently.</p><p>That is technical debt. Like financial debt it is not inherently wrong, and borrowing deliberately with a plan to repay is different from borrowing without noticing you have.</p></div>
+
+      <div class="subsection">
+        <h3>The benefits, stated precisely</h3>
+        <table>
+          <thead><tr><th>Benefit</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>Efficiency and time saving</td><td>Staff time moves from repetition to judgement</td></tr>
+            <tr><td>Enforcing baselines</td><td>The Module 8 baseline becomes the actual configuration, not a document</td></tr>
+            <tr><td>Standard configurations</td><td>Systems built identically, so drift has less opportunity</td></tr>
+            <tr><td>Scaling securely</td><td>Ten thousand endpoints handled as consistently as ten</td></tr>
+            <tr><td>Employee retention</td><td>Analysts leave roles that consist of repetitive manual work</td></tr>
+            <tr><td>Reaction time</td><td>Containment in seconds rather than after a triage queue</td></tr>
+            <tr><td>Workforce multiplier</td><td>A small team covers ground that would otherwise need a large one</td></tr>
+          </tbody>
+        </table>
+        <p>Employee retention appears in the objective and looks out of place
+        until you consider what security operations work is actually like. Roles
+        consisting largely of closing repetitive alerts have high turnover, and
+        every departure costs institutional knowledge. Automating the repetitive
+        portion is a retention measure with a direct security consequence.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>What automation costs</h3>
+        <table>
+          <thead><tr><th>Consideration</th><th>The risk</th></tr></thead>
+          <tbody>
+            <tr><td>Complexity</td><td>Systems nobody fully understands behave unpredictably</td></tr>
+            <tr><td>Cost</td><td>Tooling and the expertise to build and maintain it</td></tr>
+            <tr><td>Single point of failure</td><td>If the automation platform fails, everything it does stops</td></tr>
+            <tr><td>Technical debt</td><td>Quick scripts become critical infrastructure nobody wants to touch</td></tr>
+            <tr><td>Ongoing supportability</td><td>Automation written by someone who left is a liability</td></tr>
+          </tbody>
+        </table>
+        <p>Supportability is the practical trap. An analyst writes a script that
+        saves hours weekly, it becomes load-bearing, and they leave. Nobody else
+        understands it, nobody dares change it, and it silently stops working the
+        day an API it depends on changes. Automation is code, so it needs version
+        control, documentation, and an owner - which is the Module 8 asset
+        ownership principle applied to something that is not a device.</p>
+        <p>Automation also amplifies mistakes. A manual error affects one system;
+        the same error in automation affects every system it touches, at machine
+        speed. This is the infrastructure-as-code trade-off from Module 6 in a
+        broader form, and it is why automation that makes changes needs the same
+        review as any other production code.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="incident-response" data-icon="&#128680;" role="tabpanel"
+             aria-labelledby="tab-incident-response" tabindex="-1">
+      <h2 class="section-title">Incident Response</h2>
+
+      <div class="subsection">
+        <h3>The process</h3>
+        <p>Objective 4.8 names seven phases, and the exam tests both their content
+        and their order.</p>
+        <table>
+          <thead><tr><th>Phase</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>Preparation</td><td>Plans, tooling, training, and contacts established before anything happens</td></tr>
+            <tr><td>Detection</td><td>Something is noticed - by monitoring, a user, or a third party</td></tr>
+            <tr><td>Analysis</td><td>Determine what happened, what is affected, and how serious it is</td></tr>
+            <tr><td>Containment</td><td>Stop it spreading or continuing</td></tr>
+            <tr><td>Eradication</td><td>Remove the attacker and the cause</td></tr>
+            <tr><td>Recovery</td><td>Restore normal operation and confirm it is safe</td></tr>
+            <tr><td>Lessons learned</td><td>Review what happened and improve the response</td></tr>
+          </tbody>
+        </table>
+        <p>Two orderings are tested repeatedly. <strong>Containment precedes
+        eradication</strong>: stop the bleeding before treating the wound, because
+        eradication takes time and the attacker is still active during it. And
+        <strong>preparation precedes everything</strong> - a plan written during an
+        incident is not a plan, it is improvisation with an audience.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 220" role="img" aria-labelledby="irTitle irDesc">
+          <title id="irTitle">The incident response process</title>
+          <desc id="irDesc">Seven phases: preparation, detection, analysis, containment, eradication, recovery, and lessons learned, which feeds back into preparation. Containment is highlighted as preceding eradication.</desc>
+          <g>
+            <rect x="12" y="56" width="90" height="60" rx="9" class="svg-box brand"/>
+            <text x="57" y="82" text-anchor="middle" class="svg-sub">Preparation</text>
+            <text x="57" y="100" text-anchor="middle" class="svg-mono">before all</text>
+            <rect x="112" y="56" width="82" height="60" rx="9" class="svg-box"/>
+            <text x="153" y="90" text-anchor="middle" class="svg-sub">Detection</text>
+            <rect x="204" y="56" width="82" height="60" rx="9" class="svg-box"/>
+            <text x="245" y="90" text-anchor="middle" class="svg-sub">Analysis</text>
+            <rect x="296" y="56" width="98" height="60" rx="9" class="svg-box accent"/>
+            <text x="345" y="82" text-anchor="middle" class="svg-sub">Containment</text>
+            <text x="345" y="100" text-anchor="middle" class="svg-mono">stop spread</text>
+            <rect x="404" y="56" width="98" height="60" rx="9" class="svg-box warn"/>
+            <text x="453" y="82" text-anchor="middle" class="svg-sub">Eradication</text>
+            <text x="453" y="100" text-anchor="middle" class="svg-mono">remove cause</text>
+            <rect x="512" y="56" width="82" height="60" rx="9" class="svg-box"/>
+            <text x="553" y="90" text-anchor="middle" class="svg-sub">Recovery</text>
+            <rect x="604" y="56" width="84" height="60" rx="9" class="svg-box brand"/>
+            <text x="646" y="82" text-anchor="middle" class="svg-sub">Lessons</text>
+            <text x="646" y="100" text-anchor="middle" class="svg-mono">blameless</text>
+          </g>
+          <g class="svg-line accent">
+            <path d="M104 86 L110 86" marker-end="url(#ai10)"/>
+            <path d="M196 86 L202 86" marker-end="url(#ai10)"/>
+            <path d="M288 86 L294 86" marker-end="url(#ai10)"/>
+            <path d="M396 86 L402 86" marker-end="url(#ai10)"/>
+            <path d="M504 86 L510 86" marker-end="url(#ai10)"/>
+            <path d="M596 86 L602 86" marker-end="url(#ai10)"/>
+            <path d="M646 118 C 646 162, 57 162, 57 118" stroke-dasharray="5 4" marker-end="url(#ai10)"/>
+          </g>
+          <defs><marker id="ai10" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="36" text-anchor="middle" class="svg-sub">Containment before eradication: eradication takes hours, and the attacker is active for all of them.</text>
+          <text x="350" y="200" text-anchor="middle" class="svg-sub">Isolate the host from the network rather than powering it off &mdash; memory is lost with power.</text>
+        </svg>
+        <figcaption>A plan written during an incident is improvisation with an audience.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128167;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A burst pipe at two in the morning</p>
+        <p>You do not begin by repairing the pipe. You find the stopcock and turn
+        the water off, because the repair takes an hour and the flooding does not
+        pause while you work.</p>
+        <p>Containment is the stopcock. Eradication is the repair. Recovery is
+        drying out and turning the water back on, and lessons learned is asking
+        why nobody knew where the stopcock was - which is preparation for next
+        time.</p>
+      </div>
+
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="ir-map">
+        Open the incident response reference</button></p>
+
+      <div class="subsection">
+        <h3>Containment decisions</h3>
+        <p>Containment involves a genuine trade-off the exam likes to probe.
+        Isolating a compromised host stops the attacker and destroys volatile
+        evidence if done by powering off. Leaving a system running preserves
+        evidence and lets the attacker continue.</p>
+        <p>The standard resolution is network isolation rather than shutdown:
+        disconnect the host from the network while leaving it running, which
+        halts lateral movement and exfiltration while preserving memory contents.
+        This is the quarantine capability from Module 9, and it is why EDR tooling
+        that can isolate a host remotely is valuable beyond detection.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Training, testing, and root cause analysis</h3>
+        <p>Module 7 covered the exercise types - tabletop, simulation, and full
+        failover - in a continuity context. They apply identically to incident
+        response, and the same pattern holds: organizations run tabletops
+        repeatedly because they are safe, and discover during a real incident that
+        nobody has actually performed the technical steps.</p>
+        <p><strong>Root cause analysis</strong> asks why the incident was possible
+        rather than what the attacker did. The distinction matters because the
+        proximate cause is rarely the useful answer. "An employee clicked a
+        phishing link" is what happened; "MFA was not enforced on that
+        application, so a harvested password was sufficient" is why it mattered.
+        Only the second suggests a fix.</p>
+        <p><strong>Threat hunting</strong> is proactive rather than reactive. It
+        assumes an intruder may already be present and searches for evidence
+        without waiting for an alert - which is the correct response to the
+        long-dwell-time scenarios from Module 3, where the whole problem is that
+        nothing alerted for fourteen months.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Working an incident in order</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="ir">Run the response</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="ir">Clear</button>
+        </div>
+        <div class="terminal" id="demo-ir" aria-live="polite" aria-label="Incident response sequence"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Who is involved, and communication</h3>
+        <p>Incident response is not solely a technical activity, and the
+        preparation phase includes establishing who is involved before anyone
+        needs them.</p>
+        <table>
+          <thead><tr><th>Role</th><th>Why they are needed</th></tr></thead>
+          <tbody>
+            <tr><td>Incident commander</td><td>One person deciding, so parallel efforts do not conflict</td></tr>
+            <tr><td>Technical responders</td><td>Analysis, containment, eradication, recovery</td></tr>
+            <tr><td>Legal counsel</td><td>Notification obligations, legal hold, evidence handling</td></tr>
+            <tr><td>Communications</td><td>What is said to staff, customers, and press, and when</td></tr>
+            <tr><td>Executive sponsor</td><td>Authority for decisions with business consequences</td></tr>
+            <tr><td>HR</td><td>Required from the first hour where an insider is involved</td></tr>
+          </tbody>
+        </table>
+        <p>The incident commander role matters more than it appears. Without one,
+        an incident produces several people independently deciding to isolate,
+        rebuild, or preserve the same system - and the rebuild destroys the
+        evidence the preservation was collecting.</p>
+        <p>Communication also has a security dimension. If an attacker still has
+        access to corporate email or chat, discussing the response there tells
+        them exactly what you know and what you are about to do. Out-of-band
+        communication during an active incident is a standard precaution.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Lessons learned</h3>      <div class="subsection">
+        <h3>Lessons learned</h3>
+        <p>The final phase is the one most often skipped, because by the time it
+        arrives everyone is exhausted and the immediate problem is solved. Skipping
+        it means the same incident recurs.</p>
+        <p>A useful review is blameless, which is the same principle as the
+        reporting channel from Module 3. A review that identifies who made a
+        mistake produces defensiveness and incomplete information; a review that
+        identifies which control was missing produces changes. The question is not
+        who clicked the link but why clicking a link was sufficient to cause this.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="countermeasures" data-icon="&#128737;" role="tabpanel"
+             aria-labelledby="tab-countermeasures" tabindex="-1">
+      <h2 class="section-title">Digital Forensics and Data Sources</h2>
+
+      <div class="subsection">
+        <h3>Why forensic handling matters</h3>
+        <p>Evidence that has been altered, or that cannot be shown to be
+        unaltered, is not usable - in court, in an employment tribunal, or in an
+        insurance claim. The technical work of an investigation and the
+        evidential work run in parallel, and the second is easy to destroy while
+        doing the first.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="chain of custody">Chain of custody</span></h3>
+        <p>Chain of custody is the documented record of who held evidence, when,
+        and what they did with it, unbroken from collection to presentation. A gap
+        anywhere allows the argument that evidence could have been altered, and
+        that argument does not need to be proven to be effective.</p>
+        <p>Practically this means every transfer is recorded and signed, evidence
+        is stored so access is controlled and logged, and analysis is performed on
+        a copy while the original is preserved untouched.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128188;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Signatures on an evidence bag</p>
+        <p>An item collected at a scene goes into a sealed bag, and every person
+        who takes it signs and dates the label. The chain is not there because
+        anyone is suspected - it is there so that nobody can suggest an
+        unaccounted-for gap.</p>
+        <p>A bag with a four-hour period nobody signed for is not proof that
+        anything happened during those hours. It only has to raise the
+        possibility, which is enough to make the contents worthless as evidence.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Acquisition and order of volatility</h3>
+        <p>Acquisition is collecting the evidence, and the <span class="term" data-term="order of volatility">order of volatility</span> matters because
+        some evidence disappears faster than the rest. The principle is to collect
+        the most volatile first.</p>
+        <table>
+          <thead><tr><th>Order</th><th>Source</th><th>Survives</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>CPU registers and cache</td><td>Moments</td></tr>
+            <tr><td>2</td><td>Memory (RAM)</td><td>Until power is lost</td></tr>
+            <tr><td>3</td><td>Network state and connections</td><td>Until the session ends</td></tr>
+            <tr><td>4</td><td>Running processes</td><td>Until reboot</td></tr>
+            <tr><td>5</td><td>Disk contents</td><td>Persistent</td></tr>
+            <tr><td>6</td><td>Logs on remote systems</td><td>Until retention expires</td></tr>
+            <tr><td>7</td><td>Backups and archives</td><td>Longest</td></tr>
+          </tbody>
+        </table>
+        <p>This is why powering off a compromised machine is usually wrong.
+        Everything in memory - running malware, encryption keys, active network
+        connections, and processes with no file on disk at all - is lost the
+        instant power is removed, and it is often the only place that evidence
+        existed.</p>
+        <p>Acquisition itself must be verifiable. A forensic image is hashed
+        immediately, and the hash is recorded and re-verified later, which
+        demonstrates that the copy analysed is identical to what was collected -
+        the Module 2 integrity property applied to evidence.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="voTitle voDesc">
+          <title id="voTitle">Order of volatility in evidence acquisition</title>
+          <desc id="voDesc">Evidence ranked from most volatile to least: CPU registers and cache, memory, network state, running processes, disk contents, remote logs, and backups. Everything above disk contents is lost when power is removed.</desc>
+          <g class="svg-sub">
+            <rect x="60" y="26" width="580" height="26" rx="6" class="svg-box danger"/>
+            <text x="350" y="44" text-anchor="middle">1. CPU registers and cache &mdash; moments</text>
+            <rect x="80" y="58" width="540" height="26" rx="6" class="svg-box danger"/>
+            <text x="350" y="76" text-anchor="middle">2. Memory (RAM) &mdash; until power is lost</text>
+            <rect x="100" y="90" width="500" height="26" rx="6" class="svg-box warn"/>
+            <text x="350" y="108" text-anchor="middle">3. Network connections and state</text>
+            <rect x="120" y="122" width="460" height="26" rx="6" class="svg-box warn"/>
+            <text x="350" y="140" text-anchor="middle">4. Running processes &mdash; until reboot</text>
+            <rect x="140" y="154" width="420" height="26" rx="6" class="svg-box accent"/>
+            <text x="350" y="172" text-anchor="middle">5. Disk contents &mdash; persistent</text>
+            <rect x="160" y="186" width="380" height="26" rx="6" class="svg-box"/>
+            <text x="350" y="204" text-anchor="middle">6. Remote logs &nbsp;&nbsp; 7. Backups and archives</text>
+          </g>
+          <path d="M30 30 L30 208" class="svg-line danger" marker-end="url(#av10)"/>
+          <text x="16" y="120" text-anchor="middle" class="svg-mono" transform="rotate(-90 16 120)">collect first</text>
+          <defs><marker id="av10" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-warn"/></marker></defs>
+          <text x="350" y="238" text-anchor="middle" class="svg-sub">Everything above the disk row is gone the instant power is removed &mdash; including fileless processes that leave no disk trace at all.</text>
+        </svg>
+        <figcaption>This is why isolating a host beats powering it off.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128012;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Footprints and an incoming tide</p>
+        <p>An investigator on a beach photographs the footprints near the water
+        first. The wall behind them will still be there tomorrow; the prints will
+        not survive the next hour.</p>
+        <p>Order of volatility is exactly that judgement. The disk can wait.
+        Memory cannot, and pulling the power is the equivalent of letting the tide
+        in before anyone took a photograph.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Acquiring evidence in the right order</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="forensics">Acquire evidence</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="forensics">Clear</button>
+        </div>
+        <div class="terminal" id="demo-forensics" aria-live="polite" aria-label="Forensic acquisition output"></div>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🗑</span> Think of it like…</p><p class="analogy__title">Stopping the shredder</p><p>An office shreds routine paperwork every Friday, and this is good practice - it reduces what could be exposed and what must be stored. Then a dispute becomes likely, and that same Friday routine turns into destroying material someone is about to ask for.</p><p>A legal hold is the instruction that stops the shredder. The awkward part is that in most organizations the shredding is automated, so the question becomes whether anyone can actually pause it - and finding out for the first time under legal pressure is a bad moment to discover the answer.</p></div>
+
+      <div class="subsection">
+        <h3>Legal hold, preservation, and e-discovery</h3>
+        <table>
+          <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="legal hold">Legal hold</span></td><td>A formal instruction to preserve data relevant to anticipated litigation</td></tr>
+            <tr><td>Preservation</td><td>The practical steps taken to comply, including suspending deletion</td></tr>
+            <tr><td>E-discovery</td><td>The process of identifying and producing electronic evidence for legal proceedings</td></tr>
+            <tr><td>Reporting</td><td>Documenting findings, methods, and conclusions so they can be reviewed</td></tr>
+          </tbody>
+        </table>
+        <p>A legal hold overrides normal retention policy, and this is the point
+        that appears in exam scenarios. Routine deletion that would otherwise be
+        correct - and that Module 7 described as good practice - becomes
+        destruction of evidence once a hold is in place. Automated retention
+        policies must therefore be capable of being suspended, and an organization
+        whose deletion cannot be paused has a serious problem the moment
+        litigation is anticipated.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🧩</span> Think of it like…</p><p class="analogy__title">Two witnesses whose accounts disagree</p><p>When two witnesses describe the same evening identically, you learn what happened. When they disagree, you learn something more interesting: at least one is wrong, and working out which is often the whole investigation.</p><p>Host logs and network logs are those witnesses. Agreement is unremarkable; disagreement is the finding. A connection the firewall recorded and the host has no memory of tells you the host cannot be trusted to describe itself.</p></div>
+
+      <div class="subsection">
+        <h3>Data sources for an investigation</h3>
+        <p>Objective 4.9 names the sources, and each answers a different question.</p>
+        <table>
+          <thead><tr><th>Source</th><th>What it establishes</th></tr></thead>
+          <tbody>
+            <tr><td>Firewall logs</td><td>What connections were permitted or denied, and to where</td></tr>
+            <tr><td>Application logs</td><td>What was done inside the application, and by which account</td></tr>
+            <tr><td>Endpoint logs</td><td>Process execution, file changes, local activity</td></tr>
+            <tr><td>OS security logs</td><td>Authentication, privilege use, account changes</td></tr>
+            <tr><td>IDS / IPS logs</td><td>What matched a signature or deviated from baseline</td></tr>
+            <tr><td>Network logs and flow data</td><td>Who communicated with whom, and how much</td></tr>
+            <tr><td>Metadata</td><td>File and message properties - timestamps, authorship, routing</td></tr>
+            <tr><td>Packet captures</td><td>Full content, where it was captured and is not encrypted</td></tr>
+            <tr><td>Vulnerability scans</td><td>What weakness was likely used</td></tr>
+            <tr><td>Dashboards and reports</td><td>Aggregate view and trend</td></tr>
+          </tbody>
+        </table>
+        <p>Investigations rely on correlating these rather than on any one. The
+        rootkit indicator from Module 5 is a case in point: the finding was that
+        network logs and host logs disagreed, and neither source alone said
+        anything.</p>
+        <p>Metadata is the source most often overlooked and frequently decisive.
+        Email headers establish routing that the message body conceals, and
+        document properties establish authorship and timing that the visible
+        content does not.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        Three discriminators. Containment precedes eradication - stop the spread
+        before removing the cause. Isolate a host from the network rather than
+        powering it off, because memory is lost with power. And a legal hold
+        overrides retention policy, so routine deletion becomes evidence
+        destruction the moment one is issued.
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="&#129514;" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        Analysis labs - nothing to install. Answers save in this browser as you
+        type, and each lab generates a Word document you can submit. Graded lab
+        assignments are posted in Canvas.
+      </div>
+
+      <div class="lab" data-lab="identity-design"></div>
+      <div class="lab" data-lab="automate-safely"></div>
+      <div class="lab" data-lab="run-the-incident"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers live in this browser only. Generate the report and save the file
+        when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "identity proofing": "Establishing that a person is who they claim before an account is created. Everything downstream depends on it - strong authentication on an account issued to the wrong person protects the wrong person.",
+    "attestation": "Periodic review in which managers confirm each person's access is still appropriate. The control that catches privilege creep and orphaned accounts, and whose failure mode is rubber-stamping.",
+    "sso": "Single sign-on: one authentication grants access to multiple systems. Reduces password fatigue and makes deprovisioning effective, while concentrating risk in one identity.",
+    "federation": "Extending identity across organizational boundaries, so an identity issued by one organization is accepted by another.",
+    "saml": "A protocol for asserting identity - who this person is. Used for enterprise web single sign-on.",
+    "oauth": "A protocol for delegating authorisation - what an application may do on your behalf, without sharing your credentials. It does not establish who you are.",
+    "pam": "Privileged access management: tooling that reduces standing privilege through just-in-time elevation, password vaulting, and ephemeral credentials.",
+    "chain of custody": "The unbroken documented record of who held evidence, when, and what they did with it. A gap allows the argument that evidence could have been altered.",
+    "legal hold": "A formal instruction to preserve data relevant to anticipated litigation. It overrides retention policy, so routine deletion becomes evidence destruction.",
+    "order of volatility": "Collecting the most perishable evidence first. Memory contents vanish when power is removed, which is why powering off a compromised host is usually wrong.",
+    "privilege creep": "Access accumulated across role changes and never removed, producing a combination of permissions no role was designed to hold.",
+    "guard rail": "Automated policy that prevents a non-compliant configuration being created at all, rather than detecting it afterwards."
+  };
+
+  window.MODALS = {
+    "ir-map": {
+      title: "Incident response phases",
+      body:
+        "<table><thead><tr><th>Phase</th><th>What happens</th></tr></thead><tbody>" +
+        "<tr><td>Preparation</td><td>Plans, tooling, training, contacts - before anything happens</td></tr>" +
+        "<tr><td>Detection</td><td>Something is noticed</td></tr>" +
+        "<tr><td>Analysis</td><td>What happened, what is affected, how serious</td></tr>" +
+        "<tr><td>Containment</td><td>Stop it spreading</td></tr>" +
+        "<tr><td>Eradication</td><td>Remove the attacker and the cause</td></tr>" +
+        "<tr><td>Recovery</td><td>Restore operation and confirm it is safe</td></tr>" +
+        "<tr><td>Lessons learned</td><td>Blameless review; improve the response</td></tr>" +
+        "</tbody></table><p>Containment precedes eradication because eradication takes " +
+        "time and the attacker is active throughout it. Isolate from the network rather " +
+        "than powering off, or memory evidence is lost.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "deprov": [
+      { text: "$ audit-leaver --user r.moore --left 94 days ago", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "central identity (SSO) .............. DISABLED  day 0", cls: "info", delay: 420 },
+      { text: "  -> 41 federated applications ...... access ended", cls: "output", delay: 400 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "checking systems outside SSO...", cls: "warning", delay: 400 },
+      { text: "  legacy finance app (local account) . STILL ACTIVE", cls: "error", delay: 460 },
+      { text: "  network device admin (shared cred) . STILL VALID", cls: "error", delay: 440 },
+      { text: "  VPN certificate .................... NOT REVOKED", cls: "error", delay: 440 },
+      { text: "  SaaS tool bought on a team card .... STILL ACTIVE", cls: "error", delay: 440 },
+      { text: "  personal device, cached mailbox .... NOT WIPED", cls: "warning", delay: 420 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[NOTE] SSO deprovisioning worked exactly as designed.", cls: "warning", delay: 540 },
+      { text: "Every survivor is a system that never joined it.", cls: "warning", delay: 480 },
+      { text: "[FIX] automate from HR, and inventory what sits outside SSO", cls: "info", delay: 540 }
+    ],
+    "ir": [
+      { text: "$ incident --id 2026-0413 --walk-phases", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "[PREPARATION]  plan, contacts, EDR isolation capability .. in place", cls: "info", delay: 460 },
+      { text: "[DETECTION]    EDR flags mass file encryption on FIN-WS-22", cls: "warning", delay: 440 },
+      { text: "[ANALYSIS]     scope: 1 host encrypting, 3 hosts contacted", cls: "output", delay: 440 },
+      { text: "               vector: credential reuse, no MFA on that app", cls: "output", delay: 420 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "[CONTAINMENT]  isolate FIN-WS-22 from the network", cls: "info", delay: 440 },
+      { text: "               host stays POWERED ON - memory preserved", cls: "info", delay: 440 },
+      { text: "               disable the compromised account", cls: "output", delay: 380 },
+      { text: "               spread halted at 14 minutes", cls: "output", delay: 380 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "[ERADICATION]  remove persistence, rotate credentials", cls: "output", delay: 420 },
+      { text: "[RECOVERY]     restore from clean backup, verify, reconnect", cls: "output", delay: 420 },
+      { text: "[LESSONS]      root cause: MFA absent on that application", cls: "info", delay: 460 },
+      { text: "               NOT 'a user reused a password'", cls: "warning", delay: 440 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[NOTE] Containment before eradication. Eradication takes hours,", cls: "warning", delay: 560 },
+      { text: "and the attacker is active for every one of them.", cls: "warning", delay: 480 }
+    ],
+    "forensics": [
+      { text: "$ acquire --host FIN-WS-22 --by-volatility", cls: "prompt", delay: 340 },
+      { text: "host state ......................... isolated, POWERED ON", cls: "info", delay: 420 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "  [1] CPU registers and cache ...... captured", cls: "output", delay: 380 },
+      { text: "  [2] memory image (RAM) ........... 32 GB captured", cls: "output", delay: 420 },
+      { text: "      -> running malware, keys, fileless processes", cls: "info", delay: 440 },
+      { text: "  [3] network connections .......... captured", cls: "output", delay: 360 },
+      { text: "  [4] running process list ......... captured", cls: "output", delay: 340 },
+      { text: "  [5] disk image ................... 512 GB captured", cls: "output", delay: 400 },
+      { text: "  [6] remote logs .................. pulled from SIEM", cls: "output", delay: 380 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "hashing each image ................. SHA-256 recorded", cls: "info", delay: 420 },
+      { text: "chain of custody ................... signed at each transfer", cls: "info", delay: 420 },
+      { text: "analysis performed on ............. COPY (original sealed)", cls: "info", delay: 440 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[COUNTERFACTUAL] had the host been powered off at detection:", cls: "error", delay: 540 },
+      { text: "  steps 1-4 unrecoverable. The fileless process existed", cls: "error", delay: 480 },
+      { text: "  only in memory and would leave no trace on disk.", cls: "error", delay: 480 }
+    ]
+  };
+
+  window.MODULE_ACTIONS = {};
+
+  window.CLASSIFIERS = {
+    access: {
+      axes: [
+        { name: "model", label: "Access control model", options: ["MAC", "DAC", "RBAC", "Rule-based", "ABAC"] },
+        { name: "why", label: "Deciding characteristic", options: ["System enforces labels; users cannot override", "Owner decides and may share", "Access follows job title", "Uniform system-wide rules", "Multiple attributes evaluated together"] }
+      ],
+      items: [
+        { scenario: "A classified document is labelled Secret. Its author wants to share it with a colleague cleared only to Confidential, and the system refuses regardless of the author's wishes.",
+          answers: { model: "MAC", why: "System enforces labels; users cannot override" },
+          explain: "The defining test is whether the owner can override. Under MAC they cannot - the institution's labels decide, not the individual's judgement." },
+        { scenario: "An employee creates a folder on a file share and grants two colleagues read access because they asked for it.",
+          answers: { model: "DAC", why: "Owner decides and may share" },
+          explain: "Discretionary access puts the decision with the data owner, which is flexible and is exactly why sensitive data spreads in file shares." },
+        { scenario: "All radiologists automatically receive access to imaging systems when their role is assigned in HR, and lose it when the role changes.",
+          answers: { model: "RBAC", why: "Access follows job title" },
+          explain: "Role-based access derives permission from role alone. It scales well and cannot express contextual conditions such as device or time." },
+        { scenario: "A policy permits finance staff to read payroll only from a managed device, during business hours, from a recognised location.",
+          answers: { model: "ABAC", why: "Multiple attributes evaluated together" },
+          explain: "Four attributes in one decision. This cannot be written in RBAC, and it is what makes zero trust policy expressible." },
+        { scenario: "A firewall permits traffic from the internal subnet to the web tier on port 443 and denies everything else, identically for every user.",
+          answers: { model: "Rule-based", why: "Uniform system-wide rules" },
+          explain: "Rule-based access applies the same rules to everyone rather than deriving them from identity or role." }
+      ]
+    }
+  };
+
+  window.LABS = {
+    "identity-design": {
+      title: "Lab 1 - Design identity and access",
+      time: "~25 minutes",
+      objective: "Select access control models from scenarios, choose appropriate authentication, and identify why deprovisioning fails.",
+      steps: [
+        {
+          type: "match",
+          prompt: "Match each scenario to its access control model.",
+          hint: "Two useful tests: can the owner override the decision, and how many factors does the decision consider?",
+          columns: [
+            { name: "model", label: "Model", options: ["MAC", "DAC", "RBAC", "Rule-based", "ABAC"] }
+          ],
+          items: [
+            { text: "The system refuses to let an author share a Secret document with someone cleared to Confidential", answers: { model: "MAC" } },
+            { text: "An employee grants two colleagues read access to a folder they created", answers: { model: "DAC" } },
+            { text: "Radiologists receive imaging system access automatically when the role is assigned", answers: { model: "RBAC" } },
+            { text: "Finance staff may read payroll only from a managed device, in hours, from a known location", answers: { model: "ABAC" } },
+            { text: "A firewall permits one subnet to one port identically for everyone", answers: { model: "Rule-based" } }
+          ],
+          explain: "MAC versus DAC turns on whether the owner can override. RBAC versus ABAC turns on how many factors the decision considers - and only ABAC can express the zero trust conditions from Module 1."
+        },
+        {
+          type: "choice",
+          prompt: "<em>An employee left 94 days ago. Their SSO identity was disabled on day zero, ending access to 41 federated applications. An audit finds their legacy finance account, a shared network device credential, an unrevoked VPN certificate, and a departmental SaaS subscription all still active.</em><br><br>Select every accurate statement.",
+          hint: "Ask what all four survivors have in common.",
+          options: [
+            "SSO deprovisioning worked exactly as designed",
+            "Every surviving access sits outside the SSO integration",
+            "Interoperability gaps are why legacy systems survive deprovisioning",
+            "This proves SSO is ineffective",
+            "Automating deprovisioning from HR data would help",
+            "An inventory of systems outside SSO is needed"
+          ],
+          correct: [0, 1, 2, 4, 5],
+          explain: "SSO did its job perfectly. The failure is that four systems never joined it - which is exactly the interoperability problem, and why the remaining ten percent of an estate causes most deprovisioning incidents."
+        },
+        {
+          type: "choice",
+          prompt: "Which statements about MFA and passwords reflect current guidance? Select all that apply.",
+          hint: "One long-standing practice is now discouraged. Consider what behaviour it actually produces.",
+          options: [
+            "Length matters more than composition complexity",
+            "Forced periodic expiration is discouraged unless compromise is suspected",
+            "SMS is the weakest common second factor",
+            "A security key resists phishing because it verifies the site cryptographically",
+            "Password managers should be discouraged as a single point of failure",
+            "Password reuse is what makes credential stuffing effective"
+          ],
+          correct: [0, 1, 2, 3, 5],
+          explain: "Password managers are recommended - they make long unique passwords practical, which addresses reuse. Forced rotation produces Summer2026 becoming Autumn2026 without limiting an attacker who acts within hours."
+        },
+        {
+          type: "text",
+          prompt: "Explain the difference between SAML and OAuth in your own words.",
+          hint: "Three or four sentences. They answer different questions - name both."
+        }
+      ]
+    },
+
+    "automate-safely": {
+      title: "Lab 2 - Automate without creating new risk",
+      time: "~20 minutes",
+      objective: "Identify where automation delivers most value and recognise the costs the objective names.",
+      steps: [
+        {
+          type: "match",
+          prompt: "Match each automation use case to the benefit it primarily delivers.",
+          hint: "Ask what the manual version of each task fails at.",
+          columns: [
+            { name: "benefit", label: "Primary benefit", options: ["Reliable deprovisioning", "Prevents non-compliant configurations", "Containment faster than human triage", "Baselines become actual configuration", "Analysts freed from repetitive work"] }
+          ],
+          items: [
+            { text: "Identity system driven by HR leaving dates", answers: { benefit: "Reliable deprovisioning" } },
+            { text: "Guard rails blocking creation of public storage containers", answers: { benefit: "Prevents non-compliant configurations" } },
+            { text: "Automatic host isolation on high-confidence EDR detection", answers: { benefit: "Containment faster than human triage" } },
+            { text: "Infrastructure built from a defined standard every time", answers: { benefit: "Baselines become actual configuration" } },
+            { text: "Automated ticket creation and routing from findings", answers: { benefit: "Analysts freed from repetitive work" } }
+          ],
+          explain: "Guard rails are the notable one: they shift enforcement from detecting a problem after creation to preventing creation. That is the difference between finding a misconfiguration and not having one."
+        },
+        {
+          type: "choice",
+          prompt: "An analyst writes a script that saves several hours weekly. It becomes critical, and the analyst then leaves. Select every accurate statement.",
+          hint: "The objective names five considerations. Which apply here?",
+          options: [
+            "This is technical debt and an ongoing supportability problem",
+            "Automation is code and needs version control, documentation, and an owner",
+            "It may become a single point of failure",
+            "It will keep working indefinitely without maintenance",
+            "It could silently stop working when a dependency changes",
+            "Automation amplifies mistakes across every system it touches"
+          ],
+          correct: [0, 1, 2, 4, 5],
+          explain: "Automation written by someone who left is a liability, not an asset. The Module 8 principle applies: an unowned thing is nobody's to maintain - and this one runs at machine speed."
+        },
+        {
+          type: "choice",
+          prompt: "Why does employee retention appear in the objective as a benefit of automation? Select all that apply.",
+          hint: "Consider what security operations work consists of when nothing is automated.",
+          options: [
+            "Roles consisting of repetitive alert handling have high turnover",
+            "Every departure costs institutional knowledge",
+            "Automating repetitive work moves staff time toward judgement",
+            "Automation removes the need for security staff entirely",
+            "Retention has a direct security consequence",
+            "It is unrelated to security and included by mistake"
+          ],
+          correct: [0, 1, 2, 4],
+          explain: "Automation is a workforce multiplier rather than a replacement - it changes what analysts spend time on. The security consequence of turnover is the loss of people who knew how the environment actually behaves."
+        },
+        {
+          type: "text",
+          prompt: "Give one example where automation would have prevented an incident, and one where automation could have caused one.",
+          hint: "The second should involve an error applied at machine speed across many systems."
+        }
+      ]
+    },
+
+    "run-the-incident": {
+      title: "Lab 3 - Work the incident and handle the evidence",
+      time: "~20 minutes",
+      objective: "Put the response phases in order, preserve evidence correctly, and distinguish proximate cause from root cause.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Put the incident response phases into the correct order.",
+          hint: "Use the arrows. Two orderings are tested repeatedly - one concerns what comes before everything, the other concerns stopping versus removing.",
+          items: [
+            "Preparation - plans, tooling, training, contacts",
+            "Detection - something is noticed",
+            "Analysis - determine scope and severity",
+            "Containment - stop it spreading",
+            "Eradication - remove the attacker and the cause",
+            "Recovery - restore operation and confirm it is safe",
+            "Lessons learned - blameless review"
+          ],
+          explain: "Containment precedes eradication because eradication takes time and the attacker is active throughout. Preparation precedes everything - a plan written during an incident is improvisation with an audience."
+        },
+        {
+          type: "order",
+          prompt: "Order these evidence sources by volatility, most volatile first.",
+          hint: "Ask what survives losing power, and what survives a reboot.",
+          items: [
+            "CPU registers and cache",
+            "Memory (RAM)",
+            "Network connections and state",
+            "Running processes",
+            "Disk contents",
+            "Logs held on remote systems",
+            "Backups and archives"
+          ],
+          explain: "This ordering is why powering off a compromised host is usually wrong. A fileless process existing only in memory leaves no trace on disk, so pulling the power destroys the only evidence it was ever there."
+        },
+        {
+          type: "choice",
+          prompt: "A compromised workstation is discovered. Select every appropriate action.",
+          hint: "Balance stopping the attacker against preserving what you will need to prove what happened.",
+          options: [
+            "Isolate the host from the network while leaving it powered on",
+            "Power the host off immediately to stop the attacker",
+            "Capture a memory image before disk imaging",
+            "Hash each acquired image and record the hash",
+            "Perform analysis on a copy, preserving the original",
+            "Record chain of custody at every transfer"
+          ],
+          correct: [0, 2, 3, 4, 5],
+          explain: "Powering off halts the attacker and destroys everything in memory. Network isolation achieves containment while preserving the volatile evidence, which is why remote isolation capability in EDR matters beyond detection."
+        },
+        {
+          type: "text",
+          prompt: "<em>An employee clicked a phishing link, their password was harvested, and the attacker logged into a business application that did not require MFA.</em><br><br>State the proximate cause and the root cause, and explain why the distinction matters.",
+          hint: "One of them suggests a fix. The other suggests a person to blame."
+        }
+      ]
+    }
+  };
+
+  var QUESTIONS = [
+    { tier: "recall",
+      question: "Which protocol is used to assert identity for enterprise web single sign-on?",
+      options: ["OAuth", "SAML", "RADIUS", "LDAP"],
+      correct: 1,
+      explanation: "SAML answers who this person is. OAuth answers what an application may do on their behalf - a different question that does not establish identity." },
+    { tier: "recall",
+      question: "What is attestation in identity management?",
+      options: ["Proving identity before an account is created", "Periodic review confirming access is still appropriate", "Encrypting stored credentials", "Federating identity across organizations"],
+      correct: 1,
+      explanation: "Attestation is the recurring review that catches privilege creep and orphaned accounts. Its characteristic failure is rubber-stamping a long list against a deadline." },
+    { tier: "recall",
+      question: "Which access control model prevents a data owner from sharing a document even if they wish to?",
+      options: ["DAC", "MAC", "RBAC", "Rule-based"],
+      correct: 1,
+      explanation: "Mandatory access control enforces labels system-wide and users cannot override them. Under DAC the owner's discretion decides." },
+    { tier: "recall",
+      question: "In the incident response process, which phase immediately precedes eradication?",
+      options: ["Detection", "Analysis", "Containment", "Recovery"],
+      correct: 2,
+      explanation: "Containment stops the spread first, because eradication takes time during which the attacker would otherwise remain active." },
+    { tier: "recall",
+      question: "Which evidence source is most volatile?",
+      options: ["Disk contents", "Memory (RAM)", "Remote logs", "Backups"],
+      correct: 1,
+      explanation: "Of these, memory is lost as soon as power is removed. Only CPU registers and cache are more volatile still." },
+    { tier: "recall",
+      question: "What does a legal hold require?",
+      options: ["Immediate deletion of relevant data", "Preservation of data relevant to anticipated litigation, overriding retention policy", "Encryption of all archives", "Notification of regulators"],
+      correct: 1,
+      explanation: "A legal hold suspends normal deletion. Routine retention-based deletion that would otherwise be correct becomes destruction of evidence once a hold is in place." },
+    { tier: "applied",
+      question: "An employee's SSO identity is disabled on their last day, but a legacy application with a local account remains accessible. What does this illustrate?",
+      options: ["SSO is ineffective", "Systems outside the SSO integration survive deprovisioning", "The identity was not disabled correctly", "Federation had failed"],
+      correct: 1,
+      explanation: "SSO deprovisioning worked as designed. The interoperability gap - systems that never joined it - is where deprovisioning failures concentrate." },
+    { tier: "applied",
+      question: "A policy permits access only from managed devices, during business hours, from recognised locations, for a specific role. Which model is this?",
+      options: ["RBAC", "MAC", "ABAC", "DAC"],
+      correct: 2,
+      explanation: "Four attributes evaluated in one decision. RBAC considers role alone and cannot express device, time, or location conditions." },
+    { tier: "applied",
+      question: "Which MFA method best resists phishing?",
+      options: ["SMS code", "Authenticator app code", "Hardware security key", "Security questions"],
+      correct: 2,
+      explanation: "A security key verifies the site's identity cryptographically before responding, so it will not authenticate to a lookalike domain. A user can be persuaded to type an app code into an attacker's page." },
+    { tier: "applied",
+      question: "Which statement reflects current password guidance?",
+      options: ["Force a change every 90 days regardless", "Length matters more than composition complexity", "Prohibit password managers", "Require complexity rules over length"],
+      correct: 1,
+      explanation: "Forced periodic rotation is discouraged because it produces predictable substitutions. Length is the dominant factor, and password managers make long unique passwords practical." },
+    { tier: "applied",
+      question: "An administrator holds permanent domain admin rights. Which PAM technique most reduces this risk?",
+      options: ["Longer passwords", "Just-in-time elevation for a defined window", "More frequent expiration", "Additional security questions"],
+      correct: 1,
+      explanation: "Standing privilege is a permanent target. JIT elevation reduces the window in which the account is worth stealing from indefinite to the duration of the task." },
+    { tier: "applied",
+      question: "Which automation approach prevents a public storage container from being created at all?",
+      options: ["Scheduled configuration scanning", "A guard rail", "Automated ticket creation", "Log aggregation"],
+      correct: 1,
+      explanation: "Guard rails shift enforcement to creation time. Scanning finds the problem after it exists; a guard rail means it never does." },
+    { tier: "applied",
+      question: "A compromised host is discovered. What is the appropriate containment action?",
+      options: ["Power it off immediately", "Isolate it from the network while leaving it powered on", "Reimage it at once", "Delete the malicious files"],
+      correct: 1,
+      explanation: "Network isolation halts lateral movement and exfiltration while preserving memory contents. Powering off destroys volatile evidence, and reimaging destroys everything." },
+    { tier: "applied",
+      question: "An analyst's script has become critical infrastructure and the analyst has left. Which consideration does this represent?",
+      options: ["Scalability", "Technical debt and supportability", "Risk transference", "Data sovereignty"],
+      correct: 1,
+      explanation: "Automation is code. Without an owner, documentation, and version control it becomes a liability that will fail silently when a dependency changes." },
+    { tier: "scenario",
+      question: "After a breach, an organization concludes the root cause was that an employee clicked a phishing link. What is wrong with this conclusion?",
+      options: ["Nothing; the employee caused it", "That is the proximate cause; the root cause is why a harvested password was sufficient", "Phishing cannot be a cause", "The employee should be dismissed"],
+      correct: 1,
+      explanation: "The clicking is what happened. That MFA was absent on the application is why it mattered - and only the second suggests a fix rather than a person to blame." },
+    { tier: "scenario",
+      question: "During analysis, an investigator finds a process running in memory with no corresponding file on disk. What does this demonstrate about acquisition order?",
+      options: ["Disk imaging is sufficient", "Powering off would have destroyed the only evidence this process existed", "Memory imaging is optional", "The process was not malicious"],
+      correct: 1,
+      explanation: "Fileless activity exists only in memory. This is precisely why order of volatility places memory near the top and why isolation is preferred to shutdown." },
+    { tier: "scenario",
+      question: "Evidence in an employment tribunal is challenged because a four-hour period is unaccounted for in its handling record. What has failed?",
+      options: ["Encryption", "Chain of custody", "Legal hold", "Order of volatility"],
+      correct: 1,
+      explanation: "A gap allows the argument that evidence could have been altered, and that argument does not need to be proven to succeed - only raised." },
+    { tier: "scenario",
+      question: "An organization's automated retention policy deletes data on schedule. Litigation becomes anticipated. What must happen?",
+      options: ["Nothing; the policy is correct", "The retention policy must be suspended under legal hold", "All data must be encrypted", "Deletion should be accelerated"],
+      correct: 1,
+      explanation: "A legal hold overrides retention. An organization whose automated deletion cannot be paused has a serious problem the moment litigation is anticipated." },
+    { tier: "scenario",
+      question: "A long-serving employee has moved through three departments and holds access from all of them. What is this, and which control catches it?",
+      options: ["Orphaned account; deprovisioning", "Privilege creep; access attestation", "Federation failure; SSO", "Identity proofing failure; MFA"],
+      correct: 1,
+      explanation: "Role changes grant new access and routinely omit removing the old, because nobody complains about access they still have. Periodic attestation is the review designed to find it." },
+    { tier: "applied",
+      question: "An investigation finds that network logs show connections a host's own logs do not. Which principle does this illustrate about data sources?",
+      options: ["Network logs are always more reliable", "Correlating multiple sources reveals what no single source shows", "Host logs should be discarded", "Packet capture is unnecessary"],
+      correct: 1,
+      explanation: "The finding is the disagreement itself, which is the rootkit indicator from Module 5. Neither source alone said anything; the contradiction between them is the evidence." }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>

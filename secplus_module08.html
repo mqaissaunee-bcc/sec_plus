@@ -1,0 +1,2893 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="8" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 8: Secure Baselines, Hardening, and Asset Management</title>
+<meta name="description" content="Establishing and maintaining secure baselines, hardening every class of target, wireless and mobile deployment, application security controls, and managing assets from procurement to certified disposal.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-box.danger{stroke:var(--danger);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 8</p>
+    <h1>Secure Baselines, Hardening, and Asset Management</h1>
+    <p class="subtitle">Establishing and maintaining secure baselines, hardening every class of target, wireless and mobile deployment, application security controls, and managing assets from procurement to certified disposal.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="&#128203;" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to explain how a secure
+        baseline is established, deployed, and maintained; select hardening
+        techniques appropriate to each class of target; plan wireless
+        installation and choose wireless security settings; compare mobile
+        deployment models and the role of MDM; apply application security
+        controls including code signing and sandboxing; and manage assets from
+        acquisition through to certified disposal.
+      </div>
+
+      <p>Domain 4 is Security Operations at 28% - the largest domain on the exam
+      and the one closest to daily practice. This module covers the foundation:
+      configuring systems securely in the first place, and knowing what you own.</p>
+
+      <p>The two objectives pair for a reason that is easy to miss. Objective 4.1
+      is about applying security techniques to computing resources, and objective
+      4.2 is about asset management. You cannot apply a baseline to a system you
+      do not know exists, so asset management is not an administrative afterthought
+      appended to the technical work - it is the precondition for it.</p>
+
+      <div class="subsection">
+        <h3>The theme running through Domain 4</h3>
+        <p>Earlier domains asked what could go wrong and how to design against it.
+        Domain 4 asks how you keep a large estate in a known-good state over time,
+        which is a different problem. A single server can be configured perfectly
+        by someone careful. Ten thousand endpoints cannot, and the difference is
+        not effort but method.</p>
+        <p>Almost everything in this module is an answer to one question:
+        <strong>how do you make correct configuration the default and detect when
+        reality has diverged from it?</strong> Baselines define the known-good
+        state, hardening decides what that state contains, configuration
+        enforcement holds systems to it, and asset management ensures nothing is
+        excluded because nobody knew it was there.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128736;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Building code versus a careful builder</p>
+        <p>One skilled builder constructing one house can make sound judgements at
+        every step. That approach does not scale to a thousand houses built by
+        four hundred people over a decade.</p>
+        <p>Building codes solve this. The standard is written once, inspected
+        against, and revised as materials and knowledge change. The result is not
+        that every house is perfect - it is that no house is wrong in a way nobody
+        noticed, which is the achievable goal at scale.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="baselines" data-icon="&#128207;" role="tabpanel"
+             aria-labelledby="tab-baselines" tabindex="-1">
+      <h2 class="section-title">Secure Baselines</h2>
+
+      <div class="subsection">
+        <h3>What a baseline is</h3>
+        <p>A <span class="term" data-term="secure baseline">secure baseline</span>
+        is a documented, approved configuration standard for a class of system -
+        every Windows workstation, every Linux web server, every network switch.
+        It specifies which services run, which settings apply, which accounts
+        exist, and what is explicitly disabled.</p>
+        <p>The value is that it converts security from a judgement made
+        repeatedly into a standard applied consistently. A configuration decision
+        is made once, reviewed properly, and then applied everywhere - rather than
+        being reinvented, slightly differently, by whoever builds the next server.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Establish, deploy, maintain</h3>
+        <p>Objective 4.1 names three phases, and each fails in a characteristic
+        way.</p>
+        <table>
+          <thead><tr><th>Phase</th><th>What happens</th><th>How it fails</th></tr></thead>
+          <tbody>
+            <tr><td>Establish</td><td>Define the standard, usually from an industry benchmark, adjusted for the environment</td><td>Written by security alone, breaks applications, gets exceptions until it means nothing</td></tr>
+            <tr><td>Deploy</td><td>Apply it to systems, ideally at build time through automation</td><td>Applied only to new systems, so the existing estate never converges</td></tr>
+            <tr><td>Maintain</td><td>Update it as threats and software change; detect and correct drift</td><td>Written once and never revisited, so it slowly becomes wrong</td></tr>
+          </tbody>
+        </table>
+        <p>The establish phase deserves particular care. A baseline written without
+        the teams who run the applications will break something, and the response
+        is always an exception. Enough exceptions and the baseline documents an
+        aspiration rather than a configuration.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 230" role="img" aria-labelledby="bsTitle bsDesc">
+          <title id="bsTitle">The secure baseline lifecycle</title>
+          <desc id="bsDesc">A cycle from establishing a baseline using an industry benchmark, through deploying it by automation at build time, to maintaining it by detecting drift and revising the standard, which feeds back into establish.</desc>
+          <rect x="30" y="50" width="180" height="76" rx="12" class="svg-box brand"/>
+          <text x="120" y="78" text-anchor="middle" class="svg-label">Establish</text>
+          <text x="120" y="98" text-anchor="middle" class="svg-sub">benchmark, adjusted</text>
+          <text x="120" y="115" text-anchor="middle" class="svg-mono">agree with app teams</text>
+          <rect x="260" y="50" width="180" height="76" rx="12" class="svg-box accent"/>
+          <text x="350" y="78" text-anchor="middle" class="svg-label">Deploy</text>
+          <text x="350" y="98" text-anchor="middle" class="svg-sub">automation at build time</text>
+          <text x="350" y="115" text-anchor="middle" class="svg-mono">existing estate too</text>
+          <rect x="490" y="50" width="180" height="76" rx="12" class="svg-box warn"/>
+          <text x="580" y="78" text-anchor="middle" class="svg-label">Maintain</text>
+          <text x="580" y="98" text-anchor="middle" class="svg-sub">detect and correct drift</text>
+          <text x="580" y="115" text-anchor="middle" class="svg-mono">revise as things change</text>
+          <g class="svg-line accent">
+            <path d="M212 88 L256 88" marker-end="url(#ab8)"/>
+            <path d="M442 88 L486 88" marker-end="url(#ab8)"/>
+            <path d="M580 128 C 580 180, 120 180, 120 130" stroke-dasharray="5 4" marker-end="url(#ab8)"/>
+          </g>
+          <defs><marker id="ab8" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="176" text-anchor="middle" class="svg-mono">findings revise the standard</text>
+          <text x="350" y="212" text-anchor="middle" class="svg-sub">Each phase fails differently: establish without agreement, deploy only to new systems, maintain never.</text>
+        </svg>
+        <figcaption>A baseline written once and never revisited slowly becomes wrong.</figcaption>
+      </figure>
+      <div class="subsection">
+        <h3>Benchmarks: not starting from scratch</h3>
+        <p>Organizations rarely invent baselines. Published benchmarks provide a
+        vetted starting point.</p>
+        <table>
+          <thead><tr><th>Source</th><th>What it provides</th></tr></thead>
+          <tbody>
+            <tr><td>CIS Benchmarks</td><td>Consensus configuration guidance for common platforms, with graded levels</td></tr>
+            <tr><td>DISA STIGs</td><td>Security technical implementation guides used in US defence environments</td></tr>
+            <tr><td>Vendor guidance</td><td>The platform maker's own hardening recommendations</td></tr>
+          </tbody>
+        </table>
+        <p>These are starting points rather than answers. A benchmark cannot know
+        that a particular service is essential to your business, so a baseline is
+        the benchmark adjusted for your environment - with each deviation
+        documented and justified, which is what distinguishes a considered
+        exception from drift.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128220;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A published recipe you adjust</p>
+        <p>A professional recipe from a trusted source has been tested by people
+        who understand the chemistry. Starting there is faster and safer than
+        inventing a method, and it does not oblige you to follow it blindly - you
+        adjust for your oven and the ingredients you can actually get.</p>
+        <p>The difference between an adjustment and a mistake is that the
+        adjustment is deliberate and written down. That is exactly the difference
+        between a documented baseline exception and configuration drift.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="configuration drift">Configuration drift</span></h3>
+        <p>Drift is the gradual divergence of real systems from their defined
+        baseline. It happens through emergency fixes never reversed, manual
+        troubleshooting changes, software installing its own settings, and
+        undocumented adjustments accumulating over years.</p>
+        <p>Drift is dangerous because it is invisible without deliberate checking.
+        Systems continue working, so nothing prompts investigation, and the
+        organization's understanding of its own configuration slowly becomes
+        fiction. When an incident occurs, responders act on documentation that no
+        longer describes reality - the same failure as the stale network diagram
+        in Module 1.</p>
+        <p><strong>Configuration enforcement</strong> is the answer: tooling that
+        periodically compares actual state against the baseline and either alerts
+        or automatically corrects. The infrastructure-as-code approach from Module
+        6 goes further by rebuilding systems from a definition rather than
+        modifying them, so drift has less opportunity to accumulate.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏠</span> Think of it like…</p><p class="analogy__title">A house that no longer matches its plans</p><p>Over twenty years a wall comes down, a socket is added behind a cupboard, and a doorway is boarded over during a leak and never reopened. Each change was reasonable on the day and none was drawn onto the plans.</p><p>The house works. Nothing prompts anyone to check. Then a fire officer arrives with the original drawings and plans an escape route through a doorway that has not existed since 2011.</p><p>That is configuration drift, and it is why the danger is not any single undocumented change - it is that the organization's understanding of itself has quietly become fiction.</p></div>
+
+      <div class="interactive-demo">
+        <h3>Detecting drift</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="drift">Compare against baseline</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="drift">Clear</button>
+        </div>
+        <div class="terminal" id="demo-drift" aria-live="polite" aria-label="Configuration drift comparison"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="hardening" data-icon="&#128274;" role="tabpanel"
+             aria-labelledby="tab-hardening" tabindex="-1">
+      <h2 class="section-title">Hardening Targets and Techniques</h2>
+
+      <div class="subsection">
+        <h3>The techniques</h3>
+        <p>Module 5 introduced hardening in the mitigation catalogue. Here the
+        question is which techniques apply to which class of system.</p>
+        <table>
+          <thead><tr><th>Technique</th><th>What it removes or adds</th></tr></thead>
+          <tbody>
+            <tr><td>Remove unnecessary software</td><td>Attack surface, including bloatware</td></tr>
+            <tr><td>Disable unused ports and protocols</td><td>Listening services nobody needs</td></tr>
+            <tr><td>Change default credentials</td><td>The simplest vector in the curriculum</td></tr>
+            <tr><td><span class="term" data-term="least functionality">Least functionality</span></td><td>Every capability not required by the role</td></tr>
+            <tr><td>Host-based firewall</td><td>Control of traffic to and from the host itself</td></tr>
+            <tr><td>Endpoint protection / EDR</td><td>Behavioural detection and response on the host</td></tr>
+            <tr><td>Full disk encryption</td><td>Protection if the device is lost or stolen</td></tr>
+            <tr><td>Patch management</td><td>Known vulnerabilities, on a defined cycle</td></tr>
+            <tr><td>Secure boot</td><td>Assurance that only signed boot code runs</td></tr>
+            <tr><td>Logging and monitoring</td><td>The visibility everything else depends on</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128268;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Unplugging what you never use</p>
+        <p>A house accumulates devices plugged in permanently - a printer used
+        twice a year, a games console nobody plays, a hi-fi behind the sofa. Each
+        draws power, each can fail, and each is one more thing that could go wrong
+        while nobody is watching it.</p>
+        <p>Hardening is walking round and unplugging the things nobody uses. It
+        removes no capability anyone wanted, and it shrinks what has to be
+        maintained and watched - which is why least functionality is a security
+        principle rather than mere tidiness.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Targets differ, and so do the techniques</h3>
+        <p>Objective 4.1 lists hardening targets explicitly, and the exam tests
+        whether you know that the same technique list does not apply uniformly.</p>
+        <table>
+          <thead><tr><th>Target</th><th>Emphasis</th><th>What is often impossible</th></tr></thead>
+          <tbody>
+            <tr><td>Workstations</td><td>EDR, disk encryption, patching, least privilege</td><td>-</td></tr>
+            <tr><td>Servers</td><td>Least functionality, baselines, host firewall</td><td>-</td></tr>
+            <tr><td>Mobile devices</td><td>MDM, encryption, remote wipe, app vetting</td><td>Full local control on personal devices</td></tr>
+            <tr><td>Switches and routers</td><td>Change defaults, disable unused ports, secure management plane</td><td>Installing endpoint agents</td></tr>
+            <tr><td>Cloud infrastructure</td><td>Identity policy, configuration scanning, logging</td><td>Access to layers the provider operates</td></tr>
+            <tr><td>ICS / SCADA</td><td>Segmentation, strict access, passive monitoring</td><td>Patching, agents, active scanning</td></tr>
+            <tr><td>Embedded and RTOS</td><td>Network isolation, vendor firmware updates</td><td>Agents, and often any update at all</td></tr>
+            <tr><td>IoT devices</td><td>Change defaults, isolate on a separate network</td><td>Patching, agents, sometimes even inventory</td></tr>
+          </tbody>
+        </table>
+        <p>The right-hand column is where exam questions live. For workstations
+        and servers the full toolkit applies. For everything below them, some
+        techniques are unavailable, and the answer shifts toward controls
+        <em>around</em> the device - segmentation, access restriction, monitoring -
+        which is the compensating control pattern from Module 1 appearing for the
+        fourth time.</p>
+        <p>Note also the one technique that applies to every row without
+        exception: <strong>changing default credentials</strong>. It requires no
+        agent, no patch, and no vendor support, which is why it remains the
+        highest-return control available on the devices that are hardest to
+        secure.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 290" role="img" aria-labelledby="htTitle htDesc">
+          <title id="htTitle">Hardening options narrow as the target becomes more specialised</title>
+          <desc id="htDesc">Workstations and servers allow the full toolkit including agents and patching. Network devices and cloud allow fewer options. ICS, IoT and embedded systems allow the fewest, so controls move to segmentation and access restriction around the device. Changing default credentials applies to every class.</desc>
+          <text x="20" y="24" class="svg-label">Options available</text>
+          <rect x="20" y="36" width="640" height="40" rx="8" class="svg-box accent"/>
+          <text x="340" y="61" text-anchor="middle" class="svg-sub">Workstations &amp; servers &mdash; EDR, patching, encryption, least functionality, host firewall</text>
+          <rect x="90" y="84" width="500" height="40" rx="8" class="svg-box brand"/>
+          <text x="340" y="109" text-anchor="middle" class="svg-sub">Network devices &amp; cloud &mdash; no agents; secure the management plane, config scanning</text>
+          <rect x="170" y="132" width="340" height="40" rx="8" class="svg-box warn"/>
+          <text x="340" y="157" text-anchor="middle" class="svg-sub">Mobile &mdash; MDM, containerization, remote wipe</text>
+          <rect x="240" y="180" width="200" height="40" rx="8" class="svg-box danger"/>
+          <text x="340" y="205" text-anchor="middle" class="svg-sub">ICS, IoT, embedded</text>
+          <text x="470" y="200" class="svg-mono">no patching,</text>
+          <text x="470" y="215" class="svg-mono">no agents</text>
+          <rect x="20" y="234" width="640" height="40" rx="8" class="svg-box accent"/>
+          <text x="340" y="252" text-anchor="middle" class="svg-label">Change default credentials</text>
+          <text x="340" y="268" text-anchor="middle" class="svg-sub">the one technique available on every class &mdash; no agent, no patch, no vendor support required</text>
+        </svg>
+        <figcaption>As options narrow, controls move from the device to the network around it.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128690;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Securing a bicycle and a lorry</p>
+        <p>You secure a bicycle with a good lock and by not leaving it out
+        overnight. You secure a lorry with an immobiliser, a tracker, a depot with
+        a barrier, and a driver vetting process. Both are vehicles; almost nothing
+        transfers between them.</p>
+        <p>Asking "how do I harden this?" without asking what it is produces the
+        wrong answer. A plant controller and a laptop are both computers, and the
+        list of what you can actually do to each barely overlaps.</p>
+      </div>
+
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="harden-map">
+        Open the hardening reference table</button></p>
+
+      <div class="subsection">
+        <h3>Hardening the management plane</h3>
+        <p>Network devices, hypervisors, cloud consoles, and storage arrays share
+        a property that makes them disproportionately valuable: the interface used
+        to administer them controls everything beneath. Compromising a switch's
+        management interface is not equivalent to compromising one host - it is
+        control over what every host on that switch can reach.</p>
+        <p>The standard measures follow from that. Management interfaces belong on
+        a dedicated network reachable only from a jump server, as in Module 6.
+        Administrative accounts should be individual rather than shared, so
+        accounting can attribute actions. Default credentials must be changed
+        before the device is connected rather than afterwards, because internet
+        scanning finds newly exposed services within minutes. And unused
+        management protocols - older, unencrypted remote access in particular -
+        should be disabled rather than merely deprioritised, for the downgrade
+        reasons covered in Module 5.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Hardening cloud infrastructure</h3>
+        <p>Cloud hardening looks different because the layers you would normally
+        configure belong to the provider. The customer's work concentrates in
+        three places, all of which sit on the customer side of the shared
+        responsibility line from Module 4.</p>
+        <table>
+          <thead><tr><th>Area</th><th>What hardening means here</th></tr></thead>
+          <tbody>
+            <tr><td>Identity and permissions</td><td>Least privilege on both human and machine identities; no standing broad policies</td></tr>
+            <tr><td>Configuration</td><td>Automated scanning against a baseline, since misconfiguration is the leading cloud finding</td></tr>
+            <tr><td>Logging</td><td>Enabled at account creation, exported outside the account, retained for investigation</td></tr>
+          </tbody>
+        </table>
+        <p>The logging point is easy to underrate. Cloud logging is frequently
+        disabled by default and, once enabled, often written into the same account
+        being investigated - so an attacker with sufficient permissions can delete
+        the record of what they did. Exporting logs to a separate account with
+        different credentials is the cloud version of forwarding logs off the
+        host.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Practice: match the target to the technique</h3>      <div class="subsection">
+        <h3>Practice: match the target to the technique</h3>
+        <div class="classifier" data-classifier="hardening"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="wireless-mobile" data-icon="&#128246;" role="tabpanel"
+             aria-labelledby="tab-wireless-mobile" tabindex="-1">
+      <h2 class="section-title">Wireless and Mobile</h2>
+
+      <div class="subsection">
+        <h3>Installation: site surveys and heat maps</h3>
+        <p>Wireless security begins before any configuration, with where the
+        access points go. A <span class="term" data-term="site survey">site
+        survey</span> measures actual signal behaviour in the physical space -
+        how walls, metal, and machinery attenuate signal, and what existing
+        networks are already present. A <strong>heat map</strong> is the visual
+        output, showing signal strength across a floor plan.</p>
+        <p>The security relevance is direct. Under-provisioned coverage leaves
+        dead spots where users connect to whatever they can find, which is exactly
+        the condition a rogue access point exploits. Over-provisioned coverage
+        spills signal into the car park and the neighbouring building, extending
+        the attack surface to anyone who can sit within range.</p>
+        <p>A survey also reveals interference and channel overlap, which matter
+        for availability - and availability is a security property.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128161;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Planning the lighting for a building</p>
+        <p>You do not fit lights by guessing. You walk the space, note where the
+        windows are and where the shadows fall, and place fixtures so every area
+        is lit without floodlighting the neighbours at three in the morning.</p>
+        <p>A site survey is that walk. Too little coverage and people improvise
+        their own light source, which is the rogue access point. Too much and you
+        are illuminating the car park for anyone who cares to look.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Wireless security settings</h3>
+        <table>
+          <thead><tr><th>Setting</th><th>What it provides</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="wpa3">WPA3</span></td><td>Current standard; stronger handshake resisting offline password attacks</td></tr>
+            <tr><td>WPA2</td><td>Previous standard, still widespread, weaker handshake</td></tr>
+            <tr><td>WEP</td><td>Long broken; always the wrong answer</td></tr>
+            <tr><td>AAA / <span class="term" data-term="radius">RADIUS</span></td><td>Central authentication rather than a shared network password</td></tr>
+            <tr><td>EAP variants</td><td>The framework carrying credentials - passwords, certificates, tokens</td></tr>
+          </tbody>
+        </table>
+        <p>The distinction the exam tests most is <strong>personal versus
+        enterprise</strong> mode. Personal uses one pre-shared key everyone
+        knows, so an employee leaving means the key is compromised until it is
+        changed on every device. Enterprise authenticates each user individually
+        against a RADIUS server, so an individual can be revoked without touching
+        anyone else.</p>
+        <p>WPA3's principal improvement is worth understanding rather than
+        memorising. Under WPA2, an attacker who captures the handshake can attempt
+        passwords offline at unlimited speed. WPA3's handshake removes that
+        possibility, so a weak passphrase is no longer catastrophic in the same
+        way - each guess must be made against the live network.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128273;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A shared door code versus individual badges</p>
+        <p>A door code everyone knows is simple and works well until someone
+        leaves. Then the code is compromised, and the only remedy is telling all
+        two hundred people a new one - so in practice nobody changes it, and the
+        code circulates for years.</p>
+        <p>Individual badges cost more to run and let you revoke exactly one
+        person in ten seconds. That is the difference between WPA personal and
+        enterprise, and it is why enterprise is the answer whenever a scenario
+        mentions staff turnover.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Enterprise wireless authentication</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="wpa">Authenticate a client</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="wpa">Clear</button>
+        </div>
+        <div class="terminal" id="demo-wpa" aria-live="polite" aria-label="Wireless authentication sequence"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Mobile deployment models</h3>
+        <p>Three models, distinguished by who owns the device and how much control
+        the organization has.</p>
+        <table>
+          <thead><tr><th>Model</th><th>Ownership</th><th>Control</th><th>Main tension</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="byod">BYOD</span></td><td>Employee</td><td>Lowest</td><td>Privacy; the organization cannot wipe a personal device wholesale</td></tr>
+            <tr><td>COPE</td><td>Organization</td><td>Highest</td><td>Cost, and personal use of a monitored device</td></tr>
+            <tr><td>CYOD</td><td>Organization</td><td>High</td><td>Choice within an approved list; a compromise on both</td></tr>
+          </tbody>
+        </table>
+        <p>BYOD is the model that generates exam scenarios, because the conflict
+        is genuine. The organization needs to protect corporate data on a device
+        it does not own, while the employee has a legitimate expectation of
+        privacy over their photographs, messages, and location.</p>
+        <p>The resolution is <span class="term" data-term="containerization"><strong>containerization</strong></span>: corporate data and
+        applications are kept in a managed, encrypted container on the device.
+        The organization can wipe the container when someone leaves without
+        touching personal data, and cannot see outside it. This is why a question
+        describing BYOD plus a need to remove corporate data almost always points
+        to selective or container wipe rather than a full device wipe.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 240" role="img" aria-labelledby="mbTitle mbDesc">
+          <title id="mbTitle">Mobile deployment models by ownership and control</title>
+          <desc id="mbDesc">BYOD has employee ownership and lowest organizational control. CYOD and COPE are organization-owned with high and highest control respectively. Containerization allows corporate data to be wiped selectively without touching personal data.</desc>
+          <rect x="20" y="36" width="200" height="96" rx="12" class="svg-box warn"/>
+          <text x="120" y="62" text-anchor="middle" class="svg-label">BYOD</text>
+          <text x="120" y="84" text-anchor="middle" class="svg-sub">employee owns</text>
+          <text x="120" y="104" text-anchor="middle" class="svg-mono">lowest control</text>
+          <text x="120" y="122" text-anchor="middle" class="svg-mono">privacy conflict real</text>
+          <rect x="250" y="36" width="200" height="96" rx="12" class="svg-box brand"/>
+          <text x="350" y="62" text-anchor="middle" class="svg-label">CYOD</text>
+          <text x="350" y="84" text-anchor="middle" class="svg-sub">org owns, staff choose</text>
+          <text x="350" y="104" text-anchor="middle" class="svg-mono">high control</text>
+          <text x="350" y="122" text-anchor="middle" class="svg-mono">approved list</text>
+          <rect x="480" y="36" width="200" height="96" rx="12" class="svg-box accent"/>
+          <text x="580" y="62" text-anchor="middle" class="svg-label">COPE</text>
+          <text x="580" y="84" text-anchor="middle" class="svg-sub">org owns, personal use</text>
+          <text x="580" y="104" text-anchor="middle" class="svg-mono">highest control</text>
+          <text x="580" y="122" text-anchor="middle" class="svg-mono">highest cost</text>
+          <path d="M20 152 L680 152" class="svg-line accent" marker-end="url(#am8)"/>
+          <text x="30" y="172" class="svg-sub">less organizational control</text>
+          <text x="670" y="172" text-anchor="end" class="svg-sub">more organizational control</text>
+          <defs><marker id="am8" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <rect x="140" y="188" width="420" height="42" rx="10" class="svg-box"/>
+          <text x="350" y="207" text-anchor="middle" class="svg-label">Containerization resolves the BYOD conflict</text>
+          <text x="350" y="223" text-anchor="middle" class="svg-sub">wipe corporate data selectively; personal data untouched and unseen</text>
+        </svg>
+        <figcaption>A BYOD scenario needing corporate data removed points to selective wipe, never a full device wipe.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128663;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Whose car you drive for work</p>
+        <p><strong>BYOD</strong> is using your own car and claiming mileage. The
+        company cannot fit a tracker to it or tell you what to keep in the boot,
+        but it does care that the client files on the back seat are secure.</p>
+        <p><strong>COPE</strong> is a company car you may also use personally. The
+        company owns it, sets the rules, and knows where it has been - and you
+        accept that in exchange for not buying a car.</p>
+        <p><strong>CYOD</strong> is a company car chosen from an approved list. You
+        get some say in what you drive, and the fleet stays small enough to
+        maintain properly.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Mobile device management</h3>
+        <p><span class="term" data-term="mdm">MDM</span> is the tooling that enforces policy on mobile devices: requiring
+        encryption and a passcode, deploying and restricting applications,
+        separating corporate data into a container, and wiping remotely.</p>
+        <p>Connection methods each carry their own exposure. <strong>Cellular</strong>
+        is generally the most controlled path. <strong>Wi-Fi</strong> brings the
+        rogue access point and evil twin risks from Module 5, particularly on
+        public networks. <strong>Bluetooth</strong> introduces pairing and
+        discovery attacks, and its practical weakness is that users leave it
+        discoverable indefinitely.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="app-security" data-icon="&#129520;" role="tabpanel"
+             aria-labelledby="tab-app-security" tabindex="-1">
+      <h2 class="section-title">Application Security, Sandboxing, and Monitoring</h2>
+
+      <p>Module 4 covered these as defences against specific vulnerabilities.
+      Objective 4.1 asks about them operationally - as controls applied across an
+      estate rather than fixes for one flaw.</p>
+
+      <div class="subsection">
+        <h3>Input validation and secure cookies</h3>
+        <p>Input validation was established in Module 4 as the boundary decision:
+        determine what input is acceptable and treat everything else as data.
+        Operationally, the point is that it must be applied server-side. Client-side
+        validation improves the user experience and provides no security whatever,
+        because an attacker simply does not use your client.</p>
+        <p><strong>Secure cookies</strong> are a specific and testable set of
+        attributes.</p>
+        <table>
+          <thead><tr><th>Attribute</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Secure</td><td>Sent only over HTTPS, never in the clear</td></tr>
+            <tr><td>HttpOnly</td><td>Not readable by client-side script, limiting XSS damage</td></tr>
+            <tr><td>SameSite</td><td>Restricts sending on cross-site requests, mitigating CSRF</td></tr>
+          </tbody>
+        </table>
+        <p>Notice how these map onto Module 4: HttpOnly limits what a successful
+        XSS can steal, and SameSite addresses the CSRF pattern where the browser
+        helpfully attaches cookies to a request the user never intended.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Static and dynamic analysis</h3>
+        <table>
+          <thead><tr><th>Method</th><th>Examines</th><th>Finds</th><th>Misses</th></tr></thead>
+          <tbody>
+            <tr><td>Static (SAST)</td><td>Source code, not running</td><td>Flaw patterns, early in development</td><td>Runtime and configuration issues; produces false positives</td></tr>
+            <tr><td>Dynamic (DAST)</td><td>The running application</td><td>Real behaviour, configuration flaws</td><td>Code paths not exercised during the test</td></tr>
+          </tbody>
+        </table>
+        <p>They are complementary rather than competing. Static analysis runs
+        early and cheaply and flags things that are not actually exploitable.
+        Dynamic analysis confirms real behaviour and only sees what it manages to
+        reach. An organization relying on one alone has a predictable blind spot.</p>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="term" data-term="code signing">Code signing</span></h3>
+        <p>Code signing applies a digital signature to software so recipients can
+        verify who published it and that it has not been altered since. It is the
+        Module 2 digital signature applied to executables, and it underpins the
+        application allow lists from Module 5 - a policy permitting only signed
+        code from approved publishers is far more maintainable than one listing
+        individual files.</p>
+        <p>Its limit is worth stating precisely, because exam options exploit the
+        confusion. A signature proves the software came from the holder of that
+        signing key and has not changed. It proves nothing about whether the
+        software is safe, and nothing about whether the publisher was compromised
+        when they signed it - which is exactly the supply chain attack from Module 3.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#9993;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A wax seal on a letter</p>
+        <p>An intact seal bearing a known crest tells you two things reliably: who
+        sent the letter, and that nobody opened it on the way. Both are genuinely
+        useful and neither is a small thing.</p>
+        <p>What the seal does not tell you is whether the contents are true, or
+        whether someone had already got into the sender's study and swapped the
+        pages before it was sealed. Code signing has exactly these limits - which
+        is why signature verification and behavioural monitoring after
+        installation are both required.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Sandboxing</h3>
+        <p>Sandboxing runs code in a constrained environment where it cannot reach
+        the rest of the system. It appears in three operational forms: detonating
+        suspicious attachments to observe behaviour, isolating browser tabs and
+        applications from each other and the OS, and separating development and
+        test environments from production.</p>
+        <p>Sandboxing is detection and containment rather than prevention. Some
+        malware detects that it is being observed and stays dormant, so a clean
+        sandbox result is weaker evidence than it appears - which is why sandbox
+        analysis complements endpoint monitoring rather than replacing it.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127793;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A quarantine greenhouse</p>
+        <p>A botanical garden receiving an unfamiliar plant does not put it
+        straight into the main collection. It goes into a separate greenhouse with
+        its own soil, water, and air, and is watched for a season to see what it
+        does.</p>
+        <p>If it carries a pest, the pest is contained. But a plant that lies
+        dormant through the observation period and only spreads later has beaten
+        the quarantine - which is precisely how sandbox-aware malware behaves, and
+        why the main collection is still monitored.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🔍</span> Think of it like…</p><p class="analogy__title">A safety inspection with no follow-up visits</p><p>A building passes inspection on the day it opens. The certificate goes in a drawer and nobody returns for six years, during which extensions are built, fire doors are propped open, and the alarm is disconnected for redecorating.</p><p>The certificate is still accurate about the day it was issued and says nothing about the building now. A hardened system nobody watches is exactly that certificate: a snapshot of a good decision rather than an ongoing control.</p></div>
+
+      <div class="subsection">
+        <h3>Monitoring as a hardening control</h3>
+        <p>Monitoring appears in objective 4.1 alongside configuration controls
+        because a hardened system that nobody watches is a snapshot of a good
+        decision rather than an ongoing control. Systems drift, new software is
+        installed, and accounts are added.</p>
+        <p>What matters operationally is that logging must be enabled at build
+        time as part of the baseline, forwarded off the host so a compromise
+        cannot erase it, and retained long enough to investigate an incident that
+        may have begun months earlier. Module 5's missing-logs indicator is the
+        consequence of getting the second point wrong.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="countermeasures" data-icon="&#128737;" role="tabpanel"
+             aria-labelledby="tab-countermeasures" tabindex="-1">
+      <h2 class="section-title">Asset Management</h2>
+
+      <p>Objective 4.2 covers the full asset lifecycle. This is the least
+      glamorous content in Domain 4 and among the most consequential, because
+      every control in this module presumes you know the asset exists.</p>
+
+      <div class="subsection">
+        <h3>Acquisition and procurement</h3>
+        <p>Security begins before a device is bought. Procurement is where vendor
+        assessment happens, where support and patching commitments are agreed, and
+        where end-of-support dates are known rather than discovered years later.</p>
+        <p>The question most often skipped is how long the vendor will issue
+        security updates. A device purchased with three years of support and used
+        for eight spends five years unpatchable - the end-of-life problem from
+        Module 4, created at purchase by nobody asking.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">📖</span> Think of it like…</p><p class="analogy__title">A library book with no borrower's name</p><p>A book checked out under a name has someone responsible for returning it, and the library knows who to ask. A book that left the shelf with no record is simply gone - nobody is at fault, nobody is chasing it, and nobody notices it never came back.</p><p>An asset without a named owner is that book. It is nobody's to patch, nobody's to decommission, and nobody's to answer for when it turns up in a scan - which is why ownership is what makes every other control work.</p></div>
+
+      <div class="subsection">
+        <h3>Assignment and accounting</h3>
+        <p>Every asset needs an <strong>owner</strong> - a named person or team
+        accountable for it - and a <strong>classification</strong> reflecting the
+        sensitivity of what it processes, which connects to Module 7.</p>
+        <p>Ownership is what makes everything else work. An unowned asset is
+        nobody's to patch, nobody's to decommission, and nobody's to answer for
+        when it appears in a scan. Organizations discovering forgotten servers are
+        discovering assets that lost their owner during a reorganisation and were
+        never reassigned.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>What an inventory record needs to contain</h3>
+        <p>An inventory listing only device names and serial numbers cannot
+        support the decisions that depend on it. A usable record carries enough to
+        answer the questions that arise during an incident or an audit.</p>
+        <table>
+          <thead><tr><th>Field</th><th>The question it answers</th></tr></thead>
+          <tbody>
+            <tr><td>Owner</td><td>Who is accountable, and who approves changes?</td></tr>
+            <tr><td>Classification</td><td>How sensitive is what this processes?</td></tr>
+            <tr><td>Location</td><td>Physical site, or cloud region for sovereignty</td></tr>
+            <tr><td>Software and versions</td><td>Is this affected by the vulnerability announced today?</td></tr>
+            <tr><td>End-of-support date</td><td>When does this become unpatchable?</td></tr>
+            <tr><td>Dependencies</td><td>What breaks if this is decommissioned?</td></tr>
+          </tbody>
+        </table>
+        <p>The software field is what turns an inventory from a finance record
+        into a security control. When a vulnerability is announced in a widely
+        used component, the immediate question is which systems contain it - and
+        an organization that cannot answer within hours spends days searching
+        while the exploitation window from Module 4 stays open.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Monitoring and tracking</h3>      <div class="subsection">
+        <h3>Monitoring and tracking</h3>
+        <p>An <strong>inventory</strong> is the record of what the organization
+        owns. <span class="term" data-term="enumeration"><strong>Enumeration</strong></span> is actively discovering what is
+        present. The gap between them is the interesting part: assets on the
+        network that appear in no inventory, and inventory entries for assets that
+        no longer exist.</p>
+        <p>Both directions matter. Undiscovered assets are unmanaged and
+        unpatched. Phantom inventory entries waste effort and create false
+        assurance that something has been decommissioned when it is still running
+        somewhere.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128230;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Stocktaking in a warehouse</p>
+        <p>The system says four hundred units. Counting the shelves finds three
+        hundred and eighty on the system's shelves, plus sixty in a corner nobody
+        has looked at since a delivery two years ago.</p>
+        <p>Both discrepancies are problems and they are different problems. The
+        missing twenty are somewhere unaccounted for. The unexpected sixty are
+        stock the business has been carrying, insuring, and never selling - and in
+        the network equivalent, never patching.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 220" role="img" aria-labelledby="asTitle asDesc">
+          <title id="asTitle">The asset lifecycle</title>
+          <desc id="asDesc">Assets move from acquisition, where support commitments are agreed, through assignment of an owner and classification, to monitoring and tracking through inventory and enumeration, and finally to disposal by sanitization or destruction with certification.</desc>
+          <rect x="15" y="60" width="150" height="72" rx="10" class="svg-box brand"/>
+          <text x="90" y="86" text-anchor="middle" class="svg-label">Acquisition</text>
+          <text x="90" y="105" text-anchor="middle" class="svg-sub">support lifetime,</text>
+          <text x="90" y="121" text-anchor="middle" class="svg-sub">end-of-support date</text>
+          <rect x="190" y="60" width="150" height="72" rx="10" class="svg-box accent"/>
+          <text x="265" y="86" text-anchor="middle" class="svg-label">Assignment</text>
+          <text x="265" y="105" text-anchor="middle" class="svg-sub">named owner,</text>
+          <text x="265" y="121" text-anchor="middle" class="svg-sub">classification</text>
+          <rect x="365" y="60" width="150" height="72" rx="10" class="svg-box accent"/>
+          <text x="440" y="86" text-anchor="middle" class="svg-label">Tracking</text>
+          <text x="440" y="105" text-anchor="middle" class="svg-sub">inventory vs</text>
+          <text x="440" y="121" text-anchor="middle" class="svg-sub">enumeration</text>
+          <rect x="540" y="60" width="150" height="72" rx="10" class="svg-box warn"/>
+          <text x="615" y="86" text-anchor="middle" class="svg-label">Disposal</text>
+          <text x="615" y="105" text-anchor="middle" class="svg-sub">sanitize or destroy,</text>
+          <text x="615" y="121" text-anchor="middle" class="svg-sub">then certify</text>
+          <g class="svg-line accent">
+            <path d="M167 96 L186 96" marker-end="url(#aa8)"/>
+            <path d="M342 96 L361 96" marker-end="url(#aa8)"/>
+            <path d="M517 96 L536 96" marker-end="url(#aa8)"/>
+          </g>
+          <defs><marker id="aa8" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" class="svg-fill-accent"/></marker></defs>
+          <text x="350" y="36" text-anchor="middle" class="svg-sub">Every control in this module presumes the asset is known to exist.</text>
+          <text x="350" y="180" text-anchor="middle" class="svg-sub">An asset that loses its owner in a reorganisation becomes nobody's to patch,</text>
+          <text x="350" y="198" text-anchor="middle" class="svg-sub">nobody's to decommission, and nobody's to answer for.</text>
+        </svg>
+        <figcaption>Asset management is not administration appended to the technical work. It is the precondition for it.</figcaption>
+      </figure>
+      <div class="subsection">
+        <h3>Disposal and decommissioning</h3>
+        <p>The end of the lifecycle is where data most often escapes, because the
+        device leaves the organization's control while its storage does not
+        necessarily leave with its data removed.</p>
+        <table>
+          <thead><tr><th>Method</th><th>What it does</th><th>Appropriate for</th></tr></thead>
+          <tbody>
+            <tr><td>Deletion</td><td>Removes the reference; data remains until overwritten</td><td>Nothing sensitive</td></tr>
+            <tr><td><span class="term" data-term="sanitization">Sanitization</span></td><td>Overwrites or cryptographically erases so data is unrecoverable</td><td>Reusable media</td></tr>
+            <tr><td>Destruction</td><td>Physically destroys the media - shredding, degaussing, incineration</td><td>Highly sensitive data, failed media</td></tr>
+            <tr><td>Certification</td><td>Documented evidence that sanitization or destruction occurred</td><td>Regulated data, audit requirements</td></tr>
+          </tbody>
+        </table>
+        <p>Two points recur in exam questions. Deletion is not sanitization -
+        a deleted file is generally still present until overwritten, which is why
+        drives sold second-hand routinely yield recoverable data. And
+        <strong>certification</strong> matters because it is the evidence: without
+        a certificate of destruction, an organization cannot demonstrate to a
+        regulator that data on a disposed device was actually removed.</p>
+        <p>Failed media deserves specific mention. A drive too damaged to
+        overwrite cannot be sanitized, so destruction is the only option -
+        and a failed drive returned to the vendor under warranty leaves with its
+        data intact unless that is negotiated in advance.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128465;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Throwing out documents versus shredding them</p>
+        <p>Putting papers in the bin removes them from your desk. Anyone going
+        through the bin has them, complete and readable, because nothing about
+        being in the bin altered the paper.</p>
+        <p>Shredding destroys the content. And for a legal record you want the
+        collection receipt from the shredding company - not because you doubt
+        them, but because when someone asks in two years what happened to those
+        files, "we shredded them" and a certificate are different answers.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Choosing a disposal method</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="disposal">Work three cases</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="disposal">Clear</button>
+        </div>
+        <div class="terminal" id="demo-disposal" aria-live="polite" aria-label="Disposal method selection"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Retention</h3>
+        <p>Data retention determines how long records are kept before disposal,
+        and as Module 7 established, requirements pull in two directions:
+        regulation mandating minimum periods, and privacy law requiring that
+        personal data not be kept longer than necessary.</p>
+        <p>Decommissioning must respect both. Destroying a device holding records
+        subject to a legal hold is a serious problem, and retaining data long past
+        its purpose is liability with no benefit. This is why disposal is a
+        checklist item in a documented process rather than a decision made by
+        whoever is clearing the store cupboard.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        Three discriminators. Deletion is not sanitization. Certification is the
+        evidence, and scenarios mentioning regulators or audits want it named. And
+        when a hardening technique is impossible - agents on ICS, patching on IoT -
+        the answer moves to controls around the device.
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="&#129514;" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        Design and analysis labs - nothing to install. Answers save in this
+        browser as you type, and each lab generates a Word document you can
+        submit. Graded lab assignments are posted in Canvas.
+      </div>
+
+      <div class="lab" data-lab="build-baseline"></div>
+      <div class="lab" data-lab="wireless-mobile-design"></div>
+      <div class="lab" data-lab="asset-lifecycle"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers live in this browser only. Generate the report and save the file
+        when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "secure baseline": "A documented, approved configuration standard for a class of system, converting security from a judgement made repeatedly into a standard applied consistently.",
+    "configuration drift": "Gradual divergence of real systems from their defined baseline. Invisible without deliberate checking, because systems keep working while documentation becomes fiction.",
+    "site survey": "Measuring actual wireless signal behaviour in a physical space before installation, producing a heat map of coverage across a floor plan.",
+    "wpa3": "The current wireless security standard. Its handshake resists offline password attacks, so a captured exchange cannot be attacked at unlimited speed as it can under WPA2.",
+    "byod": "Bring your own device: the employee owns the hardware. Lowest organizational control, and the model where the privacy conflict is genuine.",
+    "code signing": "A digital signature on software proving who published it and that it has not been altered. It proves nothing about whether the software is safe.",
+    "sanitization": "Overwriting or cryptographically erasing storage so data is unrecoverable. Deletion is not sanitization - a deleted file generally remains until overwritten.",
+    "containerization": "On mobile devices, keeping corporate data and apps in a managed encrypted container so it can be wiped without touching personal data.",
+    "least functionality": "Configuring a system with only the capabilities its role requires, and nothing more.",
+    "enumeration": "Actively discovering what is present on a network, as opposed to the inventory record of what the organization believes it owns.",
+    "radius": "A central authentication service. In wireless enterprise mode each user authenticates individually, so one person can be revoked without affecting anyone else.",
+    "mdm": "Mobile device management: tooling that enforces encryption, passcodes, app restrictions, containerization, and remote wipe on mobile devices."
+  };
+
+  window.MODALS = {
+    "harden-map": {
+      title: "Hardening by target class",
+      body:
+        "<table><thead><tr><th>Target</th><th>Emphasis</th><th>Often impossible</th></tr></thead><tbody>" +
+        "<tr><td>Workstations</td><td>EDR, encryption, patching, least privilege</td><td>-</td></tr>" +
+        "<tr><td>Servers</td><td>Least functionality, baselines, host firewall</td><td>-</td></tr>" +
+        "<tr><td>Mobile</td><td>MDM, encryption, remote wipe</td><td>Full control on personal devices</td></tr>" +
+        "<tr><td>Network gear</td><td>Change defaults, disable unused ports</td><td>Endpoint agents</td></tr>" +
+        "<tr><td>Cloud</td><td>Identity policy, config scanning, logging</td><td>Provider-operated layers</td></tr>" +
+        "<tr><td>ICS / SCADA</td><td>Segmentation, strict access, passive monitoring</td><td>Patching, agents, active scanning</td></tr>" +
+        "<tr><td>IoT / embedded</td><td>Change defaults, isolate</td><td>Patching, agents, sometimes inventory</td></tr>" +
+        "</tbody></table><p>Changing default credentials is the one technique that applies " +
+        "to every row without exception - no agent, no patch, no vendor support required.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "drift": [
+      { text: "$ compare-config --host web-prod-07 --baseline SRV-LINUX-v4", cls: "prompt", delay: 340 },
+      { text: "baseline last reviewed ........ 19 months ago", cls: "warning", delay: 400 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "MATCHES ---------------------------------------", cls: "info", delay: 360 },
+      { text: "  disk encryption ............. enabled", cls: "output", delay: 300 },
+      { text: "  host firewall ............... enabled", cls: "output", delay: 300 },
+      { text: "  root SSH login .............. disabled", cls: "output", delay: 300 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "DRIFT DETECTED --------------------------------", cls: "error", delay: 400 },
+      { text: "  port 8080 ................... OPEN  (baseline: closed)", cls: "error", delay: 440 },
+      { text: "      opened during incident INC-4471, 14 months ago", cls: "warning", delay: 440 },
+      { text: "      change record ........... none", cls: "error", delay: 380 },
+      { text: "  local account 'svc_temp' .... PRESENT (baseline: none)", cls: "error", delay: 440 },
+      { text: "      created by a contractor, never removed", cls: "warning", delay: 420 },
+      { text: "  audit logging ............... DISABLED (baseline: enabled)", cls: "error", delay: 440 },
+      { text: "      disabled to reduce disk usage in 2024", cls: "warning", delay: 420 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[NOTE] The host has worked perfectly throughout. Nothing prompted a look.", cls: "warning", delay: 600 },
+      { text: "[FIX] Configuration enforcement compares and corrects on a schedule.", cls: "info", delay: 560 }
+    ],
+    "wpa": [
+      { text: "$ monitor-wlan --ssid CORP-SECURE --mode enterprise", cls: "prompt", delay: 340 },
+      { text: "client associates .................. MAC 8c:4b:..:e1", cls: "output", delay: 400 },
+      { text: "network access .................... BLOCKED pending auth", cls: "warning", delay: 400 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "AP  -> client   EAP-Request Identity", cls: "info", delay: 380 },
+      { text: "client -> AP    EAP-Response  (device certificate)", cls: "output", delay: 400 },
+      { text: "AP  -> RADIUS   forwards for validation", cls: "info", delay: 360 },
+      { text: "RADIUS          certificate chain ...... VALID", cls: "output", delay: 380 },
+      { text: "RADIUS          user in group WiFi-Staff  YES", cls: "output", delay: 360 },
+      { text: "RADIUS -> AP    Access-Accept + VLAN 30", cls: "output", delay: 400 },
+      { text: "WPA3 handshake .................... complete", cls: "info", delay: 400 },
+      { text: "network access .................... GRANTED, VLAN 30", cls: "info", delay: 400 },
+      { text: "", cls: "output", delay: 180 },
+      { text: "$ revoke-user --id r.moore --reason leaver", cls: "prompt", delay: 440 },
+      { text: "  RADIUS entry removed .......... one user affected", cls: "info", delay: 420 },
+      { text: "  other 1,847 users ............. unaffected", cls: "info", delay: 400 },
+      { text: "[NOTE] Under WPA personal, this would require changing the shared", cls: "warning", delay: 580 },
+      { text: "key on every device in the organization - so nobody ever does.", cls: "warning", delay: 520 }
+    ],
+    "disposal": [
+      { text: "$ select-disposal --batch retired-2026-Q1", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "CASE 1  laptops for reissue to other staff", cls: "info", delay: 400 },
+      { text: "  media condition ....... functional", cls: "output", delay: 340 },
+      { text: "  data classification ... confidential", cls: "output", delay: 340 },
+      { text: "  -> SANITIZATION (overwrite or crypto-erase), then reissue", cls: "info", delay: 460 },
+      { text: "  [NOTE] deletion alone leaves data recoverable until overwritten", cls: "warning", delay: 500 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "CASE 2  drives that failed and cannot be written to", cls: "info", delay: 420 },
+      { text: "  media condition ....... failed, unwritable", cls: "warning", delay: 380 },
+      { text: "  sanitization possible? NO - cannot overwrite a dead drive", cls: "error", delay: 460 },
+      { text: "  -> PHYSICAL DESTRUCTION (shred or degauss)", cls: "info", delay: 440 },
+      { text: "  [NOTE] returning these under warranty exports the data intact", cls: "error", delay: 520 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "CASE 3  storage array holding regulated health records", cls: "info", delay: 420 },
+      { text: "  data classification ... restricted, regulated", cls: "output", delay: 360 },
+      { text: "  -> DESTRUCTION + CERTIFICATE OF DESTRUCTION", cls: "info", delay: 440 },
+      { text: "  [NOTE] the certificate is the evidence for the regulator;", cls: "warning", delay: 520 },
+      { text: "  'we destroyed it' and a certificate are different answers.", cls: "warning", delay: 480 }
+    ]
+  };
+
+  window.MODULE_ACTIONS = {};
+
+  window.CLASSIFIERS = {
+    hardening: {
+      axes: [
+        { name: "target", label: "Target class", options: ["Workstation", "Server", "Network device", "ICS / SCADA", "IoT device", "Mobile device"] },
+        { name: "approach", label: "Primary approach", options: ["Full endpoint toolkit", "Least functionality and baselines", "Secure the management plane", "Segment and monitor passively", "Change defaults and isolate", "MDM and containerization"] }
+      ],
+      items: [
+        { scenario: "A plant controller from 2009 running a proprietary protocol, which the vendor no longer supports and which cannot be taken offline.",
+          answers: { target: "ICS / SCADA", approach: "Segment and monitor passively" },
+          explain: "Patching and agents are both unavailable, and active scanning can crash fragile controllers. The controls go around the device rather than on it." },
+        { scenario: "A staff laptop processing confidential documents, fully supported and centrally managed.",
+          answers: { target: "Workstation", approach: "Full endpoint toolkit" },
+          explain: "This is the one class where everything is available: EDR, full disk encryption, patching, least privilege, and host firewall." },
+        { scenario: "A networked camera deployed with its factory password, which the manufacturer has never issued a firmware update for.",
+          answers: { target: "IoT device", approach: "Change defaults and isolate" },
+          explain: "No agent and no patch path, so the achievable controls are changing the default credential and placing it on a separate network segment." },
+        { scenario: "A core switch whose configuration interface is reachable from the general user VLAN.",
+          answers: { target: "Network device", approach: "Secure the management plane" },
+          explain: "Agents cannot be installed. The work is restricting management access, changing defaults, and disabling unused ports and services." },
+        { scenario: "An employee-owned phone holding corporate email that must be removable when they leave, without touching personal photographs.",
+          answers: { target: "Mobile device", approach: "MDM and containerization" },
+          explain: "BYOD makes a full device wipe inappropriate. A managed container allows selective wipe of corporate data only." },
+        { scenario: "A production Linux host running a web application, where several default services are enabled that the application does not use.",
+          answers: { target: "Server", approach: "Least functionality and baselines" },
+          explain: "The work is removing capability the role does not require and holding the host to a defined baseline thereafter." }
+      ]
+    }
+  };
+
+  window.LABS = {
+    "build-baseline": {
+      title: "Lab 1 - Establish and hold a baseline",
+      time: "~25 minutes",
+      objective: "Work through the baseline lifecycle and select hardening approaches that account for what each target class cannot do.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Put the baseline lifecycle into the correct order.",
+          hint: "Use the arrows. Consider what must exist before the next step is possible, and what happens after deployment.",
+          items: [
+            "Select an industry benchmark as a starting point",
+            "Adjust for the environment, documenting each justified deviation",
+            "Obtain agreement from the teams who run the affected applications",
+            "Deploy through automation at build time",
+            "Compare running systems against the baseline on a schedule",
+            "Review and update the baseline as software and threats change"
+          ],
+          explain: "Agreement precedes deployment for a practical reason: a baseline written by security alone breaks applications, and the response is always an exception. Enough exceptions and the baseline documents an aspiration."
+        },
+        {
+          type: "match",
+          prompt: "Match each target to the hardening approach that fits what is actually possible.",
+          hint: "For several of these, the standard toolkit is unavailable. Ask what you cannot do before deciding what you can.",
+          columns: [
+            { name: "approach", label: "Primary approach", options: ["Full endpoint toolkit", "Least functionality and baselines", "Secure the management plane", "Segment and monitor passively", "Change defaults and isolate", "MDM and containerization"] }
+          ],
+          items: [
+            { text: "Managed staff laptop, fully supported", answers: { approach: "Full endpoint toolkit" } },
+            { text: "Production Linux server running one application", answers: { approach: "Least functionality and baselines" } },
+            { text: "Core switch with management reachable from the user VLAN", answers: { approach: "Secure the management plane" } },
+            { text: "Unsupported plant controller that cannot be taken offline", answers: { approach: "Segment and monitor passively" } },
+            { text: "Networked camera with factory credentials and no firmware updates", answers: { approach: "Change defaults and isolate" } },
+            { text: "Employee-owned phone holding corporate email", answers: { approach: "MDM and containerization" } }
+          ],
+          explain: "Only the first two rows allow the full toolkit. Everywhere else something is impossible - agents, patching, or full control - and the answer moves to controls around the device. Changing default credentials is the one technique available on every row."
+        },
+        {
+          type: "choice",
+          prompt: "A host has worked reliably for two years. A comparison against its baseline finds an open port, an extra local account, and audit logging disabled. Select every accurate statement.",
+          hint: "Ask why none of this was noticed, and what would have caught it.",
+          options: [
+            "This is configuration drift",
+            "The system working normally is why nothing prompted investigation",
+            "Each change likely had a short-term operational reason at the time",
+            "Documentation now describes a system that no longer exists",
+            "This proves the baseline was wrong",
+            "Configuration enforcement would detect and correct these on a schedule"
+          ],
+          correct: [0, 1, 2, 3, 5],
+          explain: "Drift is dangerous precisely because systems keep working, so nothing triggers a look. The baseline is not necessarily wrong - reality diverged from it, which is a different failure requiring a different fix."
+        },
+        {
+          type: "text",
+          prompt: "Explain why a baseline written by the security team alone tends to fail.",
+          hint: "Three or four sentences. Trace what happens the first time it breaks an application."
+        }
+      ]
+    },
+
+    "wireless-mobile-design": {
+      title: "Lab 2 - Wireless and mobile design",
+      time: "~20 minutes",
+      objective: "Plan a wireless deployment and choose the mobile model that fits the ownership and privacy constraints.",
+      steps: [
+        {
+          type: "match",
+          prompt: "Match each mobile deployment model or wireless setting to its defining characteristic.",
+          hint: "For the deployment models, ask who owns the device. For wireless, ask whether credentials are shared or individual.",
+          columns: [
+            { name: "def", label: "Defining characteristic", options: ["Employee owns the device", "Organization owns; personal use permitted", "Organization owns; chosen from an approved list", "One shared key everyone knows", "Individual authentication via RADIUS", "Long broken; never the answer"] }
+          ],
+          items: [
+            { text: "BYOD", answers: { def: "Employee owns the device" } },
+            { text: "COPE", answers: { def: "Organization owns; personal use permitted" } },
+            { text: "CYOD", answers: { def: "Organization owns; chosen from an approved list" } },
+            { text: "WPA personal mode", answers: { def: "One shared key everyone knows" } },
+            { text: "WPA enterprise mode", answers: { def: "Individual authentication via RADIUS" } },
+            { text: "WEP", answers: { def: "Long broken; never the answer" } }
+          ],
+          explain: "Enterprise mode is the answer whenever a scenario mentions staff turnover: an individual can be revoked in seconds, whereas a shared key requires changing it on every device - so in practice nobody does."
+        },
+        {
+          type: "choice",
+          prompt: "An organization runs BYOD and needs to remove corporate email and documents when an employee leaves. Select every appropriate statement.",
+          hint: "The device is not the organization's property. What does that rule out?",
+          options: [
+            "A full device wipe is inappropriate on personally owned hardware",
+            "Containerization separates corporate data from personal data",
+            "A selective or container wipe removes corporate data only",
+            "The organization has a legitimate interest in the corporate data",
+            "The employee has a legitimate privacy expectation over personal data",
+            "MDM cannot help with personally owned devices"
+          ],
+          correct: [0, 1, 2, 3, 4],
+          explain: "MDM absolutely applies to BYOD - it is what enforces the container, the passcode, and the selective wipe. The conflict between the two legitimate interests is real, and containerization is how it is resolved rather than decided."
+        },
+        {
+          type: "choice",
+          prompt: "Why does a wireless site survey matter for security? Select all that apply.",
+          hint: "Consider both too little coverage and too much.",
+          options: [
+            "Dead spots lead users to connect to whatever network they can find",
+            "Excess coverage extends signal into car parks and neighbouring buildings",
+            "It identifies interference affecting availability",
+            "It replaces the need for WPA3",
+            "It reveals existing networks already present in the space",
+            "Coverage planning has no security relevance"
+          ],
+          correct: [0, 1, 2, 4],
+          explain: "Under-provisioning creates exactly the condition a rogue access point exploits; over-provisioning hands signal to anyone within range. Availability is a security property, so interference counts too."
+        },
+        {
+          type: "text",
+          prompt: "Explain what WPA3 improves over WPA2 and why that matters for weak passphrases.",
+          hint: "Think about what an attacker can do with a captured handshake under each."
+        }
+      ]
+    },
+
+    "asset-lifecycle": {
+      title: "Lab 3 - Manage the asset lifecycle",
+      time: "~20 minutes",
+      objective: "Trace an asset from procurement to certified disposal and choose the correct method for each disposal case.",
+      steps: [
+        {
+          type: "match",
+          prompt: "Match each disposal case to the correct method.",
+          hint: "Ask two questions: can the media still be written to, and does anyone need documented evidence afterwards?",
+          columns: [
+            { name: "method", label: "Correct method", options: ["Sanitization, then reissue", "Physical destruction", "Destruction with certificate", "Deletion is sufficient"] }
+          ],
+          items: [
+            { text: "Working laptops holding confidential data, to be reissued internally", answers: { method: "Sanitization, then reissue" } },
+            { text: "Failed drives that can no longer be written to", answers: { method: "Physical destruction" } },
+            { text: "An array holding regulated health records, subject to audit", answers: { method: "Destruction with certificate" } },
+            { text: "A test machine that only ever held public sample data", answers: { method: "Deletion is sufficient" } }
+          ],
+          explain: "A failed drive cannot be overwritten, so sanitization is not available and destruction is the only option - which is also why returning failed drives under warranty exports the data intact unless negotiated in advance."
+        },
+        {
+          type: "choice",
+          prompt: "A security team discovers eleven servers on the network that appear in no inventory. Select every accurate statement.",
+          hint: "Consider what an unowned asset lacks, and what the discovery says about the inventory itself.",
+          options: [
+            "These assets are unpatched and unmonitored by definition",
+            "The gap between inventory and enumeration is the finding",
+            "Each asset needs a named owner before it can be managed",
+            "Phantom inventory entries for decommissioned assets are also a problem",
+            "The inventory being wrong in one direction means it is right in the other",
+            "Assets frequently lose their owner during reorganisations"
+          ],
+          correct: [0, 1, 2, 3, 5],
+          explain: "The inventory can be wrong in both directions at once - undiscovered assets that are unmanaged, and phantom entries creating false assurance that something was decommissioned when it is still running."
+        },
+        {
+          type: "choice",
+          prompt: "Which questions belong in procurement rather than being discovered later? Select all that apply.",
+          hint: "Think about what becomes impossible to change once the device is bought and deployed.",
+          options: [
+            "How long will the vendor issue security updates?",
+            "What is the documented end-of-support date?",
+            "Can the device be centrally managed?",
+            "What happens to failed media returned under warranty?",
+            "Who will own this asset in the inventory?",
+            "Nothing security-related belongs in procurement"
+          ],
+          correct: [0, 1, 2, 3, 4],
+          explain: "A device bought with three years of support and used for eight spends five years unpatchable - an end-of-life problem created at purchase by nobody asking. The warranty question matters because failed drives leave with data intact by default."
+        },
+        {
+          type: "text",
+          prompt: "Explain why deletion is not sanitization, and give one real consequence of confusing them.",
+          hint: "What actually happens to the data when a file is deleted?"
+        }
+      ]
+    }
+  };
+
+  var QUESTIONS = [
+    { tier: "recall",
+      question: "What is a secure baseline?",
+      options: ["A list of known vulnerabilities", "A documented approved configuration standard for a class of system", "The minimum acceptable network speed", "A backup taken before changes"],
+      correct: 1,
+      explanation: "A baseline converts security from a judgement made repeatedly into a standard applied consistently, so a decision made once is applied everywhere." },
+    { tier: "recall",
+      question: "What is configuration drift?",
+      options: ["Hardware degrading over time", "Gradual divergence of real systems from their defined baseline", "Network latency increasing", "Scheduled configuration updates"],
+      correct: 1,
+      explanation: "Drift accumulates through emergency fixes never reversed and undocumented changes. It is dangerous because systems keep working, so nothing prompts investigation." },
+    { tier: "recall",
+      question: "In WPA enterprise mode, what authenticates each user?",
+      options: ["A shared pre-shared key", "A RADIUS server", "The access point itself", "MAC address filtering"],
+      correct: 1,
+      explanation: "Enterprise mode authenticates individuals against RADIUS, so one user can be revoked without affecting anyone else - unlike a shared key that would need changing everywhere." },
+    { tier: "recall",
+      question: "Which mobile deployment model has the employee owning the device?",
+      options: ["COPE", "CYOD", "BYOD", "MDM"],
+      correct: 2,
+      explanation: "BYOD means the employee owns the hardware, which gives the organization the least control and creates the genuine privacy conflict the other models avoid." },
+    { tier: "recall",
+      question: "What does code signing prove?",
+      options: ["The software is free of vulnerabilities", "Who published the software and that it has not been altered since", "The software has been sandboxed", "The publisher was not compromised"],
+      correct: 1,
+      explanation: "A signature establishes origin and integrity only. It says nothing about whether the software is safe or whether the publisher was compromised when they signed it." },
+    { tier: "recall",
+      question: "Which cookie attribute prevents client-side script from reading a cookie?",
+      options: ["Secure", "HttpOnly", "SameSite", "Domain"],
+      correct: 1,
+      explanation: "HttpOnly limits what a successful cross-site scripting attack can steal. Secure restricts transmission to HTTPS, and SameSite mitigates cross-site request forgery." },
+    { tier: "applied",
+      question: "A network camera has factory credentials and the manufacturer has never issued firmware updates. What is the most appropriate approach?",
+      options: ["Install an endpoint agent", "Patch the firmware", "Change the default credential and isolate it on a separate segment", "Accept the risk with no action"],
+      correct: 2,
+      explanation: "No agent and no patch path exist, so the achievable controls are changing the default credential and segmenting the device. This is the compensating control pattern applied to IoT." },
+    { tier: "applied",
+      question: "Which hardening technique applies to every target class in the objective without exception?",
+      options: ["Installing EDR", "Applying vendor patches", "Changing default credentials", "Full disk encryption"],
+      correct: 2,
+      explanation: "It requires no agent, no patch, and no vendor support, which is why it remains the highest-return control available on the devices that are hardest to secure." },
+    { tier: "applied",
+      question: "An employee leaves and their personally owned phone holds corporate email. What is appropriate?",
+      options: ["Full device wipe", "Selective wipe of the corporate container", "No action; the device is personal", "Confiscate the device"],
+      correct: 1,
+      explanation: "A full wipe of personally owned hardware destroys personal data the organization has no right to remove. Containerization is what makes a selective wipe possible." },
+    { tier: "applied",
+      question: "Client-side input validation is implemented but server-side validation is not. What is the security value?",
+      options: ["Substantial, as most attacks come through the browser", "None, because an attacker does not use your client", "Complete, if the client is obfuscated", "It prevents SQL injection"],
+      correct: 1,
+      explanation: "Client-side validation improves user experience only. An attacker sends requests directly, so validation must be enforced server-side to have any security effect." },
+    { tier: "applied",
+      question: "Laptops holding confidential data are being reissued to other staff. What must happen to the storage?",
+      options: ["Delete the files", "Sanitization by overwriting or cryptographic erasure", "Physical destruction", "Nothing, as the new user is also an employee"],
+      correct: 1,
+      explanation: "Deletion leaves data recoverable until overwritten. Sanitization renders it unrecoverable while keeping the media usable, which is what reissue requires." },
+    { tier: "applied",
+      question: "A wireless deployment has dead spots on one floor. What is the security concern?",
+      options: ["Slower speeds only", "Users connect to whatever network they can find, which a rogue access point exploits", "Increased power consumption", "Certificates will expire faster"],
+      correct: 1,
+      explanation: "Under-provisioned coverage creates exactly the condition an evil twin or rogue access point relies on. A site survey addresses coverage before configuration does anything." },
+    { tier: "applied",
+      question: "Static and dynamic analysis are compared. Which statement is accurate?",
+      options: ["Static analysis examines the running application", "Dynamic analysis finds flaws earliest in development", "Static analysis runs early and produces false positives; dynamic confirms real behaviour but only on paths it reaches", "They are interchangeable"],
+      correct: 2,
+      explanation: "They are complementary. Relying on either alone leaves a predictable blind spot - unexercised code paths for dynamic, and non-exploitable findings for static." },
+    { tier: "applied",
+      question: "Failed drives that cannot be written to must be disposed of. What is required?",
+      options: ["Sanitization by overwriting", "Physical destruction", "Deletion of the partition table", "Return under warranty as-is"],
+      correct: 1,
+      explanation: "Sanitization requires writing to the media, which a failed drive cannot accept. Returning it under warranty exports the data intact unless destruction is negotiated in advance." },
+    { tier: "scenario",
+      question: "A comparison finds an open port, an unauthorised local account, and disabled audit logging on a host that has run reliably for two years. What does this best illustrate?",
+      options: ["The baseline was incorrectly written", "Configuration drift, invisible because the system kept working", "A successful intrusion", "Hardware failure"],
+      correct: 1,
+      explanation: "Each change likely had a short-term operational reason and was never reversed. Drift is dangerous precisely because nothing malfunctions to prompt a look." },
+    { tier: "scenario",
+      question: "An organization buys IoT sensors with three years of vendor support and plans to use them for eight. What has been created?",
+      options: ["A cost saving", "Five years of unpatchable devices, decided at procurement", "A supply chain attack", "Nothing significant"],
+      correct: 1,
+      explanation: "The end-of-life problem is created at purchase by nobody asking how long updates will be issued. Procurement is where that question is answerable and cheap." },
+    { tier: "scenario",
+      question: "A security team enumerates the network and finds eleven servers absent from the inventory. What is the most significant implication?",
+      options: ["The inventory is slightly out of date", "Eleven systems are unpatched, unmonitored, and have no owner", "Enumeration tools are unreliable", "The servers should be shut down immediately"],
+      correct: 1,
+      explanation: "An asset nobody knows about is nobody's to patch or decommission. These assets typically lost their owner during a reorganisation and were never reassigned." },
+    { tier: "scenario",
+      question: "A regulator asks an organization to demonstrate that data on disposed drives was removed. The drives were destroyed but no records kept. What was missing?",
+      options: ["Sanitization", "Certification of destruction", "Encryption", "Retention policy"],
+      correct: 1,
+      explanation: "Destruction occurred but cannot be evidenced. The certificate is what converts an assertion into proof, which is exactly what a regulator or auditor requires." },
+    { tier: "scenario",
+      question: "An organization deploys a strict baseline written solely by the security team. Within six months it has forty documented exceptions. What went wrong?",
+      options: ["The baseline was too weak", "It was written without the teams running the applications, so it broke things and exceptions followed", "Exceptions are always inappropriate", "The benchmark source was wrong"],
+      correct: 1,
+      explanation: "A baseline that breaks applications generates exceptions, and enough exceptions mean it documents an aspiration rather than a configuration. Agreement belongs before deployment." },
+    { tier: "applied",
+      question: "A suspicious attachment is detonated in a sandbox and behaves benignly, so it is released to the recipient. What is the risk?",
+      options: ["Sandboxes always produce false negatives", "Some malware detects observation and stays dormant, so a clean result is weaker evidence than it appears", "Sandboxing damages attachments", "The sandbox should have blocked it regardless"],
+      correct: 1,
+      explanation: "Sandbox-aware malware waits out the observation period. This is why sandbox analysis complements endpoint monitoring rather than replacing it - the main environment must still be watched." }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>

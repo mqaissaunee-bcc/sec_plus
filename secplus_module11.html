@@ -1,0 +1,2874 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-module="11" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security+ Module 11: Governance and Risk Management</title>
+<meta name="description" content="Policies, standards, procedures and guidelines, the roles held over systems and data, the risk management process, quantitative risk analysis, and the strategies for responding to risk.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1200px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- control bar ---------- */
+.ctlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;
+  padding:10px 0;margin-bottom:6px}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:none}
+.notes-dot.on{display:inline-block}
+
+/* ---------- header ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header .subtitle{color:var(--muted);margin-top:8px;max-width:70ch}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.progress-wrap{flex:1}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav-btn{font:inherit;font-size:.9rem;min-height:44px;padding:10px 16px;cursor:pointer;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn[aria-selected="true"]{background:var(--brand);color:#00121f;border-color:var(--brand);font-weight:700}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono)}
+.nav-btn[aria-selected="true"] .done{color:#00121f}
+
+/* ---------- sections ---------- */
+.module-section{display:none}
+.module-section.active{display:block}
+.section-title{font-size:clamp(1.25rem,2.4vw,1.8rem);margin:6px 0 16px;
+  padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subsection{margin:26px 0}
+.subsection h3{font-size:1.15rem;margin-bottom:10px;color:var(--accent)}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tool-card,.feature-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:16px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- analogy ---------- */
+.analogy{position:relative;margin:18px 0;padding:16px 18px 16px 20px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
+  border-left:5px solid var(--accent)}
+.analogy__tag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74rem;
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.analogy__title{font-weight:800;font-size:1rem;margin-bottom:5px}
+.analogy p{font-size:.94rem}
+.analogy p + p{margin-top:9px}
+.analogy__limit{margin-top:10px;padding-top:9px;border-top:1px dashed
+  color-mix(in srgb,var(--accent) 40%,transparent);font-size:.86rem;color:var(--muted)}
+.analogy__limit strong{color:var(--warn)}
+
+/* ---------- glossary terms ---------- */
+.term{border-bottom:2px dotted var(--accent);cursor:help;font-weight:600}
+.term:hover,.term:focus{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.tip{position:absolute;z-index:150;max-width:320px;background:var(--card);color:var(--text);
+  border:1px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:.88rem;
+  line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
+.tip.on{display:block}
+.tip strong{color:var(--accent);display:block;margin-bottom:4px}
+
+/* ---------- code / terminal ---------- */
+.code-block,.terminal{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  white-space:pre-wrap;margin:12px 0;line-height:1.55}
+.terminal{min-height:60px}
+.terminal-line{display:block}
+.terminal-line.prompt{color:var(--accent)}
+.terminal-line.output{color:#e8edf5}
+.terminal-line.warning{color:var(--warn)}
+.terminal-line.error{color:var(--danger)}
+.terminal-line.info{color:var(--brand)}
+.terminal-line.new{animation:fadein .18s ease-in}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- demo ---------- */
+.interactive-demo{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px;margin:18px 0}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+
+/* ---------- figures / SVG diagrams ---------- */
+.figure{margin:18px 0;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.85rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-box.accent{stroke:var(--accent);stroke-width:2}
+.svg-box.brand{stroke:var(--brand);stroke-width:2}
+.svg-box.warn{stroke:var(--warn);stroke-width:2}
+.svg-box.danger{stroke:var(--danger);stroke-width:2}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:14px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--sans);font-size:11.5px}
+.svg-mono{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.svg-line{stroke:var(--line);stroke-width:2;fill:none}
+.svg-line.accent{stroke:var(--accent)}
+.svg-line.brand{stroke:var(--brand)}
+.svg-fill-accent{fill:var(--accent)}
+.svg-fill-brand{fill:var(--brand)}
+.svg-fill-warn{fill:var(--warn)}
+.svg-hot{cursor:pointer}
+.svg-hot:hover .svg-box{stroke:var(--accent);stroke-width:2.5}
+.svg-hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- chips / toggles ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:.85rem;font-weight:600;min-height:40px;padding:8px 14px;
+  cursor:pointer;color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px}
+.chip:hover{border-color:var(--brand)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#00121f;border-color:var(--brand)}
+.chip.on{background:var(--ok);color:#00121f;border-color:var(--ok)}
+.chip.off{background:var(--card-2);color:var(--muted)}
+.chip-label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+/* ---------- classifier widget ---------- */
+.classifier{background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:var(--radius);padding:18px;margin:18px 0}
+.classifier__scenario{background:var(--bg-0);border-radius:10px;padding:14px;
+  margin-bottom:6px;font-size:.95rem}
+.classifier__counter{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.classifier__feedback{margin-top:12px;padding:12px;border-radius:8px;font-size:.9rem;display:none}
+.classifier__feedback.on{display:block}
+.classifier__feedback.right{background:color-mix(in srgb,var(--ok) 15%,transparent);
+  border-left:4px solid var(--ok)}
+.classifier__feedback.wrong{background:color-mix(in srgb,var(--warn) 15%,transparent);
+  border-left:4px solid var(--warn)}
+.scorebar{font-size:.82rem;color:var(--muted);margin-top:10px}
+
+/* ---------- decision readout ---------- */
+.readout{display:flex;align-items:center;gap:12px;background:var(--bg-0);
+  border-radius:10px;padding:14px;margin-top:12px}
+.readout__verdict{font-weight:800;font-size:1.05rem;padding:6px 14px;border-radius:8px}
+.readout__verdict.allow{background:var(--ok);color:#00121f}
+.readout__verdict.step{background:var(--warn);color:#1a1200}
+.readout__verdict.deny{background:var(--danger);color:#fff}
+.readout__why{font-size:.88rem;color:var(--muted)}
+
+
+/* ---------- lab activities ---------- */
+.lab{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
+  border-radius:var(--radius);padding:20px;margin:20px 0}
+.lab__head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+.lab__title{font-size:1.15rem;font-weight:800;margin-right:auto}
+.lab__meta{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.lab__objective{background:var(--bg-0);border-radius:10px;padding:12px 14px;
+  font-size:.9rem;margin-bottom:14px}
+.lab__step{border-top:1px solid var(--line);padding:14px 0}
+.lab__step:first-of-type{border-top:none}
+.lab__prompt{font-weight:700;display:block;margin-bottom:4px}
+.lab__prompt .n{font-family:var(--mono);color:var(--warn);margin-right:6px}
+.lab__hint{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+.lab__input{width:100%;min-height:74px;resize:vertical;font:inherit;font-size:.92rem;
+  padding:10px 12px;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.lab__input:focus-visible{border-color:var(--accent)}
+.lab__status{font-size:.8rem;color:var(--muted);margin-top:10px}
+.lab__done{color:var(--ok);font-weight:700}
+.lab__grid{width:100%;border-collapse:collapse;margin:8px 0}
+.lab__grid th{background:var(--card-2);font-size:.82rem;padding:8px 10px;text-align:left}
+.lab__grid td{border:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+.lab__grid td.item{font-weight:600;font-size:.9rem}
+.lab__grid select{width:100%;font:inherit;font-size:.86rem;padding:7px 8px;min-height:40px;
+  color:var(--text);background:var(--bg-0);border:1px solid var(--line);border-radius:8px}
+.lab__grid tr.right td{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lab__grid tr.wrong td{background:color-mix(in srgb,var(--warn) 13%,transparent)}
+.lab__mark{font-family:var(--mono);font-weight:700;font-size:.8rem;white-space:nowrap}
+.lab__mark.ok{color:var(--ok)}
+.lab__mark.no{color:var(--warn)}
+.lab__order{list-style:none;counter-reset:ord;display:grid;gap:6px;margin:8px 0}
+.lab__order li{display:flex;align-items:center;gap:10px;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.9rem}
+.lab__order li::before{counter-increment:ord;content:counter(ord);font-family:var(--mono);
+  font-weight:700;color:var(--muted);min-width:18px}
+.lab__order li.right{border-color:var(--ok)}
+.lab__order li.wrong{border-color:var(--warn)}
+.lab__order .txt{flex:1}
+.lab__move{min-width:36px;min-height:36px;font:inherit;cursor:pointer;color:var(--text);
+  background:var(--card-2);border:1px solid var(--line);border-radius:8px}
+.lab__move:disabled{opacity:.35;cursor:not-allowed}
+.lab__choice{list-style:none;display:grid;gap:8px;margin:8px 0}
+.lab__choice li{display:flex;gap:10px;align-items:flex-start;background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px;padding:11px;font-size:.9rem}
+.lab__choice li.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.lab__choice li.wrong{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.lab__choice input{margin-top:4px;flex:none}
+.lab__check{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lab__result{font-size:.86rem;padding:10px 12px;border-radius:8px;margin-top:8px;display:none}
+.lab__result.on{display:block}
+.lab__result.right{background:color-mix(in srgb,var(--ok) 14%,transparent);border-left:4px solid var(--ok)}
+.lab__result.wrong{background:color-mix(in srgb,var(--warn) 14%,transparent);border-left:4px solid var(--warn)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+
+/* ---------- buttons ---------- */
+.btn{font:inherit;min-height:44px;padding:11px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--brand);background:var(--brand);color:#00121f;font-weight:700}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* ---------- quiz ---------- */
+.quiz-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{background:var(--card-2);border:1px solid var(--line);border-radius:99px;
+  padding:6px 14px;font-size:.82rem;color:var(--muted)}
+.quiz-question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px}
+.quiz-question .qnum{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:block}
+.quiz-question .qtext{font-weight:700;margin:6px 0 12px;display:block}
+.quiz-options{list-style:none;display:grid;gap:8px}
+.quiz-option{display:flex;gap:10px;align-items:flex-start;background:var(--card-2);
+  border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:44px}
+.quiz-option:hover{border-color:var(--brand)}
+.quiz-option input{margin-top:5px;flex:none}
+.quiz-option.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.quiz-option.incorrect{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.rationale{margin-top:10px;padding:12px;border-radius:8px;background:var(--bg-0);
+  border-left:4px solid var(--brand);font-size:.9rem}
+.score-banner{padding:20px;border-radius:var(--radius);margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card)}
+.score-banner .score{font-size:2rem;font-weight:800}
+.score-banner.pass{border-color:var(--ok)}
+.score-banner.fail{border-color:var(--warn)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:120}
+.modal.open{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);
+  font-size:1.9rem;line-height:1;cursor:pointer;min-height:44px;min-width:44px}
+
+/* ---------- notes FAB + panel ---------- */
+.notes-fab{position:fixed;right:20px;bottom:20px;z-index:96;display:inline-flex;
+  align-items:center;gap:8px;min-height:52px;padding:0 18px;cursor:pointer;
+  font:inherit;font-weight:700;color:#00121f;background:var(--accent);
+  border:none;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.notes-fab:hover{filter:brightness(1.08)}
+.notes-fab__icon{font-size:1.15rem}
+.notes-fab__dot{width:9px;height:9px;border-radius:50%;background:var(--danger);display:none}
+.notes-fab__dot.on{display:inline-block}
+
+.notes-panel{position:fixed;right:20px;bottom:calc(20px + 68px);z-index:95;
+  width:min(94vw,420px);max-height:min(72vh,560px);display:none;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 18px 48px rgba(0,0,0,.45)}
+.notes-panel.open{display:flex}
+.notes-panel__head{display:flex;align-items:center;gap:8px;padding:14px;
+  border-bottom:1px solid var(--line)}
+.notes-panel__title{font-weight:700;font-size:1rem;margin-right:auto}
+.notes-panel__close{min-width:36px;min-height:36px;display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;line-height:1;color:var(--muted);
+  background:transparent;border:0;border-radius:8px;cursor:pointer}
+.notes-panel__close:hover{color:var(--danger);background:var(--card-2)}
+.notes-tabs{display:flex;gap:4px;padding:10px 14px 0}
+.notes-tab{flex:1;min-height:38px;padding:6px 10px;font:inherit;font-size:.86rem;
+  font-weight:600;color:var(--muted);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-tab[aria-pressed="true"]{color:var(--accent);background:var(--bg-0);border-color:var(--accent)}
+.notes-panel__scope{font-size:.76rem;color:var(--muted);padding:10px 14px 0}
+.notes-panel__body{padding:8px 14px;flex:1;min-height:0;display:flex}
+.notes-area{width:100%;min-height:160px;resize:vertical;padding:12px;font:inherit;
+  font-size:.94rem;line-height:1.55;color:var(--text);background:var(--bg-0);
+  border:1px solid var(--line);border-radius:10px}
+.notes-area:focus-visible{border-color:var(--accent)}
+.notes-panel__foot{display:flex;gap:8px;align-items:center;padding:8px 14px 14px}
+.notes-panel__foot .notes-hint{font-size:.76rem;color:var(--muted);margin-right:auto}
+.notes-mini{min-height:36px;padding:0 14px;font:inherit;font-size:.85rem;font-weight:600;
+  color:var(--text);background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer}
+.notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
+@media (max-width:640px){
+  .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
+  .notes-fab{right:16px;bottom:16px}
+}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;right:20px;bottom:calc(20px + 68px);max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+.toast.warning{border-color:var(--warn)}
+.toast.error{border-color:var(--danger)}
+
+/* ---------- pager / footer ---------- */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.kbd-hint{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-size:.78rem}
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .ctlbar{justify-content:center}
+  .progress-container{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.ctlbar,.section-nav,.pager,.progress-container,.notes-panel,.notes-fab,.toast{display:none}
+  .module-section{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="ctlbar" role="group" aria-label="Display controls">
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size">
+        <span class="ctl__icon" aria-hidden="true">&minus;</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size">
+        <span class="ctl__icon" aria-hidden="true">+</span></button>
+    </div>
+    <button class="ctl" id="printBtn" type="button" data-action="print">
+      <span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span>
+    </button>
+    <button class="ctl" type="button" data-action="resetProgress">
+      <span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span>
+    </button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ &middot; Module 11</p>
+    <h1>Governance and Risk Management</h1>
+    <p class="subtitle">Policies, standards, procedures and guidelines, the roles held over systems and data, the risk management process, quantitative risk analysis, and the strategies for responding to risk.</p>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Module completion"></div>
+      </div>
+      <p class="progress-text" id="progressText">Progress: 0% complete</p>
+    </div>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" role="tablist" aria-label="Module sections"></nav>
+
+  <main id="main">
+
+    <section class="module-section active" id="overview" data-icon="&#128203;" role="tabpanel"
+             aria-labelledby="tab-overview" tabindex="-1">
+      <h2 class="section-title">Overview</h2>
+
+      <div class="callout info">
+        <span class="tag">[OBJECTIVES]</span>
+        By the end of this module you will be able to distinguish policies,
+        standards, procedures, and guidelines and say which is which from a
+        description; identify governance structures and the roles held over
+        systems and data; run the risk management process from identification to
+        reporting; perform quantitative risk analysis using SLE, ARO, and ALE; and
+        select a risk management strategy and defend it.
+      </div>
+
+      <p>Domain 5 is Security Program Management and Oversight at 20% - the
+      second-largest domain, and the least technical. That combination catches
+      students out. The material reads easily, which produces false confidence,
+      and the questions turn on precise distinctions between terms that sound
+      interchangeable in ordinary speech.</p>
+
+      <p>Three pairs cause most of the losses: policy versus standard, risk
+      appetite versus risk tolerance, and data controller versus data processor.
+      Each pair is genuinely different, each is examinable, and none of the
+      differences is intuitive.</p>
+
+      <div class="subsection">
+        <h3>Why governance exists at all</h3>
+        <p>Every technical control in the previous ten modules answers a decision
+        somebody made. Governance is where those decisions are made, recorded, and
+        given an owner - so that the control exists because the organization
+        chose it rather than because an engineer had a preference on a Tuesday.</p>
+        <p>The practical test of governance is whether an organization can answer
+        three questions about any control: who decided this, on what basis, and
+        who reviews it. An organization that cannot answer them has controls
+        rather than a security programme.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127963;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">The difference between rules and habits</p>
+        <p>A kitchen where everyone happens to wash their hands is not the same as
+        a kitchen with a hygiene policy. Both may be spotless today. Only one
+        stays spotless when the experienced staff leave, when a new manager
+        arrives with different instincts, or when an inspector asks why.</p>
+        <p>Governance converts habits into commitments that survive the people who
+        formed them. That is why Domain 5 exists alongside the technical domains
+        rather than instead of them.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="governance" data-icon="&#127963;" role="tabpanel"
+             aria-labelledby="tab-governance" tabindex="-1">
+      <h2 class="section-title">Governance Documents and Structures</h2>
+
+      <div class="subsection">
+        <h3>The document hierarchy</h3>
+        <p>Four document types, in descending order of abstraction. The exam gives
+        you a description and expects you to name the type.</p>
+        <table>
+          <thead><tr><th>Type</th><th>What it does</th><th>Mandatory?</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="policy">Policy</span></td><td>States intent and assigns responsibility</td><td>Yes</td><td>"Company data must be protected against unauthorised disclosure"</td></tr>
+            <tr><td><span class="term" data-term="standard">Standard</span></td><td>Specifies the measurable requirement</td><td>Yes</td><td>"Passwords must be at least 14 characters"</td></tr>
+            <tr><td><span class="term" data-term="procedure">Procedure</span></td><td>Gives the step-by-step method</td><td>Yes</td><td>"To reset a password: open the console, select..."</td></tr>
+            <tr><td><span class="term" data-term="guideline">Guideline</span></td><td>Offers recommended practice</td><td>No</td><td>"Consider using a passphrase of unrelated words"</td></tr>
+          </tbody>
+        </table>
+        <p>Two tests resolve almost every question here. <strong>Is it
+        mandatory?</strong> If optional, it is a guideline, whatever it is called.
+        <strong>Is it measurable?</strong> A policy states what must be true; a
+        standard states the specific threshold you can audit against. "Data must
+        be encrypted" is a policy. "AES-256 must be used" is a standard.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 260" role="img" aria-labelledby="ghTitle ghDesc">
+          <title id="ghTitle">The governance document hierarchy</title>
+          <desc id="ghDesc">Four layers from abstract to specific. Policy states intent and is mandatory. Standard specifies a measurable requirement and is mandatory. Procedure gives step-by-step method and is mandatory. Guideline recommends practice and is the only optional type.</desc>
+          <rect x="200" y="26" width="300" height="46" rx="9" class="svg-box accent"/>
+          <text x="350" y="46" text-anchor="middle" class="svg-label">POLICY</text>
+          <text x="350" y="64" text-anchor="middle" class="svg-sub">states intent &mdash; "data must be protected"</text>
+          <rect x="150" y="80" width="400" height="46" rx="9" class="svg-box brand"/>
+          <text x="350" y="100" text-anchor="middle" class="svg-label">STANDARD</text>
+          <text x="350" y="118" text-anchor="middle" class="svg-sub">measurable requirement &mdash; "AES-256"</text>
+          <rect x="100" y="134" width="500" height="46" rx="9" class="svg-box brand"/>
+          <text x="350" y="154" text-anchor="middle" class="svg-label">PROCEDURE</text>
+          <text x="350" y="172" text-anchor="middle" class="svg-sub">step-by-step method &mdash; "open the console, select&hellip;"</text>
+          <rect x="50" y="188" width="600" height="46" rx="9" class="svg-box warn"/>
+          <text x="350" y="208" text-anchor="middle" class="svg-label">GUIDELINE</text>
+          <text x="350" y="226" text-anchor="middle" class="svg-sub">optional recommendation &mdash; "consider a passphrase"</text>
+          <text x="30" y="52" class="svg-mono">abstract</text>
+          <text x="30" y="214" class="svg-mono">specific</text>
+          <text x="662" y="52" text-anchor="end" class="svg-mono">MANDATORY</text>
+          <text x="662" y="106" text-anchor="end" class="svg-mono">MANDATORY</text>
+          <text x="662" y="160" text-anchor="end" class="svg-mono">MANDATORY</text>
+          <text x="662" y="214" text-anchor="end" class="svg-mono">OPTIONAL</text>
+          <text x="350" y="254" text-anchor="middle" class="svg-sub">Two tests settle almost every question: is it mandatory, and is it measurable?</text>
+        </svg>
+        <figcaption>"Data must be encrypted" is a policy. "AES-256" is a standard.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128663;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Road rules</p>
+        <p>"Drive safely and without endangering others" is the
+        <strong>policy</strong> - it states intent and binds everyone, and you
+        cannot measure compliance directly.</p>
+        <p>"Thirty miles per hour in built-up areas" is the
+        <strong>standard</strong> - specific, measurable, and enforceable with a
+        camera.</p>
+        <p>"How to perform an emergency stop" is the <strong>procedure</strong> -
+        the actual steps, in order.</p>
+        <p>"It is courteous to signal early" is the <strong>guideline</strong>.
+        Sensible, recommended, and nobody is prosecuted for ignoring it.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The policies named in the objective</h3>
+        <table>
+          <thead><tr><th>Policy</th><th>Governs</th></tr></thead>
+          <tbody>
+            <tr><td>Acceptable use (AUP)</td><td>What staff may and may not do with organizational systems</td></tr>
+            <tr><td>Information security</td><td>The overarching security commitments of the organization</td></tr>
+            <tr><td>Business continuity</td><td>Keeping the organization operating through disruption</td></tr>
+            <tr><td>Disaster recovery</td><td>Restoring technology after a major failure</td></tr>
+            <tr><td>Incident response</td><td>How incidents are declared, handled, and reported</td></tr>
+            <tr><td>Software development lifecycle</td><td>How software is built, reviewed, and released securely</td></tr>
+            <tr><td>Change management</td><td>How changes are requested, approved, and recorded</td></tr>
+          </tbody>
+        </table>
+        <p>Note how many of these formalise material from earlier modules. Change
+        management was Module 1, business continuity and disaster recovery were
+        Module 7, and incident response was Module 10. Domain 5 is largely the
+        governance layer above work you have already studied.</p>
+        <p>The acceptable use policy deserves a specific note because it does
+        something the others do not: it is the document that makes disciplinary
+        action defensible. An organization dismissing someone for misusing systems
+        needs to show they were told what was unacceptable, which is why AUP
+        acknowledgement at onboarding is a control rather than paperwork.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Standards and procedures</h3>
+        <p>The objective names four standard areas - password, access control,
+        physical security, and encryption - and three procedure types: change
+        management, onboarding and offboarding, and playbooks.</p>
+        <p><strong>Playbooks</strong> are worth understanding as a distinct
+        artefact. A playbook is a procedure for a specific scenario: what to do
+        when ransomware is detected, when an account is compromised, when a
+        supplier reports a breach. Their value is that they remove decisions from
+        the moment when people are least able to make them well, which is exactly
+        why Module 10 placed preparation before every other incident response
+        phase.</p>
+        <p>Onboarding and offboarding procedures connect directly to Module 10's
+        provisioning material. The procedure is what makes deprovisioning happen
+        reliably, and the automation that drives it from HR data is the technical
+        implementation of a governance document.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">📕</span> Think of it like…</p><p class="analogy__title">A recipe card in the middle of service</p><p>A kitchen does not work out how to plate the special while forty covers are waiting. The method was agreed in the morning, written on a card, and pinned where the line can see it - so that at eight o'clock nobody is deciding anything.</p><p>A playbook is that card. Its value is not that the steps are clever; it is that the steps were chosen calmly, by people with time to think, and are available at the moment when nobody has any.</p></div>
+
+      <div class="subsection">
+        <h3>Security frameworks</h3>
+        <p>Organizations rarely design a governance programme from nothing, for
+        the same reason Module 8 noted about baselines: published frameworks
+        provide a vetted structure that has survived scrutiny.</p>
+        <table>
+          <thead><tr><th>Framework</th><th>What it provides</th></tr></thead>
+          <tbody>
+            <tr><td>NIST Cybersecurity Framework</td><td>Five functions - identify, protect, detect, respond, recover - as an organising structure</td></tr>
+            <tr><td>ISO/IEC 27001</td><td>A certifiable information security management system</td></tr>
+            <tr><td>CIS Controls</td><td>A prioritised list of safeguards, ordered by what to do first</td></tr>
+            <tr><td>COBIT</td><td>Governance framework linking IT to business objectives</td></tr>
+          </tbody>
+        </table>
+        <p>The distinction that matters is between frameworks and regulation. A
+        framework is adopted voluntarily and shapes how a programme is organised;
+        regulation is imposed and must be complied with. Adopting a framework does
+        not itself satisfy a regulator, though it usually makes demonstrating
+        compliance considerably easier.</p>
+        <p>Notice that the NIST functions map onto this course almost exactly:
+        identify is Domain 2 and asset management, protect is Domains 1 and 3,
+        detect is Module 9's monitoring, and respond and recover are Modules 10
+        and 7. That is not coincidence - the curriculum is organised around the
+        same lifecycle.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Governance structures</h3>      <div class="subsection">
+        <h3>Governance structures</h3>
+        <table>
+          <thead><tr><th>Structure</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>Board</td><td>Ultimate accountability; sets direction and risk appetite</td></tr>
+            <tr><td>Committee</td><td>Focused oversight of a domain, reporting upward</td></tr>
+            <tr><td>Government entity</td><td>External body imposing requirements</td></tr>
+            <tr><td>Centralized governance</td><td>One authority setting policy for the whole organization</td></tr>
+            <tr><td>Decentralized governance</td><td>Business units setting their own within a framework</td></tr>
+          </tbody>
+        </table>
+        <p>The centralized and decentralized trade-off mirrors the architectural
+        one from Module 6. Central governance gives consistency and can be slow
+        and remote from local realities. Decentralized governance is responsive
+        and produces divergence, so that two business units solve the same problem
+        differently and one solves it badly.</p>
+        <p>The board's role is worth stating precisely because exam questions
+        test it: the board sets risk appetite and holds accountability. It does
+        not operate controls, and accountability cannot be delegated to a supplier
+        or an insurer - a point that returns in Module 12.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>External considerations and revision</h3>
+        <p>Governance does not happen in isolation. The objective names
+        regulatory, legal, industry, local, regional, national, and global
+        considerations, and their practical effect is that requirements arrive
+        from outside and are not negotiable.</p>
+        <p>An organization operating internationally faces requirements that
+        conflict - one jurisdiction requiring data retention, another requiring
+        deletion, a third restricting where data may sit at all, as Module 7
+        described. Resolving those conflicts is governance work rather than
+        technical work.</p>
+        <p><strong>Monitoring and revision</strong> is the element most often
+        skipped. A policy written in 2019 for an office-based workforce, never
+        revisited, now governs a remote organization using cloud services it does
+        not mention. It is not merely out of date - it actively misleads, because
+        staff following it believe they are compliant.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128220;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A staff handbook for a company that no longer exists</p>
+        <p>A handbook describing the smoking room, the fax rota, and which
+        receptionist holds the stationery key is not simply amusing. Someone
+        following it in good faith is following instructions about a building and
+        a business that are gone.</p>
+        <p>Unrevised security policy does the same thing more dangerously,
+        because the gap is less obvious. A policy silent on cloud storage does not
+        read as out of date - it reads as permission.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="roles" data-icon="&#128101;" role="tabpanel"
+             aria-labelledby="tab-roles" tabindex="-1">
+      <h2 class="section-title">Roles and Responsibilities</h2>
+
+      <div class="subsection">
+        <h3>The four roles</h3>
+        <p>These are examined precisely, and the definitions do not match casual
+        usage.</p>
+        <table>
+          <thead><tr><th>Role</th><th>Responsibility</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="data owner">Data owner</span></td><td>Senior business figure accountable for a dataset; sets classification and approves access</td></tr>
+            <tr><td><span class="term" data-term="data controller">Data controller</span></td><td>Determines <em>why</em> and <em>how</em> personal data is processed</td></tr>
+            <tr><td><span class="term" data-term="data processor">Data processor</span></td><td>Processes personal data on the controller's instructions</td></tr>
+            <tr><td><span class="term" data-term="data custodian">Data custodian / steward</span></td><td>Implements and maintains the controls the owner requires</td></tr>
+          </tbody>
+        </table>
+        <p>The distinction students find hardest is controller versus processor,
+        and it turns on one question: <strong>who decides the purpose?</strong> A
+        company deciding to run a customer loyalty scheme is the controller. The
+        analytics firm it hires to process that data according to its instructions
+        is the processor. If that firm begins using the data for purposes of its
+        own, it becomes a controller for those purposes - the role follows the
+        decision, not the contract.</p>
+        <p>Owner versus custodian is a different split: the owner decides, the
+        custodian implements. A finance director owns the payroll data and sets
+        its classification; a database administrator is the custodian who applies
+        encryption and access controls. Security teams are usually custodians, not
+        owners, which is why Module 7 noted that classification decisions belong
+        to the business.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="drTitle drDesc">
+          <title id="drTitle">The four data roles</title>
+          <desc id="drDesc">Owner and custodian split by who decides versus who implements. Controller and processor split by who decides the purpose of processing. A processor that decides a purpose of its own becomes a controller for that purpose.</desc>
+          <text x="175" y="26" text-anchor="middle" class="svg-label">Who decides vs who implements</text>
+          <rect x="20" y="38" width="150" height="62" rx="10" class="svg-box accent"/>
+          <text x="95" y="62" text-anchor="middle" class="svg-label">Data owner</text>
+          <text x="95" y="80" text-anchor="middle" class="svg-sub">sets classification,</text>
+          <text x="95" y="94" text-anchor="middle" class="svg-sub">approves access</text>
+          <rect x="185" y="38" width="150" height="62" rx="10" class="svg-box brand"/>
+          <text x="260" y="62" text-anchor="middle" class="svg-label">Custodian</text>
+          <text x="260" y="80" text-anchor="middle" class="svg-sub">implements the</text>
+          <text x="260" y="94" text-anchor="middle" class="svg-sub">controls required</text>
+          <path d="M172 69 L182 69" class="svg-line accent" marker-end="url(#ar11)"/>
+          <text x="525" y="26" text-anchor="middle" class="svg-label">Who decides the purpose</text>
+          <rect x="370" y="38" width="150" height="62" rx="10" class="svg-box accent"/>
+          <text x="445" y="62" text-anchor="middle" class="svg-label">Controller</text>
+          <text x="445" y="80" text-anchor="middle" class="svg-sub">decides why and how</text>
+          <text x="445" y="94" text-anchor="middle" class="svg-sub">data is processed</text>
+          <rect x="535" y="38" width="145" height="62" rx="10" class="svg-box brand"/>
+          <text x="607" y="62" text-anchor="middle" class="svg-label">Processor</text>
+          <text x="607" y="80" text-anchor="middle" class="svg-sub">acts on the</text>
+          <text x="607" y="94" text-anchor="middle" class="svg-sub">controller's instructions</text>
+          <path d="M522 69 L532 69" class="svg-line accent" marker-end="url(#ar11)"/>
+          <defs><marker id="ar11" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+          <rect x="20" y="126" width="660" height="52" rx="10" class="svg-box warn"/>
+          <text x="350" y="147" text-anchor="middle" class="svg-label">The role follows the decision, not the contract</text>
+          <text x="350" y="166" text-anchor="middle" class="svg-sub">A processor that starts deciding a purpose of its own becomes a controller for that purpose.</text>
+          <rect x="20" y="192" width="660" height="44" rx="10" class="svg-box"/>
+          <text x="350" y="212" text-anchor="middle" class="svg-sub">Security teams are usually custodians, not owners &mdash; which is why classification</text>
+          <text x="350" y="228" text-anchor="middle" class="svg-sub">decisions belong to the business, as Module 7 established.</text>
+        </svg>
+        <figcaption>Owner versus custodian is decide versus implement. Controller versus processor is who chose the purpose.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128196;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A client and a printing firm</p>
+        <p>A charity decides to send a fundraising mailing, chooses who receives
+        it and what it says, and hands the list to a printer. The charity is the
+        <strong>controller</strong> - it decided the purpose. The printer is the
+        <strong>processor</strong> - it does exactly what it was instructed and
+        nothing more.</p>
+        <p>If the printer decides to use that list to advertise its own services,
+        it has stopped acting on instructions and started deciding a purpose. It
+        is now a controller in its own right, with all the obligations that
+        carries, regardless of what the contract says.</p>
+        <p class="analogy__limit"><strong>Where it breaks down:</strong> a printer
+        physically returns the list. A cloud processor retains copies in backups
+        and logs, which is why processor contracts specify deletion and why
+        Module 12 treats vendor agreements as a control.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏠</span> Think of it like…</p><p class="analogy__title">The homeowner and the caretaker</p><p>A homeowner decides the house will have a burglar alarm, how sensitive it should be, and who gets a code. A caretaker installs it, tests it monthly, and calls the engineer when it faults.</p><p>Both are essential and only one is accountable for the decision. Ask a caretaker to decide who may enter the house and you have moved a judgement to someone who was never given the standing to make it - which is what happens when security teams are asked to classify data they do not own.</p></div>
+
+      <div class="subsection">
+        <h3>Why naming roles matters operationally</h3>
+        <p>Unassigned responsibility is the recurring finding across this entire
+        course. Module 8's unowned asset, Module 9's unattributed risk acceptance,
+        and Module 10's orphaned account are all the same failure in different
+        forms: something existed that nobody was accountable for.</p>
+        <p>Naming an owner does not by itself protect anything. What it does is
+        ensure that when a decision is needed - approve this access, accept this
+        risk, classify this dataset - there is a specific person whose job it is,
+        rather than a diffuse expectation that someone will notice.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="risk-identification" data-icon="&#128202;" role="tabpanel"
+             aria-labelledby="tab-risk-identification" tabindex="-1">
+      <h2 class="section-title">Identifying and Recording Risk</h2>
+
+      <div class="subsection">
+        <h3>Risk identification and assessment types</h3>
+        <p>Risk identification is finding what could go wrong, drawing on the
+        threat and vulnerability material from Domain 2, audit findings, incident
+        history, and the knowledge of the people who run each system.</p>
+        <p>Assessment is the evaluation, and the objective names four cadences.</p>
+        <table>
+          <thead><tr><th>Type</th><th>When it happens</th></tr></thead>
+          <tbody>
+            <tr><td>Ad hoc</td><td>Triggered by an event - an incident, a new threat, an acquisition</td></tr>
+            <tr><td>Recurring</td><td>On a defined schedule, typically annually</td></tr>
+            <tr><td>One-time</td><td>For a specific project or decision, then complete</td></tr>
+            <tr><td>Continuous</td><td>Ongoing, usually tool-driven, reflecting current state</td></tr>
+          </tbody>
+        </table>
+        <p>The trend is toward continuous assessment for the reason Module 8
+        established: environments change constantly, so an annual assessment
+        describes an organization that no longer exists by the time it is
+        published.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The <span class="term" data-term="risk register">risk register</span></h3>
+        <p>The register is the organization's list of identified risks and what is
+        being done about each. A usable entry carries more than a description.</p>
+        <table>
+          <thead><tr><th>Element</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>Description</td><td>What could happen, and what would follow</td></tr>
+            <tr><td>Likelihood and impact</td><td>The two dimensions producing a rating</td></tr>
+            <tr><td>Risk owner</td><td>The named person accountable for the response</td></tr>
+            <tr><td>Current controls</td><td>What already reduces this</td></tr>
+            <tr><td>Strategy</td><td>Mitigate, transfer, avoid, or accept</td></tr>
+            <tr><td>Key risk indicators</td><td>Measures that would show this risk increasing</td></tr>
+            <tr><td>Review date</td><td>When this entry is reassessed</td></tr>
+          </tbody>
+        </table>
+        <p><span class="term" data-term="kri">Key risk indicators</span> are the
+        element worth understanding rather than memorising. A KRI is a leading
+        measure - something that moves <em>before</em> the risk materialises. The
+        number of unpatched critical vulnerabilities is a KRI for compromise; the
+        number of breaches last quarter is not a KRI at all, because by the time
+        it moves the risk has already occurred.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128663;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A warning light versus a breakdown</p>
+        <p>An oil pressure light is a key risk indicator. It moves before the
+        engine seizes, it gives you time to act, and acting on it is cheaper than
+        not.</p>
+        <p>The number of times you have been towed this year is a fascinating
+        statistic and useless as a warning. It only moves after the thing you were
+        trying to prevent has already happened - which is why counting last
+        quarter's incidents is reporting, not risk indication.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Reading a register entry</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="register">Open an entry</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="register">Clear</button>
+        </div>
+        <div class="terminal" id="demo-register" aria-live="polite" aria-label="Risk register entry output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Risk tolerance, threshold, and appetite</h3>
+        <p>These three are constantly confused and are individually examinable.</p>
+        <table>
+          <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term" data-term="risk appetite">Risk appetite</span></td><td>How much risk the organization is <em>willing</em> to take in pursuit of objectives</td></tr>
+            <tr><td><span class="term" data-term="risk tolerance">Risk tolerance</span></td><td>How much variation from that it can actually <em>withstand</em></td></tr>
+            <tr><td>Risk threshold</td><td>The specific point at which action becomes required</td></tr>
+          </tbody>
+        </table>
+        <p>Appetite is a deliberate strategic choice set by the board. The
+        objective names three postures: <strong>expansionary</strong>, accepting
+        higher risk for growth; <strong>conservative</strong>, prioritising
+        stability; and <strong>neutral</strong>, in between. A startup pursuing
+        market share and a nuclear operator hold genuinely different appetites,
+        and neither is wrong.</p>
+        <p>Tolerance is about capacity rather than desire. An organization may
+        have an expansionary appetite and a low tolerance for regulatory breach
+        specifically - happy to take commercial risk, unable to withstand losing
+        its licence.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127798;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">How spicy you order versus how spicy you can stand</p>
+        <p><strong>Appetite</strong> is what you choose from the menu. Some people
+        deliberately order the hottest thing available; others never do. It is a
+        preference, and it is a decision made in advance.</p>
+        <p><strong>Tolerance</strong> is what you can actually get through without
+        a problem. These are different numbers, and people get into difficulty
+        precisely when appetite exceeds tolerance - which is also how
+        organizations get into difficulty.</p>
+      </div>
+    </section>
+
+    <section class="module-section" id="risk-analysis" data-icon="&#128290;" role="tabpanel"
+             aria-labelledby="tab-risk-analysis" tabindex="-1">
+      <h2 class="section-title">Analysing Risk</h2>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">📋</span> Think of it like…</p><p class="analogy__title">A to-do list with nobody's name on it</p><p>A shared household list reading 'fix the gate, chase the insurance, sort the damp' produces nothing. Everyone has read it, everyone assumes someone else is on it, and in a month it reads the same.</p><p>Add a name and a date to each line and the same list starts moving. A risk register without owners and review dates is that first list: an accurate description of what is wrong, and no mechanism whatsoever for it to change.</p></div>
+
+      <div class="subsection">
+        <h3>Qualitative and quantitative</h3>
+        <table>
+          <thead><tr><th></th><th>Qualitative</th><th>Quantitative</th></tr></thead>
+          <tbody>
+            <tr><td>Expresses risk as</td><td>Categories - high, medium, low</td><td>Monetary values</td></tr>
+            <tr><td>Requires</td><td>Judgement and experience</td><td>Data on asset values and frequencies</td></tr>
+            <tr><td>Strength</td><td>Fast, works where data is absent</td><td>Comparable, supports cost-benefit decisions</td></tr>
+            <tr><td>Weakness</td><td>Subjective; two assessors may disagree</td><td>Precision can be spurious if inputs are guessed</td></tr>
+          </tbody>
+        </table>
+        <p>Most organizations use both: qualitative to triage the whole
+        population quickly, quantitative on the significant few where the numbers
+        justify the effort. The exam's concern is that you know which is which and
+        what each is for.</p>
+        <p>The caution about quantitative analysis is worth taking seriously. A
+        calculation producing £847,500 looks authoritative, and if the frequency
+        input was a guess, the output is that guess with decimal places. The
+        confidence a number projects is not evidence about the number.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>The quantitative formulas</h3>
+        <p>These appear on the exam as calculations, and they are the only
+        arithmetic in the course.</p>
+        <table>
+          <thead><tr><th>Term</th><th>Meaning</th><th>Formula</th></tr></thead>
+          <tbody>
+            <tr><td>AV</td><td>Asset value</td><td>&mdash;</td></tr>
+            <tr><td>EF</td><td>Exposure factor - proportion of the asset lost in one event</td><td>&mdash;</td></tr>
+            <tr><td><span class="term" data-term="sle">SLE</span></td><td>Single loss expectancy - cost of one occurrence</td><td>AV &times; EF</td></tr>
+            <tr><td><span class="term" data-term="aro">ARO</span></td><td>Annualised rate of occurrence - times per year</td><td>&mdash;</td></tr>
+            <tr><td><span class="term" data-term="ale">ALE</span></td><td>Annualised loss expectancy - expected annual cost</td><td>SLE &times; ARO</td></tr>
+          </tbody>
+        </table>
+        <p>An ARO below one expresses an event less frequent than annual: once
+        every four years is 0.25. This is where arithmetic slips happen under exam
+        pressure, so read the frequency carefully before converting.</p>
+        <p>The purpose of ALE is comparison against control cost. If a risk
+        carries an ALE of £40,000 and a control costing £15,000 a year would
+        eliminate it, the control is justified. If the control costs £90,000, it
+        is not - and spending it anyway is a worse decision than accepting the
+        risk, however uncomfortable that sounds.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 250" role="img" aria-labelledby="rmTitle rmDesc">
+          <title id="rmTitle">The quantitative risk formulas</title>
+          <desc id="rmDesc">Asset value multiplied by exposure factor gives single loss expectancy, the cost of one event. Single loss expectancy multiplied by annualised rate of occurrence gives annualised loss expectancy, which is compared against the annual cost of a control.</desc>
+          <rect x="20" y="40" width="130" height="52" rx="9" class="svg-box"/>
+          <text x="85" y="62" text-anchor="middle" class="svg-label">AV</text>
+          <text x="85" y="80" text-anchor="middle" class="svg-sub">asset value</text>
+          <text x="168" y="72" text-anchor="middle" class="svg-label">&times;</text>
+          <rect x="186" y="40" width="130" height="52" rx="9" class="svg-box"/>
+          <text x="251" y="62" text-anchor="middle" class="svg-label">EF</text>
+          <text x="251" y="80" text-anchor="middle" class="svg-sub">exposure factor</text>
+          <text x="334" y="72" text-anchor="middle" class="svg-label">=</text>
+          <rect x="352" y="40" width="130" height="52" rx="9" class="svg-box brand"/>
+          <text x="417" y="62" text-anchor="middle" class="svg-label">SLE</text>
+          <text x="417" y="80" text-anchor="middle" class="svg-sub">cost of one event</text>
+          <text x="500" y="72" text-anchor="middle" class="svg-label">&times;</text>
+          <rect x="518" y="40" width="130" height="52" rx="9" class="svg-box"/>
+          <text x="583" y="62" text-anchor="middle" class="svg-label">ARO</text>
+          <text x="583" y="80" text-anchor="middle" class="svg-sub">events per year</text>
+          <rect x="215" y="112" width="270" height="52" rx="10" class="svg-box accent"/>
+          <text x="350" y="134" text-anchor="middle" class="svg-label">ALE = SLE &times; ARO</text>
+          <text x="350" y="153" text-anchor="middle" class="svg-sub">expected annual cost</text>
+          <path d="M417 94 L340 110" class="svg-line accent" marker-end="url(#am11)"/>
+          <path d="M583 94 L360 110" class="svg-line accent" marker-end="url(#am11)"/>
+          <defs><marker id="am11" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" class="svg-fill-accent"/></marker></defs>
+          <rect x="20" y="180" width="320" height="56" rx="10" class="svg-box warn"/>
+          <text x="180" y="201" text-anchor="middle" class="svg-label">Watch the ARO</text>
+          <text x="180" y="220" text-anchor="middle" class="svg-sub">once every 4 years = 0.25, not 4</text>
+          <rect x="360" y="180" width="320" height="56" rx="10" class="svg-box brand"/>
+          <text x="520" y="201" text-anchor="middle" class="svg-label">What ALE is for</text>
+          <text x="520" y="220" text-anchor="middle" class="svg-sub">compare against annual control cost</text>
+        </svg>
+        <figcaption>Spending more per year than the ALE destroys value, however frightening the risk feels.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127754;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Costing a flood</p>
+        <p>Your ground floor and its contents are worth £200,000. A flood ruins
+        about a quarter of that - the <strong>exposure factor</strong> is 0.25 -
+        so one flood costs £50,000. That is the <strong>single loss
+        expectancy</strong>.</p>
+        <p>Historically the river floods roughly once every ten years, so the
+        <strong>annualised rate of occurrence</strong> is 0.1. Multiply, and
+        flooding costs you £5,000 a year on average - the <strong>annualised loss
+        expectancy</strong>.</p>
+        <p>Now the decision is answerable. A £2,000-a-year flood barrier is worth
+        it. A £12,000-a-year one is not, and the fact that flooding feels
+        frightening does not change the arithmetic.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Working an ALE calculation</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="ale">Calculate and decide</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="ale">Clear</button>
+        </div>
+        <div class="terminal" id="demo-ale" aria-live="polite" aria-label="Risk calculation output"></div>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">⚖️</span> Think of it like…</p><p class="analogy__title">Two ways to be told a number</p><p>A surveyor saying 'the roof is in poor condition' and one saying '£18,000 to replace, likely needed within three years' have told you about the same roof. Only the second lets you compare it against the kitchen, the boiler, and what you actually have.</p><p>That is qualitative against quantitative. The first is quick and adequate for triage; the second is what you need when two things are competing for the same money.</p><p class="analogy__limit"><strong>Where it breaks down:</strong> a surveyor's estimate rests on inspection. A frequency figure often rests on a guess - and £847,500 looks equally authoritative either way, which is the trap.</p></div>
+
+      <div class="subsection">
+        <h3>Probability, likelihood, and impact</h3>
+        <p>The objective lists these separately from the formulas.
+        <strong>Probability</strong> is a mathematical expression of chance,
+        <strong>likelihood</strong> is a qualitative judgement of the same idea,
+        and <strong>impact</strong> is the consequence if it happens.</p>
+        <p>Risk combines likelihood and impact, and neither alone is sufficient.
+        A near-certain event with trivial impact and a catastrophic event that is
+        essentially impossible both produce low risk, for opposite reasons. The
+        entries that need attention are those scoring meaningfully on both axes.</p>
+      </div>
+
+      <p><button class="btn secondary" type="button" data-action="openModal" data-modal="risk-map">
+        Open the risk terms reference</button></p>
+
+      <div class="subsection">
+        <h3>Practice: classify the element</h3>
+        <div class="classifier" data-classifier="risk"></div>
+      </div>
+    </section>
+
+    <section class="module-section" id="countermeasures" data-icon="&#128737;" role="tabpanel"
+             aria-labelledby="tab-countermeasures" tabindex="-1">
+      <h2 class="section-title">Strategies, Reporting, and Business Impact</h2>
+
+      <div class="subsection">
+        <h3>The four risk management strategies</h3>
+        <table>
+          <thead><tr><th>Strategy</th><th>What it does</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Mitigate</td><td>Reduce likelihood or impact with controls</td><td>Patch, segment, add MFA</td></tr>
+            <tr><td>Transfer</td><td>Move financial consequence to another party</td><td>Insurance, contractual terms</td></tr>
+            <tr><td>Avoid</td><td>Stop doing the thing that creates the risk</td><td>Discontinue a service, decline a market</td></tr>
+            <tr><td>Accept</td><td>Take no further action, deliberately and on record</td><td>Documented exception with an owner</td></tr>
+          </tbody>
+        </table>
+        <p>Three points recur in exam questions. <strong>Transfer moves financial
+        consequence, never accountability</strong> - an insured organization
+        still faces the regulator and still owes its customers an explanation.
+        <strong>Avoidance is genuinely available</strong> and students forget it;
+        sometimes the correct answer is not to offer the service. And
+        <strong>acceptance is legitimate</strong> when documented with a named
+        acceptor and a review date, which is the Module 9 exception in governance
+        language.</p>
+      </div>
+
+      <figure class="figure">
+        <svg viewBox="0 0 700 260" role="img" aria-labelledby="rsTitle rsDesc">
+          <title id="rsTitle">The four risk management strategies</title>
+          <desc id="rsDesc">Avoid removes the activity entirely. Mitigate reduces likelihood or impact with controls. Transfer moves financial consequence to an insurer or supplier. Accept takes no further action deliberately, with a named owner and review date.</desc>
+          <rect x="20" y="34" width="155" height="96" rx="11" class="svg-box accent"/>
+          <text x="97" y="60" text-anchor="middle" class="svg-label">AVOID</text>
+          <text x="97" y="82" text-anchor="middle" class="svg-sub">stop doing it</text>
+          <text x="97" y="102" text-anchor="middle" class="svg-mono">risk never</text>
+          <text x="97" y="118" text-anchor="middle" class="svg-mono">enters</text>
+          <rect x="190" y="34" width="155" height="96" rx="11" class="svg-box brand"/>
+          <text x="267" y="60" text-anchor="middle" class="svg-label">MITIGATE</text>
+          <text x="267" y="82" text-anchor="middle" class="svg-sub">add controls</text>
+          <text x="267" y="102" text-anchor="middle" class="svg-mono">reduces likelihood</text>
+          <text x="267" y="118" text-anchor="middle" class="svg-mono">or impact</text>
+          <rect x="360" y="34" width="155" height="96" rx="11" class="svg-box warn"/>
+          <text x="437" y="60" text-anchor="middle" class="svg-label">TRANSFER</text>
+          <text x="437" y="82" text-anchor="middle" class="svg-sub">insure or contract</text>
+          <text x="437" y="102" text-anchor="middle" class="svg-mono">moves COST only</text>
+          <text x="437" y="118" text-anchor="middle" class="svg-mono">event unchanged</text>
+          <rect x="530" y="34" width="150" height="96" rx="11" class="svg-box"/>
+          <text x="605" y="60" text-anchor="middle" class="svg-label">ACCEPT</text>
+          <text x="605" y="82" text-anchor="middle" class="svg-sub">deliberate, on record</text>
+          <text x="605" y="102" text-anchor="middle" class="svg-mono">named acceptor</text>
+          <text x="605" y="118" text-anchor="middle" class="svg-mono">+ review date</text>
+          <rect x="20" y="150" width="660" height="50" rx="10" class="svg-box danger"/>
+          <text x="350" y="171" text-anchor="middle" class="svg-label">Transfer moves financial consequence &mdash; never accountability</text>
+          <text x="350" y="190" text-anchor="middle" class="svg-sub">An insured organization still faces the regulator and still owes its customers an explanation.</text>
+          <text x="350" y="224" text-anchor="middle" class="svg-sub">Students forget AVOID is available. Sometimes the correct answer is not to offer the service at all.</text>
+          <text x="350" y="246" text-anchor="middle" class="svg-sub">And ACCEPT is legitimate &mdash; when it was actually decided, by someone named, with a date to revisit.</text>
+        </svg>
+        <figcaption>Four responses to a house on a floodplain: do not buy it, fit barriers, insure it, or keep a mop.</figcaption>
+      </figure>
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#127968;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">Four responses to a house on a floodplain</p>
+        <p><strong>Avoid</strong> - do not buy the house. The risk never enters
+        your life.</p>
+        <p><strong>Mitigate</strong> - buy it and fit flood barriers and raised
+        sockets. The water may still come; less of it, and it costs less.</p>
+        <p><strong>Transfer</strong> - buy flood insurance. The water arrives
+        exactly as before and someone else pays for the carpets. Note what does
+        not transfer: you still have nowhere to sleep on Tuesday.</p>
+        <p><strong>Accept</strong> - buy it, know the risk, keep a mop, and decide
+        the location is worth it. That is a decision, not negligence, provided it
+        was actually made.</p>
+      </div>
+
+<div class="analogy"><p class="analogy__tag"><span aria-hidden="true">🏥</span> Think of it like…</p><p class="analogy__title">Consent before an operation</p><p>A surgeon explaining a procedure does not read out the whole file. They state what is being proposed, what could go wrong, how likely that is, and what decision is being asked of the patient right now.</p><p>Risk reporting to a board is the same act. The register is the file. What the board needs is the significant risks, whether things are improving, what sits outside appetite, and which decisions are theirs to make.</p></div>
+
+      <div class="subsection">
+        <h3>Risk reporting</h3>
+        <p>Reporting communicates the risk position to those accountable for it,
+        and Module 9's lesson about audience applies. A board needs the
+        significant risks, whether the position is improving, which risks sit
+        outside appetite, and what decisions are being asked of them. It does not
+        need the register.</p>
+        <p>The most important content is usually the exceptions: risks that have
+        been accepted, by whom, and when they will be reviewed. That is the list
+        the board is accountable for and the one most likely to be absent from a
+        report focused on activity.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Business impact analysis</h3>
+        <p>A <span class="term" data-term="bia">business impact analysis</span>
+        determines which functions matter most and how quickly they must be
+        restored. It is the input to the continuity and recovery decisions from
+        Module 7 - the BIA establishes the requirement, and the architecture
+        satisfies it.</p>
+        <table>
+          <thead><tr><th>Metric</th><th>Meaning</th><th>Set by</th></tr></thead>
+          <tbody>
+            <tr><td>RTO</td><td>Maximum acceptable time to restore a function</td><td>The business</td></tr>
+            <tr><td>RPO</td><td>Maximum acceptable data loss</td><td>The business</td></tr>
+            <tr><td><span class="term" data-term="mttr">MTTR</span></td><td>Mean time to repair - average actual recovery time</td><td>Measured</td></tr>
+            <tr><td><span class="term" data-term="mtbf">MTBF</span></td><td>Mean time between failures - average interval between them</td><td>Measured</td></tr>
+          </tbody>
+        </table>
+        <p>The distinction that matters is which are <em>targets</em> and which
+        are <em>measurements</em>. RTO and RPO are requirements the business
+        states. MTTR and MTBF are observations of how systems actually behave.
+        Comparing them is the useful act: an MTTR of 30 hours against an RTO of 4
+        hours is a gap requiring investment, and you cannot know that without both
+        numbers.</p>
+      </div>
+
+      <div class="analogy">
+        <p class="analogy__tag"><span aria-hidden="true">&#128295;</span> Think of it like&hellip;</p>
+        <p class="analogy__title">A delivery van's service record</p>
+        <p><strong>MTBF</strong> is how long the van typically runs between
+        breakdowns - roughly eight months. <strong>MTTR</strong> is how long it
+        usually takes to get back on the road - about three days.</p>
+        <p>Those are facts about the van. <strong>RTO</strong> is different in
+        kind: it is the business saying deliveries cannot stop for more than one
+        day. Comparing them gives you the decision - three days of actual repair
+        against one day of tolerance means you need a spare van, a faster
+        mechanic, or a revised promise to customers.</p>
+      </div>
+
+      <div class="interactive-demo">
+        <h3>Reading BIA metrics together</h3>
+        <div class="demo-controls">
+          <button class="btn" type="button" data-action="runDemo" data-demo="bia">Compare targets and actuals</button>
+          <button class="btn secondary" type="button" data-action="clearDemo" data-demo="bia">Clear</button>
+        </div>
+        <div class="terminal" id="demo-bia" aria-live="polite" aria-label="Business impact metrics output"></div>
+      </div>
+
+      <div class="subsection">
+        <h3>Inherent, residual, and control risk</h3>
+        <p>Three related terms describe risk at different points in the treatment
+        process, and exam questions use them to test whether you know which stage
+        is being discussed.</p>
+        <table>
+          <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Inherent risk</td><td>The risk before any controls are applied</td></tr>
+            <tr><td>Residual risk</td><td>What remains after controls are in place</td></tr>
+            <tr><td>Control risk</td><td>The risk that a control itself fails or is ineffective</td></tr>
+          </tbody>
+        </table>
+        <p>Residual risk is the figure that matters operationally, because it is
+        what the organization actually carries and therefore what acceptance
+        decisions apply to. A register recording inherent risk alone describes a
+        world in which the organization has done nothing.</p>
+        <p>Control risk is the one students overlook, and it is the reason
+        validation exists throughout this course. The untested backup from Module
+        7, the untuned alert rule from Module 9, and the patch deployed but never
+        confirmed from Module 9 are all control risk: a control was counted on and
+        did not deliver, so the residual risk was understated all along.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>What a BIA produces</h3>      <div class="subsection">
+        <h3>What a BIA produces</h3>
+        <p>Beyond the metrics, a BIA identifies which business functions are
+        critical, what each depends on, and the order in which they must be
+        restored. That dependency mapping is where BIAs earn their cost: an
+        organization frequently discovers that a function it rated
+        non-critical is a dependency of one it rated essential, so restoring them
+        in priority order would not work.</p>
+        <p>The other common finding is that stated RTOs are unaffordable in
+        aggregate. Every department believes its function is critical, and
+        totalling the resulting requirements produces a cost nobody will fund -
+        which forces the genuinely useful conversation about relative priority
+        that the BIA existed to prompt.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="tag">[EXAM]</span>
+        Three discriminators. A standard is measurable and a policy states intent.
+        Appetite is what you are willing to take; tolerance is what you can
+        withstand. And RTO and RPO are targets set by the business, while MTTR and
+        MTBF are measurements of what actually happens.
+      </div>
+    </section>
+
+    <section class="module-section" id="labs" data-icon="&#129514;" role="tabpanel"
+             aria-labelledby="tab-labs" tabindex="-1">
+      <h2 class="section-title">Lab Activities</h2>
+
+      <div class="callout info">
+        <span class="tag">[HOW THESE WORK]</span>
+        Analysis labs - nothing to install. Answers save in this browser as you
+        type, and each lab generates a Word document you can submit. Graded lab
+        assignments are posted in Canvas.
+      </div>
+
+      <div class="lab" data-lab="governance-stack"></div>
+      <div class="lab" data-lab="quantify-risk"></div>
+      <div class="lab" data-lab="strategy-bia"></div>
+
+      <div class="callout warn">
+        <span class="tag">[BEFORE YOU SUBMIT]</span>
+        Answers live in this browser only. Generate the report and save the file
+        when you finish a lab.
+      </div>
+    </section>
+
+    <!-- ============ ASSESSMENT (always last) ============ -->
+    <section class="module-section" id="assessment" data-icon="📝" role="tabpanel"
+             aria-labelledby="tab-assessment" tabindex="-1">
+      <h2 class="section-title">Assessment</h2>
+      <div class="quiz-meta">
+        <span class="pill" id="quizCount">0 questions</span>
+        <span class="pill">Passing score: 80%</span>
+        <span class="pill">Unlimited attempts</span>
+      </div>
+      <form id="quizForm" novalidate></form>
+      <div class="btn-row">
+        <button class="btn" id="submitQuiz" type="button">Submit answers</button>
+        <button class="btn secondary" id="retryQuiz" type="button" hidden>Try again</button>
+      </div>
+      <div id="quizResults" aria-live="polite"></div>
+    </section>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevSection" type="button">&larr; Previous</button>
+      <button class="btn secondary" id="nextSection" type="button">Next &rarr;</button>
+    </div>
+    <p class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> sections &middot;
+       <kbd>N</kbd> notes &middot; <kbd>Esc</kbd> close</p>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <button class="modal-close" type="button" data-action="closeModal" aria-label="Close dialog">&times;</button>
+    <div id="modalBody"><h3 id="modalTitle"></h3><div id="modalContent"></div></div>
+  </div>
+</div>
+
+<button class="notes-fab" id="notesToggle" type="button" data-action="toggleNotes"
+        aria-expanded="false" aria-controls="notesPanel" aria-label="Open notes">
+  <span class="notes-fab__icon" aria-hidden="true">📝</span>
+  <span class="notes-fab__text">Notes</span>
+  <span class="notes-fab__dot" id="notesDot" aria-hidden="true"></span>
+</button>
+
+<div class="notes-panel" id="notesPanel" role="dialog" aria-modal="false"
+     aria-label="Study notes" aria-hidden="true">
+  <div class="notes-panel__head">
+    <span class="notes-panel__title">Notes</span>
+    <button class="notes-panel__close" type="button" data-action="toggleNotes"
+            aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-tabs" role="group" aria-label="Notes scope">
+    <button class="notes-tab" id="scopeSection" type="button" data-action="notesSection"
+            aria-pressed="true">This section</button>
+    <button class="notes-tab" id="scopeScratch" type="button" data-action="notesScratch"
+            aria-pressed="false">Scratchpad</button>
+  </div>
+  <p class="notes-panel__scope" id="notesHint">Notes for this section</p>
+  <div class="notes-panel__body">
+    <label class="sr-only" for="notesArea">Note text</label>
+    <textarea class="notes-area" id="notesArea" spellcheck="true"
+              placeholder="Type your notes here."></textarea>
+  </div>
+  <div class="notes-panel__foot">
+    <span class="notes-hint">Saved automatically</span>
+    <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
+    <label class="sr-only" for="notesFormat">Export format</label>
+    <select class="notes-mini" id="notesFormat">
+      <option value="doc">Word (.doc)</option>
+      <option value="txt">Plain text (.txt)</option>
+      <option value="print">Print / Save as PDF</option>
+      <option value="md">Markdown (.md)</option>
+    </select>
+    <button class="notes-mini" type="button" data-action="exportNotes">Export</button>
+  </div>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="liveRegion" role="status" aria-live="polite"></div>
+
+<!-- ==================== [0] CHASSIS JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var MODULE_ID = root.getAttribute("data-module") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";              // shared across all modules
+  var STATE_KEY = COURSE + ":progress:" + MODULE_ID; // per module
+  var NOTES_KEY = COURSE + ":notes:" + MODULE_ID;    // per module
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  /* ---------- storage (never throws: Safari private mode) ---------- */
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  /* ---------- announce / toast ---------- */
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast on" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = "toast"; }, 2600);
+    announce(msg);
+  }
+
+  /* ---------- preferences: theme + text scale ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle");
+    var dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(theme) { prefs.theme = theme; write(PREFS_KEY, prefs); applyTheme(theme); }
+
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- sections derived from the DOM ---------- */
+  var SECTION_ELS = Array.prototype.slice.call(document.querySelectorAll(".module-section"));
+  var SECTIONS = SECTION_ELS.map(function (el) {
+    return {
+      id: el.id,
+      label: el.querySelector(".section-title").textContent.trim(),
+      icon: el.getAttribute("data-icon") || ""   // emoji shown in the nav tab
+    };
+  });
+  var sectionOrder = SECTIONS.map(function (s) { return s.id; });
+  function sectionTitle(id) {
+    for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i].label;
+    return id;
+  }
+
+  var nav = document.getElementById("sectionNav");
+  var bar = document.getElementById("progressBar");
+  var ptext = document.getElementById("progressText");
+  var modal = document.getElementById("detailModal");
+
+  var state = read(STATE_KEY, { visited: [], current: sectionOrder[0] });
+  var visited = new Set((state.visited || []).filter(function (id) { return document.getElementById(id); }));
+  var current = sectionOrder[0];
+  var lastFocus = null;
+
+  SECTIONS.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn"; b.id = "tab-" + s.id;
+    b.setAttribute("role", "tab"); b.setAttribute("aria-controls", s.id);
+    b.setAttribute("aria-selected", "false"); b.setAttribute("tabindex", "-1");
+    b.dataset.section = s.id;
+    b.innerHTML = (s.icon ? '<span aria-hidden="true">' + s.icon + '</span> ' : '') +
+      s.label + '<span class="done" hidden> \u2713</span>';
+    nav.appendChild(b);
+  });
+
+  function saveProgress() { write(STATE_KEY, { visited: Array.from(visited), current: current }); }
+
+  function show(id) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    SECTION_ELS.forEach(function (el) { el.classList.toggle("active", el.id === id); });
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      var on = b.dataset.section === id;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    if (notesScope === "section") flushNotes();
+    current = id;
+    visited.add(id);                       // mark the section ENTERED, not the one left
+    nav.querySelectorAll(".nav-btn").forEach(function (b) {
+      b.querySelector(".done").hidden = !visited.has(b.dataset.section);
+    });
+    updateProgress();
+    saveProgress();
+    if (notesPanelOpen && notesScope === "section") renderNotes();
+    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    if (typeof window.scrollTo === "function") { try { window.scrollTo(0, 0); } catch (e) {} }
+    if (typeof window.onSectionShown === "function") window.onSectionShown(id);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((visited.size / SECTIONS.length) * 100);
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    ptext.textContent = "Progress: " + pct + "% complete (" + visited.size +
+      " of " + SECTIONS.length + " sections)";
+  }
+
+  function step(d) {
+    var i = sectionOrder.indexOf(current);
+    if (i === -1) return;
+    show(sectionOrder[(i + d + sectionOrder.length) % sectionOrder.length]);
+  }
+
+  function resetProgress() {
+    visited.clear(); visited.add(current);
+    nav.querySelectorAll(".nav-btn").forEach(function (b) { b.querySelector(".done").hidden = true; });
+    updateProgress(); saveProgress();
+    notify("Progress reset.");
+  }
+
+  /* ---------- notes ---------- */
+  var notesScope = "section", notesPanelOpen = false, notesT;
+  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function notesValue() {
+    var n = loadNotes();
+    return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
+  }
+  function setNotesValue(v) {
+    var n = loadNotes();
+    if (notesScope === "scratch") n.scratch = v; else n.sections[current] = v;
+    write(NOTES_KEY, n);
+    updateNotesDot();
+  }
+  function hasAnyNotes() {
+    var n = loadNotes();
+    if (n.scratch && n.scratch.trim()) return true;
+    for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    return false;
+  }
+  function updateNotesDot() {
+    document.getElementById("notesDot").classList.toggle("on", hasAnyNotes());
+  }
+  function renderNotes() {
+    document.getElementById("notesArea").value = notesValue();
+    document.getElementById("notesHint").textContent =
+      notesScope === "scratch" ? "Scratchpad - shared across this module."
+                               : "Notes for: " + sectionTitle(current);
+    document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
+    document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+  }
+  function flushNotes() {
+    var area = document.getElementById("notesArea");
+    if (area && notesPanelOpen) setNotesValue(area.value);
+  }
+  function setNotesScope(scope) {
+    flushNotes();
+    notesScope = scope === "scratch" ? "scratch" : "section";
+    renderNotes();
+    document.getElementById("notesArea").focus();
+  }
+  function toggleNotes() {
+    notesPanelOpen = !notesPanelOpen;
+    var p = document.getElementById("notesPanel");
+    p.classList.toggle("open", notesPanelOpen);
+    p.setAttribute("aria-hidden", String(!notesPanelOpen));
+    document.getElementById("notesToggle").setAttribute("aria-expanded", String(notesPanelOpen));
+    if (notesPanelOpen) { renderNotes(); document.getElementById("notesArea").focus(); }
+    else { flushNotes(); document.getElementById("notesToggle").focus(); }
+  }
+  function clearNotes() {
+    setNotesValue("");
+    document.getElementById("notesArea").value = "";
+    notify("Cleared notes for this scope.", "warning");
+  }
+  function collectNotes() {
+    var n = loadNotes(), out = [];
+    sectionOrder.forEach(function (id) {
+      var v = n.sections[id];
+      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+    });
+    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    return out;
+  }
+  function moduleTitle() {
+    var h = document.querySelector(".module-header h1");
+    return h ? h.textContent.trim() : "Module " + MODULE_ID;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportNotes() {
+    // The textarea is debounced, so flush pending keystrokes first. Without this,
+    // exporting within 400ms of typing reports "no notes" and loses the edit.
+    flushNotes();
+    var items = collectNotes();
+    if (!items.length) { notify("No notes to export yet.", "warning"); return; }
+    var sel = document.getElementById("notesFormat");
+    var fmt = sel ? sel.value : "doc";
+    var title = moduleTitle();
+    var stamp = new Date().toLocaleString();
+    var base = COURSE + "-module" + MODULE_ID + "-notes";
+
+    if (fmt === "md") {
+      var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
+      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
+
+    } else if (fmt === "txt") {
+      var tx = ["NOTES - " + title.toUpperCase(),
+                "Exported " + stamp,
+                new Array(60).join("=")  , ""];
+      items.forEach(function (it) {
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+      });
+      download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
+
+    } else {
+      // Word and print share the same HTML body.
+      var body = '<h1>' + esc(title) + '</h1>' +
+        '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
+      items.forEach(function (it) {
+        body += "<h2>" + esc(it.heading) + "</h2>";
+        it.body.split(/\n{2,}/).forEach(function (para) {
+          body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+      });
+      var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+        "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+
+      if (fmt === "print") {
+        var w = window.open("", "_blank");
+        if (!w) { notify("Allow pop-ups to print your notes.", "warning"); return; }
+        w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" +
+          esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+          body + "</body></html>");
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 350);
+        notify("Opened print view. Choose 'Save as PDF' as the destination.");
+        return;
+      }
+      // .doc: Word opens HTML saved with a .doc extension.
+      var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>" +
+        "<title>" + esc(title) + " - Notes</title><style>" + css + "</style></head><body>" +
+        body + "</body></html>";
+      download(new Blob(["\ufeff" + doc], { type: "application/msword" }), base + ".doc");
+    }
+    notify("Notes exported.");
+  }
+
+  document.getElementById("notesArea").addEventListener("input", function () {
+    clearTimeout(notesT);
+    notesT = setTimeout(flushNotes, 400);
+  });
+  updateNotesDot();
+
+  /* ---------- glossary tooltips ---------- */
+  var tip = document.getElementById("tip"), tipFor = null;
+  function tipText(el) {
+    var key = (el.dataset.term || el.textContent || "").trim().toLowerCase();
+    return (window.GLOSSARY || {})[key] || "";
+  }
+  function showTip(el) {
+    var txt = tipText(el);
+    if (!txt) return;
+    tip.innerHTML = "<strong>" + (el.dataset.term || el.textContent).trim() + "</strong>" + txt;
+    tip.classList.add("on");
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var top = r.bottom + window.pageYOffset + 8;
+    var left = Math.max(8, Math.min(r.left + window.pageXOffset,
+      (window.innerWidth || 1024) - tip.offsetWidth - 12));
+    tip.style.top = top + "px"; tip.style.left = left + "px";
+  }
+  function hideTip() { tip.classList.remove("on"); tipFor = null; }
+  function initTooltips() {
+    document.querySelectorAll(".term").forEach(function (el) {
+      var txt = tipText(el);
+      if (!txt) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", el.textContent.trim() + ": " + txt);
+    });
+  }
+  function closestTerm(n) {
+    while (n && n !== document) { if (n.classList && n.classList.contains("term")) return n; n = n.parentNode; }
+    return null;
+  }
+  document.addEventListener("mouseover", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("mouseout", function (e) { if (closestTerm(e.target)) hideTip(); });
+  document.addEventListener("focusin", function (e) { var t = closestTerm(e.target); if (t) showTip(t); });
+  document.addEventListener("focusout", function (e) { if (closestTerm(e.target)) hideTip(); });
+
+  /* ---------- modal ---------- */
+  function openModal(title, html) {
+    lastFocus = document.activeElement;
+    // Set the heading in place. Re-injecting an <h3 id="modalTitle"> would create
+    // a duplicate id and break the dialog's aria-labelledby reference.
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = html;
+    modal.classList.add("open");
+    modal.querySelector(".modal-close").focus();
+    initTooltips();
+  }
+  function closeModal() {
+    modal.classList.remove("open");
+    if (lastFocus) lastFocus.focus();
+  }
+  modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+  modal.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var f = modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- terminal demo runner ---------- */
+  // DEMOS[name] = [{text, cls, delay}] - rendered line by line.
+  var demoTimers = {};
+  function runDemo(name) {
+    var steps = (window.DEMOS || {})[name];
+    var out = document.getElementById("demo-" + name);
+    if (!steps || !out) return;
+    clearDemo(name);
+    var i = 0;
+    (function next() {
+      if (i >= steps.length) { announce("Demonstration complete."); return; }
+      var s = steps[i++];
+      var span = document.createElement("span");
+      span.className = "terminal-line new " + (s.cls || "output");
+      span.textContent = s.text;
+      out.appendChild(span);
+      demoTimers[name] = setTimeout(next, s.delay || 420);
+    })();
+  }
+  function clearDemo(name) {
+    clearTimeout(demoTimers[name]);
+    var out = document.getElementById("demo-" + name);
+    if (out) out.innerHTML = "";
+  }
+
+  var ACTIONS_EXTRA = {};
+
+  /* ---------- reusable classifier widget ----------
+     window.CLASSIFIERS[id] = {
+       axes: [{ name, label, options:[...] }, ...],
+       items: [{ scenario, answers:{axisName:option}, explain }, ...]
+     }
+     Markup: <div class="classifier" data-classifier="id"></div>          */
+  var clsState = {};
+  function buildClassifier(host) {
+    var id = host.dataset.classifier;
+    var cfg = (window.CLASSIFIERS || {})[id];
+    if (!cfg) return;
+    var st = clsState[id] || (clsState[id] = { i: 0, picks: {}, right: 0, done: 0 });
+    var item = cfg.items[st.i];
+
+    var html = '<p class="classifier__counter">Scenario ' + (st.i + 1) + ' of ' +
+      cfg.items.length + '</p>' +
+      '<div class="classifier__scenario">' + item.scenario + '</div>';
+    cfg.axes.forEach(function (ax) {
+      html += '<span class="chip-label">' + ax.label + '</span><div class="chips" role="group" aria-label="' +
+        ax.label + '">';
+      ax.options.forEach(function (o) {
+        var on = st.picks[ax.name] === o;
+        html += '<button type="button" class="chip" data-action="clsPick" data-cls="' + id +
+          '" data-axis="' + ax.name + '" data-opt="' + o + '" aria-pressed="' + on + '">' + o + '</button>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="clsCheck" data-cls="' + id + '">Check answer</button>' +
+      '<button class="btn secondary" type="button" data-action="clsNext" data-cls="' + id + '">Next scenario</button>' +
+      '</div>' +
+      '<div class="classifier__feedback" id="clsfb-' + id + '" aria-live="polite"></div>' +
+      '<p class="scorebar">Correct: ' + st.right + ' of ' + st.done + ' attempted</p>';
+    host.innerHTML = html;
+  }
+  function initClassifiers() {
+    document.querySelectorAll("[data-classifier]").forEach(buildClassifier);
+  }
+  function clsHost(id) { return document.querySelector('[data-classifier="' + id + '"]'); }
+
+  ACTIONS_EXTRA.clsPick = function (el) {
+    var id = el.dataset.cls, st = clsState[id];
+    var axis = el.dataset.axis, opt = el.dataset.opt;
+    st.picks[axis] = opt;
+    buildClassifier(clsHost(id));
+    // Rebuilding innerHTML detaches the clicked node, which drops keyboard focus.
+    // Restore it on the equivalent chip in the new markup.
+    var again = clsHost(id).querySelector(
+      '[data-axis="' + axis + '"][data-opt="' + opt + '"]');
+    if (again) again.focus();
+  };
+  ACTIONS_EXTRA.clsCheck = function (el) {
+    var id = el.dataset.cls, cfg = window.CLASSIFIERS[id], st = clsState[id];
+    var item = cfg.items[st.i];
+    var missing = cfg.axes.filter(function (a) { return !st.picks[a.name]; });
+    var fb = document.getElementById("clsfb-" + id);
+    if (missing.length) {
+      fb.className = "classifier__feedback on wrong";
+      fb.innerHTML = "Choose one option for each row before checking.";
+      return;
+    }
+    var wrong = cfg.axes.filter(function (a) { return st.picks[a.name] !== item.answers[a.name]; });
+    st.done++;
+    if (!wrong.length) st.right++;
+    fb.className = "classifier__feedback on " + (wrong.length ? "wrong" : "right");
+    fb.innerHTML = (wrong.length
+      ? "<strong>Not quite.</strong> " + cfg.axes.map(function (a) {
+          return a.label + ": <strong>" + item.answers[a.name] + "</strong>";
+        }).join(" &middot; ")
+      : "<strong>Correct.</strong>") + "<br>" + item.explain;
+    document.querySelector('[data-classifier="' + id + '"] .scorebar').textContent =
+      "Correct: " + st.right + " of " + st.done + " attempted";
+    announce(wrong.length ? "Incorrect" : "Correct");
+  };
+  ACTIONS_EXTRA.clsNext = function (el) {
+    var id = el.dataset.cls, st = clsState[id], cfg = window.CLASSIFIERS[id];
+    st.i = (st.i + 1) % cfg.items.length;
+    st.picks = {};
+    buildClassifier(clsHost(id));
+  };
+
+
+  /* ---------- lab activities ----------
+     window.LABS[id] = { title, time, objective, steps:[{prompt, hint}] }
+     Markup: <div class="lab" data-lab="id"></div>
+     Responses persist under the notes key so a single export carries everything. */
+  function labKey() { return COURSE + ":labs:" + MODULE_ID; }
+  function loadLabs() { return read(labKey(), {}); }
+  function labResponse(id, i) { var d = loadLabs()[id] || {}; return d[i] || ""; }
+  function setLabResponse(id, i, v) {
+    var all = loadLabs();
+    if (!all[id]) all[id] = {};
+    all[id][i] = v;
+    write(labKey(), all);
+  }
+  function labFilled(id, cfg) {
+    var d = loadLabs()[id] || {}, n = 0;
+    cfg.steps.forEach(function (s, i) {
+      var v = d[i];
+      if (v === undefined || v === null) return;
+      if (typeof v === "string") { if (v.trim()) n++; return; }
+      if (Array.isArray(v)) { if (v.length) n++; return; }
+      if (typeof v === "object") {
+        // match step: count only when every cell is filled
+        var rows = Object.keys(v);
+        if (!rows.length) return;
+        var complete = rows.every(function (r) {
+          return Object.keys(v[r]).every(function (c) { return v[r][c]; });
+        });
+        if (complete && rows.length === (s.items || []).length) n++;
+      }
+    });
+    return n;
+  }
+  function shuffleArr(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function stepHTML(id, i, s) {
+    var val = labResponse(id, i);
+    var body = "";
+
+    if (s.type === "match") {
+      // Grid: each row an item, each column a dropdown the student must set.
+      body += '<table class="lab__grid"><thead><tr><th>Item</th>';
+      s.columns.forEach(function (c) { body += "<th>" + c.label + "</th>"; });
+      body += '<th class="lab__mark"></th></tr></thead><tbody>';
+      s.items.forEach(function (it, r) {
+        body += '<tr data-row="' + r + '"><td class="item">' + it.text + "</td>";
+        s.columns.forEach(function (c) {
+          var cur = (val && val[r] && val[r][c.name]) || "";
+          body += '<td><select data-lab-sel="' + id + '" data-step="' + i +
+            '" data-row="' + r + '" data-col="' + c.name + '">' +
+            '<option value="">- choose -</option>';
+          c.options.forEach(function (o) {
+            body += '<option value="' + o + '"' + (cur === o ? " selected" : "") + ">" + o + "</option>";
+          });
+          body += "</select></td>";
+        });
+        body += '<td class="lab__mark"></td></tr>';
+      });
+      body += "</tbody></table>";
+
+    } else if (s.type === "order") {
+      // Order is stored as an array of item indices in the student's sequence.
+      var seq = (val && val.length) ? val : shuffleArr(s.items.map(function (_, k) { return k; }));
+      body += '<ul class="lab__order" data-order="' + i + '">';
+      seq.forEach(function (idx, pos) {
+        body += '<li data-idx="' + idx + '"><span class="txt">' + s.items[idx] + "</span>" +
+          '<button class="lab__move" type="button" data-action="labUp" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move up"' +
+          (pos === 0 ? " disabled" : "") + ">&uarr;</button>" +
+          '<button class="lab__move" type="button" data-action="labDown" data-lab="' + id +
+          '" data-step="' + i + '" data-pos="' + pos + '" aria-label="Move down"' +
+          (pos === seq.length - 1 ? " disabled" : "") + ">&darr;</button></li>";
+      });
+      body += "</ul>";
+
+    } else if (s.type === "choice") {
+      body += '<ul class="lab__choice">';
+      s.options.forEach(function (o, k) {
+        var on = val && val.indexOf && val.indexOf(k) !== -1;
+        body += '<li><input type="checkbox" id="lc-' + id + "-" + i + "-" + k +
+          '" data-lab-chk="' + id + '" data-step="' + i + '" data-opt="' + k + '"' +
+          (on ? " checked" : "") + '><label for="lc-' + id + "-" + i + "-" + k + '">' +
+          o + "</label></li>";
+      });
+      body += "</ul>";
+
+    } else {
+      body += '<textarea class="lab__input" id="lab-' + id + "-" + i +
+        '" data-lab-in="' + id + '" data-step="' + i +
+        '" placeholder="Your answer">' + String(val || "").replace(/</g, "&lt;") + "</textarea>";
+    }
+
+    if (s.type && s.type !== "text") {
+      body += '<div class="lab__check">' +
+        '<button class="btn secondary" type="button" data-action="labCheck" data-lab="' + id +
+        '" data-step="' + i + '">Check this step</button></div>' +
+        '<div class="lab__result" id="labres-' + id + "-" + i + '" aria-live="polite"></div>';
+    }
+    return body;
+  }
+
+  function buildLab(host) {
+    var id = host.dataset.lab;
+    var cfg = (window.LABS || {})[id];
+    if (!cfg) return;
+    var html = '<div class="lab__head"><span class="lab__title">' + cfg.title + '</span>' +
+      '<span class="lab__meta">' + (cfg.time || "") + '</span></div>' +
+      '<div class="lab__objective"><strong>Objective.</strong> ' + cfg.objective + '</div>';
+    cfg.steps.forEach(function (s, i) {
+      html += '<div class="lab__step">' +
+        '<span class="lab__prompt"><span class="n">' + (i + 1) + ".</span>" + s.prompt + "</span>" +
+        (s.hint ? '<p class="lab__hint">' + s.hint + "</p>" : "") +
+        stepHTML(id, i, s) + "</div>";
+    });
+    var n = labFilled(id, cfg);
+    html += '<div class="btn-row">' +
+      '<button class="btn" type="button" data-action="labReport" data-lab="' + id + '">Generate lab report</button>' +
+      '<button class="btn secondary" type="button" data-action="labClear" data-lab="' + id + '">Clear answers</button>' +
+      '</div><p class="lab__status" id="labst-' + id + '">' +
+      (n === cfg.steps.length ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+                              : n + " of " + cfg.steps.length + " steps answered.") +
+      " Answers save automatically.</p>";
+    host.innerHTML = html;
+  }
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+  // Render one stored answer as report HTML. Answers are strings for text steps,
+  // objects for match steps, and arrays for order and choice steps.
+  function labAnswerHTML(s, v) {
+    if (v === undefined || v === null || (Array.isArray(v) && !v.length)) {
+      return "<p><em style='color:#999'>Not answered</em></p>";
+    }
+    if (s.type === "match") {
+      var rows = "";
+      s.items.forEach(function (it, r) {
+        var got = (v && v[r]) || {};
+        var mine = s.columns.map(function (c) { return got[c.name] || "-"; }).join(" / ");
+        var key = s.columns.map(function (c) { return it.answers[c.name]; }).join(" / ");
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        rows += "<tr><td>" + esc(it.text) + "</td><td>" + esc(mine) + "</td><td>" +
+          esc(key) + "</td><td>" + (okRow ? "correct" : "review") + "</td></tr>";
+      });
+      return "<table border='1' cellpadding='5' style='border-collapse:collapse;width:100%'>" +
+        "<tr><th align='left'>Item</th><th align='left'>Your answer</th>" +
+        "<th align='left'>Correct</th><th align='left'>Result</th></tr>" + rows + "</table>";
+    }
+    if (s.type === "order") {
+      var li = "";
+      v.forEach(function (idx, pos) {
+        li += "<li>" + esc(String(s.items[idx]).replace(/<[^>]+>/g, "")) +
+          (idx === pos ? "" : " <em>(correct position: " + (idx + 1) + ")</em>") + "</li>";
+      });
+      return "<ol>" + li + "</ol>";
+    }
+    if (s.type === "choice") {
+      var out = "";
+      v.forEach(function (k) {
+        var right = s.correct.indexOf(k) !== -1;
+        out += "<li>" + esc(String(s.options[k]).replace(/<[^>]+>/g, "")) +
+          (right ? "" : " <em>(not correct)</em>") + "</li>";
+      });
+      var missed = s.correct.filter(function (k) { return v.indexOf(k) === -1; });
+      if (missed.length) {
+        out += "<li><em>Missed: " + missed.map(function (k) {
+          return esc(String(s.options[k]).replace(/<[^>]+>/g, ""));
+        }).join("; ") + "</em></li>";
+      }
+      return "<ul>" + out + "</ul>";
+    }
+    return "<p>" + esc(String(v)).replace(/\n/g, "<br>") + "</p>";
+  }
+
+  function labAnswered(s, v) {
+    if (v === undefined || v === null) return false;
+    if (typeof v === "string") return !!v.trim();
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === "object") return Object.keys(v).length > 0;
+    return false;
+  }
+
+  ACTIONS_EXTRA.labReport = function (el) {
+    var id = el.dataset.lab, cfg = window.LABS[id], data = loadLabs()[id] || {};
+    var answered = cfg.steps.filter(function (s, i) { return labAnswered(s, data[i]); }).length;
+    if (!answered) { notify("Answer at least one step first.", "warning"); return; }
+    var stamp = new Date().toLocaleString();
+    var body = "<h1>" + esc(cfg.title) + "</h1>" +
+      "<p style='color:#666'><em>" + esc(moduleTitle()) + " &middot; generated " + esc(stamp) +
+      " &middot; " + answered + " of " + cfg.steps.length + " steps completed</em></p>" +
+      "<h2>Objective</h2><p>" + esc(cfg.objective.replace(/<[^>]+>/g, "")) + "</p><h2>Responses</h2>";
+    cfg.steps.forEach(function (s, i) {
+      body += "<h3>" + (i + 1) + ". " +
+        esc(s.prompt.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")) + "</h3>" +
+        labAnswerHTML(s, data[i]);
+    });
+    var css2 = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
+      "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
+      "h2{font-size:13pt;color:#1f3864;margin-top:16pt}h3{font-size:11.5pt;margin-top:12pt}" +
+      "table{font-size:10pt}";
+    var doc = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'><title>" + esc(cfg.title) + "</title><style>" + css2 +
+      "</style></head><body>" + body + "</body></html>";
+    download(new Blob(["\ufeff" + doc], { type: "application/msword" }),
+      COURSE + "-module" + MODULE_ID + "-" + id + "-report.doc");
+    notify("Lab report downloaded as a Word document.");
+  };
+
+  function initLabs() { document.querySelectorAll("[data-lab]").forEach(buildLab); }
+
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (!el.dataset || !el.dataset.labIn) return;
+    setLabResponse(el.dataset.labIn, el.dataset.step, el.value);
+    var id = el.dataset.labIn, cfg = window.LABS[id];
+    var st = document.getElementById("labst-" + id);
+    var n = labFilled(id, cfg);
+    if (st) st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + ' steps answered.</span>'
+      : n + ' of ' + cfg.steps.length + ' steps answered.') + " Answers save automatically.";
+  });
+
+  function refreshStatus(id) {
+    var cfg = window.LABS[id], st = document.getElementById("labst-" + id);
+    if (!st) return;
+    var n = labFilled(id, cfg);
+    st.innerHTML = (n === cfg.steps.length
+      ? '<span class="lab__done">All ' + n + " steps answered.</span>"
+      : n + " of " + cfg.steps.length + " steps answered.") + " Answers save automatically.";
+  }
+
+  document.addEventListener("change", function (e) {
+    var el = e.target;
+    if (el.dataset && el.dataset.labSel) {
+      var id = el.dataset.labSel, i = el.dataset.step;
+      var cur = labResponse(id, i) || {};
+      if (!cur[el.dataset.row]) cur[el.dataset.row] = {};
+      cur[el.dataset.row][el.dataset.col] = el.value;
+      setLabResponse(id, i, cur);
+      refreshStatus(id);
+    }
+    if (el.dataset && el.dataset.labChk) {
+      var id2 = el.dataset.labChk, j = el.dataset.step;
+      var arr = labResponse(id2, j) || [];
+      if (!Array.isArray(arr)) arr = [];
+      var k = parseInt(el.dataset.opt, 10);
+      var at = arr.indexOf(k);
+      if (el.checked && at === -1) arr.push(k);
+      if (!el.checked && at !== -1) arr.splice(at, 1);
+      setLabResponse(id2, j, arr);
+      refreshStatus(id2);
+    }
+  });
+
+  function moveOrder(id, stepIdx, pos, delta) {
+    var cfg = window.LABS[id], s = cfg.steps[stepIdx];
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var list = host.querySelector('[data-order="' + stepIdx + '"]');
+    var seq = Array.prototype.map.call(list.children, function (li) {
+      return parseInt(li.dataset.idx, 10);
+    });
+    var to = pos + delta;
+    if (to < 0 || to >= seq.length) return;
+    var tmp = seq[pos]; seq[pos] = seq[to]; seq[to] = tmp;
+    setLabResponse(id, stepIdx, seq);
+    refreshStatus(id);
+    buildLab(host);
+    // Keep focus on the row the student just moved, at its new position.
+    var again = host.querySelectorAll('[data-order="' + stepIdx + '"] > li')[to];
+    if (again) {
+      var btn = again.querySelector('[data-action="lab' + (delta < 0 ? "Up" : "Down") + '"]');
+      if (btn && !btn.disabled) btn.focus(); else again.querySelector(".lab__move").focus();
+    }
+  }
+  ACTIONS_EXTRA.labUp = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), -1);
+  };
+  ACTIONS_EXTRA.labDown = function (el) {
+    moveOrder(el.dataset.lab, parseInt(el.dataset.step, 10), parseInt(el.dataset.pos, 10), 1);
+  };
+
+  ACTIONS_EXTRA.labCheck = function (el) {
+    var id = el.dataset.lab, i = parseInt(el.dataset.step, 10);
+    var cfg = window.LABS[id], s = cfg.steps[i];
+    var val = labResponse(id, i);
+    var host = document.querySelector('[data-lab="' + id + '"]');
+    var res = document.getElementById("labres-" + id + "-" + i);
+    var right = 0, total = 0, msg = "";
+
+    if (s.type === "match") {
+      total = s.items.length;
+      s.items.forEach(function (it, r) {
+        var got = (val && val[r]) || {};
+        var okRow = s.columns.every(function (c) { return got[c.name] === it.answers[c.name]; });
+        if (okRow) right++;
+        var tr = host.querySelector('[data-order], table');
+        var row = host.querySelectorAll('.lab__grid tbody tr')[r];
+        if (row) {
+          row.className = okRow ? "right" : "wrong";
+          var mark = row.querySelector(".lab__mark");
+          if (mark) {
+            mark.className = "lab__mark " + (okRow ? "ok" : "no");
+            mark.textContent = okRow ? "correct" : s.columns.map(function (c) {
+              return it.answers[c.name];
+            }).join(" / ");
+          }
+        }
+      });
+      msg = right + " of " + total + " rows correct.";
+
+    } else if (s.type === "order") {
+      total = s.items.length;
+      var seq = val || [];
+      var lis = host.querySelectorAll('[data-order="' + i + '"] > li');
+      seq.forEach(function (idx, pos) {
+        var okPos = idx === pos;
+        if (okPos) right++;
+        if (lis[pos]) lis[pos].className = okPos ? "right" : "wrong";
+      });
+      msg = right + " of " + total + " in the correct position.";
+
+    } else if (s.type === "choice") {
+      var picked = val || [];
+      var correct = s.correct;
+      total = correct.length;
+      var lis2 = host.querySelectorAll(".lab__choice li");
+      s.options.forEach(function (o, k) {
+        var shouldPick = correct.indexOf(k) !== -1;
+        var didPick = picked.indexOf(k) !== -1;
+        var node = host.querySelectorAll('[data-step="' + i + '"][data-opt="' + k + '"]')[0];
+        var li = node ? node.parentNode : null;
+        if (li) li.className = (shouldPick && didPick) ? "right"
+                             : (didPick && !shouldPick) ? "wrong" : "";
+        if (shouldPick && didPick) right++;
+      });
+      var over = picked.filter(function (k) { return correct.indexOf(k) === -1; }).length;
+      msg = right + " of " + total + " correct" + (over ? ", " + over + " incorrect selected" : "") + ".";
+    }
+
+    var perfect = right === total && (s.type !== "choice" ||
+      (val || []).filter(function (k) { return s.correct.indexOf(k) === -1; }).length === 0);
+    res.className = "lab__result on " + (perfect ? "right" : "wrong");
+    res.innerHTML = "<strong>" + (perfect ? "Correct. " : "Not yet. ") + "</strong>" + msg +
+      (s.explain ? "<br>" + s.explain : "");
+    announce(msg);
+  };
+
+  ACTIONS_EXTRA.labClear = function (el) {
+    var id = el.dataset.lab, all = loadLabs();
+    delete all[id]; write(labKey(), all);
+    buildLab(document.querySelector('[data-lab="' + id + '"]'));
+    notify("Lab answers cleared.", "warning");
+  };
+
+  /* ---------- delegated actions (CSP-safe: no inline handlers) ---------- */
+  var ACTIONS = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    toggleNotes: toggleNotes,
+    notesSection: function () { setNotesScope("section"); },
+    notesScratch: function () { setNotesScope("scratch"); },
+    exportNotes: exportNotes,
+    clearNotes: clearNotes,
+    resetProgress: resetProgress,
+    print: function () { if (typeof window.print === "function") window.print(); },
+    closeModal: closeModal,
+    openModal: function (el) {
+      var entry = (window.MODALS || {})[el.dataset.modal];
+      if (entry) openModal(entry.title, entry.body);
+    },
+    runDemo: function (el) { runDemo(el.dataset.demo); },
+    clearDemo: function (el) { clearDemo(el.dataset.demo); }
+  };
+  Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest(".nav-btn");
+    if (navBtn) { show(navBtn.dataset.section); return; }
+    var el = e.target.closest("[data-action]");
+    if (!el) return;
+    var fn = ACTIONS[el.dataset.action] || (window.MODULE_ACTIONS || {})[el.dataset.action];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+
+  /* ---------- keyboard ---------- */
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var btns = Array.prototype.slice.call(nav.querySelectorAll(".nav-btn"));
+    var i = btns.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    var n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length];
+    n.focus(); show(n.dataset.section);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (modal.classList.contains("open")) { closeModal(); return; }
+      if (tipFor) { hideTip(); return; }
+      if (notesPanelOpen) { toggleNotes(); return; }
+    }
+    var t = e.target, tag = t.tagName;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+    if (typing || nav.contains(t) || modal.classList.contains("open")) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById("prevSection").addEventListener("click", function () { step(-1); });
+  document.getElementById("nextSection").addEventListener("click", function () { step(1); });
+
+  /* ---------- boot ---------- */
+  show(state.current && document.getElementById(state.current) ? state.current : sectionOrder[0]);
+
+  // GLOSSARY, CLASSIFIERS and DEMOS are defined in the module script block, which
+  // runs AFTER this one. Defer anything that reads them until parsing completes,
+  // or those widgets initialise against undefined data and silently render empty.
+  function bootLate() { initTooltips(); initClassifiers(); initLabs(); }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootLate);
+  } else {
+    setTimeout(bootLate, 0);
+  }
+
+  // Globals kept for module-specific JS that calls them directly.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  window.MODULE = {
+    show: show, step: step, sections: SECTIONS, openModal: openModal, closeModal: closeModal,
+    runDemo: runDemo, clearDemo: clearDemo, notify: notify, announce: announce,
+    initTooltips: initTooltips, toggleNotes: toggleNotes, exportNotes: exportNotes,
+    initClassifiers: initClassifiers, initLabs: initLabs
+  };
+})();
+</script>
+
+<!-- ==================== [1] MODULE-SPECIFIC JS ==================== -->
+<script>
+(function () {
+  "use strict";
+
+  window.GLOSSARY = {
+    "policy": "A mandatory document stating intent and assigning responsibility. States what must be true, without specifying a measurable threshold.",
+    "standard": "A mandatory document specifying the measurable requirement you can audit against - the threshold a policy implies.",
+    "procedure": "A mandatory step-by-step method for carrying out a task. Playbooks are procedures for specific incident scenarios.",
+    "guideline": "Recommended practice that is not mandatory. If it is optional, it is a guideline whatever it is called.",
+    "data owner": "A senior business figure accountable for a dataset who sets its classification and approves access. Decides, rather than implements.",
+    "data controller": "The party that determines why and how personal data is processed. The role follows the decision about purpose, not the contract.",
+    "data processor": "A party that processes personal data on the controller's instructions. Deciding a purpose of its own makes it a controller for that purpose.",
+    "data custodian": "The technical role that implements and maintains the controls the owner requires. Security teams are usually custodians, not owners.",
+    "risk register": "The organization's list of identified risks with owner, current controls, chosen strategy, indicators, and review date for each.",
+    "kri": "Key risk indicator: a leading measure that moves before a risk materialises. Counting last quarter's incidents is reporting, not risk indication.",
+    "risk appetite": "How much risk an organization is willing to take in pursuit of its objectives. A deliberate strategic choice set by the board.",
+    "risk tolerance": "How much variation from appetite an organization can actually withstand. Capacity rather than desire - the two are different numbers.",
+    "sle": "Single loss expectancy: the cost of one occurrence. Asset value multiplied by exposure factor.",
+    "aro": "Annualised rate of occurrence: how many times per year an event is expected. Once every four years is 0.25.",
+    "ale": "Annualised loss expectancy: expected annual cost, SLE multiplied by ARO. Its purpose is comparison against the cost of a control.",
+    "mttr": "Mean time to repair: the average actual time taken to restore a system. A measurement, not a target.",
+    "mtbf": "Mean time between failures: the average interval between failures. A measurement, not a target.",
+    "bia": "Business impact analysis: determines which functions are critical, what they depend on, and how quickly each must be restored."
+  };
+
+  window.MODALS = {
+    "risk-map": {
+      title: "Risk terms at a glance",
+      body:
+        "<table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>" +
+        "<tr><td>Appetite</td><td>Risk the organization is WILLING to take</td></tr>" +
+        "<tr><td>Tolerance</td><td>Variation it can WITHSTAND</td></tr>" +
+        "<tr><td>Threshold</td><td>Point at which action is required</td></tr>" +
+        "<tr><td>SLE</td><td>AV &times; EF &mdash; cost of one event</td></tr>" +
+        "<tr><td>ARO</td><td>Events per year (0.25 = once in four years)</td></tr>" +
+        "<tr><td>ALE</td><td>SLE &times; ARO &mdash; expected annual cost</td></tr>" +
+        "<tr><td>RTO / RPO</td><td>TARGETS set by the business</td></tr>" +
+        "<tr><td>MTTR / MTBF</td><td>MEASUREMENTS of actual behaviour</td></tr>" +
+        "</tbody></table><p>Strategies: mitigate, transfer, avoid, accept. Transfer moves " +
+        "financial consequence, never accountability.</p>"
+    }
+  };
+
+  window.DEMOS = {
+    "ale": [
+      { text: "$ risk-calc --asset customer-database", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "asset value (AV) ................... 800,000", cls: "output", delay: 380 },
+      { text: "exposure factor (EF) ............... 0.30", cls: "output", delay: 340 },
+      { text: "  -> 30% of value lost per occurrence", cls: "info", delay: 380 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "SLE = AV x EF = 800,000 x 0.30 ..... 240,000", cls: "info", delay: 460 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "historical frequency ............... once every 5 years", cls: "output", delay: 400 },
+      { text: "ARO = 1 / 5 ........................ 0.2", cls: "info", delay: 400 },
+      { text: "  [CAUTION] read the frequency carefully - this is where", cls: "warning", delay: 480 },
+      { text: "  arithmetic slips happen under exam pressure", cls: "warning", delay: 420 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "ALE = SLE x ARO = 240,000 x 0.2 .... 48,000 per year", cls: "info", delay: 480 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "DECISION ------------------------------------", cls: "info", delay: 380 },
+      { text: "  control A: costs 18,000/yr, removes the risk .. JUSTIFIED", cls: "info", delay: 460 },
+      { text: "  control B: costs 71,000/yr, removes the risk .. NOT justified", cls: "error", delay: 460 },
+      { text: "  [NOTE] spending 71,000 to avoid 48,000 is a worse", cls: "warning", delay: 500 },
+      { text: "  decision than accepting the risk, however it feels.", cls: "warning", delay: 460 }
+    ],
+    "bia": [
+      { text: "$ bia --function order-processing", cls: "prompt", delay: 340 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "TARGETS (stated by the business) ------------", cls: "info", delay: 400 },
+      { text: "  RTO .............. 4 hours   max acceptable downtime", cls: "output", delay: 420 },
+      { text: "  RPO .............. 1 hour    max acceptable data loss", cls: "output", delay: 400 },
+      { text: "", cls: "output", delay: 140 },
+      { text: "MEASUREMENTS (observed behaviour) -----------", cls: "info", delay: 400 },
+      { text: "  MTBF ............. 7 months  typical interval between failures", cls: "output", delay: 420 },
+      { text: "  MTTR ............. 30 hours  typical time to restore", cls: "error", delay: 420 },
+      { text: "  backup interval .. 24 hours", cls: "error", delay: 360 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "GAP ANALYSIS --------------------------------", cls: "info", delay: 380 },
+      { text: "  MTTR 30h vs RTO 4h ......... 26 HOUR SHORTFALL", cls: "error", delay: 460 },
+      { text: "    -> needs standby capacity or a hot site", cls: "output", delay: 400 },
+      { text: "  backup 24h vs RPO 1h ....... 23 HOUR SHORTFALL", cls: "error", delay: 440 },
+      { text: "    -> needs replication or journaling", cls: "output", delay: 400 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[NOTE] Two separate gaps, two separate investments.", cls: "warning", delay: 520 },
+      { text: "You cannot see either without both the target and the measurement.", cls: "warning", delay: 500 }
+    ],
+    "register": [
+      { text: "$ risk-register --entry RSK-0184", cls: "prompt", delay: 340 },
+      { text: "description ....... Legacy payment gateway cannot support TLS 1.3", cls: "output", delay: 440 },
+      { text: "likelihood ........ Medium", cls: "output", delay: 320 },
+      { text: "impact ............ High  (regulated card data)", cls: "output", delay: 360 },
+      { text: "risk owner ........ Director of Payments  [NAMED]", cls: "info", delay: 400 },
+      { text: "current controls .. segmentation, enhanced monitoring", cls: "output", delay: 400 },
+      { text: "strategy .......... ACCEPT (exception)", cls: "warning", delay: 380 },
+      { text: "accepted by ....... Director of Payments, 12 Feb", cls: "info", delay: 400 },
+      { text: "review date ....... 12 Aug   [45 days overdue]", cls: "error", delay: 440 },
+      { text: "", cls: "output", delay: 150 },
+      { text: "key risk indicators:", cls: "info", delay: 360 },
+      { text: "  unpatched criticals on segment .... 3   (threshold: 0)", cls: "error", delay: 440 },
+      { text: "  failed logins to gateway .......... rising 3 weeks", cls: "warning", delay: 420 },
+      { text: "  [READ] both are LEADING measures - they move before", cls: "info", delay: 480 },
+      { text: "  the risk materialises, which is what makes them KRIs", cls: "info", delay: 440 },
+      { text: "", cls: "output", delay: 160 },
+      { text: "[FINDING] An accepted risk with an overdue review is no longer", cls: "error", delay: 540 },
+      { text: "an accepted risk. It is an unreviewed one.", cls: "error", delay: 460 }
+    ]
+  };
+
+  window.MODULE_ACTIONS = {};
+
+  window.CLASSIFIERS = {
+    risk: {
+      axes: [
+        { name: "type", label: "Document or concept type", options: ["Policy", "Standard", "Procedure", "Guideline", "Risk appetite", "Risk tolerance"] },
+        { name: "test", label: "Deciding test", options: ["States intent, mandatory", "Measurable threshold, mandatory", "Step-by-step method", "Optional recommendation", "Willing to take", "Able to withstand"] }
+      ],
+      items: [
+        { scenario: "\"Company information must be protected against unauthorised disclosure, and all staff share responsibility for this.\"",
+          answers: { type: "Policy", test: "States intent, mandatory" },
+          explain: "It binds everyone and states what must be true without giving a measurable figure. You cannot audit against it directly - that is what a standard is for." },
+        { scenario: "\"All user passwords must be a minimum of 14 characters and must not appear in the breached-password list.\"",
+          answers: { type: "Standard", test: "Measurable threshold, mandatory" },
+          explain: "Specific, measurable, and enforceable. A tool can check compliance without human judgement, which is the test for a standard." },
+        { scenario: "\"To disable a leaver's account: open the identity console, search the username, select Disable, then revoke active sessions.\"",
+          answers: { type: "Procedure", test: "Step-by-step method" },
+          explain: "Ordered steps for carrying out a task. Playbooks are the same artefact scoped to a specific incident scenario." },
+        { scenario: "\"Consider choosing a passphrase of four unrelated words, which many people find easier to remember than a substituted word.\"",
+          answers: { type: "Guideline", test: "Optional recommendation" },
+          explain: "The word 'consider' is doing the work. If it is optional it is a guideline, regardless of what the document is titled." },
+        { scenario: "The board decides the organization will pursue aggressive growth in new markets and is prepared to take on more risk to achieve it.",
+          answers: { type: "Risk appetite", test: "Willing to take" },
+          explain: "A deliberate strategic choice about how much risk to take on - here an expansionary appetite, set at board level." },
+        { scenario: "The same organization determines it could not survive losing its operating licence, so any regulatory risk must be brought to near zero.",
+          answers: { type: "Risk tolerance", test: "Able to withstand" },
+          explain: "This is capacity rather than desire. An expansionary appetite and a very low tolerance for one specific risk type coexist without contradiction." }
+      ]
+    }
+  };
+
+  window.LABS = {
+    "governance-stack": {
+      title: "Lab 1 - Build the governance stack",
+      time: "~25 minutes",
+      objective: "Distinguish the four document types from descriptions and assign the four data roles correctly.",
+      steps: [
+        {
+          type: "order",
+          prompt: "Order these documents from most abstract to most specific.",
+          hint: "Use the arrows. Ask which one the next one exists to implement.",
+          items: [
+            "Policy - states intent and assigns responsibility",
+            "Standard - specifies the measurable requirement",
+            "Procedure - gives the step-by-step method",
+            "Guideline - offers optional recommended practice"
+          ],
+          explain: "Each layer implements the one above. The guideline sits last because it is the only non-mandatory type - it advises rather than requires."
+        },
+        {
+          type: "match",
+          prompt: "Identify the document type for each statement.",
+          hint: "Two tests: is it mandatory, and is it measurable?",
+          columns: [
+            { name: "type", label: "Type", options: ["Policy", "Standard", "Procedure", "Guideline"] }
+          ],
+          items: [
+            { text: "\"Company data must be protected against unauthorised disclosure.\"", answers: { type: "Policy" } },
+            { text: "\"Passwords must be at least 14 characters.\"", answers: { type: "Standard" } },
+            { text: "\"To reset a password: open the console, select the user, click Reset.\"", answers: { type: "Procedure" } },
+            { text: "\"Consider using a passphrase of four unrelated words.\"", answers: { type: "Guideline" } },
+            { text: "\"All data at rest must be encrypted using AES-256.\"", answers: { type: "Standard" } },
+            { text: "\"The organization is committed to maintaining the availability of customer services.\"", answers: { type: "Policy" } }
+          ],
+          explain: "The measurability test separates policy from standard reliably: 'must be encrypted' states intent, 'AES-256' states the auditable requirement."
+        },
+        {
+          type: "match",
+          prompt: "Assign the correct role in each case.",
+          hint: "For controller versus processor, ask who decided the purpose. For owner versus custodian, ask who decides versus who implements.",
+          columns: [
+            { name: "role", label: "Role", options: ["Data owner", "Data controller", "Data processor", "Data custodian"] }
+          ],
+          items: [
+            { text: "The finance director who sets the classification of payroll data", answers: { role: "Data owner" } },
+            { text: "A charity that decides to run a mailing and chooses its recipients", answers: { role: "Data controller" } },
+            { text: "A printing firm acting solely on the charity's instructions", answers: { role: "Data processor" } },
+            { text: "The database administrator applying the encryption the owner requires", answers: { role: "Data custodian" } },
+            { text: "That printing firm once it starts using the list to advertise its own services", answers: { role: "Data controller" } }
+          ],
+          explain: "The last row is the key insight: the role follows the decision about purpose, not the contract. A processor that decides a purpose of its own becomes a controller for that purpose."
+        },
+        {
+          type: "text",
+          prompt: "Explain why an unrevised policy is more dangerous than an obviously absent one.",
+          hint: "Consider what someone following it in good faith concludes about a subject it does not mention."
+        }
+      ]
+    },
+
+    "quantify-risk": {
+      title: "Lab 2 - Quantify and decide",
+      time: "~20 minutes",
+      objective: "Work the SLE, ARO, and ALE calculation and use the result to justify or reject a control.",
+      steps: [
+        {
+          type: "choice",
+          prompt: "<em>A customer database is valued at £800,000. A breach would destroy about 30% of its value. Historically this occurs roughly once every five years.</em><br><br>Select every correct statement.",
+          hint: "Work it in order: exposure factor first, then SLE, then convert the frequency to ARO.",
+          options: [
+            "The exposure factor is 0.30",
+            "The SLE is £240,000",
+            "The ARO is 0.2",
+            "The ARO is 5",
+            "The ALE is £48,000",
+            "The ALE is £1,200,000"
+          ],
+          correct: [0, 1, 2, 4],
+          explain: "SLE = 800,000 × 0.30 = 240,000. Once in five years gives ARO = 1/5 = 0.2, not 5 - inverting this is the most common arithmetic slip. ALE = 240,000 × 0.2 = 48,000."
+        },
+        {
+          type: "choice",
+          prompt: "Given an ALE of £48,000, which control decisions are defensible? Select all that apply.",
+          hint: "Compare annual control cost against annual expected loss.",
+          options: [
+            "A control costing £18,000 a year that eliminates the risk is justified",
+            "A control costing £71,000 a year that eliminates the risk is justified",
+            "Spending more than the ALE is a worse decision than accepting the risk",
+            "The ALE exists to be compared against control cost",
+            "Emotional weight of the risk should override the arithmetic",
+            "Accepting the risk with a named owner and review date is legitimate"
+          ],
+          correct: [0, 2, 3, 5],
+          explain: "The whole purpose of quantitative analysis is making this comparison possible. Spending £71,000 annually to avoid £48,000 of expected loss destroys value, however uncomfortable that sounds."
+        },
+        {
+          type: "match",
+          prompt: "Match each term to what it describes.",
+          hint: "Two of these are targets set by the business; two are measurements of what actually happens.",
+          columns: [
+            { name: "kind", label: "What it is", options: ["Target set by the business", "Measurement of actual behaviour"] }
+          ],
+          items: [
+            { text: "RTO - maximum acceptable downtime", answers: { kind: "Target set by the business" } },
+            { text: "RPO - maximum acceptable data loss", answers: { kind: "Target set by the business" } },
+            { text: "MTTR - average actual time to restore", answers: { kind: "Measurement of actual behaviour" } },
+            { text: "MTBF - average interval between failures", answers: { kind: "Measurement of actual behaviour" } }
+          ],
+          explain: "Comparing the two kinds is the useful act. An MTTR of 30 hours against an RTO of 4 hours is a 26-hour gap requiring investment, and you cannot see it without both numbers."
+        },
+        {
+          type: "text",
+          prompt: "Explain when qualitative analysis is more appropriate than quantitative, and the main risk of quantitative analysis.",
+          hint: "Consider what happens when the frequency input was a guess."
+        }
+      ]
+    },
+
+    "strategy-bia": {
+      title: "Lab 3 - Choose a strategy",
+      time: "~20 minutes",
+      objective: "Select risk management strategies and recognise what transfer does and does not achieve.",
+      steps: [
+        {
+          type: "match",
+          prompt: "Match each response to its risk management strategy.",
+          hint: "Ask whether the action removes the activity, reduces the risk, moves the cost, or does none of those deliberately.",
+          columns: [
+            { name: "strat", label: "Strategy", options: ["Mitigate", "Transfer", "Avoid", "Accept"] }
+          ],
+          items: [
+            { text: "Deploy MFA and segment the network around a vulnerable system", answers: { strat: "Mitigate" } },
+            { text: "Purchase cyber insurance covering breach response costs", answers: { strat: "Transfer" } },
+            { text: "Discontinue the legacy service that creates the exposure", answers: { strat: "Avoid" } },
+            { text: "Document the residual risk, name an executive acceptor, set a review date", answers: { strat: "Accept" } },
+            { text: "Decline to enter a market whose regulatory burden exceeds capability", answers: { strat: "Avoid" } },
+            { text: "Add contractual liability terms shifting cost to a supplier", answers: { strat: "Transfer" } }
+          ],
+          explain: "Avoidance is genuinely available and students forget it - sometimes the correct answer is not to offer the service. Transfer moves financial consequence via insurance or contract, and nothing else."
+        },
+        {
+          type: "choice",
+          prompt: "An organization insures against breach costs and states it has transferred the risk. Select every accurate statement.",
+          hint: "Ask what an insurer can and cannot do on the organization's behalf.",
+          options: [
+            "Financial consequence has been transferred",
+            "Accountability to the regulator remains with the organization",
+            "The organization still owes its customers an explanation",
+            "Insurance reduces the likelihood of the breach",
+            "Insurance restores the lost data",
+            "Transfer is a legitimate strategy alongside mitigation"
+          ],
+          correct: [0, 1, 2, 5],
+          explain: "Transfer addresses cost only. It changes neither the probability of the event nor the organization's obligations - which is why it complements mitigation rather than replacing it."
+        },
+        {
+          type: "choice",
+          prompt: "A risk register entry shows an accepted risk whose review date passed 45 days ago. Select every accurate statement.",
+          hint: "What made the acceptance legitimate in the first place?",
+          options: [
+            "An accepted risk with an overdue review is effectively an unreviewed risk",
+            "The review date is part of what makes acceptance legitimate",
+            "Circumstances may have changed since acceptance",
+            "Once accepted, a risk needs no further attention",
+            "The named risk owner is accountable for the review",
+            "This would be a finding in an audit"
+          ],
+          correct: [0, 1, 2, 4, 5],
+          explain: "Acceptance is a decision made against a particular set of circumstances at a particular time. Without review it quietly becomes a decision nobody has revisited while the environment changed around it."
+        },
+        {
+          type: "text",
+          prompt: "A BIA reveals that a function every department rated critical would cost more to protect than the organization can fund. What conversation does this force, and why is it valuable?",
+          hint: "Consider what happens when every function is priority one."
+        }
+      ]
+    }
+  };
+
+  var QUESTIONS = [
+    { tier: "recall",
+      question: "Which document type specifies a measurable, auditable requirement?",
+      options: ["Policy", "Standard", "Procedure", "Guideline"],
+      correct: 1,
+      explanation: "A standard gives the specific threshold - 14 characters, AES-256. A policy states intent without a figure you can audit against directly." },
+    { tier: "recall",
+      question: "Which document type is not mandatory?",
+      options: ["Policy", "Standard", "Procedure", "Guideline"],
+      correct: 3,
+      explanation: "Guidelines recommend rather than require. If a document is optional it is a guideline, whatever it is titled." },
+    { tier: "recall",
+      question: "What is the formula for annualised loss expectancy?",
+      options: ["AV × EF", "SLE × ARO", "AV × ARO", "SLE ÷ ARO"],
+      correct: 1,
+      explanation: "ALE = SLE × ARO, where SLE itself is AV × EF. The purpose of ALE is comparison against the annual cost of a control." },
+    { tier: "recall",
+      question: "Which party determines why and how personal data is processed?",
+      options: ["Data processor", "Data controller", "Data custodian", "Data steward"],
+      correct: 1,
+      explanation: "The controller decides the purpose. A processor acts on instructions, and becomes a controller itself if it decides a purpose of its own." },
+    { tier: "recall",
+      question: "What distinguishes risk appetite from risk tolerance?",
+      options: ["They are synonyms", "Appetite is what an organization is willing to take; tolerance is what it can withstand", "Appetite applies to boards, tolerance to staff", "Tolerance is always higher"],
+      correct: 1,
+      explanation: "Appetite is a deliberate strategic choice; tolerance is capacity. An organization can hold an expansionary appetite and a very low tolerance for regulatory risk simultaneously." },
+    { tier: "recall",
+      question: "Which of these is a measurement rather than a target?",
+      options: ["RTO", "RPO", "MTTR", "Risk appetite"],
+      correct: 2,
+      explanation: "MTTR and MTBF measure how systems actually behave. RTO and RPO are requirements the business states, and comparing the two kinds reveals the gap." },
+    { tier: "applied",
+      question: "An asset is worth £500,000 and an incident would destroy 40% of its value. What is the SLE?",
+      options: ["£40,000", "£200,000", "£300,000", "£500,000"],
+      correct: 1,
+      explanation: "SLE = AV × EF = 500,000 × 0.40 = 200,000. The exposure factor is the proportion lost in a single occurrence." },
+    { tier: "applied",
+      question: "An event occurs roughly once every four years. What is the ARO?",
+      options: ["4", "0.25", "2.5", "0.4"],
+      correct: 1,
+      explanation: "ARO is occurrences per year, so once in four years is 1/4 = 0.25. Inverting this is the most common arithmetic error under exam pressure." },
+    { tier: "applied",
+      question: "A risk has an ALE of £30,000. A control eliminating it costs £52,000 annually. What is the appropriate decision?",
+      options: ["Implement the control regardless", "Do not implement; consider accepting or a cheaper mitigation", "Implement and transfer the remainder", "Avoid the risk entirely"],
+      correct: 1,
+      explanation: "Spending £52,000 to avoid £30,000 of expected annual loss destroys value. This comparison is precisely what quantitative analysis exists to enable." },
+    { tier: "applied",
+      question: "Which statement is a policy rather than a standard?",
+      options: ["\"Passwords must be at least 14 characters\"", "\"Data at rest must be encrypted using AES-256\"", "\"Company information must be protected against unauthorised disclosure\"", "\"Sessions must time out after 15 minutes\""],
+      correct: 2,
+      explanation: "It states intent and assigns responsibility without a measurable threshold. The other three all specify something a tool could check." },
+    { tier: "applied",
+      question: "Which is a valid key risk indicator for the risk of system compromise?",
+      options: ["Number of breaches last quarter", "Number of unpatched critical vulnerabilities", "Total security spend", "Number of employees"],
+      correct: 1,
+      explanation: "A KRI is a leading measure that moves before the risk materialises. Counting past breaches is reporting - by the time it moves, the risk has already occurred." },
+    { tier: "applied",
+      question: "An organization purchases cyber insurance. Which risk strategy is this, and what does it achieve?",
+      options: ["Mitigate; it reduces likelihood", "Transfer; it moves financial consequence but not accountability", "Avoid; it removes the risk", "Accept; it acknowledges the risk"],
+      correct: 1,
+      explanation: "Transfer moves cost to another party. The organization still faces the regulator, still owes customers an explanation, and the breach is no less likely." },
+    { tier: "applied",
+      question: "A printing firm processing a client's mailing list begins using it to market its own services. What has changed?",
+      options: ["Nothing; it remains a processor", "It has become a controller for that purpose", "It has become a data custodian", "It has become the data owner"],
+      correct: 1,
+      explanation: "The role follows the decision about purpose rather than the contract. Deciding to use data for its own ends makes the firm a controller with all the obligations that carries." },
+    { tier: "applied",
+      question: "A function has an RTO of 4 hours and a measured MTTR of 30 hours. What does this indicate?",
+      options: ["The RTO should be raised to 30 hours", "A 26-hour capability gap requiring investment in recovery", "MTBF should be measured instead", "Nothing; these measure different things"],
+      correct: 1,
+      explanation: "The target and the measurement are directly comparable, and the shortfall is the finding. Options are standby capacity, a hot site, or renegotiating the stated requirement." },
+    { tier: "scenario",
+      question: "A security policy written in 2019 makes no mention of cloud storage, and staff have been using it freely. What is the most significant issue?",
+      options: ["Staff should have known better", "The policy is silent, so staff following it in good faith believe they are compliant", "Cloud storage should be banned", "The policy needs no change"],
+      correct: 1,
+      explanation: "Monitoring and revision is the element organizations skip. An unrevised policy does not read as out of date - silence reads as permission." },
+    { tier: "scenario",
+      question: "A risk register entry records an accepted risk whose review date passed 45 days ago. How should this be treated?",
+      options: ["It remains validly accepted", "It is effectively unreviewed; acceptance was legitimate only with a review commitment", "It should be deleted from the register", "Acceptance never requires review"],
+      correct: 1,
+      explanation: "Acceptance is a decision made against particular circumstances at a particular time. Without review it becomes a decision nobody has revisited while the environment changed." },
+    { tier: "scenario",
+      question: "A BIA finds that every department rates its function as critical, and the aggregate recovery requirements exceed available funding. What is the value of this finding?",
+      options: ["It shows the BIA was performed incorrectly", "It forces a conversation about relative priority that the BIA existed to prompt", "It means all functions should be protected equally", "Funding should simply be increased"],
+      correct: 1,
+      explanation: "When every function is priority one, none is. Surfacing the unaffordable total is what compels the organization to rank functions honestly rather than aspirationally." },
+    { tier: "scenario",
+      question: "A board delegates operation of security controls to a managed service provider and states it has delegated accountability. What is inaccurate?",
+      options: ["Nothing; delegation is complete", "Responsibility for operation can be delegated; accountability cannot", "Only cost can be delegated", "Boards hold no accountability for security"],
+      correct: 1,
+      explanation: "The board sets risk appetite and retains accountability. Operational responsibility moves to the provider, but the organization still answers to its regulator and its customers." },
+    { tier: "applied",
+      question: "A BIA reveals that a function rated non-critical is a dependency of one rated essential. Why does this matter?",
+      options: ["It does not; ratings are independent", "Restoring functions in priority order would not work, because the essential one cannot run", "The non-critical function should be decommissioned", "The ratings should simply be averaged"],
+      correct: 1,
+      explanation: "Dependency mapping is where BIAs earn their cost. A recovery sequence built from ratings alone stalls when the essential function turns out to need something scheduled for later." },
+    { tier: "scenario",
+      question: "An organization has an expansionary risk appetite but states that any risk to its operating licence must be near zero. Is this contradictory?",
+      options: ["Yes; appetite must apply uniformly", "No; appetite is a general willingness while tolerance for a specific severe risk can be very low", "Yes; they should choose one posture", "No, but only if documented as an exception"],
+      correct: 1,
+      explanation: "Appetite is desire and tolerance is capacity. Willingness to take commercial risk coexists perfectly well with an inability to withstand losing the licence that permits trading at all." }
+  ];
+
+  var PASS = 0.8;
+  var form = document.getElementById("quizForm");
+  var results = document.getElementById("quizResults");
+  var submitBtn = document.getElementById("submitQuiz");
+  var retryBtn = document.getElementById("retryQuiz");
+  var order = [];
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function scoreMessage(pct) {
+    if (pct >= 90) return "[EXCELLENT] You have mastered this material.";
+    if (pct >= 80) return "[PASS] You met the 80% threshold.";
+    if (pct >= 70) return "[CLOSE] Just below the threshold - review the flagged topics.";
+    return "[REVIEW] Re-read the module before retrying.";
+  }
+
+  function render() {
+    order = shuffle(QUESTIONS).map(function (q) {
+      return {
+        q: q,
+        opts: shuffle(q.options.map(function (text, i) {
+          return { text: text, isCorrect: i === q.correct };
+        }))
+      };
+    });
+
+    form.innerHTML = "";
+    order.forEach(function (item, qi) {
+      var fs = document.createElement("fieldset");
+      fs.className = "quiz-question";
+      fs.dataset.q = String(qi);
+      var lg = document.createElement("legend");
+      lg.innerHTML = '<span class="qnum">Question ' + (qi + 1) + " of " + order.length +
+        " &middot; " + item.q.tier + '</span><span class="qtext">' + item.q.question + "</span>";
+      fs.appendChild(lg);
+      var ul = document.createElement("ul");
+      ul.className = "quiz-options";
+      item.opts.forEach(function (o, oi) {
+        var li = document.createElement("li");
+        var id = "q" + qi + "o" + oi;
+        li.className = "quiz-option";
+        li.innerHTML = '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+          '<label for="' + id + '">' + o.text + "</label>";
+        ul.appendChild(li);
+      });
+      fs.appendChild(ul);
+      form.appendChild(fs);
+    });
+
+    document.getElementById("quizCount").textContent = order.length + " questions";
+    results.innerHTML = "";
+    submitBtn.hidden = false;
+    retryBtn.hidden = true;
+  }
+
+  function grade() {
+    var correct = 0, unanswered = 0;
+    order.forEach(function (item, qi) {
+      var fs = form.querySelector('[data-q="' + qi + '"]');
+      var picked = form.querySelector('input[name="q' + qi + '"]:checked');
+      var lis = fs.querySelectorAll(".quiz-option");
+      lis.forEach(function (li, oi) {
+        li.classList.remove("correct", "incorrect");
+        if (item.opts[oi].isCorrect) li.classList.add("correct");
+      });
+      if (!picked) unanswered++;
+      else {
+        var oi = parseInt(picked.value, 10);
+        if (item.opts[oi].isCorrect) correct++;
+        else lis[oi].classList.add("incorrect");
+      }
+      var r = document.createElement("div");
+      r.className = "rationale";
+      r.innerHTML = "<strong>Explanation:</strong> " + item.q.explanation;
+      fs.appendChild(r);
+      fs.querySelectorAll("input").forEach(function (i) { i.disabled = true; });
+    });
+
+    var pct = Math.round((correct / order.length) * 100);
+    results.innerHTML =
+      '<div class="score-banner ' + (pct >= PASS * 100 ? "pass" : "fail") + '">' +
+      '<p class="score">' + pct + "%</p><p>" + correct + " of " + order.length + " correct" +
+      (unanswered ? " &middot; " + unanswered + " left blank" : "") + "</p><p>" +
+      scoreMessage(pct) + "</p></div>";
+
+    submitBtn.hidden = true;
+    retryBtn.hidden = false;
+    if (typeof results.scrollIntoView === "function") {
+      try { results.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+  }
+
+  submitBtn.addEventListener("click", grade);
+  retryBtn.addEventListener("click", render);
+
+  var built = false;
+  window.onSectionShown = function (id) {
+    if (id === "assessment" && !built) { render(); built = true; }
+  };
+})();
+</script>
+</body>
+</html>
