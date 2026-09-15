@@ -10,7 +10,7 @@
 <meta name="editing_roles" content="teachers">
 <meta name="workflow_state" content="unpublished">
 <title>Course Outline — CompTIA Security+ (SY0-701)</title>
-<meta name="description" content="Sixteen-week course outline for CompTIA Security+ SY0-701, mapped to the five exam domains across thirteen instructional modules.">
+<meta name="description" content="Fifteen-week course outline for CompTIA Security+ SY0-701, mapping five exam domains, twelve instructional modules, and seventeen scheduled hands-on labs.">
 <style>
 body{font-family:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
   line-height:1.6;color:#1f2733;max-width:1100px;margin:0 auto;padding:24px}
@@ -26,7 +26,12 @@ caption{text-align:left;font-weight:700;padding:6px 0;color:#55606f}
 .row-midterm{background:#fdf1d6}
 .row-final{background:#fbdedb}
 .row-review{background:#e8f4ec}
+.row-skip{background:#eef0f3;color:#6b7683}
 .wk{white-space:nowrap;font-weight:700;width:64px}
+.dt{white-space:nowrap;width:86px;color:#55606f}
+.labnum{white-space:nowrap;width:52px;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}
+.labcol{font-size:.88rem;line-height:1.5}
+.labcol strong{font-family:ui-monospace,Menlo,Consolas,monospace;color:#2c3e50}
 .dom{white-space:nowrap;width:92px;color:#55606f}
 .note{background:#f2f5f9;border-left:4px solid #2c3e50;padding:12px 16px;margin:16px 0}
 .tag{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;
@@ -39,13 +44,15 @@ footer{margin-top:30px;padding-top:14px;border-top:1px solid #d4dae3;
 <body>
 
 <h1>Course Outline</h1>
-<p class="lede">CompTIA Security+ (SY0-701) &middot; 15 weeks &middot; 12 modules &middot; 3 unit exams</p>
+<p class="lede">CompTIA Security+ (SY0-701) &middot; September 14 &ndash; December 25, 2026 &middot; 15 weeks &middot; 12 modules &middot; 17 labs &middot; 3 unit exams</p>
 
 <div class="note">
   <span class="tag">[BEFORE PUBLISHING]</span>
-  Replace the Canvas identifier in the page source, fill the Date column against
-  the academic calendar, and confirm the exam version is still SY0-701 at the
-  start of term. Set <code>workflow_state</code> to <code>active</code> when ready.
+  Replace the Canvas identifier in the page source and confirm the exam version
+  is still SY0-701 at the start of term. Dates run Mondays from
+  14&nbsp;September&nbsp;2026; check them against the academic calendar before
+  publishing, and see the note below the schedule on holiday collisions. Set
+  <code>workflow_state</code> to <code>active</code> when ready.
 </div>
 
 <h2>Exam domains and weighting</h2>
@@ -66,41 +73,56 @@ footer{margin-top:30px;padding-top:14px;border-top:1px solid #d4dae3;
 modules in its unit; none is cumulative.</p>
 <table>
   <thead>
-    <tr><th class="wk">Week</th><th>Date</th><th class="dom">Domain</th><th>Module / Activity</th></tr>
+    <tr><th class="wk">Week</th><th>Date</th><th class="dom">Domain</th><th>Module / Activity</th><th class="labcol">Hands-on labs</th></tr>
   </thead>
   <tbody>
-    <tr class="row-light"><td class="wk">1</td><td></td><td class="dom">1</td>
-      <td><strong>Module 1</strong> &mdash; Security Fundamentals and Controls</td></tr>
-    <tr class="row-dark"><td class="wk">2</td><td></td><td class="dom">1</td>
-      <td><strong>Module 2</strong> &mdash; Cryptographic Solutions</td></tr>
-    <tr class="row-light"><td class="wk">3</td><td></td><td class="dom">2</td>
-      <td><strong>Module 3</strong> &mdash; Threat Actors and Attack Surfaces</td></tr>
-    <tr class="row-dark"><td class="wk">4</td><td></td><td class="dom">2</td>
-      <td><strong>Module 4</strong> &mdash; Vulnerabilities</td></tr>
-    <tr class="row-midterm"><td class="wk">5</td><td></td><td class="dom">1&ndash;2</td>
-      <td><strong>Unit Exam 1</strong> &mdash; Modules 1&ndash;4</td></tr>
+    <tr class="row-light"><td class="wk">1</td><td class="dt">Sep&nbsp;14</td><td class="dom">1</td>
+      <td><strong>Module 1</strong> &mdash; Security Fundamentals and Controls</td>
+      <td class="labcol"><strong>20</strong> &middot; Linux Account Management</td></tr>
+    <tr class="row-dark"><td class="wk">2</td><td class="dt">Sep&nbsp;21</td><td class="dom">1</td>
+      <td><strong>Module 2</strong> &mdash; Cryptographic Solutions</td>
+      <td class="labcol"><strong>14</strong> &middot; Cryptography Concepts<br><strong>21</strong> &middot; PKI Management with Windows</td></tr>
+    <tr class="row-light"><td class="wk">3</td><td class="dt">Sep&nbsp;28</td><td class="dom">2</td>
+      <td><strong>Module 3</strong> &mdash; Threat Actors and Attack Surfaces</td>
+      <td class="labcol"><strong>01</strong> &middot; Social Engineering Attacks</td></tr>
+    <tr class="row-dark"><td class="wk">4</td><td class="dt">Oct&nbsp;5</td><td class="dom">2</td>
+      <td><strong>Module 4</strong> &mdash; Vulnerabilities</td>
+      <td class="labcol"><strong>03</strong> &middot; Analyzing Types of Web Application Attacks</td></tr>
+    <tr class="row-midterm"><td class="wk">5</td><td class="dt">Oct&nbsp;12</td><td class="dom">1&ndash;2</td>
+      <td><strong>Unit Exam 1</strong> &mdash; Modules 1&ndash;4</td>
+      <td class="labcol">&mdash;</td></tr>
 
-    <tr class="row-light"><td class="wk">6</td><td></td><td class="dom">2</td>
-      <td><strong>Module 5</strong> &mdash; Malicious Activity and Mitigation</td></tr>
-    <tr class="row-dark"><td class="wk">7</td><td></td><td class="dom">3</td>
-      <td><strong>Module 6</strong> &mdash; Architecture Models and Enterprise Infrastructure</td></tr>
-    <tr class="row-light"><td class="wk">8</td><td></td><td class="dom">3</td>
-      <td><strong>Module 7</strong> &mdash; Data Protection, Resilience, and Recovery</td></tr>
-    <tr class="row-dark"><td class="wk">9</td><td></td><td class="dom">4</td>
-      <td><strong>Module 8</strong> &mdash; Secure Baselines, Hardening, and Asset Management</td></tr>
-    <tr class="row-midterm"><td class="wk">10</td><td></td><td class="dom">2&ndash;4</td>
-      <td><strong>Unit Exam 2</strong> &mdash; Modules 5&ndash;8</td></tr>
+    <tr class="row-light"><td class="wk">6</td><td class="dt">Oct&nbsp;19</td><td class="dom">2</td>
+      <td><strong>Module 5</strong> &mdash; Malicious Activity and Mitigation</td>
+      <td class="labcol"><strong>02</strong> &middot; Analyzing Types of Malware and Application Attacks<br><strong>04</strong> &middot; Investigating ARP Poisoning</td></tr>
+    <tr class="row-dark"><td class="wk">7</td><td class="dt">Oct&nbsp;26</td><td class="dom">3</td>
+      <td><strong>Module 6</strong> &mdash; Architecture Models and Enterprise Infrastructure</td>
+      <td class="labcol"><strong>17</strong> &middot; Configuring a Network Based Firewall</td></tr>
+    <tr class="row-light"><td class="wk">8</td><td class="dt">Nov&nbsp;2</td><td class="dom">3</td>
+      <td><strong>Module 7</strong> &mdash; Data Protection, Resilience, and Recovery</td>
+      <td class="labcol"><strong>12</strong> &middot; Setting Up a Load Balancer<br><strong>24</strong> &middot; Performing Backups</td></tr>
+    <tr class="row-dark"><td class="wk">9</td><td class="dt">Nov&nbsp;9</td><td class="dom">4</td>
+      <td><strong>Module 8</strong> &mdash; Secure Baselines, Hardening, and Asset Management</td>
+      <td class="labcol"><strong>18</strong> &middot; Wireless Networking Attack and Mitigation Techniques<br><strong>19</strong> &middot; Working with Android</td></tr>
+    <tr class="row-midterm"><td class="wk">10</td><td class="dt">Nov&nbsp;16</td><td class="dom">2&ndash;4</td>
+      <td><strong>Unit Exam 2</strong> &mdash; Modules 5&ndash;8</td>
+      <td class="labcol">&mdash;</td></tr>
 
-    <tr class="row-light"><td class="wk">11</td><td></td><td class="dom">4</td>
-      <td><strong>Module 9</strong> &mdash; Vulnerability Management, Monitoring, and Enterprise Controls</td></tr>
-    <tr class="row-dark"><td class="wk">12</td><td></td><td class="dom">4</td>
-      <td><strong>Module 10</strong> &mdash; Identity, Automation, Incident Response, and Forensics</td></tr>
-    <tr class="row-light"><td class="wk">13</td><td></td><td class="dom">5</td>
-      <td><strong>Module 11</strong> &mdash; Governance and Risk Management</td></tr>
-    <tr class="row-dark"><td class="wk">14</td><td></td><td class="dom">5</td>
-      <td><strong>Module 12</strong> &mdash; Third-Party Risk, Compliance, and Awareness</td></tr>
-    <tr class="row-final"><td class="wk">15</td><td></td><td class="dom">4&ndash;5</td>
-      <td><strong>Unit Exam 3</strong> &mdash; Modules 9&ndash;12</td></tr>
+    <tr class="row-light"><td class="wk">11</td><td class="dt">Nov&nbsp;23</td><td class="dom">4</td>
+      <td><strong>Module 9</strong> &mdash; Vulnerability Management, Monitoring, and Enterprise Controls</td>
+      <td class="labcol"><strong>06</strong> &middot; Vulnerability Checks with OpenVAS<br><strong>08</strong> &middot; Identifying and Analyzing Network/Host Intrusion Detection System (NIDS/HIDS) Alerts</td></tr>
+    <tr class="row-dark"><td class="wk">12</td><td class="dt">Nov&nbsp;30</td><td class="dom">4</td>
+      <td><strong>Module 10</strong> &mdash; Identity, Automation, Incident Response, and Forensics</td>
+      <td class="labcol"><strong>23</strong> &middot; Incident Response Procedures<br><strong>25</strong> &middot; Using Autopsy for Forensics and Lost Data Recovery</td></tr>
+    <tr class="row-light"><td class="wk">13</td><td class="dt">Dec&nbsp;7</td><td class="dom">5</td>
+      <td><strong>Module 11</strong> &mdash; Governance and Risk Management</td>
+      <td class="labcol"><em>None</em> &mdash; module labs are analysis-based</td></tr>
+    <tr class="row-dark"><td class="wk">14</td><td class="dt">Dec&nbsp;14</td><td class="dom">5</td>
+      <td><strong>Module 12</strong> &mdash; Third-Party Risk, Compliance, and Awareness</td>
+      <td class="labcol"><strong>07</strong> &middot; Performing Active Reconnaissance</td></tr>
+    <tr class="row-final"><td class="wk">15</td><td class="dt">Dec&nbsp;21</td><td class="dom">4&ndash;5</td>
+      <td><strong>Unit Exam 3</strong> &mdash; Modules 9&ndash;12</td>
+      <td class="labcol">&mdash;</td></tr>
   </tbody>
 </table>
 
@@ -110,6 +132,19 @@ modules in its unit; none is cumulative.</p>
   campus closure or holiday falling on a class day costs a module week directly.
   Module 10 is the densest in the course and is the first candidate to split
   across two sessions or move partly to asynchronous Canvas work.
+</div>
+
+<div class="note">
+  <span class="tag">[CALENDAR COLLISIONS]</span>
+  Three teaching weeks contain a US federal holiday, and one is serious.
+  <strong>Week&nbsp;15 (21&nbsp;December) holds Unit Exam&nbsp;3 in the week of
+  Christmas</strong> &mdash; most academic calendars end the term before this,
+  so the exam almost certainly needs to move earlier or the term needs to start
+  before 14&nbsp;September. <strong>Week&nbsp;11 (23&nbsp;November)</strong>
+  contains Thanksgiving on Thursday 26&nbsp;November and carries Module&nbsp;9,
+  one of the heavier modules. <strong>Week&nbsp;9 (9&nbsp;November)</strong>
+  contains Veterans Day on Wednesday 11&nbsp;November. Week&nbsp;13 has no lab
+  and is the only slack in the schedule if a week has to be recovered.
 </div>
 
 <h2>Exam coverage</h2>
@@ -127,6 +162,63 @@ modules in its unit; none is cumulative.</p>
 module range. Students should study by module rather than by domain; review
 material organized by domain gives the wrong scope for Exam 2.</p>
 
+<h2>Lab index</h2>
+<p>The lab catalogue holds twenty-five labs. Seventeen are scheduled, at no more
+than two in any week, and each sits in the week whose module supplies the
+underlying concepts so the reading precedes the lab. The remaining eight are not assigned. Six duplicate material another scheduled
+lab already covers; two were withdrawn from this term. All are listed here so
+the omissions are deliberate and reversible.</p>
+<table>
+  <caption>Ordered by catalogue number. Shaded rows are not assigned this term.</caption>
+  <thead><tr><th class="labnum">Lab</th><th>Title</th><th class="wk">Week</th><th class="dom">Module</th><th>Supports / reason skipped</th></tr></thead>
+  <tbody>
+    <tr class="row-light"><td class="labnum">01</td><td>Social Engineering Attacks</td><td class="wk">3</td><td>Module 3</td><td>Social engineering techniques and pretexting</td></tr>
+    <tr class="row-dark"><td class="labnum">02</td><td>Analyzing Types of Malware and Application Attacks</td><td class="wk">6</td><td>Module 5</td><td>Malware families and application attack analysis</td></tr>
+    <tr class="row-light"><td class="labnum">03</td><td>Analyzing Types of Web Application Attacks</td><td class="wk">4</td><td>Module 4</td><td>Injection, XSS, and other web application flaws</td></tr>
+    <tr class="row-dark"><td class="labnum">04</td><td>Investigating ARP Poisoning</td><td class="wk">6</td><td>Module 5</td><td>On-path attacks against the local network</td></tr>
+    <tr class="row-skip"><td class="labnum">05</td><td>Analyzing Types of Attacks and Mitigation Techniques</td><td class="wk">&mdash;</td><td><em>Not scheduled</em></td><td>Overlaps Labs 02 and 03; mitigation is covered across Modules 4 and 5</td></tr>
+    <tr class="row-dark"><td class="labnum">06</td><td>Vulnerability Checks with OpenVAS</td><td class="wk">11</td><td>Module 9</td><td>Credentialed and non-credentialed scanning</td></tr>
+    <tr class="row-light"><td class="labnum">07</td><td>Performing Active Reconnaissance</td><td class="wk">14</td><td>Module 12</td><td>Active recon within agreed rules of engagement</td></tr>
+    <tr class="row-dark"><td class="labnum">08</td><td>Identifying and Analyzing Network/Host Intrusion Detection System (NIDS/HIDS) Alerts</td><td class="wk">11</td><td>Module 9</td><td>IDS/IPS alerting and alert triage</td></tr>
+    <tr class="row-skip"><td class="labnum">09</td><td>Virtualization and Group Policy Objects (GPO)</td><td class="wk">&mdash;</td><td><em>Not scheduled</em></td><td>Virtualization is covered in Module 6; Group Policy in Module 9</td></tr>
+    <tr class="row-skip"><td class="labnum">10</td><td>Javascript Obfuscation and Dead Code Injection</td><td class="wk">&mdash;</td><td><em>Not scheduled</em></td><td>Removed from this term&rsquo;s schedule</td></tr>
+    <tr class="row-skip"><td class="labnum">11</td><td>Configuring a RADIUS Server</td><td class="wk">&mdash;</td><td><em>Not scheduled</em></td><td>RADIUS and 802.1X are exercised within Lab 18 and taught in Modules 6 and 8</td></tr>
+    <tr class="row-dark"><td class="labnum">12</td><td>Setting Up a Load Balancer</td><td class="wk">8</td><td>Module 7</td><td>Load balancing and high availability</td></tr>
+    <tr class="row-skip"><td class="labnum">13</td><td>IoT Management</td><td class="wk">&mdash;</td><td><em>Not scheduled</em></td><td>Removed from this term&rsquo;s schedule</td></tr>
+    <tr class="row-dark"><td class="labnum">14</td><td>Cryptography Concepts</td><td class="wk">2</td><td>Module 2</td><td>Symmetric, asymmetric, and hashing in practice</td></tr>
+    <tr class="row-skip"><td class="labnum">15</td><td>Implementing Common Protocols and Services for Basic Security Practices</td><td class="wk">&mdash;</td><td><em>Not scheduled</em></td><td>Protocol selection is largely conceptual; ports and services appear in Lab 17</td></tr>
+    <tr class="row-skip"><td class="labnum">16</td><td>Securing Data with Encryption Software</td><td class="wk">&mdash;</td><td><em>Not scheduled</em></td><td>Overlaps Labs 14 and 21 in the same crypto material</td></tr>
+    <tr class="row-light"><td class="labnum">17</td><td>Configuring a Network Based Firewall</td><td class="wk">7</td><td>Module 6</td><td>Rule order, ACLs, and implicit deny</td></tr>
+    <tr class="row-dark"><td class="labnum">18</td><td>Wireless Networking Attack and Mitigation Techniques</td><td class="wk">9</td><td>Module 8</td><td>WPA3, rogue APs, and evil twin mitigation</td></tr>
+    <tr class="row-light"><td class="labnum">19</td><td>Working with Android</td><td class="wk">9</td><td>Module 8</td><td>Mobile deployment, MDM, and containerization</td></tr>
+    <tr class="row-dark"><td class="labnum">20</td><td>Linux Account Management</td><td class="wk">1</td><td>Module 1</td><td>AAA, authorization models, and least privilege</td></tr>
+    <tr class="row-light"><td class="labnum">21</td><td>PKI Management with Windows</td><td class="wk">2</td><td>Module 2</td><td>Certificate issuance, trust chains, and revocation</td></tr>
+    <tr class="row-skip"><td class="labnum">22</td><td>Capturing Network Traffic</td><td class="wk">&mdash;</td><td><em>Not scheduled</em></td><td>Packet capture is performed within Labs 04 and 08</td></tr>
+    <tr class="row-light"><td class="labnum">23</td><td>Incident Response Procedures</td><td class="wk">12</td><td>Module 10</td><td>Containment, eradication, and recovery in order</td></tr>
+    <tr class="row-dark"><td class="labnum">24</td><td>Performing Backups</td><td class="wk">8</td><td>Module 7</td><td>Backup strategy against stated RPO and RTO</td></tr>
+    <tr class="row-light"><td class="labnum">25</td><td>Using Autopsy for Forensics and Lost Data Recovery</td><td class="wk">12</td><td>Module 10</td><td>Acquisition, chain of custody, and analysis</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <span class="tag">[LAB LOAD]</span>
+  No week carries more than two labs. Weeks 3, 4, 7 and 14 carry one, and
+  <strong>Week 13 (Module 11, Governance and Risk Management) carries none</strong>
+  &mdash; no lab in the catalogue addresses policy, risk analysis, or business
+  impact. Module 11 has three built-in analysis labs covering that ground,
+  including the SLE, ARO, and ALE calculations, so Week 13 is the natural place
+  to absorb a lost class day or to schedule exam review.
+</div>
+
+<div class="note">
+  <span class="tag">[IF CAPACITY ALLOWS]</span>
+  Weeks 4 and 7 now have an open second slot. The closest fits from the
+  unscheduled list are <strong>Lab 11 (RADIUS)</strong> for Week 7, since 802.1X
+  and EAP are taught in Module 6 and otherwise get no hands-on time, and
+  <strong>Lab 05</strong> for Week 4. Lab 09 (Group Policy) remains the other
+  strong candidate wherever a slot opens.
+</div>
+
 <h2>Module structure</h2>
 <p>Each module is a self-contained interactive reading in the online textbook.
 Modules carry the teaching content and an ungraded self-check assessment with
@@ -141,7 +233,8 @@ dates live in Canvas.</p>
     <tr class="row-light"><td>Teaching content, diagrams, worked examples</td><td>Interactive module</td></tr>
     <tr class="row-dark"><td>Self-check assessment (ungraded, unlimited retries)</td><td>Interactive module</td></tr>
     <tr class="row-light"><td>Graded quizzes and exams</td><td>Canvas</td></tr>
-    <tr class="row-dark"><td>Hands-on labs and due dates</td><td>Canvas</td></tr>
+    <tr class="row-dark"><td>Hands-on cyber range labs (17) and due dates</td><td>Canvas</td></tr>
+    <tr class="row-light"><td>In-module analysis labs (36, ungraded)</td><td>Interactive module</td></tr>
   </tbody>
 </table>
 

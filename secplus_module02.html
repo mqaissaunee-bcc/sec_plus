@@ -343,6 +343,22 @@ th{background:var(--card-2)}
   color:var(--text);background:var(--card-2);border:1px solid var(--line);
   border-radius:8px;cursor:pointer}
 .notes-mini:hover{border-color:var(--accent);color:var(--accent)}
+.notes-imgs{padding:0 14px;display:flex;flex-wrap:wrap;gap:8px;max-height:210px;overflow:auto}
+.notes-imgs:empty{display:none}
+.nimg{position:relative;width:104px;background:var(--card-2);border:1px solid var(--line);
+  border-radius:8px;padding:5px;display:flex;flex-direction:column;gap:4px}
+.nimg img{width:100%;height:64px;object-fit:cover;border-radius:5px;cursor:zoom-in;display:block}
+.nimg input{width:100%;font:inherit;font-size:.7rem;padding:3px 5px;color:var(--text);
+  background:var(--bg-0);border:1px solid var(--line);border-radius:5px}
+.nimg input:focus-visible{border-color:var(--accent);outline:none}
+.nimg__rm{position:absolute;top:-7px;right:-7px;width:22px;height:22px;line-height:1;
+  font-size:.9rem;color:#fff;background:var(--danger);border:none;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center}
+.notes-tools{display:flex;gap:8px;align-items:center;padding:8px 14px 0}
+.notes-tools .notes-hint{font-size:.72rem;color:var(--muted);margin-left:auto;text-align:right}
+.notes-panel.drop-on{outline:3px dashed var(--accent);outline-offset:-6px}
+.nimg-full{max-width:100%;height:auto;border-radius:8px}
+@media print{.notes-panel,.notes-fab{display:none!important}}
 .notes-mini.is-danger:hover{border-color:var(--danger);color:var(--danger)}
 @media (max-width:640px){
   .notes-panel{right:3vw;left:3vw;width:auto;bottom:calc(16px + 64px)}
@@ -1338,6 +1354,12 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
     <textarea class="notes-area" id="notesArea" spellcheck="true"
               placeholder="Type your notes here."></textarea>
   </div>
+  <div class="notes-tools">
+    <button class="notes-mini" type="button" data-action="pickImage">Add image</button>
+    <input type="file" id="notesFile" accept="image/*" multiple hidden>
+    <span class="notes-hint" id="notesStore">Paste a screenshot with Ctrl&#8209;V</span>
+  </div>
+  <div class="notes-imgs" id="notesImgs"></div>
   <div class="notes-panel__foot">
     <span class="notes-hint">Saved automatically</span>
     <button class="notes-mini is-danger" type="button" data-action="clearNotes">Clear</button>
@@ -1504,7 +1526,142 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
 
   /* ---------- notes ---------- */
   var notesScope = "section", notesPanelOpen = false, notesT;
-  function loadNotes() { return read(NOTES_KEY, { sections: {}, scratch: "" }); }
+  function loadNotes() {
+    var n = read(NOTES_KEY, { sections: {}, scratch: "" });
+    if (!n.images) n.images = {};   // added in the image update; older saves lack it
+    return n;
+  }
+
+  /* ---------- note images ----------
+     Screenshots live in localStorage alongside the text, which is a hard ~5MB
+     ceiling shared with progress and lab data. Every image is therefore
+     downscaled and re-encoded on the way in, and writes are checked rather
+     than assumed: a silent quota failure would look like a saved note. */
+  var IMG_MAX_W = 1000;        // px on the long edge
+  var IMG_WARN  = 3200000;     // characters of stored JSON before we warn
+  var IMG_STOP  = 4400000;     // refuse further images beyond this
+
+  function scopeKey() { return notesScope === "scratch" ? "scratch" : current; }
+  function getImages() {
+    var n = loadNotes();
+    return (n.images && n.images[scopeKey()]) || [];
+  }
+  function writeNotes(n) {
+    try { localStorage.setItem(NOTES_KEY, JSON.stringify(n)); return true; }
+    catch (e) { return false; }   // QuotaExceededError, or Safari private mode
+  }
+  function setImages(arr) {
+    var n = loadNotes();
+    n.images = n.images || {};
+    n.images[scopeKey()] = arr;
+    return writeNotes(n);
+  }
+  function notesBytes() {
+    try { var s = localStorage.getItem(NOTES_KEY); return s ? s.length : 0; }
+    catch (e) { return 0; }
+  }
+  function updateStoreHint() {
+    var el = document.getElementById("notesStore");
+    if (!el) return;
+    var b = notesBytes();
+    if (b < 400000) { el.textContent = "Paste a screenshot with Ctrl\u2011V"; el.style.color = ""; return; }
+    var txt = Math.round(b / 1024) + " KB of notes stored";
+    if (b > IMG_WARN) { txt += " \u2014 approaching the browser limit, export soon"; }
+    el.textContent = txt;
+    el.style.color = b > IMG_WARN ? "var(--warn)" : "";
+  }
+
+  // Downscale, then encode as both JPEG and PNG and keep whichever is smaller.
+  // Screenshots of text compress badly as JPEG and diagrams badly as PNG, so
+  // picking per image beats committing to one format.
+  function shrinkImage(file, cb) {
+    if (!file || file.type.indexOf("image/") !== 0) { cb(null); return; }
+    var reader = new FileReader();
+    reader.onerror = function () { cb(null); };
+    reader.onload = function () {
+      var img = new Image();
+      img.onerror = function () { cb(null); };
+      img.onload = function () {
+        var w = img.width, h = img.height;
+        if (w > IMG_MAX_W) { h = Math.round(h * IMG_MAX_W / w); w = IMG_MAX_W; }
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#ffffff";          // flatten transparency for JPEG
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        var out;
+        try {
+          var jpg = c.toDataURL("image/jpeg", 0.82);
+          var png = c.toDataURL("image/png");
+          out = png.length < jpg.length ? png : jpg;
+        } catch (e) { cb(null); return; }   // tainted canvas
+        cb({ data: out, w: w, h: h });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addImageFiles(files) {
+    if (!files || !files.length) return;
+    if (notesBytes() > IMG_STOP) {
+      notify("Note storage is full. Export and clear some notes first.", "error");
+      return;
+    }
+    var list = Array.prototype.slice.call(files).filter(function (f) {
+      return f && f.type && f.type.indexOf("image/") === 0;
+    });
+    if (!list.length) { notify("That file is not an image.", "warning"); return; }
+    var done = 0, added = 0;
+    list.forEach(function (f) {
+      shrinkImage(f, function (res) {
+        done++;
+        if (res) {
+          var arr = getImages().slice();
+          arr.push({ data: res.data, cap: "", w: res.w, h: res.h });
+          if (setImages(arr)) { added++; }
+          else { notify("Not enough browser storage for that image.", "error"); }
+        }
+        if (done === list.length) {
+          renderImages(); updateNotesDot(); updateStoreHint();
+          if (added) notify(added + (added === 1 ? " image added." : " images added."), "success");
+        }
+      });
+    });
+  }
+
+  function removeImage(i) {
+    var arr = getImages().slice();
+    if (i < 0 || i >= arr.length) return;
+    arr.splice(i, 1);
+    setImages(arr);
+    renderImages(); updateNotesDot(); updateStoreHint();
+    notify("Image removed.", "warning");
+  }
+  function captionImage(i, v) {
+    var arr = getImages().slice();
+    if (!arr[i]) return;
+    arr[i].cap = v;
+    setImages(arr);
+  }
+  function renderImages() {
+    var host = document.getElementById("notesImgs");
+    if (!host) return;
+    var arr = getImages(), html = "";
+    arr.forEach(function (im, i) {
+      var cap = esc(im.cap || "");
+      html += '<figure class="nimg">' +
+        '<img src="' + im.data + '" alt="' + (cap || "Note image " + (i + 1)) +
+          '" data-action="viewImage" data-idx="' + i + '">' +
+        '<input type="text" value="' + cap + '" placeholder="Caption" ' +
+          'aria-label="Caption for image ' + (i + 1) + '" data-cap="' + i + '">' +
+        '<button class="nimg__rm" type="button" data-action="removeImage" data-idx="' + i +
+          '" aria-label="Remove image ' + (i + 1) + '">&times;</button>' +
+        '</figure>';
+    });
+    host.innerHTML = html;
+  }
   function notesValue() {
     var n = loadNotes();
     return notesScope === "scratch" ? (n.scratch || "") : (n.sections[current] || "");
@@ -1519,6 +1676,7 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
     var n = loadNotes();
     if (n.scratch && n.scratch.trim()) return true;
     for (var k in n.sections) if (n.sections[k] && n.sections[k].trim()) return true;
+    for (var j in (n.images || {})) if (n.images[j] && n.images[j].length) return true;
     return false;
   }
   function updateNotesDot() {
@@ -1531,6 +1689,9 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
                                : "Notes for: " + sectionTitle(current);
     document.getElementById("scopeSection").setAttribute("aria-pressed", String(notesScope === "section"));
     document.getElementById("scopeScratch").setAttribute("aria-pressed", String(notesScope === "scratch"));
+
+    renderImages();
+    updateStoreHint();
   }
   function flushNotes() {
     var area = document.getElementById("notesArea");
@@ -1552,17 +1713,23 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
     else { flushNotes(); document.getElementById("notesToggle").focus(); }
   }
   function clearNotes() {
+    var imgs = getImages().length;
     setNotesValue("");
+    if (imgs) setImages([]);
     document.getElementById("notesArea").value = "";
-    notify("Cleared notes for this scope.", "warning");
+    renderImages(); updateStoreHint();
+    notify("Cleared notes" + (imgs ? " and " + imgs + " image(s)" : "") +
+           " for this scope.", "warning");
   }
   function collectNotes() {
     var n = loadNotes(), out = [];
+    function imgs(k) { return (n.images && n.images[k]) || []; }
     sectionOrder.forEach(function (id) {
-      var v = n.sections[id];
-      if (v && v.trim()) out.push({ heading: sectionTitle(id), body: v.trim() });
+      var v = (n.sections[id] || "").trim(), im = imgs(id);
+      if (v || im.length) out.push({ heading: sectionTitle(id), body: v, images: im });
     });
-    if (n.scratch && n.scratch.trim()) out.push({ heading: "Scratchpad", body: n.scratch.trim() });
+    var s = (n.scratch || "").trim(), si = imgs("scratch");
+    if (s || si.length) out.push({ heading: "Scratchpad", body: s, images: si });
     return out;
   }
   function moduleTitle() {
@@ -1594,7 +1761,13 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
 
     if (fmt === "md") {
       var md = ["# Notes - " + title, "", "_Exported " + stamp + "_", ""];
-      items.forEach(function (it) { md.push("## " + it.heading, "", it.body, ""); });
+      items.forEach(function (it) {
+        md.push("## " + it.heading, "");
+        if (it.body) md.push(it.body, "");
+        (it.images || []).forEach(function (im, i) {
+          md.push("![" + (im.cap || "Screenshot " + (i + 1)) + "](" + im.data + ")", "");
+        });
+      });
       download(new Blob([md.join("\n")], { type: "text/markdown" }), base + ".md");
 
     } else if (fmt === "txt") {
@@ -1602,7 +1775,14 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
                 "Exported " + stamp,
                 new Array(60).join("=")  , ""];
       items.forEach(function (it) {
-        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "", it.body, "");
+        tx.push(it.heading.toUpperCase(), new Array(it.heading.length + 1).join("-"), "");
+        if (it.body) tx.push(it.body, "");
+        // Plain text cannot carry images, so record that they exist.
+        (it.images || []).forEach(function (im, i) {
+          tx.push("[Image " + (i + 1) + (im.cap ? ": " + im.cap : "") +
+                  " - included in the Word, Markdown and PDF exports]");
+        });
+        if ((it.images || []).length) tx.push("");
       });
       download(new Blob([tx.join("\r\n")], { type: "text/plain;charset=utf-8" }), base + ".txt");
 
@@ -1612,13 +1792,22 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
         '<p style="color:#666"><em>Notes exported ' + esc(stamp) + '</em></p>';
       items.forEach(function (it) {
         body += "<h2>" + esc(it.heading) + "</h2>";
-        it.body.split(/\n{2,}/).forEach(function (para) {
+        if (it.body) it.body.split(/\n{2,}/).forEach(function (para) {
           body += "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>";
+        });
+        (it.images || []).forEach(function (im, i) {
+          body += '<figure class="shot"><img src="' + im.data + '" alt="' +
+                  esc(im.cap || "Screenshot " + (i + 1)) + '">' +
+                  '<figcaption>' + esc(im.cap || "Screenshot " + (i + 1)) +
+                  '</figcaption></figure>';
         });
       });
       var css = "body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;margin:1in}" +
         "h1{font-size:18pt;border-bottom:1px solid #999;padding-bottom:6pt}" +
-        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}";
+        "h2{font-size:13pt;color:#1f3864;margin-top:18pt}" +
+        ".shot{margin:10pt 0;page-break-inside:avoid}" +
+        ".shot img{max-width:100%;border:1px solid #bbb}" +
+        ".shot figcaption{font-size:9pt;color:#555;font-style:italic;margin-top:3pt}";
 
       if (fmt === "print") {
         var w = window.open("", "_blank");
@@ -2333,6 +2522,14 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
     notesScratch: function () { setNotesScope("scratch"); },
     exportNotes: exportNotes,
     clearNotes: clearNotes,
+    pickImage: function () { document.getElementById("notesFile").click(); },
+    removeImage: function (el) { removeImage(parseInt(el.dataset.idx, 10)); },
+    viewImage: function (el) {
+      var im = getImages()[parseInt(el.dataset.idx, 10)];
+      if (im) openModal(im.cap || "Note image",
+        '<img class="nimg-full" src="' + im.data + '" alt="' +
+        esc(im.cap || "Note image") + '">');
+    },
     resetProgress: resetProgress,
     print: function () { if (typeof window.print === "function") window.print(); },
     closeModal: closeModal,
@@ -2344,6 +2541,48 @@ kbd{font-family:var(--mono);background:var(--card-2);border:1px solid var(--line
     clearDemo: function (el) { clearDemo(el.dataset.demo); }
   };
   Object.keys(ACTIONS_EXTRA).forEach(function (k) { ACTIONS[k] = ACTIONS_EXTRA[k]; });
+  /* image input, captions, paste and drop */
+  (function () {
+    var file = document.getElementById("notesFile");
+    var panel = document.getElementById("notesPanel");
+    if (!file || !panel) return;
+    file.addEventListener("change", function () {
+      addImageFiles(file.files);
+      file.value = "";               // so the same file can be picked twice
+    });
+    panel.addEventListener("input", function (e) {
+      var i = e.target.dataset ? e.target.dataset.cap : null;
+      if (i != null) captionImage(parseInt(i, 10), e.target.value);
+    });
+    // Pasting a screenshot is the main path: Print Screen or a snipping tool,
+    // then Ctrl-V anywhere in the panel.
+    panel.addEventListener("paste", function (e) {
+      var items = (e.clipboardData || {}).items;
+      if (!items) return;
+      var files = [];
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].kind === "file" && items[i].type.indexOf("image/") === 0) {
+          var f = items[i].getAsFile();
+          if (f) files.push(f);
+        }
+      }
+      if (files.length) { e.preventDefault(); addImageFiles(files); }
+    });
+    ["dragenter", "dragover"].forEach(function (ev) {
+      panel.addEventListener(ev, function (e) {
+        e.preventDefault(); panel.classList.add("drop-on");
+      });
+    });
+    ["dragleave", "drop"].forEach(function (ev) {
+      panel.addEventListener(ev, function (e) {
+        e.preventDefault(); panel.classList.remove("drop-on");
+      });
+    });
+    panel.addEventListener("drop", function (e) {
+      if (e.dataTransfer && e.dataTransfer.files) addImageFiles(e.dataTransfer.files);
+    });
+  })();
+
   document.addEventListener("click", function (e) {
     var navBtn = e.target.closest(".nav-btn");
     if (navBtn) { show(navBtn.dataset.section); return; }
