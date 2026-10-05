@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How SQL Injection Works — Interactive Lesson</title>
+<meta name="description" content="Watch untrusted input become SQL. An interactive walkthrough of authentication bypass, UNION extraction, blind, and second-order SQL injection — with the parameterized-query fix.">
+<style>
+  :root {
+    /* Palette — "query console": cool paper, ink-navy structure,
+       amber = attacker-controlled, crimson = damage, teal = the safe path */
+    --paper:      #eceef2;
+    --surface:    #ffffff;
+    --surface-2:  #f4f6f9;
+    --ink:        #16202e;
+    --ink-soft:   #4a5769;
+    --ink-faint:  #8b96a6;
+    --line:       #d6dbe3;
+    --line-soft:  #e6e9ef;
+    --navy:       #24406b;
+    --navy-soft:  #eaf0f9;
+    --amber:      #9a5a00;
+    --amber-bg:   #fdefcf;
+    --amber-line: #e6b24d;
+    --crimson:    #b12a1c;
+    --crimson-bg: #fbe3df;
+    --teal:       #0f6b52;
+    --teal-bg:    #d9efe6;
+    --code-bg:    #f3f4f8;
+    --code-ink:   #23324a;
+    --focus:      #2f6bd4;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans:  "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    --maxw: 940px;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:      #0e141d;
+      --surface:    #161e2a;
+      --surface-2:  #1c2634;
+      --ink:        #e7ecf3;
+      --ink-soft:   #aab6c6;
+      --ink-faint:  #6f7d90;
+      --line:       #2b3747;
+      --line-soft:  #232e3c;
+      --navy:       #8fb2e8;
+      --navy-soft:  #1a2740;
+      --amber:      #f2c26b;
+      --amber-bg:   #362a12;
+      --amber-line: #7a5a1f;
+      --crimson:    #f0897c;
+      --crimson-bg: #3a1d18;
+      --teal:       #6fd0ac;
+      --teal-bg:    #123329;
+      --code-bg:    #101824;
+      --code-ink:   #cdd8e8;
+      --focus:      #6fa4f0;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 0 0 var(--radius-sm) 0;
+    z-index: 100;
+  }
+  .skip-link:focus { left: 0; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* ---------- Hero ---------- */
+  header.hero {
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(120% 140% at 88% -20%, var(--navy-soft) 0%, transparent 55%),
+      var(--surface);
+  }
+  .hero .wrap { padding-top: 44px; padding-bottom: 40px; }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--navy);
+    margin: 0 0 14px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .kicker b { font-weight: 600; }
+  .kicker .dot { color: var(--ink-faint); }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2rem, 5.5vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 0 0 18px;
+    max-width: 18ch;
+  }
+  .lede {
+    font-size: clamp(1.05rem, 2.4vw, 1.24rem);
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0;
+  }
+  .lede .amber { color: var(--amber); font-weight: 600; }
+
+  /* ---------- Section scaffolding ---------- */
+  main { padding: 8px 0 60px; }
+  section { padding: 40px 0 8px; }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3.4vw, 2rem);
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  h2 .num {
+    font-family: var(--mono);
+    font-size: 0.72em;
+    color: var(--navy);
+    margin-right: 0.5em;
+    font-weight: 500;
+  }
+  .section-sub { color: var(--ink-soft); margin: 0 0 22px; max-width: 64ch; }
+  p { margin: 0 0 14px; }
+
+  /* ---------- Tabs ---------- */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 2px solid var(--line);
+    margin-bottom: 22px;
+  }
+  .tab {
+    appearance: none;
+    border: none;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding: 12px 16px;
+    min-height: 44px;
+    cursor: pointer;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    position: relative;
+    top: 2px;
+    border-bottom: 2px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .tab .tnum { font-family: var(--mono); font-size: 0.82em; color: var(--ink-faint); }
+  .tab:hover { color: var(--ink); background: var(--surface-2); }
+  .tab[aria-selected="true"] {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+  }
+  .tab[aria-selected="true"] .tnum { color: var(--navy); }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fade 0.18s ease-out; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ---------- The live console ---------- */
+  .console {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+    box-shadow: 0 1px 0 var(--line-soft);
+  }
+  .console-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+  .traffic { display: inline-flex; gap: 6px; margin-right: 4px; }
+  .traffic i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); display: block; }
+  .console-body { padding: 18px; }
+
+  .field-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .field-label .hint { font-weight: 400; color: var(--ink-faint); }
+
+  .input-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+  .sql-input {
+    flex: 1 1 260px;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    padding: 11px 12px;
+    min-height: 44px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .sql-input:focus-visible { border-color: var(--focus); }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .preset-label { width: 100%; font-size: 0.76rem; color: var(--ink-faint); margin-bottom: 2px; }
+  .chip {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 7px 10px;
+    min-height: 34px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  .chip:hover { border-color: var(--navy); color: var(--navy); }
+  .chip.danger:hover { border-color: var(--crimson); color: var(--crimson); }
+  .chip.safe:hover { border-color: var(--teal); color: var(--teal); }
+
+  .arrow-down {
+    text-align: center;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    margin: 16px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .arrow-down::before, .arrow-down::after {
+    content: ""; height: 1px; background: var(--line); flex: 1;
+  }
+
+  /* ---------- Rendered SQL ---------- */
+  .sql-out {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    line-height: 1.75;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line-soft);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+  }
+  .sql-out .kw { color: var(--navy); font-weight: 600; }
+  .inj {
+    background: var(--amber-bg);
+    color: var(--amber);
+    font-weight: 600;
+    padding: 1px 3px;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px var(--amber-line);
+  }
+  .commented { color: var(--ink-faint); text-decoration: line-through; text-decoration-thickness: 1px; }
+
+  /* ---------- DB result ---------- */
+  .result {
+    margin-top: 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line-soft);
+    overflow: hidden;
+  }
+  .result-head {
+    padding: 9px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .result-head .badge {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: auto;
+  }
+  .result.breached .result-head { background: var(--crimson-bg); color: var(--crimson); }
+  .result.breached .badge { background: var(--crimson); color: #fff; }
+  .result.ok .result-head { background: var(--teal-bg); color: var(--teal); }
+  .result.ok .badge { background: var(--teal); color: #fff; }
+  .result.empty .result-head { background: var(--surface-2); color: var(--ink-soft); }
+  .result.empty .badge { background: var(--ink-faint); color: #fff; }
+
+  table.rows {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: var(--surface);
+  }
+  table.rows th, table.rows td {
+    text-align: left;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    white-space: nowrap;
+  }
+  table.rows th { color: var(--ink-faint); font-weight: 600; font-size: 0.74rem; letter-spacing: 0.03em; }
+  table.rows td { color: var(--ink); }
+  table.rows tr.leaked td { color: var(--crimson); }
+  table.rows tr.leaked td::after { }
+  .result-note {
+    padding: 10px 14px;
+    font-family: var(--sans);
+    font-size: 0.84rem;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border-top: 1px solid var(--line-soft);
+  }
+
+  /* ---------- Four-part breakdown ---------- */
+  .breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 22px;
+  }
+  .breakdown .cell { background: var(--surface); padding: 16px 18px; }
+  .breakdown .cell h4 {
+    margin: 0 0 6px;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    color: var(--navy);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .breakdown .cell h4 .g {
+    width: 18px; height: 18px; border-radius: 5px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--navy-soft); color: var(--navy);
+    font-size: 0.7rem;
+  }
+  .breakdown .cell.risk h4 { color: var(--crimson); }
+  .breakdown .cell.risk h4 .g { background: var(--crimson-bg); color: var(--crimson); }
+  .breakdown .cell p { margin: 0; font-size: 0.94rem; color: var(--ink); }
+  .breakdown .cell code {
+    font-family: var(--mono); font-size: 0.86em;
+    background: var(--code-bg); padding: 1px 5px; border-radius: 4px;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note {
+    border-left: 3px solid var(--navy);
+    background: var(--navy-soft);
+    padding: 14px 16px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin: 22px 0;
+    font-size: 0.95rem;
+  }
+  .note.warn { border-left-color: var(--amber-line); background: var(--amber-bg); }
+  .note strong { color: var(--ink); }
+
+  /* ---------- Fix section: before/after ---------- */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .card > .cap {
+    padding: 11px 15px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card.bad > .cap { background: var(--crimson-bg); color: var(--crimson); }
+  .card.good > .cap { background: var(--teal-bg); color: var(--teal); }
+  .card pre {
+    margin: 0; padding: 15px;
+    font-family: var(--mono); font-size: 0.84rem; line-height: 1.7;
+    overflow-x: auto; color: var(--code-ink); background: var(--surface);
+  }
+  .card pre .kw { color: var(--navy); font-weight: 600; }
+  .card pre .inj-lite { background: var(--amber-bg); color: var(--amber); border-radius: 3px; padding: 0 2px; }
+  .card pre .ph { color: var(--teal); font-weight: 600; }
+  .card .foot { padding: 12px 15px; font-size: 0.88rem; color: var(--ink-soft); border-top: 1px solid var(--line-soft); }
+
+  /* ---------- Knowledge check ---------- */
+  .quiz { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+  .quiz-q { padding: 20px; border-bottom: 1px solid var(--line-soft); }
+  .quiz-q:last-of-type { border-bottom: none; }
+  .quiz-q .q { font-weight: 600; margin: 0 0 12px; }
+  .quiz-q .q .qn { font-family: var(--mono); color: var(--navy); margin-right: 8px; }
+  .options { display: grid; gap: 8px; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 11px 13px;
+    cursor: pointer;
+    background: var(--surface);
+    font-size: 0.94rem;
+    min-height: 44px;
+  }
+  .opt:hover { border-color: var(--navy); }
+  .opt input { margin-top: 4px; accent-color: var(--navy); width: 16px; height: 16px; flex: none; }
+  .opt.correct { border-color: var(--teal); background: var(--teal-bg); }
+  .opt.wrong { border-color: var(--crimson); background: var(--crimson-bg); }
+  .opt code { font-family: var(--mono); font-size: 0.88em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+  .explain {
+    margin-top: 12px; font-size: 0.9rem; padding: 11px 13px;
+    border-radius: var(--radius-sm); background: var(--surface-2); color: var(--ink-soft);
+    display: none;
+  }
+  .explain.show { display: block; }
+  .explain strong { color: var(--ink); }
+
+  /* ---------- Footer ---------- */
+  footer {
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+    padding: 26px 0 40px;
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+  }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; }
+  footer .program { color: var(--ink-soft); font-weight: 600; }
+  footer a { color: var(--navy); }
+
+  .glossary-toggle {
+    appearance: none; border: 1px solid var(--line); background: var(--surface-2);
+    color: var(--ink-soft); font-family: var(--mono); font-size: 0.78rem;
+    padding: 4px 10px; border-radius: 20px; cursor: pointer; margin-left: auto;
+  }
+
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .breakdown { grid-template-columns: 1fr; }
+    .compare { grid-template-columns: 1fr; }
+    .console-body { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker"><b>CISSP · Domain 8</b> <span class="dot">/</span> Software Development Security <span class="dot">/</span> Injection</p>
+    <h1>Watch input turn into a command.</h1>
+    <p class="lede">Every SQL injection is the same mistake: the application glues what a user typed into a query string, so the database can't tell <span class="amber">the developer's SQL</span> apart from <span class="amber">the attacker's</span>. Type into the fields below and watch the query rewrite itself in real time.</p>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <!-- ============ THE LAB ============ -->
+    <section aria-labelledby="lab-h">
+      <h2 id="lab-h"><span class="num">01</span>The injection lab</h2>
+      <p class="section-sub">Four attack styles the CISSP exam expects you to recognize. Edit the input or click a payload — the SQL the database actually receives, and what it returns, update live. The <span style="color:var(--amber);font-weight:600;">amber</span> span is the part the attacker controls.</p>
+
+      <div class="tabs" role="tablist" aria-label="SQL injection attack types">
+        <button class="tab" role="tab" id="tab-auth"  aria-selected="true"  aria-controls="panel-auth"  tabindex="0"><span class="tnum">A</span>Auth bypass</button>
+        <button class="tab" role="tab" id="tab-union" aria-selected="false" aria-controls="panel-union" tabindex="-1"><span class="tnum">B</span>UNION extraction</button>
+        <button class="tab" role="tab" id="tab-blind" aria-selected="false" aria-controls="panel-blind" tabindex="-1"><span class="tnum">C</span>Blind</button>
+        <button class="tab" role="tab" id="tab-second" aria-selected="false" aria-controls="panel-second" tabindex="-1"><span class="tnum">D</span>Second-order</button>
+      </div>
+
+      <!-- ---- Panel A: Auth bypass ---- -->
+      <div class="panel active" id="panel-auth" role="tabpanel" aria-labelledby="tab-auth" tabindex="0">
+        <div class="console">
+          <div class="console-head"><span class="traffic"><i></i><i></i><i></i></span> login.php — user authentication</div>
+          <div class="console-body">
+            <label class="field-label" for="in-auth">Username field <span class="hint">— type anything, or try a payload below</span></label>
+            <div class="input-row">
+              <input class="sql-input" id="in-auth" type="text" spellcheck="false" autocomplete="off" value="' OR '1'='1' --" aria-describedby="auth-sql">
+            </div>
+            <div class="presets">
+              <span class="preset-label">Payloads to try:</span>
+              <button class="chip safe" data-target="in-auth" data-payload="alice">alice (real user)</button>
+              <button class="chip danger" data-target="in-auth" data-payload="' OR '1'='1' --">' OR '1'='1' --</button>
+              <button class="chip danger" data-target="in-auth" data-payload="admin' --">admin' --</button>
+              <button class="chip danger" data-target="in-auth" data-payload="' OR 1=1 LIMIT 1 --">' OR 1=1 LIMIT 1 --</button>
+            </div>
+
+            <div class="arrow-down">the query the database receives</div>
+            <pre class="sql-out" id="auth-sql" aria-live="polite"></pre>
+            <div id="auth-result"></div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <div class="cell"><h4><span class="g">1</span>The parameter someone inputs</h4><p>The <code>username</code> field. The password can be left blank — the attack never touches it.</p></div>
+          <div class="cell"><h4><span class="g">2</span>What the query looks for</h4><p>A row whose <code>username</code> and <code>password</code> both match. The app treats "one row came back" as proof of a valid login.</p></div>
+          <div class="cell risk"><h4><span class="g">3</span>Why it's a risk</h4><p>The closing <code>'</code> ends the string early, <code>OR '1'='1'</code> is always true, and <code>--</code> comments out the password check. The DB can't separate data from code.</p></div>
+          <div class="cell risk"><h4><span class="g">4</span>What happens</h4><p>The WHERE clause is true for every row, so the query returns the whole users table. Login code accepts the first row — usually the admin.</p></div>
+        </div>
+      </div>
+
+      <!-- ---- Panel B: UNION ---- -->
+      <div class="panel" id="panel-union" role="tabpanel" aria-labelledby="tab-union" tabindex="0">
+        <div class="console">
+          <div class="console-head"><span class="traffic"><i></i><i></i><i></i></span> store.php?id= — product lookup</div>
+          <div class="console-body">
+            <label class="field-label" for="in-union">Product ID from the URL <span class="hint">— a number… the app assumes</span></label>
+            <div class="input-row">
+              <input class="sql-input" id="in-union" type="text" spellcheck="false" autocomplete="off" value="42 UNION SELECT username, password_hash, NULL FROM users" aria-describedby="union-sql">
+            </div>
+            <div class="presets">
+              <span class="preset-label">Payloads to try:</span>
+              <button class="chip safe" data-target="in-union" data-payload="42">42 (normal)</button>
+              <button class="chip" data-target="in-union" data-payload="42 ORDER BY 4 --">42 ORDER BY 4 -- (probe columns)</button>
+              <button class="chip danger" data-target="in-union" data-payload="42 UNION SELECT username, password_hash, NULL FROM users">UNION SELECT … FROM users</button>
+            </div>
+
+            <div class="arrow-down">the query the database receives</div>
+            <pre class="sql-out" id="union-sql" aria-live="polite"></pre>
+            <div id="union-result"></div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <div class="cell"><h4><span class="g">1</span>The parameter someone inputs</h4><p>The <code>id</code> in the URL, e.g. <code>store.php?id=42</code>. It's numeric, so it's often not even quoted — developers assume numbers are safe.</p></div>
+          <div class="cell"><h4><span class="g">2</span>What the query looks for</h4><p>The three columns for product 42: <code>name, description, price</code> — rendered straight into the product page template.</p></div>
+          <div class="cell risk"><h4><span class="g">3</span>Why it's a risk</h4><p><code>UNION</code> staples a second query's rows onto the first. Match the column count (found with <code>ORDER BY</code>) and the DB runs both as one result set.</p></div>
+          <div class="cell risk"><h4><span class="g">4</span>What happens</h4><p>Usernames and password hashes are rendered <em>as if they were products</em>. This is how bulk credential dumps happen — no malware, just a text field.</p></div>
+        </div>
+      </div>
+
+      <!-- ---- Panel C: Blind ---- -->
+      <div class="panel" id="panel-blind" role="tabpanel" aria-labelledby="tab-blind" tabindex="0">
+        <div class="console">
+          <div class="console-head"><span class="traffic"><i></i><i></i><i></i></span> check.php?id= — no data shown on the page</div>
+          <div class="console-body">
+            <label class="field-label" for="in-blind">Item ID <span class="hint">— the page never prints query results, only "found / not found"</span></label>
+            <div class="input-row">
+              <input class="sql-input" id="in-blind" type="text" spellcheck="false" autocomplete="off" value="7' AND SUBSTRING(password,1,1)='a" aria-describedby="blind-sql">
+            </div>
+            <div class="presets">
+              <span class="preset-label">Payloads to try:</span>
+              <button class="chip" data-target="in-blind" data-payload="7' AND '1'='1">7' AND '1'='1 (true)</button>
+              <button class="chip" data-target="in-blind" data-payload="7' AND '1'='2">7' AND '1'='2 (false)</button>
+              <button class="chip danger" data-target="in-blind" data-payload="7' AND SUBSTRING(password,1,1)='a">…SUBSTRING(password,1,1)='a</button>
+              <button class="chip danger" data-target="in-blind" data-payload="7'; WAITFOR DELAY '0:0:5' --">…WAITFOR DELAY '0:0:5' -- (time)</button>
+            </div>
+
+            <div class="arrow-down">the query the database receives</div>
+            <pre class="sql-out" id="blind-sql" aria-live="polite"></pre>
+            <div id="blind-result"></div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <div class="cell"><h4><span class="g">1</span>The parameter someone inputs</h4><p>The <code>id</code>, extended with a true/false test the attacker controls — a character guess, or a timed sleep.</p></div>
+          <div class="cell"><h4><span class="g">2</span>What the query looks for</h4><p>Nothing useful is shown. The app only reveals whether the row matched (page A) or not (page B) — or how long the response took.</p></div>
+          <div class="cell risk"><h4><span class="g">3</span>Why it's a risk</h4><p>The attacker infers data one bit at a time. <code>AND '1'='1</code> ⇒ true page; <code>AND '1'='2</code> ⇒ false page. The difference <em>is</em> the leak.</p></div>
+          <div class="cell risk"><h4><span class="g">4</span>What happens</h4><p>Scripted, the yes/no oracle spells out passwords character by character. <strong>Time-based</strong> works even when both pages look identical — a 5-second delay means "true."</p></div>
+        </div>
+      </div>
+
+      <!-- ---- Panel D: Second-order ---- -->
+      <div class="panel" id="panel-second" role="tabpanel" aria-labelledby="tab-second" tabindex="0">
+        <div class="console">
+          <div class="console-head"><span class="traffic"><i></i><i></i><i></i></span> two steps — stored now, detonates later</div>
+          <div class="console-body">
+            <label class="field-label" for="in-second">Step 1 — choose a username at registration</label>
+            <div class="input-row">
+              <input class="sql-input" id="in-second" type="text" spellcheck="false" autocomplete="off" value="admin'--" aria-describedby="second-sql">
+            </div>
+            <div class="presets">
+              <span class="preset-label">Payloads to try:</span>
+              <button class="chip safe" data-target="in-second" data-payload="bob">bob (normal)</button>
+              <button class="chip danger" data-target="in-second" data-payload="admin'--">admin'--</button>
+            </div>
+
+            <div class="arrow-down">step 1 · the INSERT (input is safely escaped here)</div>
+            <pre class="sql-out" id="second-sql" aria-live="polite"></pre>
+            <div id="second-result"></div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <div class="cell"><h4><span class="g">1</span>The parameter someone inputs</h4><p>A username at sign-up: <code>admin'--</code>. Registration uses a safe, parameterized INSERT, so it stores <em>literally</em> — no alarm.</p></div>
+          <div class="cell"><h4><span class="g">2</span>What the query looks for</h4><p>Later, a different feature (say "change password") reads that stored name and builds a <em>new</em> query with it — this time by concatenation.</p></div>
+          <div class="cell risk"><h4><span class="g">3</span>Why it's a risk</h4><p>Developers trust data already in their own database. The payload was dormant; the second, unsafe query is where it fires.</p></div>
+          <div class="cell risk"><h4><span class="g">4</span>What happens</h4><p>The stored <code>'--</code> comments out the <code>WHERE</code> clause of the update, so the password reset applies to <em>every</em> account. Escaping only on input isn't enough.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ THE FIX ============ -->
+    <section aria-labelledby="fix-h">
+      <h2 id="fix-h"><span class="num">02</span>The fix is structural, not a filter</h2>
+      <p class="section-sub">Blocklisting quotes and the word <code>UNION</code> is a losing game — encodings, comments, and case tricks slip through. The real fix changes <em>how</em> the query is sent: structure first, data separately.</p>
+
+      <div class="compare">
+        <div class="card bad">
+          <div class="cap">✕ Vulnerable — string concatenation</div>
+          <pre><span class="kw">SELECT</span> * <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> username = '<span class="inj-lite">" + input + "</span>';</pre>
+          <div class="foot">The input becomes part of the command string. The database parses attacker text as SQL.</div>
+        </div>
+        <div class="card good">
+          <div class="cap">✓ Safe — parameterized query</div>
+          <pre><span class="kw">SELECT</span> * <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> username = <span class="ph">?</span>;
+<span style="color:var(--ink-faint)">// input bound separately as a value</span>
+stmt.setString(<span class="ph">1</span>, input);</pre>
+          <div class="foot">The SQL structure is compiled first; input arrives as a pure value. <code>' OR '1'='1</code> becomes a username that matches nobody.</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Defense in depth, in order of leverage:</strong> parameterized queries / prepared statements (the fix) → ORM or stored procedures that parameterize under the hood → least-privilege DB accounts (the web app can't <code>DROP</code> or read other schemas) → input validation and allow-lists → a WAF as a backstop, never the primary control. Escaping input by hand is last-resort and error-prone — and, as second-order shows, escaping at input time alone doesn't hold.
+      </div>
+    </section>
+
+    <!-- ============ KNOWLEDGE CHECK ============ -->
+    <section aria-labelledby="quiz-h">
+      <h2 id="quiz-h"><span class="num">03</span>Knowledge check</h2>
+      <p class="section-sub">Three questions in CISSP framing. Pick an answer to see why it's right or wrong.</p>
+
+      <div class="quiz" id="quiz"></div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Built for <span class="program">CISSP Exam Prep · Domain 8</span> · Brookdale Community College · <span>2026</span></span>
+    <button class="glossary-toggle" id="reset-quiz" type="button">Reset quiz</button>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- SQL rendering helpers ---------------- */
+  var KEYWORDS = /\b(SELECT|FROM|WHERE|AND|OR|UNION|ALL|ORDER BY|LIMIT|INSERT INTO|VALUES|UPDATE|SET|DELETE|SUBSTRING|WAITFOR DELAY|NULL|IS|LIKE)\b/g;
+
+  function esc(s) {
+    return String(s).replace(/[&<>]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c];
+    });
+  }
+  function kw(s) { return esc(s).replace(KEYWORDS, '<span class="kw">$1</span>'); }
+
+  // Render prefix + [injected input] + suffix, dimming anything after a -- comment
+  function renderSQL(prefix, input, suffix) {
+    var commentIdx = input.indexOf("--");
+    var injHTML, tail = "";
+    if (commentIdx !== -1) {
+      var live = input.slice(0, commentIdx);
+      var commented = input.slice(commentIdx);
+      injHTML = '<span class="inj">' + kw(live) + '</span>' +
+                '<span class="inj commented">' + esc(commented) + '</span>';
+      // everything in the suffix after a comment is also dead
+      tail = '<span class="commented">' + kw(suffix) + '</span>';
+      return kw(prefix) + injHTML + tail;
+    }
+    injHTML = '<span class="inj">' + kw(input) + '</span>';
+    return kw(prefix) + injHTML + kw(suffix);
+  }
+
+  function tautology(s) {
+    var t = s.replace(/\s+/g, "").toUpperCase();
+    return /OR'1'='1|OR1=1|OR'A'='A|OR"1"="1/.test(t);
+  }
+  function hasComment(s) { return s.indexOf("--") !== -1; }
+
+  /* ---------------- Result panel builder ---------------- */
+  function resultPanel(kind, title, badge, cols, rows, note) {
+    var html = '<div class="result ' + kind + '">';
+    html += '<div class="result-head">' + esc(title) + '<span class="badge">' + esc(badge) + '</span></div>';
+    if (cols && rows && rows.length) {
+      html += '<div style="overflow-x:auto"><table class="rows"><thead><tr>';
+      cols.forEach(function (c) { html += '<th>' + esc(c) + '</th>'; });
+      html += '</tr></thead><tbody>';
+      rows.forEach(function (r) {
+        html += '<tr' + (r.leaked ? ' class="leaked"' : "") + '>';
+        r.cells.forEach(function (v) { html += '<td>' + esc(v) + '</td>'; });
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+    if (note) html += '<div class="result-note">' + note + '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  /* ---------------- A · Auth bypass ---------------- */
+  var USERS = [
+    { u: "admin", pw: "hunter2", role: "administrator" },
+    { u: "alice", pw: "spring!", role: "user" },
+    { u: "bob",   pw: "letmein", role: "user" }
+  ];
+  var inAuth = document.getElementById("in-auth");
+  var outAuth = document.getElementById("auth-sql");
+  var resAuth = document.getElementById("auth-result");
+
+  function updateAuth() {
+    var v = inAuth.value;
+    outAuth.innerHTML = renderSQL("SELECT * FROM users WHERE username = '", v, "' AND password = '';");
+    var breached = tautology(v) && hasComment(v);
+    var adminComment = /^admin'\s*--/i.test(v.trim());
+    if (breached || adminComment) {
+      var rows = adminComment
+        ? [{ cells: ["admin", "hunter2", "administrator"], leaked: true }]
+        : USERS.map(function (x, i) { return { cells: [x.u, x.pw, x.role], leaked: i === 0 }; });
+      resAuth.innerHTML = resultPanel(
+        "breached", "Authentication bypassed", (rows.length) + " row(s) returned",
+        ["username", "password", "role"], rows,
+        "Login code sees at least one row and logs you in as the <strong>first</strong> result — <strong>admin</strong>. The password check never ran."
+      );
+    } else {
+      var match = USERS.filter(function (x) { return x.u === v; });
+      if (match.length) {
+        resAuth.innerHTML = resultPanel("empty", "Username found, but password '' is wrong", "0 rows", null, null,
+          "A real username with an empty password matches no row. Normal login fails — as it should.");
+      } else {
+        resAuth.innerHTML = resultPanel("empty", "No matching row", "0 rows", null, null,
+          "Ordinary input is just data here. Nothing breaks — which is exactly why the vulnerability hides until someone sends a quote.");
+      }
+    }
+  }
+
+  /* ---------------- B · UNION ---------------- */
+  var inUnion = document.getElementById("in-union");
+  var outUnion = document.getElementById("union-sql");
+  var resUnion = document.getElementById("union-result");
+
+  function updateUnion() {
+    var v = inUnion.value;
+    outUnion.innerHTML = renderSQL("SELECT name, description, price FROM products WHERE id = ", v, ";");
+    var U = v.toUpperCase();
+    if (/UNION\s+SELECT/.test(U) && /FROM\s+USERS/.test(U)) {
+      resUnion.innerHTML = resultPanel(
+        "breached", "Second query smuggled in", "credentials leaked",
+        ["name / username", "description / hash", "price / —"],
+        [
+          { cells: ["Wireless Mouse", "Ergonomic 2.4GHz mouse", "$24.99"] },
+          { cells: ["admin", "$2a$10$9f...c1e", "NULL"], leaked: true },
+          { cells: ["alice", "$2a$10$71...b8a", "NULL"], leaked: true },
+          { cells: ["bob",   "$2a$10$0d...4fa", "NULL"], leaked: true }
+        ],
+        "The product row is followed by the users table — <strong>rendered as if the hashes were products</strong>. Column count and types line up, so the DB runs both."
+      );
+    } else if (/ORDER\s+BY/.test(U)) {
+      var n = (v.match(/ORDER\s+BY\s+(\d+)/i) || [])[1];
+      var tooMany = n && parseInt(n, 10) > 3;
+      resUnion.innerHTML = resultPanel(
+        tooMany ? "empty" : "ok",
+        tooMany ? "Error: ORDER BY column out of range" : "Sorted OK — column exists",
+        tooMany ? "probe: 4 > 3" : "probe: within range", null, null,
+        tooMany
+          ? "The error reveals there are fewer than 4 columns. Attackers count columns this way before crafting the UNION."
+          : "No error means the query has at least this many columns. Keep incrementing until it breaks — that's the column count."
+      );
+    } else if (/^\d+$/.test(v.trim())) {
+      resUnion.innerHTML = resultPanel("ok", "Normal product lookup", "1 row",
+        ["name", "description", "price"],
+        [{ cells: ["Wireless Mouse", "Ergonomic 2.4GHz mouse", "$24.99"] }],
+        "Exactly what the developer intended. The injection point is invisible during normal use.");
+    } else {
+      resUnion.innerHTML = resultPanel("empty", "No product matches", "0 rows", null, null,
+        "Add <code>UNION SELECT</code> with a matching column count to append data from another table.");
+    }
+  }
+
+  /* ---------------- C · Blind ---------------- */
+  var inBlind = document.getElementById("in-blind");
+  var outBlind = document.getElementById("blind-sql");
+  var resBlind = document.getElementById("blind-result");
+
+  function updateBlind() {
+    var v = inBlind.value;
+    outBlind.innerHTML = renderSQL("SELECT 1 FROM items WHERE id = '", v, "' LIMIT 1;");
+    var U = v.toUpperCase();
+    if (/WAITFOR\s+DELAY/.test(U)) {
+      resBlind.innerHTML = resultPanel("breached", "Response delayed ~5 seconds", "time-based: TRUE", null, null,
+        "The page looks identical, but it <strong>hung for 5 seconds</strong>. That delay is the answer — attackers read data through response time when nothing is displayed.");
+    } else if (/AND\s+'1'\s*=\s*'1$/.test(v.replace(/\s+/g, " ").toUpperCase().trim()) || /AND\s*'1'='1/.test(U)) {
+      resBlind.innerHTML = resultPanel("breached", "Page renders normally (item found)", 'oracle: TRUE', null, null,
+        "The always-true condition means the row matches — the attacker sees the <strong>&ldquo;true&rdquo; version</strong> of the page.");
+    } else if (/AND\s*'1'='2/.test(U) || /AND\s+'1'\s*=\s*'2/.test(U)) {
+      resBlind.innerHTML = resultPanel("empty", "Page shows 'not found'", "oracle: FALSE", null, null,
+        "The always-false condition suppresses the row. Comparing this <strong>&ldquo;false&rdquo; page</strong> to the true one is the whole channel.");
+    } else if (/SUBSTRING\s*\(\s*PASSWORD/.test(U)) {
+      var guess = (v.match(/=\s*'([^']*)/) || [])[1] || "?";
+      var hit = guess.toLowerCase() === "h"; // admin pw starts with 'h'
+      resBlind.innerHTML = resultPanel(
+        hit ? "breached" : "empty",
+        hit ? "Page renders normally — guess correct" : "Page shows 'not found' — wrong guess",
+        hit ? "char 1 = '" + guess + "' ✓" : "char 1 ≠ '" + guess + "'",
+        null, null,
+        hit
+          ? "First character of the password is <strong>'" + esc(guess) + "'</strong>. Loop through a–z, 0–9 and the whole hash falls out — one character per request."
+          : "Wrong guess ⇒ false page. Try <code>'h'</code>: when the page flips to normal, that character is confirmed."
+      );
+    } else {
+      resBlind.innerHTML = resultPanel("empty", "No visible data either way", "blind", null, null,
+        "This endpoint never prints results — only true/false or timing. Use the payloads above to build a yes/no oracle.");
+    }
+  }
+
+  /* ---------------- D · Second-order ---------------- */
+  var inSecond = document.getElementById("in-second");
+  var outSecond = document.getElementById("second-sql");
+  var resSecond = document.getElementById("second-result");
+
+  function updateSecond() {
+    var v = inSecond.value;
+    // Step 1: parameterized INSERT — input stored literally, shown as a bound value (safe)
+    outSecond.innerHTML =
+      '<span class="kw">INSERT INTO</span> users (username) <span class="kw">VALUES</span> (<span class="ph" style="color:var(--teal);font-weight:600">?</span>);  ' +
+      '<span style="color:var(--ink-faint)">// bound value: ' + esc(v) + '</span>';
+    var malicious = /'\s*--/.test(v);
+    // Step 2: the later, UNSAFE concatenated query
+    var step2 = renderSQL("UPDATE users SET password = 'NEW' WHERE username = '", v, "';");
+    var note, kind, title, badge;
+    if (malicious) {
+      kind = "breached"; title = "Step 2 fires: WHERE clause commented out"; badge = "all accounts reset";
+      note = "The stored <code>'--</code> closes the string and comments out <code>WHERE username = …</code>. The UPDATE now matches <strong>every row</strong> — every user's password is overwritten. The value was safe at input; it detonated at reuse.";
+    } else {
+      kind = "ok"; title = "Step 2: scoped to one user"; badge = "1 row";
+      note = "An ordinary name updates just that account. The danger only appears when the stored value contains SQL syntax and a later query concatenates it.";
+    }
+    resSecond.innerHTML =
+      '<div class="arrow-down" style="margin-top:16px">step 2 · a later "change password" query — built by concatenation</div>' +
+      '<pre class="sql-out">' + step2 + '</pre>' +
+      resultPanel(kind, title, badge, null, null, note);
+  }
+
+  /* ---------------- Wire inputs & presets ---------------- */
+  inAuth.addEventListener("input", updateAuth);
+  inUnion.addEventListener("input", updateUnion);
+  inBlind.addEventListener("input", updateBlind);
+  inSecond.addEventListener("input", updateSecond);
+
+  var updaters = { "in-auth": updateAuth, "in-union": updateUnion, "in-blind": updateBlind, "in-second": updateSecond };
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (chip) {
+    chip.addEventListener("click", function () {
+      var t = chip.getAttribute("data-target");
+      var el = document.getElementById(t);
+      el.value = chip.getAttribute("data-payload");
+      updaters[t]();
+      el.focus();
+    });
+  });
+
+  /* ---------------- Tabs (ARIA + arrow keys) ---------------- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  function selectTab(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.setAttribute("tabindex", on ? "0" : "-1");
+      document.getElementById(t.getAttribute("aria-controls")).classList.toggle("active", on);
+    });
+  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener("click", function () { selectTab(tab); });
+    tab.addEventListener("keydown", function (e) {
+      var idx = null;
+      if (e.key === "ArrowRight") idx = (i + 1) % tabs.length;
+      else if (e.key === "ArrowLeft") idx = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === "Home") idx = 0;
+      else if (e.key === "End") idx = tabs.length - 1;
+      if (idx !== null) { e.preventDefault(); tabs[idx].focus(); selectTab(tabs[idx]); }
+    });
+  });
+
+  /* ---------------- Knowledge check ---------------- */
+  var QUIZ = [
+    {
+      q: "A login form is exploited with <code>' OR '1'='1' --</code>. What is the single most effective fix?",
+      opts: [
+        { t: "Strip apostrophes from all user input", ok: false },
+        { t: "Use a parameterized query (prepared statement) so input is bound as a value", ok: true },
+        { t: "Rename the <code>users</code> table so attackers can't guess it", ok: false },
+        { t: "Hash the password before comparing it", ok: false }
+      ],
+      why: "<strong>Parameterization</strong> separates SQL structure from data, so input can never be parsed as code. Stripping quotes is a blocklist attackers bypass; obscurity and hashing don't address the injection at all."
+    },
+    {
+      q: "An endpoint returns no query output — only a generic \"found\" or \"not found\" page. Which technique still extracts data?",
+      opts: [
+        { t: "UNION-based injection", ok: false },
+        { t: "Error-based injection", ok: false },
+        { t: "Blind (boolean or time-based) injection", ok: true },
+        { t: "It cannot be exploited without visible output", ok: false }
+      ],
+      why: "<strong>Blind injection</strong> infers data from the true/false difference between pages, or from response delays (<code>WAITFOR DELAY</code>) when the pages are identical. No data needs to be displayed."
+    },
+    {
+      q: "Input is safely escaped when a username is stored, yet an injection still fires days later during a password-reset feature. This is:",
+      opts: [
+        { t: "Second-order SQL injection", ok: true },
+        { t: "A false positive — escaping prevents all injection", ok: false },
+        { t: "Cross-site scripting (XSS)", ok: false },
+        { t: "A UNION attack", ok: false }
+      ],
+      why: "<strong>Second-order injection</strong>: the payload is stored harmlessly, then a <em>different</em> query later concatenates the trusted-but-tainted value. It's why input-time escaping alone is insufficient — parameterize every query, including those reading your own data."
+    }
+  ];
+
+  function buildQuiz() {
+    var host = document.getElementById("quiz");
+    host.innerHTML = "";
+    QUIZ.forEach(function (item, qi) {
+      var block = document.createElement("div");
+      block.className = "quiz-q";
+      var h = '<p class="q"><span class="qn">Q' + (qi + 1) + '</span>' + item.q + '</p><div class="options" role="group">';
+      item.opts.forEach(function (o, oi) {
+        var id = "q" + qi + "o" + oi;
+        h += '<label class="opt" for="' + id + '">' +
+             '<input type="radio" name="q' + qi + '" id="' + id + '" value="' + oi + '">' +
+             '<span>' + o.t + '</span></label>';
+      });
+      h += '</div><div class="explain" id="exp' + qi + '"></div>';
+      block.innerHTML = h;
+      host.appendChild(block);
+
+      block.addEventListener("change", function (e) {
+        if (e.target.name !== "q" + qi) return;
+        var chosen = parseInt(e.target.value, 10);
+        var labels = block.querySelectorAll(".opt");
+        labels.forEach(function (lab, li) {
+          lab.classList.remove("correct", "wrong");
+          if (item.opts[li].ok) lab.classList.add("correct");
+          else if (li === chosen) lab.classList.add("wrong");
+        });
+        var exp = document.getElementById("exp" + qi);
+        exp.innerHTML = (item.opts[chosen].ok ? "<strong>Correct.</strong> " : "<strong>Not quite.</strong> ") + item.why;
+        exp.classList.add("show");
+      });
+    });
+  }
+
+  document.getElementById("reset-quiz").addEventListener("click", function () {
+    buildQuiz();
+    document.getElementById("quiz-h").scrollIntoView({ block: "start" });
+  });
+
+  /* ---------------- Init ---------------- */
+  updateAuth(); updateUnion(); updateBlind(); updateSecond(); buildQuiz();
+})();
+</script>
+</body>
+</html>
