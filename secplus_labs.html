@@ -255,7 +255,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <div class="topbar" role="group" aria-label="Display controls">
     <span class="crumb">pairs with
-      <a href="index.html">the Security+ SY0-701 textbook</a></span>
+      <a href="index.html" target="_blank" rel="noopener">the Security+ SY0-701 textbook</a></span>
     <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
       <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span></button>
     <div class="ctl-group" role="group" aria-label="Text size">
@@ -344,7 +344,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       +'<p class="labcard__blurb">'+l.b+'</p>'
       +'<div class="labcard__foot"><span class="labcard__mod">Module '+l.m+' \u00b7 '+MOD[l.m]+'</span>'+prog+'</div>'
       +'<div class="labcard__tools">'+l.tools+'</div>';
-    return l.ready ? '<a class="labcard" href="'+href+'">'+inner+'</a>'
+    return l.ready ? '<a class="labcard" href="'+href+'" target="_blank" rel="noopener">'+inner+'</a>'
                    : '<div class="labcard is-soon">'+inner+'</div>';
   }
   function grid(labs){return '<div class="cardgrid">'+labs.map(card).join("")+'</div>';}
