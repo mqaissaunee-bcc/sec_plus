@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-lab="20" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lab 20 Companion — Linux Account Management · Security+</title>
+<meta name="description" content="Student companion for Security+ Lab 20: creating groups, users, and passwords and controlling access with symbolic and absolute (octal) file permissions, identity and least privilege, the defender's view, screenshots to submit, and how it maps to your Security+ modules.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1040px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh;
+  padding-top:env(safe-area-inset-top,0)}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- crumb + control bar ---------- */
+.topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;margin-bottom:6px}
+.crumb{margin-right:auto;font-size:.85rem;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb a:hover{text-decoration:underline}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+
+/* ---------- header / hero ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2;margin-top:4px}
+.module-header .subtitle{color:var(--muted);margin-top:10px;max-width:72ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.meta-chip{font-size:.82rem;background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px;padding:7px 13px;color:var(--muted)}
+.meta-chip b{color:var(--text);font-weight:700}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- jump nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.nav-btn{font:inherit;font-size:.88rem;min-height:44px;padding:9px 15px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:7px;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono);display:none}
+.nav-btn.is-done .done{display:inline}
+
+/* ---------- sections ---------- */
+.lab-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;margin-bottom:18px;scroll-margin-top:16px}
+.section-title{font-size:clamp(1.2rem,2.3vw,1.7rem);margin-bottom:6px;
+  display:flex;align-items:center;gap:10px}
+.section-title .ico{font-size:1.1em}
+.section-lead{color:var(--muted);margin-bottom:16px;max-width:74ch}
+.subsection{margin:24px 0}
+.subsection h3{font-size:1.12rem;margin-bottom:10px;color:var(--accent)}
+.lab-section p + p{margin-top:10px}
+.lab-section ul,.lab-section ol{margin:10px 0 10px 22px}
+.lab-section li{margin:6px 0}
+.phase-tag{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);
+  border-radius:6px;padding:3px 9px;margin-bottom:6px}
+
+/* ---------- code / terminal ---------- */
+.code-block{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;
+  white-space:pre-wrap;margin:10px 0;line-height:1.55}
+.code-block .cmt{color:var(--muted)}
+.code-block .pr{color:var(--accent)}
+code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+
+/* ---------- step explainer ---------- */
+.step{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:16px 0}
+.step h4{font-size:1rem;margin-bottom:4px}
+.step .why{font-size:.92rem;color:var(--muted);margin-top:6px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- screenshot marker ---------- */
+.shot-mark{display:flex;gap:10px;align-items:flex-start;margin:12px 0;padding:11px 14px;
+  border-radius:10px;border:1px dashed color-mix(in srgb,var(--accent) 55%,transparent);
+  background:color-mix(in srgb,var(--accent) 8%,transparent);font-size:.9rem}
+.shot-mark .cam{font-size:1.1rem;line-height:1.3}
+.shot-mark b{color:var(--accent)}
+
+/* ---------- defender grid ---------- */
+.def-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px}
+.def-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:15px}
+.def-card h4{font-size:.98rem;margin-bottom:6px}
+.def-card .attack{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.def-card .ctrl{font-size:.9rem}
+
+/* ---------- figure / topology ---------- */
+.figure{margin:16px 0;background:var(--bg-0);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.84rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:13px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.svg-zone{fill:none;stroke-width:1.5;stroke-dasharray:5 4}
+
+/* ---------- evidence checklist ---------- */
+.evidence li{list-style:none;display:flex;gap:11px;align-items:flex-start;margin:10px 0;
+  padding:11px 13px;background:var(--card-2);border:1px solid var(--line);border-radius:9px}
+.evidence ul{margin-left:0}
+.evidence input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
+.evidence .shot{color:var(--accent);font-weight:700}
+.evidence li:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+
+/* ---------- cheat sheet ---------- */
+.cheat{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cheat .col{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:16px}
+.cheat h4{color:var(--accent);font-size:.98rem;margin-bottom:8px}
+.cheat ul{margin-left:18px}
+.cheat code{font-family:var(--mono);font-size:.84em}
+
+/* ---------- review questions ---------- */
+.q{border:1px solid var(--line);border-radius:10px;padding:15px;margin:12px 0;background:var(--card-2)}
+.q .ask{font-weight:600;margin-bottom:10px}
+.reveal{font:inherit;font-size:.86rem;font-weight:600;min-height:40px;padding:8px 14px;cursor:pointer;
+  color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:9px}
+.reveal:hover{border-color:var(--accent);color:var(--accent)}
+.ans{margin-top:10px;padding:12px 14px;border-radius:8px;font-size:.92rem;display:none;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);border-left:4px solid var(--accent)}
+.ans.on{display:block}
+
+/* ---------- mark reviewed ---------- */
+.review{display:inline-flex;align-items:center;gap:9px;margin-top:18px;padding:9px 14px;cursor:pointer;
+  font-size:.9rem;font-weight:600;background:var(--card-2);border:1px solid var(--line);border-radius:10px}
+.review input{width:18px;height:18px;accent-color:var(--accent)}
+.review:has(input:checked){border-color:var(--ok);color:var(--ok)}
+
+/* ---------- footer / toast ---------- */
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .topbar{justify-content:center}
+  .crumb{width:100%;margin-bottom:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .topbar,.section-nav,.toast,.review{display:none!important}
+  body{background:#fff}
+  .lab-section,.module-header,.progress-container{break-inside:avoid}
+}
+
+/* ---------- related labs ---------- */
+.related{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.rel-card{display:flex;flex-direction:column;gap:3px;background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:13px 15px;text-decoration:none;color:var(--text)}
+.rel-card:hover{border-left-color:var(--accent)}
+.rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
+.rel-ttl{font-weight:700;font-size:.96rem}
+.rel-why{font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="topbar" role="group" aria-label="Display controls">
+    <span class="crumb"><a href="secplus_labs.html">&larr; All labs</a> &middot; pairs with
+      <a href="index.html">the Security+ textbook</a></span>
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size"><span class="ctl__icon">A−</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size"><span class="ctl__icon">A+</span></button>
+    </div>
+    <button class="ctl" type="button" data-action="print"><span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span></button>
+    <button class="ctl" type="button" data-action="resetProgress"><span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span></button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ Lab Companion &middot; Lab 20</p>
+    <h1>Linux Account Management</h1>
+    <p class="subtitle">Identity and access control, from the command line. This lab creates users and groups, sets passwords, and locks down files with Linux permissions — symbolic and octal — the everyday mechanics of least privilege on a Linux host.</p>
+    <div class="chips">
+      <span class="meta-chip">⏱ <b>~45 min</b></span>
+      <span class="meta-chip">📶 Difficulty: <b>Beginner</b></span>
+      <span class="meta-chip">🧰 Tools: <b>useradd · groupadd · passwd · chmod</b></span>
+      <span class="meta-chip">🎯 Do: <b>users, groups, and permissions</b></span>
+      <span class="meta-chip">📘 Maps to: <b>Module 10 — Identity, Automation, Incident Response, and Forensics</b></span>
+    </div>
+  </header>
+
+  <div class="callout danger">
+    <span class="tag">[AUTHORIZED TESTING ONLY]</span>
+    This lab manages accounts and permissions inside an isolated pod. Account and permission changes directly control who can access what — on a real system, an over-permissive setting is how data leaks and privilege escalates.
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Companion progress"></div>
+    </div>
+    <p class="progress-text" id="progressText">0% · mark each section reviewed as you work through it</p>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
+    <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+    <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
+    <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
+    <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
+    <a class="nav-btn" href="#evidence" data-nav="evidence"><span class="done" aria-hidden="true">✓</span>📸 Evidence</a>
+    <a class="nav-btn" href="#cheat" data-nav="cheat"><span class="done" aria-hidden="true">✓</span>⚡ Cheat sheet</a>
+    <a class="nav-btn" href="#check" data-nav="check"><span class="done" aria-hidden="true">✓</span>✅ Check yourself</a>
+    <a class="nav-btn" href="#related" data-nav="related">🔗 Related labs</a>
+  </nav>
+
+  <main id="main">
+
+    <section class="lab-section" id="overview" data-section="overview">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📋</span> Overview</h2>
+      <p class="section-lead">Least privilege, implemented.</p>
+      <p>Access control on Linux comes down to <strong>who</strong> (users and groups) and <strong>what they may do</strong> (file permissions). You'll create a group and users, set passwords, and then control file access two ways: <strong>symbolic</strong> (<code class="inl">u/g/o</code> and <code class="inl">+/-rwx</code>) and <strong>absolute</strong> (octal, like <code class="inl">chmod 764</code>). The thread is least privilege — give each account exactly the access it needs and no more.</p>
+      <div class="callout"><span class="tag">[THE ONE IDEA]</span> Every Linux permission answers two questions: <strong>who</strong> (owner / group / others) and <strong>what</strong> (read / write / execute). Read <code class="inl">rwxrw-r--</code> as owner-group-others and the whole model clicks.</div>
+      <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="walkthrough" data-section="walkthrough">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
+      <p class="section-lead">Make the accounts, then set who can touch what.</p>
+      <div class="subsection"><span class="phase-tag">Phase 1 · Users &amp; groups</span>
+        <h3>Create identities</h3>
+        <div class="code-block"><span class="pr">root@ubuntusrv:~#</span> groupadd HR
+<span class="pr">root@ubuntusrv:~#</span> useradd jenny
+<span class="pr">root@ubuntusrv:~#</span> useradd joe
+<span class="pr">root@ubuntusrv:~#</span> passwd jenny          <span class="cmt"># set a password</span>
+<span class="pr">root@ubuntusrv:~#</span> tail /etc/passwd        <span class="cmt"># verify the accounts</span></div>
+        <p class="why">Groups let you grant access to many users at once; users are individual identities. The accounts appear in <code class="inl">/etc/passwd</code> — note that the <em>password hashes</em> live in <code class="inl">/etc/shadow</code>, not here.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the HR group and jenny/joe created, shown in /etc/passwd.</span></div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 2 · Symbolic permissions</span>
+        <h3>Adjust access by who and what</h3>
+        <div class="code-block"><span class="pr">$</span> chmod u+rwx file     <span class="cmt"># owner: read, write, execute</span>
+<span class="pr">$</span> chmod g-rwx file     <span class="cmt"># group: remove all</span>
+<span class="pr">$</span> chmod o+r file       <span class="cmt"># others: add read</span></div>
+        <p class="why">Symbolic mode names the class (<code class="inl">u</code>ser, <code class="inl">g</code>roup, <code class="inl">o</code>thers) and adds (<code class="inl">+</code>) or removes (<code class="inl">-</code>) permissions. It's for adjusting specific bits without restating the whole set.</p>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 3 · Absolute (octal) permissions</span>
+        <h3>Set everything at once</h3>
+        <div class="code-block"><span class="pr">$</span> chmod 764 file
+<span class="pr">$</span> ls -l file          <span class="cmt"># -rwxrw-r--</span></div>
+        <p class="why">Octal sets all three classes in one number: read=4, write=2, execute=1, summed per class. <code class="inl">764</code> = owner <code class="inl">7</code> (rwx), group <code class="inl">6</code> (rw-), others <code class="inl">4</code> (r--). Test it: jenny shouldn't be able to enter joe's home directory unless the permissions allow it — permissions enforced, visibly.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> a chmod 764 and the ls -l output (rwxrw-r--), plus a permission-denied test.</span></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="stuck" data-section="stuck">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚠️</span> Where students get stuck</h2>
+      <p class="section-lead">The permission math that trips people.</p>
+      <div class="callout warn"><span class="tag">[OCTAL MATH]</span> r=4, w=2, x=1; add them per class. 7=rwx, 6=rw-, 5=r-x, 4=r--. <code class="inl">764</code> is owner 7 / group 6 / others 4.</div>
+      <div class="callout warn"><span class="tag">[READING ls -l]</span> The 10 characters are: type, then owner (3), group (3), others (3). <code class="inl">-rwxrw-r--</code> is a file, owner rwx, group rw-, others r--.</div>
+      <div class="callout warn"><span class="tag">[DIRECTORIES NEED x]</span> To <code class="inl">cd</code> into a directory you need execute on it, not just read. 'Permission denied' entering a folder is usually a missing x.</div>
+      <div class="callout warn"><span class="tag">[passwd ≠ /etc/passwd FOR HASHES]</span> <code class="inl">/etc/passwd</code> lists accounts; the password hashes are in <code class="inl">/etc/shadow</code>. Don't expect to see passwords in passwd.</div>
+      <div class="callout warn"><span class="tag">[SYMBOLIC vs ABSOLUTE]</span> They do the same job differently — symbolic nudges specific bits, absolute sets the full set. Mixing up <code class="inl">u+r</code> with an octal digit is a common slip.</div>
+      <label class="review"><input type="checkbox" data-review="stuck"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="defender" data-section="defender">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🛡️</span> The defender's view</h2>
+      <p class="section-lead">This is identity and access management at the host level.</p>
+      <div class="def-grid">
+        <div class="def-card"><h4>Least privilege</h4><p class="attack">Breaks: over-broad access</p><p class="ctrl">Give each user and file only the access required. Tight permissions (and not making everything world-readable/writable) is the everyday expression of least privilege.</p></div>
+        <div class="def-card"><h4>Group-based access</h4><p class="attack">Breaks: per-user sprawl</p><p class="ctrl">Assign rights to groups and put users in them, rather than managing each user's access individually — scalable and auditable.</p></div>
+        <div class="def-card"><h4>Protect /etc/shadow + strong passwords</h4><p class="attack">Breaks: credential theft</p><p class="ctrl">Hashes live in shadow for a reason — restrict it, enforce a password policy, and salt/hash properly (the crypto lab's point applied to logins).</p></div>
+        <div class="def-card"><h4>sudo, not root login</h4><p class="attack">Breaks: unlimited standing privilege</p><p class="ctrl">Grant elevated rights through sudo for specific tasks instead of logging in as root. Limits standing privilege and leaves an audit trail.</p></div>
+        <div class="def-card"><h4>Remove/disable unused accounts</h4><p class="attack">Breaks: forgotten doors</p><p class="ctrl">Dormant accounts are a classic attack path. Disable or delete accounts for people and services no longer active.</p></div>
+        <div class="def-card"><h4>Sensible umask</h4><p class="attack">Breaks: risky defaults</p><p class="ctrl">A good default umask means new files aren't created over-permissive in the first place — least privilege by default.</p></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="defender"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="evidence" data-section="evidence">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📸</span> Evidence to capture</h2>
+      <p class="section-lead">Your instructor wants screenshots of the key steps as proof you ran the lab. Grab these as you go, tick each one off, then print or submit this list as your evidence cover sheet. Ticks are saved in this browser.</p>
+      <div class="evidence"><ul>
+        <li><input type="checkbox" data-evidence="e1"><span><span class="shot">Group made.</span> the HR group created.</span></li>
+        <li><input type="checkbox" data-evidence="e2"><span><span class="shot">Users made.</span> jenny and joe in <code class='inl'>/etc/passwd</code>.</span></li>
+        <li><input type="checkbox" data-evidence="e3"><span><span class="shot">Symbolic.</span> a <code class='inl'>chmod u+rwx</code> / <code class='inl'>g-rwx</code> change.</span></li>
+        <li><input type="checkbox" data-evidence="e4"><span><span class="shot">Absolute.</span> a <code class='inl'>chmod 764</code> with <code class='inl'>ls -l</code> showing rwxrw-r--.</span></li>
+        <li><input type="checkbox" data-evidence="e5"><span><span class="shot">Enforced.</span> a permission-denied result (jenny into joe's home).</span></li>
+        <li><input type="checkbox" data-evidence="e6"><span><span class="shot">Your takeaway.</span> a one-line note translating 764 to rwxrw-r-- and naming the principle (least privilege).</span></li>
+      </ul></div>
+      <label class="review"><input type="checkbox" data-review="evidence"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="cheat" data-section="cheat">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚡</span> Cheat sheet</h2>
+      <p class="section-lead">Who, and what.</p>
+      <div class="cheat">
+        <div class="col"><h4>Commands</h4><ul>
+          <li><code>groupadd HR</code> · <code>useradd jenny</code> · <code>passwd jenny</code></li>
+          <li><code>chmod u+rwx</code> · <code>g-rwx</code> · <code>o+r</code></li>
+          <li><code>chmod 764</code> (rwx rw- r--)</li>
+          <li><code>ls -l</code> to read it back</li>
+          <li>Accounts: <code>/etc/passwd</code> · hashes: <code>/etc/shadow</code></li>
+        </ul></div>
+        <div class="col"><h4>Do it right</h4><ul>
+          <li>Least privilege everywhere</li>
+          <li>Group-based access</li>
+          <li>Protect /etc/shadow; strong passwords</li>
+          <li>sudo, not root login</li>
+          <li>Remove unused accounts; sane umask</li>
+        </ul></div>
+        <div class="col"><h4>Octal cheat</h4><ul>
+          <li>r = 4, w = 2, x = 1</li>
+          <li>7 = rwx · 6 = rw- · 5 = r-x · 4 = r--</li>
+          <li>Order: owner · group · others</li>
+          <li>Directory needs x to enter</li>
+        </ul></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="cheat"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="check" data-section="check">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">✅</span> Check yourself</h2>
+      <div class="q"><p class="ask">1. Translate <code class='inl'>chmod 764 file</code> into who-can-do-what.</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Owner = 7 = read+write+execute (rwx); group = 6 = read+write (rw-); others = 4 = read only (r--). So <code class='inl'>-rwxrw-r--</code>.</div></div>
+      <div class="q"><p class="ask">2. Symbolic (<code class='inl'>u+rwx</code>) vs absolute (<code class='inl'>chmod 755</code>) — do they do the same thing?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">They control the same permission bits in different notations. Symbolic adjusts specific bits for specific classes (add/remove), while absolute sets all three classes at once to an exact value. Same model, two ways to express it.</div></div>
+      <div class="q"><p class="ask">3. Where are Linux password hashes stored, and why not in /etc/passwd?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">In <code class='inl'>/etc/shadow</code>, which is readable only by root. <code class='inl'>/etc/passwd</code> is world-readable and lists account info, so keeping hashes out of it prevents ordinary users from grabbing them to crack offline.</div></div>
+      <div class="q"><p class="ask">4. What security principle do these users, groups, and permissions ultimately enforce?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Least privilege — each account and file is granted only the access it genuinely needs and no more, which limits what any compromised account or mistake can reach.</div></div>
+      <label class="review"><input type="checkbox" data-review="check"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="related" data-section="related">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🔗</span> Related labs</h2>
+      <p class="section-lead">Labs that build on the same ideas or tools.</p>
+      <div class="related">
+        <a class="rel-card" href="secplus_lab11_companion.html"><span class="rel-no">LAB 11</span><span class="rel-ttl">RADIUS</span><span class="rel-why">centralizing those identities with AAA</span></a>
+        <a class="rel-card" href="secplus_lab09_companion.html"><span class="rel-no">LAB 09</span><span class="rel-ttl">Virtualization & GPO</span><span class="rel-why">the Windows hardening counterpart</span></a>
+        <a class="rel-card" href="secplus_lab05_companion.html"><span class="rel-no">LAB 05</span><span class="rel-ttl">Attacks & Mitigation</span><span class="rel-why">host security practices</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ Lab Companion &middot; Lab 20 &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="sr-only" id="liveRegion" aria-live="polite"></div>
+
+<!-- ==================== JS ==================== -->
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var LAB_ID = root.getAttribute("data-lab") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";                 // shared with the textbook modules
+  var STATE_KEY = COURSE + ":labprogress:" + LAB_ID;    // this lab only
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg) {
+    toastEl.textContent = msg; toastEl.className = "toast on";
+    clearTimeout(toastT); toastT = setTimeout(function () { toastEl.className = "toast"; }, 2400);
+    announce(msg);
+  }
+
+  /* ---------- prefs: theme + text scale (synced with the modules) ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle"), dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(t) { prefs.theme = t; write(PREFS_KEY, prefs); applyTheme(t); }
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- progress + evidence state ---------- */
+  var SECTIONS = Array.prototype.slice.call(document.querySelectorAll("[data-review]")).map(function (el) { return el.getAttribute("data-review"); });
+  var state = read(STATE_KEY, { reviewed: [], evidence: [] });
+  var reviewed = new Set(state.reviewed || []);
+  var evidence = new Set(state.evidence || []);
+
+  function save() { write(STATE_KEY, { reviewed: Array.from(reviewed), evidence: Array.from(evidence) }); }
+
+  function paint() {
+    // review checkboxes + nav ticks
+    document.querySelectorAll("[data-review]").forEach(function (cb) {
+      var id = cb.getAttribute("data-review"), on = reviewed.has(id);
+      cb.checked = on;
+      var nav = document.querySelector('[data-nav="' + id + '"]');
+      if (nav) nav.classList.toggle("is-done", on);
+    });
+    document.querySelectorAll("[data-evidence]").forEach(function (cb) {
+      cb.checked = evidence.has(cb.getAttribute("data-evidence"));
+    });
+    var pct = SECTIONS.length ? Math.round(reviewed.size / SECTIONS.length * 100) : 0;
+    var bar = document.getElementById("progressBar");
+    bar.style.width = pct + "%"; bar.setAttribute("aria-valuenow", String(pct));
+    document.getElementById("progressText").textContent =
+      pct + "% · " + reviewed.size + " of " + SECTIONS.length + " sections reviewed";
+  }
+
+  function resetProgress() {
+    reviewed.clear(); evidence.clear(); save(); paint();
+    document.querySelectorAll(".ans.on").forEach(function (a) {
+      a.classList.remove("on"); var b = a.previousElementSibling;
+      if (b) { b.textContent = "Show answer"; b.setAttribute("aria-expanded", "false"); }
+    });
+    notify("Progress cleared");
+  }
+
+  /* ---------- delegated events ---------- */
+  var actions = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    print: function () { if (typeof window.print === "function") window.print(); },
+    resetProgress: resetProgress,
+    reveal: function (btn) {
+      var ans = btn.nextElementSibling, open = ans.classList.toggle("on");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Hide answer" : "Show answer";
+    }
+  };
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t) return;
+    var fn = actions[t.getAttribute("data-action")];
+    if (fn) fn(t);
+  });
+  document.addEventListener("change", function (e) {
+    var r = e.target.closest("[data-review]");
+    if (r) {
+      var id = r.getAttribute("data-review");
+      if (r.checked) reviewed.add(id); else reviewed.delete(id);
+      save(); paint();
+      if (r.checked && reviewed.size === SECTIONS.length) notify("All sections reviewed — nice work.");
+      return;
+    }
+    var ev = e.target.closest("[data-evidence]");
+    if (ev) {
+      var k = ev.getAttribute("data-evidence");
+      if (ev.checked) evidence.add(k); else evidence.delete(k);
+      save();
+    }
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>

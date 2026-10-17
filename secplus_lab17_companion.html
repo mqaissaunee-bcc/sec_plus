@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-lab="17" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lab 17 Companion — Configuring a Network-Based Firewall · Security+</title>
+<meta name="description" content="Student companion for Security+ Lab 17: configuring pfSense to block ICMP, port-forward to an internal host, and run a VPN server with a connecting client, firewall rules and secure network design, the defender's view, screenshots to submit, and how it maps to your Security+ modules.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1040px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh;
+  padding-top:env(safe-area-inset-top,0)}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- crumb + control bar ---------- */
+.topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;margin-bottom:6px}
+.crumb{margin-right:auto;font-size:.85rem;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb a:hover{text-decoration:underline}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+
+/* ---------- header / hero ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2;margin-top:4px}
+.module-header .subtitle{color:var(--muted);margin-top:10px;max-width:72ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.meta-chip{font-size:.82rem;background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px;padding:7px 13px;color:var(--muted)}
+.meta-chip b{color:var(--text);font-weight:700}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- jump nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.nav-btn{font:inherit;font-size:.88rem;min-height:44px;padding:9px 15px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:7px;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono);display:none}
+.nav-btn.is-done .done{display:inline}
+
+/* ---------- sections ---------- */
+.lab-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;margin-bottom:18px;scroll-margin-top:16px}
+.section-title{font-size:clamp(1.2rem,2.3vw,1.7rem);margin-bottom:6px;
+  display:flex;align-items:center;gap:10px}
+.section-title .ico{font-size:1.1em}
+.section-lead{color:var(--muted);margin-bottom:16px;max-width:74ch}
+.subsection{margin:24px 0}
+.subsection h3{font-size:1.12rem;margin-bottom:10px;color:var(--accent)}
+.lab-section p + p{margin-top:10px}
+.lab-section ul,.lab-section ol{margin:10px 0 10px 22px}
+.lab-section li{margin:6px 0}
+.phase-tag{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);
+  border-radius:6px;padding:3px 9px;margin-bottom:6px}
+
+/* ---------- code / terminal ---------- */
+.code-block{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;
+  white-space:pre-wrap;margin:10px 0;line-height:1.55}
+.code-block .cmt{color:var(--muted)}
+.code-block .pr{color:var(--accent)}
+code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+
+/* ---------- step explainer ---------- */
+.step{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:16px 0}
+.step h4{font-size:1rem;margin-bottom:4px}
+.step .why{font-size:.92rem;color:var(--muted);margin-top:6px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- screenshot marker ---------- */
+.shot-mark{display:flex;gap:10px;align-items:flex-start;margin:12px 0;padding:11px 14px;
+  border-radius:10px;border:1px dashed color-mix(in srgb,var(--accent) 55%,transparent);
+  background:color-mix(in srgb,var(--accent) 8%,transparent);font-size:.9rem}
+.shot-mark .cam{font-size:1.1rem;line-height:1.3}
+.shot-mark b{color:var(--accent)}
+
+/* ---------- defender grid ---------- */
+.def-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px}
+.def-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:15px}
+.def-card h4{font-size:.98rem;margin-bottom:6px}
+.def-card .attack{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.def-card .ctrl{font-size:.9rem}
+
+/* ---------- figure / topology ---------- */
+.figure{margin:16px 0;background:var(--bg-0);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.84rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:13px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.svg-zone{fill:none;stroke-width:1.5;stroke-dasharray:5 4}
+
+/* ---------- evidence checklist ---------- */
+.evidence li{list-style:none;display:flex;gap:11px;align-items:flex-start;margin:10px 0;
+  padding:11px 13px;background:var(--card-2);border:1px solid var(--line);border-radius:9px}
+.evidence ul{margin-left:0}
+.evidence input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
+.evidence .shot{color:var(--accent);font-weight:700}
+.evidence li:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+
+/* ---------- cheat sheet ---------- */
+.cheat{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cheat .col{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:16px}
+.cheat h4{color:var(--accent);font-size:.98rem;margin-bottom:8px}
+.cheat ul{margin-left:18px}
+.cheat code{font-family:var(--mono);font-size:.84em}
+
+/* ---------- review questions ---------- */
+.q{border:1px solid var(--line);border-radius:10px;padding:15px;margin:12px 0;background:var(--card-2)}
+.q .ask{font-weight:600;margin-bottom:10px}
+.reveal{font:inherit;font-size:.86rem;font-weight:600;min-height:40px;padding:8px 14px;cursor:pointer;
+  color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:9px}
+.reveal:hover{border-color:var(--accent);color:var(--accent)}
+.ans{margin-top:10px;padding:12px 14px;border-radius:8px;font-size:.92rem;display:none;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);border-left:4px solid var(--accent)}
+.ans.on{display:block}
+
+/* ---------- mark reviewed ---------- */
+.review{display:inline-flex;align-items:center;gap:9px;margin-top:18px;padding:9px 14px;cursor:pointer;
+  font-size:.9rem;font-weight:600;background:var(--card-2);border:1px solid var(--line);border-radius:10px}
+.review input{width:18px;height:18px;accent-color:var(--accent)}
+.review:has(input:checked){border-color:var(--ok);color:var(--ok)}
+
+/* ---------- footer / toast ---------- */
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .topbar{justify-content:center}
+  .crumb{width:100%;margin-bottom:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .topbar,.section-nav,.toast,.review{display:none!important}
+  body{background:#fff}
+  .lab-section,.module-header,.progress-container{break-inside:avoid}
+}
+
+/* ---------- related labs ---------- */
+.related{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.rel-card{display:flex;flex-direction:column;gap:3px;background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:13px 15px;text-decoration:none;color:var(--text)}
+.rel-card:hover{border-left-color:var(--accent)}
+.rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
+.rel-ttl{font-weight:700;font-size:.96rem}
+.rel-why{font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="topbar" role="group" aria-label="Display controls">
+    <span class="crumb"><a href="secplus_labs.html">&larr; All labs</a> &middot; pairs with
+      <a href="index.html">the Security+ textbook</a></span>
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size"><span class="ctl__icon">A−</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size"><span class="ctl__icon">A+</span></button>
+    </div>
+    <button class="ctl" type="button" data-action="print"><span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span></button>
+    <button class="ctl" type="button" data-action="resetProgress"><span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span></button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ Lab Companion &middot; Lab 17</p>
+    <h1>Configuring a Network-Based Firewall</h1>
+    <p class="subtitle">A firewall is where network security policy becomes real rules. This lab works a pfSense firewall through three jobs — block a protocol, redirect traffic to an internal host, and stand up a VPN for secure remote access — the everyday work of controlling a perimeter.</p>
+    <div class="chips">
+      <span class="meta-chip">⏱ <b>~70 min</b></span>
+      <span class="meta-chip">📶 Difficulty: <b>Intermediate</b></span>
+      <span class="meta-chip">🧰 Tools: <b>pfSense · OpenVPN</b></span>
+      <span class="meta-chip">🎯 Do: <b>block, forward, and VPN</b></span>
+      <span class="meta-chip">📘 Maps to: <b>Module 6 — Architecture Models and Enterprise Infrastructure</b></span>
+    </div>
+  </header>
+
+  <div class="callout danger">
+    <span class="tag">[AUTHORIZED TESTING ONLY]</span>
+    This lab reconfigures a firewall inside an isolated pod. Firewall and VPN changes directly control what can reach a network — a wrong rule can expose or isolate real systems, so understand each rule before applying it anywhere live.
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Companion progress"></div>
+    </div>
+    <p class="progress-text" id="progressText">0% · mark each section reviewed as you work through it</p>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
+    <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+    <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
+    <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
+    <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
+    <a class="nav-btn" href="#evidence" data-nav="evidence"><span class="done" aria-hidden="true">✓</span>📸 Evidence</a>
+    <a class="nav-btn" href="#cheat" data-nav="cheat"><span class="done" aria-hidden="true">✓</span>⚡ Cheat sheet</a>
+    <a class="nav-btn" href="#check" data-nav="check"><span class="done" aria-hidden="true">✓</span>✅ Check yourself</a>
+    <a class="nav-btn" href="#related" data-nav="related">🔗 Related labs</a>
+  </nav>
+
+  <main id="main">
+
+    <section class="lab-section" id="overview" data-section="overview">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📋</span> Overview</h2>
+      <p class="section-lead">Three firewall jobs that cover most of what a perimeter does.</p>
+      <p>You'll drive a <strong>pfSense</strong> firewall through three tasks: <strong>block ICMP</strong> (a simple allow/deny rule, verified by a ping that stops working), <strong>port forwarding</strong> (NAT a port from the outside to an internal host, retargeting an SSH connection), and a <strong>VPN</strong> (stand up an OpenVPN server, export a client config, connect, and manage the session). Together they're the core of controlling and securing a network boundary.</p>
+      <div class="callout"><span class="tag">[THE ONE IDEA]</span> A firewall enforces policy through <strong>rules evaluated in order</strong>, ideally on a <strong>default-deny</strong> base: block everything, then allow only what's needed. Every rule you add is a deliberate exception to 'no.'</div>
+      <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="walkthrough" data-section="walkthrough">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
+      <p class="section-lead">Block, redirect, tunnel.</p>
+      <div class="subsection"><span class="phase-tag">Phase 1 · Block a protocol</span>
+        <h3>Deny ICMP and prove it</h3>
+        <div class="code-block"><span class="pr">kali@kali$</span> ping -c4 172.16.1.10     <span class="cmt"># works before the rule...</span>
+<span class="pr">kali@kali$</span> ping -c4 172.16.1.10     <span class="cmt"># ...times out after the block rule is applied</span></div>
+        <p class="why">Add a pfSense rule to block ICMP, then ping the target — the ping now fails. This is the simplest possible demonstration of a firewall rule: a specific protocol, denied, with observable effect. (It's also why hosts behind firewalls look 'down' to nmap — Lab 07's lesson, from the defender's side.)</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the ping succeeding, then failing after the block-ICMP rule is applied.</span></div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 2 · Port forwarding (NAT)</span>
+        <h3>Send an outside port to an inside host</h3>
+        <div class="code-block"><span class="pr">kali@kali$</span> ssh sysadmin@203.0.113.1    <span class="cmt"># hitting the firewall's WAN address...</span></div>
+        <p class="why">Configure a NAT port-forward so a connection to the firewall's external address is redirected to an internal host. Now an SSH to the firewall's WAN IP lands on the internal server. Port forwarding is how services behind NAT become reachable — useful and, done carelessly, a way to expose internal hosts.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the SSH connection to the firewall's WAN address reaching the internal host.</span></div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 3 · VPN for remote access</span>
+        <h3>An encrypted tunnel in</h3>
+        <div class="code-block"><span class="pr">kali@kali$</span> cd ~/Downloads
+<span class="pr">kali@kali$</span> unzip pfSense-UDP4-1194-vpnuser-config.zip</div>
+        <p class="why">Set up an OpenVPN server on pfSense, export the client config, import it on Kali, and connect. The VPN gives a remote user an encrypted tunnel into the network — the right way to provide remote access, versus exposing individual services. Then manage the active connection from the firewall.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the VPN client connected and the session shown in pfSense.</span></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="stuck" data-section="stuck">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚠️</span> Where students get stuck</h2>
+      <p class="section-lead">Firewall-specific gotchas.</p>
+      <div class="callout warn"><span class="tag">[RULE ORDER]</span> pfSense evaluates rules top-down and stops at the first match. A block below an allow (or vice-versa) may never fire — order matters as much as the rules themselves.</div>
+      <div class="callout warn"><span class="tag">[APPLY CHANGES]</span> Edits don't take effect until you click Apply. A 'rule that isn't working' is often a rule that was never applied.</div>
+      <div class="callout warn"><span class="tag">[WAN vs LAN INTERFACE]</span> Rules are per-interface. A rule on the wrong interface silently does nothing — inbound internet rules go on WAN.</div>
+      <div class="callout warn"><span class="tag">[NAT + FIREWALL RULE]</span> A port-forward usually needs both the NAT mapping and an associated firewall rule to permit the traffic. One without the other fails.</div>
+      <div class="callout warn"><span class="tag">[VPN CONFIG MATCH]</span> The exported client config must match the server (protocol, port 1194, certs). A mismatch means the client never connects.</div>
+      <label class="review"><input type="checkbox" data-review="stuck"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="defender" data-section="defender">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🛡️</span> The defender's view</h2>
+      <p class="section-lead">This lab is pure blue team — the design principles behind the rules.</p>
+      <div class="def-grid">
+        <div class="def-card"><h4>Default-deny</h4><p class="attack">Breaks: implicit exposure</p><p class="ctrl">Start by blocking everything, then allow only required traffic. A default-allow firewall exposes anything you forgot to block; default-deny exposes only what you chose to permit.</p></div>
+        <div class="def-card"><h4>Least-privilege rules</h4><p class="attack">Breaks: over-broad allows</p><p class="ctrl">Each rule should be as specific as possible — source, destination, port. Broad 'any-any' rules defeat the point of having a firewall.</p></div>
+        <div class="def-card"><h4>VPN for remote access</h4><p class="attack">Breaks: exposed internal services</p><p class="ctrl">A VPN gives remote users an encrypted, authenticated tunnel instead of port-forwarding each service to the internet — far less attack surface.</p></div>
+        <div class="def-card"><h4>Careful NAT / port-forwarding</h4><p class="attack">Breaks: accidental exposure</p><p class="ctrl">Every forward is a hole through the perimeter to an internal host. Forward only what must be reachable, to hardened targets, and know exactly what you've exposed.</p></div>
+        <div class="def-card"><h4>Logging &amp; monitoring</h4><p class="attack">Breaks: blind perimeter</p><p class="ctrl">Firewall logs show what's being blocked and allowed — feed them to a SIEM. A firewall you don't watch can't tell you you're under attack.</p></div>
+        <div class="def-card"><h4>Segmentation</h4><p class="attack">Breaks: flat networks</p><p class="ctrl">Firewalls between internal zones (not just at the edge) contain lateral movement — secure network design is layers of control, not one wall.</p></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="defender"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="evidence" data-section="evidence">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📸</span> Evidence to capture</h2>
+      <p class="section-lead">Your instructor wants screenshots of the key steps as proof you ran the lab. Grab these as you go, tick each one off, then print or submit this list as your evidence cover sheet. Ticks are saved in this browser.</p>
+      <div class="evidence"><ul>
+        <li><input type="checkbox" data-evidence="e1"><span><span class="shot">Ping before.</span> a successful ping to the target.</span></li>
+        <li><input type="checkbox" data-evidence="e2"><span><span class="shot">ICMP blocked.</span> the block rule applied and the ping now failing.</span></li>
+        <li><input type="checkbox" data-evidence="e3"><span><span class="shot">Port-forward.</span> the NAT rule, and SSH to the WAN address reaching the internal host.</span></li>
+        <li><input type="checkbox" data-evidence="e4"><span><span class="shot">VPN server.</span> the OpenVPN server configured on pfSense.</span></li>
+        <li><input type="checkbox" data-evidence="e5"><span><span class="shot">Client connected.</span> the VPN client connected from Kali.</span></li>
+        <li><input type="checkbox" data-evidence="e6"><span><span class="shot">Session managed.</span> the active VPN connection shown in pfSense.</span></li>
+      </ul></div>
+      <label class="review"><input type="checkbox" data-review="evidence"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="cheat" data-section="cheat">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚡</span> Cheat sheet</h2>
+      <p class="section-lead">Block, forward, tunnel — on default-deny.</p>
+      <div class="cheat">
+        <div class="col"><h4>The tasks</h4><ul>
+          <li>Block rule (ICMP) &rarr; ping fails</li>
+          <li>NAT port-forward &rarr; SSH to WAN hits internal host</li>
+          <li>OpenVPN server + export client config</li>
+          <li><code>unzip ...vpnuser-config.zip</code> &rarr; connect</li>
+          <li>Manage the session</li>
+        </ul></div>
+        <div class="col"><h4>Design principles</h4><ul>
+          <li>Default-deny, then allow what's needed</li>
+          <li>Least-privilege, specific rules</li>
+          <li>VPN beats exposing services</li>
+          <li>Forward only what must be reachable</li>
+          <li>Log + segment</li>
+        </ul></div>
+        <div class="col"><h4>Know the terms</h4><ul>
+          <li><strong>Default-deny</strong> — block all, allow exceptions</li>
+          <li><strong>NAT / port-forward</strong> — map outside port to inside host</li>
+          <li><strong>Rule order</strong> — first match wins</li>
+          <li><strong>VPN</strong> — encrypted remote-access tunnel</li>
+        </ul></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="cheat"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="check" data-section="check">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">✅</span> Check yourself</h2>
+      <div class="q"><p class="ask">1. What does 'default-deny' mean and why is it the safer base for a firewall?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Block all traffic by default and add explicit rules only for what's needed. It's safer because anything you forget is denied rather than allowed — a default-allow firewall exposes every service you didn't remember to block.</div></div>
+      <div class="q"><p class="ask">2. pfSense evaluates rules top-down, first match wins. Why does that make rule order critical?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Because evaluation stops at the first matching rule. An allow placed above a block (or vice-versa) means the lower rule never fires — so two correct-looking rules in the wrong order produce the wrong behavior.</div></div>
+      <div class="q"><p class="ask">3. Why is a VPN preferable to port-forwarding several internal services to the internet?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">A VPN provides one encrypted, authenticated entry point and puts remote users 'inside' the network, instead of exposing each service directly. Port-forwarding multiple services multiplies the internet-facing attack surface; the VPN minimizes it.</div></div>
+      <div class="q"><p class="ask">4. Port forwarding is useful but risky. What's the risk and how do you limit it?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Every forward punches a hole through the perimeter to an internal host, which can expose that host to the internet. Limit it by forwarding only truly necessary ports, to hardened/patched targets, restricting allowed sources, and logging the traffic.</div></div>
+      <label class="review"><input type="checkbox" data-review="check"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="related" data-section="related">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🔗</span> Related labs</h2>
+      <p class="section-lead">Labs that build on the same ideas or tools.</p>
+      <div class="related">
+        <a class="rel-card" href="secplus_lab07_companion.html"><span class="rel-no">LAB 07</span><span class="rel-ttl">Active Recon</span><span class="rel-why">the scans these rules block</span></a>
+        <a class="rel-card" href="secplus_lab12_companion.html"><span class="rel-no">LAB 12</span><span class="rel-ttl">Load Balancer</span><span class="rel-why">designing for availability too</span></a>
+        <a class="rel-card" href="secplus_lab13_companion.html"><span class="rel-no">LAB 13</span><span class="rel-ttl">IoT Management</span><span class="rel-why">segmenting IoT devices</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ Lab Companion &middot; Lab 17 &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="sr-only" id="liveRegion" aria-live="polite"></div>
+
+<!-- ==================== JS ==================== -->
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var LAB_ID = root.getAttribute("data-lab") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";                 // shared with the textbook modules
+  var STATE_KEY = COURSE + ":labprogress:" + LAB_ID;    // this lab only
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg) {
+    toastEl.textContent = msg; toastEl.className = "toast on";
+    clearTimeout(toastT); toastT = setTimeout(function () { toastEl.className = "toast"; }, 2400);
+    announce(msg);
+  }
+
+  /* ---------- prefs: theme + text scale (synced with the modules) ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle"), dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(t) { prefs.theme = t; write(PREFS_KEY, prefs); applyTheme(t); }
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- progress + evidence state ---------- */
+  var SECTIONS = Array.prototype.slice.call(document.querySelectorAll("[data-review]")).map(function (el) { return el.getAttribute("data-review"); });
+  var state = read(STATE_KEY, { reviewed: [], evidence: [] });
+  var reviewed = new Set(state.reviewed || []);
+  var evidence = new Set(state.evidence || []);
+
+  function save() { write(STATE_KEY, { reviewed: Array.from(reviewed), evidence: Array.from(evidence) }); }
+
+  function paint() {
+    // review checkboxes + nav ticks
+    document.querySelectorAll("[data-review]").forEach(function (cb) {
+      var id = cb.getAttribute("data-review"), on = reviewed.has(id);
+      cb.checked = on;
+      var nav = document.querySelector('[data-nav="' + id + '"]');
+      if (nav) nav.classList.toggle("is-done", on);
+    });
+    document.querySelectorAll("[data-evidence]").forEach(function (cb) {
+      cb.checked = evidence.has(cb.getAttribute("data-evidence"));
+    });
+    var pct = SECTIONS.length ? Math.round(reviewed.size / SECTIONS.length * 100) : 0;
+    var bar = document.getElementById("progressBar");
+    bar.style.width = pct + "%"; bar.setAttribute("aria-valuenow", String(pct));
+    document.getElementById("progressText").textContent =
+      pct + "% · " + reviewed.size + " of " + SECTIONS.length + " sections reviewed";
+  }
+
+  function resetProgress() {
+    reviewed.clear(); evidence.clear(); save(); paint();
+    document.querySelectorAll(".ans.on").forEach(function (a) {
+      a.classList.remove("on"); var b = a.previousElementSibling;
+      if (b) { b.textContent = "Show answer"; b.setAttribute("aria-expanded", "false"); }
+    });
+    notify("Progress cleared");
+  }
+
+  /* ---------- delegated events ---------- */
+  var actions = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    print: function () { if (typeof window.print === "function") window.print(); },
+    resetProgress: resetProgress,
+    reveal: function (btn) {
+      var ans = btn.nextElementSibling, open = ans.classList.toggle("on");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Hide answer" : "Show answer";
+    }
+  };
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t) return;
+    var fn = actions[t.getAttribute("data-action")];
+    if (fn) fn(t);
+  });
+  document.addEventListener("change", function (e) {
+    var r = e.target.closest("[data-review]");
+    if (r) {
+      var id = r.getAttribute("data-review");
+      if (r.checked) reviewed.add(id); else reviewed.delete(id);
+      save(); paint();
+      if (r.checked && reviewed.size === SECTIONS.length) notify("All sections reviewed — nice work.");
+      return;
+    }
+    var ev = e.target.closest("[data-evidence]");
+    if (ev) {
+      var k = ev.getAttribute("data-evidence");
+      if (ev.checked) evidence.add(k); else evidence.delete(k);
+      save();
+    }
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>

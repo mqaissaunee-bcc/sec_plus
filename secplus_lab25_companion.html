@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-lab="25" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lab 25 Companion — Using Autopsy for Forensics and Lost Data Recovery · Security+</title>
+<meta name="description" content="Student companion for Security+ Lab 25: examining a disk image in Autopsy — creating a case, recovering data, tagging evidence, and generating a report, digital-forensics principles and chain of custody, the defender's view, screenshots to submit, and how it maps to your Security+ modules.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1040px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh;
+  padding-top:env(safe-area-inset-top,0)}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- crumb + control bar ---------- */
+.topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;margin-bottom:6px}
+.crumb{margin-right:auto;font-size:.85rem;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb a:hover{text-decoration:underline}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+
+/* ---------- header / hero ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2;margin-top:4px}
+.module-header .subtitle{color:var(--muted);margin-top:10px;max-width:72ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.meta-chip{font-size:.82rem;background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px;padding:7px 13px;color:var(--muted)}
+.meta-chip b{color:var(--text);font-weight:700}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- jump nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.nav-btn{font:inherit;font-size:.88rem;min-height:44px;padding:9px 15px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:7px;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono);display:none}
+.nav-btn.is-done .done{display:inline}
+
+/* ---------- sections ---------- */
+.lab-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;margin-bottom:18px;scroll-margin-top:16px}
+.section-title{font-size:clamp(1.2rem,2.3vw,1.7rem);margin-bottom:6px;
+  display:flex;align-items:center;gap:10px}
+.section-title .ico{font-size:1.1em}
+.section-lead{color:var(--muted);margin-bottom:16px;max-width:74ch}
+.subsection{margin:24px 0}
+.subsection h3{font-size:1.12rem;margin-bottom:10px;color:var(--accent)}
+.lab-section p + p{margin-top:10px}
+.lab-section ul,.lab-section ol{margin:10px 0 10px 22px}
+.lab-section li{margin:6px 0}
+.phase-tag{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);
+  border-radius:6px;padding:3px 9px;margin-bottom:6px}
+
+/* ---------- code / terminal ---------- */
+.code-block{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;
+  white-space:pre-wrap;margin:10px 0;line-height:1.55}
+.code-block .cmt{color:var(--muted)}
+.code-block .pr{color:var(--accent)}
+code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+
+/* ---------- step explainer ---------- */
+.step{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:16px 0}
+.step h4{font-size:1rem;margin-bottom:4px}
+.step .why{font-size:.92rem;color:var(--muted);margin-top:6px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- screenshot marker ---------- */
+.shot-mark{display:flex;gap:10px;align-items:flex-start;margin:12px 0;padding:11px 14px;
+  border-radius:10px;border:1px dashed color-mix(in srgb,var(--accent) 55%,transparent);
+  background:color-mix(in srgb,var(--accent) 8%,transparent);font-size:.9rem}
+.shot-mark .cam{font-size:1.1rem;line-height:1.3}
+.shot-mark b{color:var(--accent)}
+
+/* ---------- defender grid ---------- */
+.def-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px}
+.def-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:15px}
+.def-card h4{font-size:.98rem;margin-bottom:6px}
+.def-card .attack{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.def-card .ctrl{font-size:.9rem}
+
+/* ---------- figure / topology ---------- */
+.figure{margin:16px 0;background:var(--bg-0);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.84rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:13px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.svg-zone{fill:none;stroke-width:1.5;stroke-dasharray:5 4}
+
+/* ---------- evidence checklist ---------- */
+.evidence li{list-style:none;display:flex;gap:11px;align-items:flex-start;margin:10px 0;
+  padding:11px 13px;background:var(--card-2);border:1px solid var(--line);border-radius:9px}
+.evidence ul{margin-left:0}
+.evidence input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
+.evidence .shot{color:var(--accent);font-weight:700}
+.evidence li:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+
+/* ---------- cheat sheet ---------- */
+.cheat{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cheat .col{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:16px}
+.cheat h4{color:var(--accent);font-size:.98rem;margin-bottom:8px}
+.cheat ul{margin-left:18px}
+.cheat code{font-family:var(--mono);font-size:.84em}
+
+/* ---------- review questions ---------- */
+.q{border:1px solid var(--line);border-radius:10px;padding:15px;margin:12px 0;background:var(--card-2)}
+.q .ask{font-weight:600;margin-bottom:10px}
+.reveal{font:inherit;font-size:.86rem;font-weight:600;min-height:40px;padding:8px 14px;cursor:pointer;
+  color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:9px}
+.reveal:hover{border-color:var(--accent);color:var(--accent)}
+.ans{margin-top:10px;padding:12px 14px;border-radius:8px;font-size:.92rem;display:none;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);border-left:4px solid var(--accent)}
+.ans.on{display:block}
+
+/* ---------- mark reviewed ---------- */
+.review{display:inline-flex;align-items:center;gap:9px;margin-top:18px;padding:9px 14px;cursor:pointer;
+  font-size:.9rem;font-weight:600;background:var(--card-2);border:1px solid var(--line);border-radius:10px}
+.review input{width:18px;height:18px;accent-color:var(--accent)}
+.review:has(input:checked){border-color:var(--ok);color:var(--ok)}
+
+/* ---------- footer / toast ---------- */
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .topbar{justify-content:center}
+  .crumb{width:100%;margin-bottom:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .topbar,.section-nav,.toast,.review{display:none!important}
+  body{background:#fff}
+  .lab-section,.module-header,.progress-container{break-inside:avoid}
+}
+
+/* ---------- related labs ---------- */
+.related{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.rel-card{display:flex;flex-direction:column;gap:3px;background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:13px 15px;text-decoration:none;color:var(--text)}
+.rel-card:hover{border-left-color:var(--accent)}
+.rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
+.rel-ttl{font-weight:700;font-size:.96rem}
+.rel-why{font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="topbar" role="group" aria-label="Display controls">
+    <span class="crumb"><a href="secplus_labs.html">&larr; All labs</a> &middot; pairs with
+      <a href="index.html">the Security+ textbook</a></span>
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size"><span class="ctl__icon">A−</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size"><span class="ctl__icon">A+</span></button>
+    </div>
+    <button class="ctl" type="button" data-action="print"><span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span></button>
+    <button class="ctl" type="button" data-action="resetProgress"><span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span></button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ Lab Companion &middot; Lab 25</p>
+    <h1>Using Autopsy for Forensics and Lost Data Recovery</h1>
+    <p class="subtitle">When an incident is over, the evidence has to tell the story. This lab uses Autopsy to examine a disk image: recover deleted files, tag and annotate findings, and produce a report — all while preserving the integrity that makes the evidence hold up.</p>
+    <div class="chips">
+      <span class="meta-chip">⏱ <b>~55 min</b></span>
+      <span class="meta-chip">📶 Difficulty: <b>Intermediate</b></span>
+      <span class="meta-chip">🧰 Tools: <b>Autopsy</b></span>
+      <span class="meta-chip">🎯 Do: <b>examine an image, recover data, report</b></span>
+      <span class="meta-chip">📘 Maps to: <b>Module 10 — Identity, Automation, Incident Response, and Forensics</b></span>
+    </div>
+  </header>
+
+  <div class="callout danger">
+    <span class="tag">[AUTHORIZED TESTING ONLY]</span>
+    This lab performs forensic analysis on a provided evidence image inside an isolated pod. Real forensic work must preserve evidence integrity and chain of custody; examining devices or data without authorization can taint evidence and may be illegal.
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Companion progress"></div>
+    </div>
+    <p class="progress-text" id="progressText">0% · mark each section reviewed as you work through it</p>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
+    <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+    <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
+    <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
+    <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
+    <a class="nav-btn" href="#evidence" data-nav="evidence"><span class="done" aria-hidden="true">✓</span>📸 Evidence</a>
+    <a class="nav-btn" href="#cheat" data-nav="cheat"><span class="done" aria-hidden="true">✓</span>⚡ Cheat sheet</a>
+    <a class="nav-btn" href="#check" data-nav="check"><span class="done" aria-hidden="true">✓</span>✅ Check yourself</a>
+    <a class="nav-btn" href="#related" data-nav="related">🔗 Related labs</a>
+  </nav>
+
+  <main id="main">
+
+    <section class="lab-section" id="overview" data-section="overview">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📋</span> Overview</h2>
+      <p class="section-lead">Where incident response becomes evidence.</p>
+      <p><strong>Digital forensics</strong> is the disciplined recovery and analysis of evidence. In <strong>Autopsy</strong> you'll create a <strong>case</strong>, load a <strong>disk image</strong> as the evidence source, explore the file system (including <strong>recovering deleted files</strong>), <strong>tag and comment</strong> on findings, and generate a <strong>report</strong>. The constant underneath every step is integrity: you work on a copy, you prove it hasn't changed, and you document everything.</p>
+      <div class="callout"><span class="tag">[THE ONE IDEA]</span> <strong>Work on a copy, prove it's unchanged.</strong> You examine a hashed image, never the original drive, so the evidence stays pristine and your findings are defensible. Preservation first, analysis second.</div>
+      <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="walkthrough" data-section="walkthrough">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
+      <p class="section-lead">Open the case, examine the image, document the findings.</p>
+      <div class="subsection"><span class="phase-tag">Phase 1 · Create a case &amp; load evidence</span>
+        <h3>Set up the investigation</h3>
+        <p class="why">Create a new case (case name, examiner, notes) and add the <strong>disk image</strong> as a data source. Autopsy ingests and indexes it — extracting files, metadata, and artifacts. You're analyzing the image, a bit-for-bit copy, which is what keeps the original evidence untouched.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the new case with the evidence image loaded as a data source.</span></div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 2 · Examine &amp; recover</span>
+        <h3>Find what's there — and what was 'deleted'</h3>
+        <p class="why">Browse the file system, artifacts, and <strong>deleted/recovered files</strong>. Autopsy recovers data that a user 'deleted' because deletion usually just removes the pointer, not the underlying blocks. Locate items of interest (an image, a document) the way an examiner would.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> a recovered / deleted file surfaced in Autopsy.</span></div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 3 · Tag evidence</span>
+        <h3>Build the documented record</h3>
+        <p class="why">Right-click a file of interest and <strong>Add File Tag → Tag and Comment</strong> — mark it as evidence and annotate why it matters. Tagging turns 'I found something' into a structured, documented finding that the report can compile. Repeat for each item (the image, the PDF).</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> a file tagged as evidence with a comment.</span></div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 4 · Report</span>
+        <h3>Produce the deliverable</h3>
+        <p class="why">Generate a report. The report is the output of forensics — a documented, reproducible account of what was found and how. It's what gets handed to IR, management, or (if it comes to it) a court.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the generated forensic report listing the tagged findings.</span></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="stuck" data-section="stuck">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚠️</span> Where students get stuck</h2>
+      <p class="section-lead">Forensic discipline, where it's easy to slip.</p>
+      <div class="callout warn"><span class="tag">[IMAGE, NOT ORIGINAL]</span> You examine a disk <em>image</em>, never the original drive. Working on the original would alter evidence and destroy its integrity — this is the cardinal rule.</div>
+      <div class="callout warn"><span class="tag">[HASHING PROVES INTEGRITY]</span> A forensic image is hashed; matching hashes prove it wasn't altered. If the hashes differ, the evidence is compromised. (The hashing lab's avalanche effect is exactly why this works.)</div>
+      <div class="callout warn"><span class="tag">['DELETED' ISN'T GONE]</span> Recovered files surprise people — deletion typically removes the file's pointer, not its data, until overwritten. That's what makes recovery (and secure deletion) possible.</div>
+      <div class="callout warn"><span class="tag">[TAGS + COMMENTS ARE THE RECORD]</span> Tagging without comments loses the 'why.' The documented reasoning is what makes a finding usable later.</div>
+      <div class="callout warn"><span class="tag">[THE REPORT IS THE POINT]</span> The analysis isn't done until it's documented in a report. Findings in your head aren't evidence.</div>
+      <label class="review"><input type="checkbox" data-review="stuck"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="defender" data-section="defender">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🛡️</span> The defender's view</h2>
+      <p class="section-lead">Forensics is governed by integrity and accountability more than by any tool.</p>
+      <div class="def-grid">
+        <div class="def-card"><h4>Image &amp; hash the evidence</h4><p class="attack">Breaks: altered originals</p><p class="ctrl">Acquire a bit-for-bit image and hash it. Work only on the copy; the hash proves at any point that the evidence is unchanged — integrity you can demonstrate.</p></div>
+        <div class="def-card"><h4>Chain of custody</h4><p class="attack">Breaks: inadmissible evidence</p><p class="ctrl">Document who handled the evidence, when, and what they did, start to finish. A broken custody chain can make sound findings worthless in a proceeding.</p></div>
+        <div class="def-card"><h4>Work on copies only</h4><p class="attack">Breaks: destroying the original</p><p class="ctrl">The original is preserved and sealed; all analysis happens on verified copies. One examination on the original can taint everything.</p></div>
+        <div class="def-card"><h4>Document every action</h4><p class="attack">Breaks: unreproducible findings</p><p class="ctrl">Forensics must be reproducible — another examiner should reach the same result. Tags, comments, and the report are that documentation.</p></div>
+        <div class="def-card"><h4>Timeline analysis</h4><p class="attack">Breaks: missing the story</p><p class="ctrl">Ordering artifacts by time reconstructs what happened and when — turning scattered files into a narrative of the incident.</p></div>
+        <div class="def-card"><h4>Secure deletion (the flip side)</h4><p class="attack">Breaks: recoverable 'deleted' data</p><p class="ctrl">Because 'delete' leaves data behind, truly removing sensitive data needs wiping or crypto-shredding — the defensive lesson of how recovery works.</p></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="defender"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="evidence" data-section="evidence">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📸</span> Evidence to capture</h2>
+      <p class="section-lead">Your instructor wants screenshots of the key steps as proof you ran the lab. Grab these as you go, tick each one off, then print or submit this list as your evidence cover sheet. Ticks are saved in this browser.</p>
+      <div class="evidence"><ul>
+        <li><input type="checkbox" data-evidence="e1"><span><span class="shot">Case created.</span> the new Autopsy case.</span></li>
+        <li><input type="checkbox" data-evidence="e2"><span><span class="shot">Evidence loaded.</span> the disk image added as a data source.</span></li>
+        <li><input type="checkbox" data-evidence="e3"><span><span class="shot">Recovered file.</span> a deleted/recovered file surfaced.</span></li>
+        <li><input type="checkbox" data-evidence="e4"><span><span class="shot">Tagged.</span> a file tagged as evidence with a comment.</span></li>
+        <li><input type="checkbox" data-evidence="e5"><span><span class="shot">Second tag.</span> another tagged item (e.g. the PDF).</span></li>
+        <li><input type="checkbox" data-evidence="e6"><span><span class="shot">Report.</span> the generated forensic report.</span></li>
+      </ul></div>
+      <label class="review"><input type="checkbox" data-review="evidence"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="cheat" data-section="cheat">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚡</span> Cheat sheet</h2>
+      <p class="section-lead">Examine, recover, document.</p>
+      <div class="cheat">
+        <div class="col"><h4>The workflow</h4><ul>
+          <li>Create case + add disk image</li>
+          <li>Examine files, artifacts, deleted data</li>
+          <li>Recover lost files</li>
+          <li>Tag + comment findings</li>
+          <li>Generate the report</li>
+        </ul></div>
+        <div class="col"><h4>Forensic principles</h4><ul>
+          <li>Image &amp; hash; work on the copy</li>
+          <li>Chain of custody</li>
+          <li>Document every action</li>
+          <li>Timeline analysis</li>
+          <li>Secure deletion is the flip side</li>
+        </ul></div>
+        <div class="col"><h4>Know the terms</h4><ul>
+          <li><strong>Disk image</strong> — bit-for-bit evidence copy</li>
+          <li><strong>Chain of custody</strong> — documented handling</li>
+          <li><strong>Hashing</strong> — proves the image is unaltered</li>
+          <li><strong>File carving</strong> — recovering deleted data</li>
+        </ul></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="cheat"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="check" data-section="check">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">✅</span> Check yourself</h2>
+      <div class="q"><p class="ask">1. Why do forensic examiners work on a disk image rather than the original drive?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Any action on the original alters it and destroys the evidence's integrity. Working on a bit-for-bit image preserves the original untouched while allowing full analysis on the copy.</div></div>
+      <div class="q"><p class="ask">2. How is the integrity of an evidence image proven?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">By hashing it (e.g. SHA-256) at acquisition and comparing hashes later. Because a hash avalanches on any change, matching values prove the image is byte-identical and unaltered — the technical backbone of chain of custody.</div></div>
+      <div class="q"><p class="ask">3. Autopsy recovers files a user 'deleted.' How is that possible, and what's the defensive lesson?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Deleting a file usually just removes its directory pointer, leaving the data blocks intact until overwritten, so they can be recovered. The defensive lesson: truly removing sensitive data requires secure wiping or crypto-shredding, not ordinary deletion.</div></div>
+      <div class="q"><p class="ask">4. Why are tagging, comments, and the report so central to forensics?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Forensics must be documented and reproducible. Tags and comments capture what was found and why; the report compiles it into an accountable, repeatable account — which is what makes the findings defensible to IR, management, or a court.</div></div>
+      <label class="review"><input type="checkbox" data-review="check"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="related" data-section="related">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🔗</span> Related labs</h2>
+      <p class="section-lead">Labs that build on the same ideas or tools.</p>
+      <div class="related">
+        <a class="rel-card" href="secplus_lab23_companion.html"><span class="rel-no">LAB 23</span><span class="rel-ttl">Incident Response</span><span class="rel-why">the incident that produced the evidence</span></a>
+        <a class="rel-card" href="secplus_lab22_companion.html"><span class="rel-no">LAB 22</span><span class="rel-ttl">Capturing Traffic</span><span class="rel-why">how that evidence is captured</span></a>
+        <a class="rel-card" href="secplus_lab08_companion.html"><span class="rel-no">LAB 08</span><span class="rel-ttl">NIDS/HIDS Alerts</span><span class="rel-why">the monitoring that flags it</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ Lab Companion &middot; Lab 25 &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="sr-only" id="liveRegion" aria-live="polite"></div>
+
+<!-- ==================== JS ==================== -->
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var LAB_ID = root.getAttribute("data-lab") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";                 // shared with the textbook modules
+  var STATE_KEY = COURSE + ":labprogress:" + LAB_ID;    // this lab only
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg) {
+    toastEl.textContent = msg; toastEl.className = "toast on";
+    clearTimeout(toastT); toastT = setTimeout(function () { toastEl.className = "toast"; }, 2400);
+    announce(msg);
+  }
+
+  /* ---------- prefs: theme + text scale (synced with the modules) ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle"), dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(t) { prefs.theme = t; write(PREFS_KEY, prefs); applyTheme(t); }
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- progress + evidence state ---------- */
+  var SECTIONS = Array.prototype.slice.call(document.querySelectorAll("[data-review]")).map(function (el) { return el.getAttribute("data-review"); });
+  var state = read(STATE_KEY, { reviewed: [], evidence: [] });
+  var reviewed = new Set(state.reviewed || []);
+  var evidence = new Set(state.evidence || []);
+
+  function save() { write(STATE_KEY, { reviewed: Array.from(reviewed), evidence: Array.from(evidence) }); }
+
+  function paint() {
+    // review checkboxes + nav ticks
+    document.querySelectorAll("[data-review]").forEach(function (cb) {
+      var id = cb.getAttribute("data-review"), on = reviewed.has(id);
+      cb.checked = on;
+      var nav = document.querySelector('[data-nav="' + id + '"]');
+      if (nav) nav.classList.toggle("is-done", on);
+    });
+    document.querySelectorAll("[data-evidence]").forEach(function (cb) {
+      cb.checked = evidence.has(cb.getAttribute("data-evidence"));
+    });
+    var pct = SECTIONS.length ? Math.round(reviewed.size / SECTIONS.length * 100) : 0;
+    var bar = document.getElementById("progressBar");
+    bar.style.width = pct + "%"; bar.setAttribute("aria-valuenow", String(pct));
+    document.getElementById("progressText").textContent =
+      pct + "% · " + reviewed.size + " of " + SECTIONS.length + " sections reviewed";
+  }
+
+  function resetProgress() {
+    reviewed.clear(); evidence.clear(); save(); paint();
+    document.querySelectorAll(".ans.on").forEach(function (a) {
+      a.classList.remove("on"); var b = a.previousElementSibling;
+      if (b) { b.textContent = "Show answer"; b.setAttribute("aria-expanded", "false"); }
+    });
+    notify("Progress cleared");
+  }
+
+  /* ---------- delegated events ---------- */
+  var actions = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    print: function () { if (typeof window.print === "function") window.print(); },
+    resetProgress: resetProgress,
+    reveal: function (btn) {
+      var ans = btn.nextElementSibling, open = ans.classList.toggle("on");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Hide answer" : "Show answer";
+    }
+  };
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t) return;
+    var fn = actions[t.getAttribute("data-action")];
+    if (fn) fn(t);
+  });
+  document.addEventListener("change", function (e) {
+    var r = e.target.closest("[data-review]");
+    if (r) {
+      var id = r.getAttribute("data-review");
+      if (r.checked) reviewed.add(id); else reviewed.delete(id);
+      save(); paint();
+      if (r.checked && reviewed.size === SECTIONS.length) notify("All sections reviewed — nice work.");
+      return;
+    }
+    var ev = e.target.closest("[data-evidence]");
+    if (ev) {
+      var k = ev.getAttribute("data-evidence");
+      if (ev.checked) evidence.add(k); else evidence.delete(k);
+      save();
+    }
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>

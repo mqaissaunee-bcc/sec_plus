@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-lab="10" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lab 10 Companion — JavaScript Obfuscation and Dead Code Injection · Security+</title>
+<meta name="description" content="Student companion for Security+ Lab 10: obfuscating JavaScript and injecting dead code, why obfuscation protects intellectual property but is not a security control, how attackers use it, the defender's view, screenshots to submit, and how it maps to your Security+ modules.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1040px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh;
+  padding-top:env(safe-area-inset-top,0)}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- crumb + control bar ---------- */
+.topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;margin-bottom:6px}
+.crumb{margin-right:auto;font-size:.85rem;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb a:hover{text-decoration:underline}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+
+/* ---------- header / hero ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2;margin-top:4px}
+.module-header .subtitle{color:var(--muted);margin-top:10px;max-width:72ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.meta-chip{font-size:.82rem;background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px;padding:7px 13px;color:var(--muted)}
+.meta-chip b{color:var(--text);font-weight:700}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- jump nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.nav-btn{font:inherit;font-size:.88rem;min-height:44px;padding:9px 15px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:7px;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono);display:none}
+.nav-btn.is-done .done{display:inline}
+
+/* ---------- sections ---------- */
+.lab-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;margin-bottom:18px;scroll-margin-top:16px}
+.section-title{font-size:clamp(1.2rem,2.3vw,1.7rem);margin-bottom:6px;
+  display:flex;align-items:center;gap:10px}
+.section-title .ico{font-size:1.1em}
+.section-lead{color:var(--muted);margin-bottom:16px;max-width:74ch}
+.subsection{margin:24px 0}
+.subsection h3{font-size:1.12rem;margin-bottom:10px;color:var(--accent)}
+.lab-section p + p{margin-top:10px}
+.lab-section ul,.lab-section ol{margin:10px 0 10px 22px}
+.lab-section li{margin:6px 0}
+.phase-tag{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);
+  border-radius:6px;padding:3px 9px;margin-bottom:6px}
+
+/* ---------- code / terminal ---------- */
+.code-block{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;
+  white-space:pre-wrap;margin:10px 0;line-height:1.55}
+.code-block .cmt{color:var(--muted)}
+.code-block .pr{color:var(--accent)}
+code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+
+/* ---------- step explainer ---------- */
+.step{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:16px 0}
+.step h4{font-size:1rem;margin-bottom:4px}
+.step .why{font-size:.92rem;color:var(--muted);margin-top:6px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- screenshot marker ---------- */
+.shot-mark{display:flex;gap:10px;align-items:flex-start;margin:12px 0;padding:11px 14px;
+  border-radius:10px;border:1px dashed color-mix(in srgb,var(--accent) 55%,transparent);
+  background:color-mix(in srgb,var(--accent) 8%,transparent);font-size:.9rem}
+.shot-mark .cam{font-size:1.1rem;line-height:1.3}
+.shot-mark b{color:var(--accent)}
+
+/* ---------- defender grid ---------- */
+.def-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px}
+.def-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:15px}
+.def-card h4{font-size:.98rem;margin-bottom:6px}
+.def-card .attack{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.def-card .ctrl{font-size:.9rem}
+
+/* ---------- figure / topology ---------- */
+.figure{margin:16px 0;background:var(--bg-0);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.84rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:13px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.svg-zone{fill:none;stroke-width:1.5;stroke-dasharray:5 4}
+
+/* ---------- evidence checklist ---------- */
+.evidence li{list-style:none;display:flex;gap:11px;align-items:flex-start;margin:10px 0;
+  padding:11px 13px;background:var(--card-2);border:1px solid var(--line);border-radius:9px}
+.evidence ul{margin-left:0}
+.evidence input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
+.evidence .shot{color:var(--accent);font-weight:700}
+.evidence li:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+
+/* ---------- cheat sheet ---------- */
+.cheat{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cheat .col{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:16px}
+.cheat h4{color:var(--accent);font-size:.98rem;margin-bottom:8px}
+.cheat ul{margin-left:18px}
+.cheat code{font-family:var(--mono);font-size:.84em}
+
+/* ---------- review questions ---------- */
+.q{border:1px solid var(--line);border-radius:10px;padding:15px;margin:12px 0;background:var(--card-2)}
+.q .ask{font-weight:600;margin-bottom:10px}
+.reveal{font:inherit;font-size:.86rem;font-weight:600;min-height:40px;padding:8px 14px;cursor:pointer;
+  color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:9px}
+.reveal:hover{border-color:var(--accent);color:var(--accent)}
+.ans{margin-top:10px;padding:12px 14px;border-radius:8px;font-size:.92rem;display:none;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);border-left:4px solid var(--accent)}
+.ans.on{display:block}
+
+/* ---------- mark reviewed ---------- */
+.review{display:inline-flex;align-items:center;gap:9px;margin-top:18px;padding:9px 14px;cursor:pointer;
+  font-size:.9rem;font-weight:600;background:var(--card-2);border:1px solid var(--line);border-radius:10px}
+.review input{width:18px;height:18px;accent-color:var(--accent)}
+.review:has(input:checked){border-color:var(--ok);color:var(--ok)}
+
+/* ---------- footer / toast ---------- */
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .topbar{justify-content:center}
+  .crumb{width:100%;margin-bottom:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .topbar,.section-nav,.toast,.review{display:none!important}
+  body{background:#fff}
+  .lab-section,.module-header,.progress-container{break-inside:avoid}
+}
+
+/* ---------- related labs ---------- */
+.related{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.rel-card{display:flex;flex-direction:column;gap:3px;background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:13px 15px;text-decoration:none;color:var(--text)}
+.rel-card:hover{border-left-color:var(--accent)}
+.rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
+.rel-ttl{font-weight:700;font-size:.96rem}
+.rel-why{font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="topbar" role="group" aria-label="Display controls">
+    <span class="crumb"><a href="secplus_labs.html">&larr; All labs</a> &middot; pairs with
+      <a href="index.html">the Security+ textbook</a></span>
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size"><span class="ctl__icon">A−</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size"><span class="ctl__icon">A+</span></button>
+    </div>
+    <button class="ctl" type="button" data-action="print"><span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span></button>
+    <button class="ctl" type="button" data-action="resetProgress"><span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span></button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ Lab Companion &middot; Lab 10</p>
+    <h1>JavaScript Obfuscation and Dead Code Injection</h1>
+    <p class="subtitle">You can make code unreadable without changing what it does. This lab obfuscates JavaScript and injects dead code — and makes the uncomfortable point a security course must: unreadable is not the same as protected, and attackers obfuscate too.</p>
+    <div class="chips">
+      <span class="meta-chip">⏱ <b>~45 min</b></span>
+      <span class="meta-chip">📶 Difficulty: <b>Beginner→Intermediate</b></span>
+      <span class="meta-chip">🧰 Tools: <b>javascript-obfuscator · Node.js</b></span>
+      <span class="meta-chip">🎯 Concepts: <b>obfuscation · dead-code injection</b></span>
+      <span class="meta-chip">📘 Maps to: <b>Module 5 — Malicious Activity and Mitigation</b></span>
+    </div>
+  </header>
+
+  <div class="callout danger">
+    <span class="tag">[AUTHORIZED TESTING ONLY]</span>
+    The techniques here are dual-use: defenders obfuscate to protect intellectual property, attackers obfuscate to hide malware. Learn to recognize both; using obfuscation to conceal malicious code is not a legitimate purpose.
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Companion progress"></div>
+    </div>
+    <p class="progress-text" id="progressText">0% · mark each section reviewed as you work through it</p>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
+    <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+    <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
+    <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
+    <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
+    <a class="nav-btn" href="#evidence" data-nav="evidence"><span class="done" aria-hidden="true">✓</span>📸 Evidence</a>
+    <a class="nav-btn" href="#cheat" data-nav="cheat"><span class="done" aria-hidden="true">✓</span>⚡ Cheat sheet</a>
+    <a class="nav-btn" href="#check" data-nav="check"><span class="done" aria-hidden="true">✓</span>✅ Check yourself</a>
+    <a class="nav-btn" href="#related" data-nav="related">🔗 Related labs</a>
+  </nav>
+
+  <main id="main">
+
+    <section class="lab-section" id="overview" data-section="overview">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📋</span> Overview</h2>
+      <p class="section-lead">Making code hard to read — and why that isn't security.</p>
+      <p><strong>Obfuscation</strong> rewrites code so it still runs identically but is painful to read. <strong>Dead-code injection</strong> adds junk logic that never executes, to frustrate anyone analyzing it. Both have a legitimate use: protecting intellectual property and slowing reverse engineering. But in a security course the essential point is the limit: client-side code can always be run and studied, so obfuscation delays analysis — it does not protect secrets. And the same tools are used by attackers to hide malicious JavaScript from detection.</p>
+      <div class="callout"><span class="tag">[THE ONE IDEA]</span> <strong>Obfuscation is not encryption and not a security control.</strong> If a secret or trust decision lives in code the browser runs, it's exposed — no matter how scrambled. Keep anything that matters on the server.</div>
+      <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="walkthrough" data-section="walkthrough">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
+      <p class="section-lead">Scramble it, confirm it still runs, then pad it with dead code.</p>
+      <div class="subsection"><span class="phase-tag">Phase 1 · Obfuscate</span>
+        <h3>Same behavior, unreadable source</h3>
+        <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> javascript-obfuscator server.js --output server-obfu.js
+<span class="pr">sysadmin@ubuntusrv:~$</span> cat server.js         <span class="cmt"># before</span>
+<span class="pr">sysadmin@ubuntusrv:~$</span> cat server-obfu.js    <span class="cmt"># after — same logic, scrambled</span>
+<span class="pr">sysadmin@ubuntusrv:~$</span> node server.js        <span class="cmt"># still runs identically</span></div>
+        <p class="why">Compare before and after: the obfuscated file is unreadable, yet <code class="inl">node</code> runs it exactly the same. That's the defining property — <strong>behavior is unchanged</strong>. Obfuscation touches readability, not function.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the cat before/after showing readable vs. obfuscated code.</span></div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 2 · Domain lock</span>
+        <h3>Restrict where it runs</h3>
+        <p class="why">The obfuscator can <strong>domain-lock</strong> output so only listed domains can execute it; load it elsewhere and it won't run. Useful for IP protection — and a reminder that this is an anti-tamper convenience, not a confidentiality guarantee.</p>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 3 · Dead-code injection</span>
+        <h3>Bury the real logic in noise</h3>
+        <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> javascript-obfuscator my_javascript.js --output my_dci.js --dead-code-injection --dead-code-injection-threshold 0.4</div>
+        <p class="why">Dead-code injection sprinkles in branches that never run (threshold 0–1, default 0.4 controls how much). It makes analysis harder by hiding the real logic among decoys — the technique malware authors lean on to slip past signature detection.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the dead-code-injection command and its padded output.</span></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="stuck" data-section="stuck">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚠️</span> Where students get stuck</h2>
+      <p class="section-lead">The conceptual traps, which matter more than the commands here.</p>
+      <div class="callout warn"><span class="tag">[BEHAVIOR IS UNCHANGED]</span> If the obfuscated code behaves differently, something went wrong — correct obfuscation produces identical output, just unreadable.</div>
+      <div class="callout warn"><span class="tag">[OBFUSCATION ≠ ENCRYPTION]</span> It's reversible and the code still runs client-side. Don't treat it as protecting data or secrets — that's the whole lesson.</div>
+      <div class="callout warn"><span class="tag">[THRESHOLD RANGE]</span> Dead-code threshold is 0–1 (default 0.4). Higher means more junk and bigger, slower files — there's a performance cost.</div>
+      <div class="callout warn"><span class="tag">[DOMAIN LOCK IS SOFT]</span> Domain locking deters casual reuse but isn't a hard security boundary — treat it as friction, not a control.</div>
+      <div class="callout warn"><span class="tag">[NODE JUST SERVES/RUNS IT]</span> <code class="inl">node server.js</code> runs the script; the obfuscation doesn't change how it's served or executed, only how it reads.</div>
+      <label class="review"><input type="checkbox" data-review="stuck"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="defender" data-section="defender">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🛡️</span> The defender's view</h2>
+      <p class="section-lead">The security takeaway is about trust boundaries, not the tool.</p>
+      <div class="def-grid">
+        <div class="def-card"><h4>Never trust client-side code</h4><p class="attack">Breaks: logic/secrets in the browser</p><p class="ctrl">Anything shipped to the client can be read and modified. Validate and enforce on the server; obfuscation changes none of that.</p></div>
+        <div class="def-card"><h4>Keep secrets server-side</h4><p class="attack">Breaks: exposed keys/logic</p><p class="ctrl">API keys, auth decisions, and business logic that matter must live on the server. Obfuscating a secret in client code still ships the secret.</p></div>
+        <div class="def-card"><h4>Obfuscation for IP, not security</h4><p class="attack">Breaks: false sense of protection</p><p class="ctrl">Use it to slow reverse engineering and protect intellectual property — but don't count it as a confidentiality or integrity control.</p></div>
+        <div class="def-card"><h4>CSP + Subresource Integrity</h4><p class="attack">Breaks: malicious/altered scripts</p><p class="ctrl">A Content-Security-Policy limits which scripts run; SRI hashes ensure a loaded script wasn't tampered with — real controls over client code.</p></div>
+        <div class="def-card"><h4>Detect obfuscated malicious JS</h4><p class="attack">Breaks: evasive web malware</p><p class="ctrl">Heavily obfuscated or dead-code-laden JavaScript on a page is itself an indicator — scanners and analysts flag it as suspicious.</p></div>
+        <div class="def-card"><h4>Minification isn't security either</h4><p class="attack">Breaks: same misconception</p><p class="ctrl">Minifying shrinks code; like obfuscation it changes readability, not trust. Neither protects what the client can execute.</p></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="defender"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="evidence" data-section="evidence">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📸</span> Evidence to capture</h2>
+      <p class="section-lead">Your instructor wants screenshots of the key steps as proof you ran the lab. Grab these as you go, tick each one off, then print or submit this list as your evidence cover sheet. Ticks are saved in this browser.</p>
+      <div class="evidence"><ul>
+        <li><input type="checkbox" data-evidence="e1"><span><span class="shot">Before.</span> the readable <code class='inl'>cat server.js</code>.</span></li>
+        <li><input type="checkbox" data-evidence="e2"><span><span class="shot">After.</span> the obfuscated output, unreadable but equivalent.</span></li>
+        <li><input type="checkbox" data-evidence="e3"><span><span class="shot">Still runs.</span> <code class='inl'>node server.js</code> executing the code.</span></li>
+        <li><input type="checkbox" data-evidence="e4"><span><span class="shot">Domain lock.</span> the domain-lock option applied.</span></li>
+        <li><input type="checkbox" data-evidence="e5"><span><span class="shot">Dead code.</span> the <code class='inl'>--dead-code-injection</code> command and output.</span></li>
+        <li><input type="checkbox" data-evidence="e6"><span><span class="shot">Your takeaway.</span> a one-line note: obfuscation protects IP, not security — never trust client code.</span></li>
+      </ul></div>
+      <label class="review"><input type="checkbox" data-review="evidence"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="cheat" data-section="cheat">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚡</span> Cheat sheet</h2>
+      <p class="section-lead">Scramble it — and know its limits.</p>
+      <div class="cheat">
+        <div class="col"><h4>Commands</h4><ul>
+          <li><code>javascript-obfuscator in.js --output out.js</code></li>
+          <li><code>--dead-code-injection</code></li>
+          <li><code>--dead-code-injection-threshold 0.4</code></li>
+          <li>domain-lock option</li>
+          <li><code>node server.js</code> (still runs)</li>
+        </ul></div>
+        <div class="col"><h4>The security truth</h4><ul>
+          <li>Obfuscation ≠ encryption ≠ security</li>
+          <li>Never trust client-side code</li>
+          <li>Secrets & logic stay server-side</li>
+          <li>Use CSP + SRI for real control</li>
+          <li>Obfuscated JS can be an IoC</li>
+        </ul></div>
+        <div class="col"><h4>Know the terms</h4><ul>
+          <li><strong>Obfuscation</strong> — unreadable, same behavior</li>
+          <li><strong>Dead-code injection</strong> — junk that never runs</li>
+          <li><strong>Domain lock</strong> — restrict where code runs</li>
+          <li><strong>CSP / SRI</strong> — control & verify scripts</li>
+        </ul></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="cheat"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="check" data-section="check">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">✅</span> Check yourself</h2>
+      <div class="q"><p class="ask">1. Does obfuscating code change what it does? What does that tell you about its purpose?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">No — the behavior is identical; only readability changes. So its purpose is to slow human analysis and protect intellectual property, not to alter or secure functionality.</div></div>
+      <div class="q"><p class="ask">2. Why is obfuscation not a security control for client-side code?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Client-side code is downloaded and run by the browser, so it can always be executed, inspected, and deobfuscated. Obfuscation only delays analysis — it can't keep a determined party from reading the logic or extracting any secret shipped in it.</div></div>
+      <div class="q"><p class="ask">3. How do attackers use these same techniques?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">They obfuscate malicious JavaScript and inject dead code to hide its real behavior and evade signature-based detection. Heavily obfuscated script on a page is itself a red flag defenders look for.</div></div>
+      <div class="q"><p class="ask">4. You need to protect an API key your web app uses. Where does it belong, and why not in obfuscated client code?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">On the server, behind an endpoint your client calls — never in client code. Obfuscated or not, anything shipped to the browser can be extracted, so a 'hidden' key in client code is still an exposed key.</div></div>
+      <label class="review"><input type="checkbox" data-review="check"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="related" data-section="related">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🔗</span> Related labs</h2>
+      <p class="section-lead">Labs that build on the same ideas or tools.</p>
+      <div class="related">
+        <a class="rel-card" href="secplus_lab03_companion.html"><span class="rel-no">LAB 03</span><span class="rel-ttl">Web App Attacks</span><span class="rel-why">the web attacks client code enables</span></a>
+        <a class="rel-card" href="secplus_lab14_companion.html"><span class="rel-no">LAB 14</span><span class="rel-ttl">Cryptography Concepts</span><span class="rel-why">obfuscation vs. real encryption</span></a>
+        <a class="rel-card" href="secplus_lab15_companion.html"><span class="rel-no">LAB 15</span><span class="rel-ttl">Common Protocols</span><span class="rel-why">securing what the browser receives</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ Lab Companion &middot; Lab 10 &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="sr-only" id="liveRegion" aria-live="polite"></div>
+
+<!-- ==================== JS ==================== -->
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var LAB_ID = root.getAttribute("data-lab") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";                 // shared with the textbook modules
+  var STATE_KEY = COURSE + ":labprogress:" + LAB_ID;    // this lab only
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg) {
+    toastEl.textContent = msg; toastEl.className = "toast on";
+    clearTimeout(toastT); toastT = setTimeout(function () { toastEl.className = "toast"; }, 2400);
+    announce(msg);
+  }
+
+  /* ---------- prefs: theme + text scale (synced with the modules) ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle"), dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(t) { prefs.theme = t; write(PREFS_KEY, prefs); applyTheme(t); }
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- progress + evidence state ---------- */
+  var SECTIONS = Array.prototype.slice.call(document.querySelectorAll("[data-review]")).map(function (el) { return el.getAttribute("data-review"); });
+  var state = read(STATE_KEY, { reviewed: [], evidence: [] });
+  var reviewed = new Set(state.reviewed || []);
+  var evidence = new Set(state.evidence || []);
+
+  function save() { write(STATE_KEY, { reviewed: Array.from(reviewed), evidence: Array.from(evidence) }); }
+
+  function paint() {
+    // review checkboxes + nav ticks
+    document.querySelectorAll("[data-review]").forEach(function (cb) {
+      var id = cb.getAttribute("data-review"), on = reviewed.has(id);
+      cb.checked = on;
+      var nav = document.querySelector('[data-nav="' + id + '"]');
+      if (nav) nav.classList.toggle("is-done", on);
+    });
+    document.querySelectorAll("[data-evidence]").forEach(function (cb) {
+      cb.checked = evidence.has(cb.getAttribute("data-evidence"));
+    });
+    var pct = SECTIONS.length ? Math.round(reviewed.size / SECTIONS.length * 100) : 0;
+    var bar = document.getElementById("progressBar");
+    bar.style.width = pct + "%"; bar.setAttribute("aria-valuenow", String(pct));
+    document.getElementById("progressText").textContent =
+      pct + "% · " + reviewed.size + " of " + SECTIONS.length + " sections reviewed";
+  }
+
+  function resetProgress() {
+    reviewed.clear(); evidence.clear(); save(); paint();
+    document.querySelectorAll(".ans.on").forEach(function (a) {
+      a.classList.remove("on"); var b = a.previousElementSibling;
+      if (b) { b.textContent = "Show answer"; b.setAttribute("aria-expanded", "false"); }
+    });
+    notify("Progress cleared");
+  }
+
+  /* ---------- delegated events ---------- */
+  var actions = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    print: function () { if (typeof window.print === "function") window.print(); },
+    resetProgress: resetProgress,
+    reveal: function (btn) {
+      var ans = btn.nextElementSibling, open = ans.classList.toggle("on");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Hide answer" : "Show answer";
+    }
+  };
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t) return;
+    var fn = actions[t.getAttribute("data-action")];
+    if (fn) fn(t);
+  });
+  document.addEventListener("change", function (e) {
+    var r = e.target.closest("[data-review]");
+    if (r) {
+      var id = r.getAttribute("data-review");
+      if (r.checked) reviewed.add(id); else reviewed.delete(id);
+      save(); paint();
+      if (r.checked && reviewed.size === SECTIONS.length) notify("All sections reviewed — nice work.");
+      return;
+    }
+    var ev = e.target.closest("[data-evidence]");
+    if (ev) {
+      var k = ev.getAttribute("data-evidence");
+      if (ev.checked) evidence.add(k); else evidence.delete(k);
+      save();
+    }
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>

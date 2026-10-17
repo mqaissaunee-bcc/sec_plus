@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-lab="3" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lab 03 Companion — Analyzing Types of Web Application Attacks · Security+</title>
+<meta name="description" content="Student companion for Security+ Lab 03: SQL injection in WebGoat and DVWA, a Burp Suite Repeater challenge, cross-site scripting, the defender's view (parameterized queries, output encoding), screenshots to submit, and how it maps to your Security+ modules.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1040px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh;
+  padding-top:env(safe-area-inset-top,0)}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- crumb + control bar ---------- */
+.topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;margin-bottom:6px}
+.crumb{margin-right:auto;font-size:.85rem;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb a:hover{text-decoration:underline}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+
+/* ---------- header / hero ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2;margin-top:4px}
+.module-header .subtitle{color:var(--muted);margin-top:10px;max-width:72ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.meta-chip{font-size:.82rem;background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px;padding:7px 13px;color:var(--muted)}
+.meta-chip b{color:var(--text);font-weight:700}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- jump nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.nav-btn{font:inherit;font-size:.88rem;min-height:44px;padding:9px 15px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:7px;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono);display:none}
+.nav-btn.is-done .done{display:inline}
+
+/* ---------- sections ---------- */
+.lab-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;margin-bottom:18px;scroll-margin-top:16px}
+.section-title{font-size:clamp(1.2rem,2.3vw,1.7rem);margin-bottom:6px;
+  display:flex;align-items:center;gap:10px}
+.section-title .ico{font-size:1.1em}
+.section-lead{color:var(--muted);margin-bottom:16px;max-width:74ch}
+.subsection{margin:24px 0}
+.subsection h3{font-size:1.12rem;margin-bottom:10px;color:var(--accent)}
+.lab-section p + p{margin-top:10px}
+.lab-section ul,.lab-section ol{margin:10px 0 10px 22px}
+.lab-section li{margin:6px 0}
+.phase-tag{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);
+  border-radius:6px;padding:3px 9px;margin-bottom:6px}
+
+/* ---------- code / terminal ---------- */
+.code-block{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;
+  white-space:pre-wrap;margin:10px 0;line-height:1.55}
+.code-block .cmt{color:var(--muted)}
+.code-block .pr{color:var(--accent)}
+code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+
+/* ---------- step explainer ---------- */
+.step{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:16px 0}
+.step h4{font-size:1rem;margin-bottom:4px}
+.step .why{font-size:.92rem;color:var(--muted);margin-top:6px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- screenshot marker ---------- */
+.shot-mark{display:flex;gap:10px;align-items:flex-start;margin:12px 0;padding:11px 14px;
+  border-radius:10px;border:1px dashed color-mix(in srgb,var(--accent) 55%,transparent);
+  background:color-mix(in srgb,var(--accent) 8%,transparent);font-size:.9rem}
+.shot-mark .cam{font-size:1.1rem;line-height:1.3}
+.shot-mark b{color:var(--accent)}
+
+/* ---------- defender grid ---------- */
+.def-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px}
+.def-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:15px}
+.def-card h4{font-size:.98rem;margin-bottom:6px}
+.def-card .attack{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.def-card .ctrl{font-size:.9rem}
+
+/* ---------- figure / topology ---------- */
+.figure{margin:16px 0;background:var(--bg-0);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.84rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:13px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.svg-zone{fill:none;stroke-width:1.5;stroke-dasharray:5 4}
+
+/* ---------- evidence checklist ---------- */
+.evidence li{list-style:none;display:flex;gap:11px;align-items:flex-start;margin:10px 0;
+  padding:11px 13px;background:var(--card-2);border:1px solid var(--line);border-radius:9px}
+.evidence ul{margin-left:0}
+.evidence input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
+.evidence .shot{color:var(--accent);font-weight:700}
+.evidence li:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+
+/* ---------- cheat sheet ---------- */
+.cheat{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cheat .col{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:16px}
+.cheat h4{color:var(--accent);font-size:.98rem;margin-bottom:8px}
+.cheat ul{margin-left:18px}
+.cheat code{font-family:var(--mono);font-size:.84em}
+
+/* ---------- review questions ---------- */
+.q{border:1px solid var(--line);border-radius:10px;padding:15px;margin:12px 0;background:var(--card-2)}
+.q .ask{font-weight:600;margin-bottom:10px}
+.reveal{font:inherit;font-size:.86rem;font-weight:600;min-height:40px;padding:8px 14px;cursor:pointer;
+  color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:9px}
+.reveal:hover{border-color:var(--accent);color:var(--accent)}
+.ans{margin-top:10px;padding:12px 14px;border-radius:8px;font-size:.92rem;display:none;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);border-left:4px solid var(--accent)}
+.ans.on{display:block}
+
+/* ---------- mark reviewed ---------- */
+.review{display:inline-flex;align-items:center;gap:9px;margin-top:18px;padding:9px 14px;cursor:pointer;
+  font-size:.9rem;font-weight:600;background:var(--card-2);border:1px solid var(--line);border-radius:10px}
+.review input{width:18px;height:18px;accent-color:var(--accent)}
+.review:has(input:checked){border-color:var(--ok);color:var(--ok)}
+
+/* ---------- footer / toast ---------- */
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .topbar{justify-content:center}
+  .crumb{width:100%;margin-bottom:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .topbar,.section-nav,.toast,.review{display:none!important}
+  body{background:#fff}
+  .lab-section,.module-header,.progress-container{break-inside:avoid}
+}
+
+/* ---------- related labs ---------- */
+.related{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.rel-card{display:flex;flex-direction:column;gap:3px;background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:13px 15px;text-decoration:none;color:var(--text)}
+.rel-card:hover{border-left-color:var(--accent)}
+.rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
+.rel-ttl{font-weight:700;font-size:.96rem}
+.rel-why{font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="topbar" role="group" aria-label="Display controls">
+    <span class="crumb"><a href="secplus_labs.html">&larr; All labs</a> &middot; pairs with
+      <a href="index.html">the Security+ textbook</a></span>
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size"><span class="ctl__icon">A−</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size"><span class="ctl__icon">A+</span></button>
+    </div>
+    <button class="ctl" type="button" data-action="print"><span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span></button>
+    <button class="ctl" type="button" data-action="resetProgress"><span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span></button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ Lab Companion &middot; Lab 03</p>
+    <h1>Analyzing Types of Web Application Attacks</h1>
+    <p class="subtitle">The two web attacks the exam asks about most: SQL injection, which tricks a database query into handing over data it shouldn't, and cross-site scripting, which gets a victim's browser to run the attacker's script. Both come from the same mistake — trusting user input.</p>
+    <div class="chips">
+      <span class="meta-chip">⏱ <b>~60 min</b></span>
+      <span class="meta-chip">📶 Difficulty: <b>Intermediate</b></span>
+      <span class="meta-chip">🧰 Tools: <b>WebGoat · DVWA · Burp Suite · sqlmap</b></span>
+      <span class="meta-chip">🎯 Target: <b>web containers (172.17.0.2)</b></span>
+      <span class="meta-chip">📘 Maps to: <b>Module 5 — Malicious Activity and Mitigation</b></span>
+    </div>
+  </header>
+
+  <div class="callout danger">
+    <span class="tag">[AUTHORIZED TESTING ONLY]</span>
+    These attacks run against deliberately vulnerable apps (WebGoat, DVWA) inside an isolated pod. Injecting SQL or script into web applications you don't own or have written permission to test is a crime in most jurisdictions.
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Companion progress"></div>
+    </div>
+    <p class="progress-text" id="progressText">0% · mark each section reviewed as you work through it</p>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
+    <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+    <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
+    <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
+    <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
+    <a class="nav-btn" href="#evidence" data-nav="evidence"><span class="done" aria-hidden="true">✓</span>📸 Evidence</a>
+    <a class="nav-btn" href="#cheat" data-nav="cheat"><span class="done" aria-hidden="true">✓</span>⚡ Cheat sheet</a>
+    <a class="nav-btn" href="#check" data-nav="check"><span class="done" aria-hidden="true">✓</span>✅ Check yourself</a>
+    <a class="nav-btn" href="#related" data-nav="related">🔗 Related labs</a>
+  </nav>
+
+  <main id="main">
+
+    <section class="lab-section" id="overview" data-section="overview">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📋</span> Overview</h2>
+      <p class="section-lead">Two attacks, one root cause.</p>
+      <p><strong>SQL injection</strong> happens when user input is pasted straight into a database query, so an attacker's text becomes part of the SQL command. <strong>Cross-site scripting (XSS)</strong> happens when a page echoes user input back without encoding it, so an attacker's <code class="inl">&lt;script&gt;</code> runs in another user's browser. You practice SQLi in WebGoat's guided lessons, then against a realistic login challenge using Burp Suite's Repeater, then in DVWA — and finish with XSS.</p>
+      <div class="callout"><span class="tag">[THE ONE IDEA]</span> Both attacks exist because the app failed to keep <em>data</em> and <em>code</em> separate. Every fix below is some version of "treat input as data, never as instructions."</div>
+      <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="walkthrough" data-section="walkthrough">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
+      <p class="section-lead">The injection strings that matter, and why they work.</p>
+      <div class="subsection"><span class="phase-tag">Phase 1 · WebGoat SQLi (guided)</span>
+        <h3>Close the quote, add a truth</h3>
+        <div class="step"><h4>Start WebGoat and register</h4>
+          <div class="code-block"><span class="pr">kali@kali:~$</span> sudo docker run --rm -it webgoat/goatandwolf</div>
+          <p class="why">Then browse to <code class="inl">http://172.17.0.2:8080/WebGoat/login</code> (case-sensitive) and register <code class="inl">guestuser</code>/<code class="inl">guestuser</code>.</p></div>
+        <div class="step"><h4>Lesson 9 — the all-rows injection</h4>
+          <p class="why">The query ends with <code class="inl">... last_name = '</code>. Pick <code class="inl">Smith'</code> to close the quote, keep the <code class="inl">or</code>, and choose <code class="inl">'1' = '1</code> to balance the syntax. The query becomes always-true and dumps every row of <code class="inl">user_data</code>.</p>
+          <div class="code-block">SELECT ... WHERE last_name = 'Smith' or '1' = '1'</div>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the full users table returned by the injected query (lesson 9).</span></div>
+        </div>
+        <div class="step"><h4>Lesson 10 — find the injectable field</h4>
+          <p class="why">Two fields, one injectable. <code class="inl">Login_Count</code> rejects <code class="inl">0 or 1=1</code>; the <code class="inl">User_Id</code> field accepts it. The skill is testing each input, not assuming.</p></div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 2 · Burp Repeater challenge</span>
+        <h3>Log in as Larry without his password</h3>
+        <p class="why">Launch <code class="inl">burpsuite</code> (Temporary project → Start Burp), Proxy tab → turn <strong>Intercept off</strong> → Open Browser. Log into WebGoat, open the "Without password" challenge, and submit <code class="inl">Larry</code> / <code class="inl">fakepassword</code>. In Burp's <strong>HTTP history</strong>, find the POST to <code class="inl">/WebGoat/challenge/5</code>, right-click → <strong>Send to Repeater</strong>. In Repeater, replace the password field value with an injection like <code class="inl">0' or '1'='1</code> and click <strong>Send</strong> — the response logs you in as Larry.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the Burp Repeater response showing a successful login as Larry.</span></div>
+        <div class="callout"><span class="tag">[WHY BURP]</span> Repeater is Burp's version of Lab 2's Tamper Data: capture a real request, edit it, resend it. It's how you test injection outside a friendly dropdown.</div>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 3 · DVWA &amp; sqlmap</span>
+        <h3>The same bug in a second app</h3>
+        <div class="code-block"><span class="pr">sysadmin@seconion:~$</span> sudo docker run --rm -it -p 4444:80 vulnerables/web-dvwa
+<span class="pr">kali@kali$</span> sqlmap -u "http://&lt;dvwa&gt;/vulnerabilities/sqli/?id=1&amp;Submit=Submit"</div>
+        <p class="why">In DVWA's SQLi page, <code class="inl">' or '1'='1</code> in the ID field returns all users. <code class="inl">sqlmap</code> automates the whole process — it's the attacker's version of a dynamic scanner (DAST).</p>
+      </div>
+      <div class="subsection"><span class="phase-tag">Phase 4 · Cross-site scripting</span>
+        <h3>Make the browser run your script</h3>
+        <div class="code-block">&lt;script&gt;alert(document.cookie)&lt;/script&gt;</div>
+        <p class="why">Injected into a field the app echoes back unescaped, the browser executes it instead of showing it. Reflected XSS runs from a crafted link; stored XSS is saved on the server and fires for every visitor — which is why stored is the more dangerous of the two.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the XSS alert box firing in the browser.</span></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="stuck" data-section="stuck">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚠️</span> Where students get stuck</h2>
+      <p class="section-lead">The snags, in order of how often they bite.</p>
+      <div class="callout warn"><span class="tag">[CASE-SENSITIVE URL]</span> <code class="inl">/WebGoat/login</code> is case-sensitive, and the container's IP is <code class="inl">172.17.0.2:8080</code> — if it's different, check the container's actual address.</div>
+      <div class="callout warn"><span class="tag">[UNBALANCED QUOTES]</span> Injection is quote arithmetic. Count the quotes so the final query is valid SQL — one stray quote and you get a syntax error, not a dump.</div>
+      <div class="callout warn"><span class="tag">[BURP INTERCEPT ON]</span> Leave Intercept <em>off</em> so pages load, then work from HTTP history. With Intercept on, the browser just hangs.</div>
+      <div class="callout warn"><span class="tag">[KEYRING / PASSWORD PROMPTS]</span> When Firefox offers to save the password or asks for a keyring, choose Never / Cancel — they interrupt the flow.</div>
+      <div class="callout warn"><span class="tag">[XSS WON'T FIRE]</span> The input has to be reflected or stored <em>unescaped</em>. If you see the literal <code class="inl">&lt;script&gt;</code> text on the page, the app is encoding output — that field isn't vulnerable.</div>
+      <label class="review"><input type="checkbox" data-review="stuck"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="defender" data-section="defender">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🛡️</span> The defender's view</h2>
+      <p class="section-lead">Each attack above is an app that forgot to separate data from code.</p>
+      <div class="def-grid">
+        <div class="def-card"><h4>Parameterized queries</h4><p class="attack">Breaks: SQL injection</p><p class="ctrl">Prepared statements bind input as data, so it can never change the query's structure. This is the one fix the exam wants named first.</p></div>
+        <div class="def-card"><h4>Input validation (allow-list)</h4><p class="attack">Breaks: SQLi &amp; XSS</p><p class="ctrl">Reject unexpected characters at the boundary — accept only what a field legitimately needs rather than trying to block every bad string.</p></div>
+        <div class="def-card"><h4>Output encoding + CSP</h4><p class="attack">Breaks: cross-site scripting</p><p class="ctrl">Encode on output so <code class='inl'>&lt;script&gt;</code> renders as visible text, and a Content-Security-Policy blocks inline/untrusted scripts from executing.</p></div>
+        <div class="def-card"><h4>Least-privilege DB account</h4><p class="attack">Breaks: SQLi impact</p><p class="ctrl">The web app's database user shouldn't be able to read every table or run DROP/DELETE — limiting it caps the damage an injection can do.</p></div>
+        <div class="def-card"><h4>WAF</h4><p class="attack">Breaks: both (defense in depth)</p><p class="ctrl">Signatures catch <code class='inl'>' or 1=1</code> and <code class='inl'>&lt;script&gt;</code>, buying time — but a WAF is a filter in front of the real fix, not the fix.</p></div>
+        <div class="def-card"><h4>Secure SDLC + testing</h4><p class="attack">Breaks: the root cause</p><p class="ctrl">Code review and SAST/DAST (sqlmap is an attacker's DAST) catch these before release. Build security in rather than bolting it on.</p></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="defender"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="evidence" data-section="evidence">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📸</span> Evidence to capture</h2>
+      <p class="section-lead">Your instructor wants screenshots of the key steps as proof you ran the lab. Grab these as you go, tick each one off, then print or submit this list as your evidence cover sheet. Ticks are saved in this browser.</p>
+      <div class="evidence"><ul>
+        <li><input type="checkbox" data-evidence="e1"><span><span class="shot">SQLi works.</span> WebGoat lesson 9 returning the full user table.</span></li>
+        <li><input type="checkbox" data-evidence="e2"><span><span class="shot">Injection string.</span> the crafted request showing your <code class='inl'>' or '1'='1</code> payload.</span></li>
+        <li><input type="checkbox" data-evidence="e3"><span><span class="shot">Burp challenge.</span> the Repeater response logged in as Larry.</span></li>
+        <li><input type="checkbox" data-evidence="e4"><span><span class="shot">Second app.</span> the DVWA SQLi result (or sqlmap output).</span></li>
+        <li><input type="checkbox" data-evidence="e5"><span><span class="shot">XSS fires.</span> the alert box executing in the browser.</span></li>
+        <li><input type="checkbox" data-evidence="e6"><span><span class="shot">Your explanation.</span> a one-line note naming the fix for each attack (parameterized queries / output encoding).</span></li>
+      </ul></div>
+      <label class="review"><input type="checkbox" data-review="evidence"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="cheat" data-section="cheat">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚡</span> Cheat sheet</h2>
+      <p class="section-lead">The payloads and their fixes.</p>
+      <div class="cheat">
+        <div class="col"><h4>Attack strings</h4><ul>
+          <li>SQLi: <code>' or '1'='1</code> · <code>0 or 1=1</code></li>
+          <li>Burp: capture POST → Repeater → edit → Send</li>
+          <li>Automate: <code>sqlmap -u "&lt;url&gt;"</code></li>
+          <li>XSS: <code>&lt;script&gt;alert(1)&lt;/script&gt;</code></li>
+        </ul></div>
+        <div class="col"><h4>What stops it</h4><ul>
+          <li>Parameterized queries (SQLi — the fix)</li>
+          <li>Input validation / allow-listing</li>
+          <li>Output encoding + CSP (XSS)</li>
+          <li>Least-privilege DB account</li>
+          <li>WAF (defense in depth)</li>
+        </ul></div>
+        <div class="col"><h4>Know the terms</h4><ul>
+          <li><strong>SQLi</strong> — input becomes part of the query</li>
+          <li><strong>XSS</strong> — input becomes script in a browser</li>
+          <li><strong>Reflected vs stored</strong> — crafted link vs saved on server</li>
+          <li><strong>DAST</strong> — testing the running app (sqlmap)</li>
+        </ul></div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="cheat"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="check" data-section="check">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">✅</span> Check yourself</h2>
+      <div class="q"><p class="ask">1. Why does <code class='inl'>' or '1'='1</code> return every row?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">It closes the string literal the query expected, then adds a condition that is always true, OR'd into the WHERE clause — so every row satisfies it and the query returns the whole table.</div></div>
+      <div class="q"><p class="ask">2. SQL injection and XSS both come from trusting input. Who is the victim in each, and where does the attacker's code run?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">SQLi: the database/server is the victim and the injected code runs in the SQL engine. XSS: another <em>user</em> is the victim and the injected script runs in their browser.</div></div>
+      <div class="q"><p class="ask">3. What is the definitive fix for SQL injection, and why isn't a WAF enough?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Parameterized (prepared) queries — they bind input as data so it can't alter the query's structure. A WAF only pattern-matches known payloads and can be bypassed, so it's a supporting layer, not the fix.</div></div>
+      <div class="q"><p class="ask">4. What keeps a stored XSS payload from executing in a visitor's browser?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Encoding the data on output so it displays as text instead of running, backed by a Content-Security-Policy that restricts which scripts the browser will execute.</div></div>
+      <label class="review"><input type="checkbox" data-review="check"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="related" data-section="related">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🔗</span> Related labs</h2>
+      <p class="section-lead">Labs that build on the same ideas or tools.</p>
+      <div class="related">
+        <a class="rel-card" href="secplus_lab10_companion.html"><span class="rel-no">LAB 10</span><span class="rel-ttl">JS Obfuscation</span><span class="rel-why">the client-side code attackers also abuse</span></a>
+        <a class="rel-card" href="secplus_lab15_companion.html"><span class="rel-no">LAB 15</span><span class="rel-ttl">Common Protocols</span><span class="rel-why">serving the app over HTTPS</span></a>
+        <a class="rel-card" href="secplus_lab05_companion.html"><span class="rel-no">LAB 05</span><span class="rel-ttl">Attacks & Mitigation</span><span class="rel-why">where web attacks sit among attack types</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ Lab Companion &middot; Lab 03 &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="sr-only" id="liveRegion" aria-live="polite"></div>
+
+<!-- ==================== JS ==================== -->
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var LAB_ID = root.getAttribute("data-lab") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";                 // shared with the textbook modules
+  var STATE_KEY = COURSE + ":labprogress:" + LAB_ID;    // this lab only
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg) {
+    toastEl.textContent = msg; toastEl.className = "toast on";
+    clearTimeout(toastT); toastT = setTimeout(function () { toastEl.className = "toast"; }, 2400);
+    announce(msg);
+  }
+
+  /* ---------- prefs: theme + text scale (synced with the modules) ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle"), dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(t) { prefs.theme = t; write(PREFS_KEY, prefs); applyTheme(t); }
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- progress + evidence state ---------- */
+  var SECTIONS = Array.prototype.slice.call(document.querySelectorAll("[data-review]")).map(function (el) { return el.getAttribute("data-review"); });
+  var state = read(STATE_KEY, { reviewed: [], evidence: [] });
+  var reviewed = new Set(state.reviewed || []);
+  var evidence = new Set(state.evidence || []);
+
+  function save() { write(STATE_KEY, { reviewed: Array.from(reviewed), evidence: Array.from(evidence) }); }
+
+  function paint() {
+    // review checkboxes + nav ticks
+    document.querySelectorAll("[data-review]").forEach(function (cb) {
+      var id = cb.getAttribute("data-review"), on = reviewed.has(id);
+      cb.checked = on;
+      var nav = document.querySelector('[data-nav="' + id + '"]');
+      if (nav) nav.classList.toggle("is-done", on);
+    });
+    document.querySelectorAll("[data-evidence]").forEach(function (cb) {
+      cb.checked = evidence.has(cb.getAttribute("data-evidence"));
+    });
+    var pct = SECTIONS.length ? Math.round(reviewed.size / SECTIONS.length * 100) : 0;
+    var bar = document.getElementById("progressBar");
+    bar.style.width = pct + "%"; bar.setAttribute("aria-valuenow", String(pct));
+    document.getElementById("progressText").textContent =
+      pct + "% · " + reviewed.size + " of " + SECTIONS.length + " sections reviewed";
+  }
+
+  function resetProgress() {
+    reviewed.clear(); evidence.clear(); save(); paint();
+    document.querySelectorAll(".ans.on").forEach(function (a) {
+      a.classList.remove("on"); var b = a.previousElementSibling;
+      if (b) { b.textContent = "Show answer"; b.setAttribute("aria-expanded", "false"); }
+    });
+    notify("Progress cleared");
+  }
+
+  /* ---------- delegated events ---------- */
+  var actions = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    print: function () { if (typeof window.print === "function") window.print(); },
+    resetProgress: resetProgress,
+    reveal: function (btn) {
+      var ans = btn.nextElementSibling, open = ans.classList.toggle("on");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Hide answer" : "Show answer";
+    }
+  };
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t) return;
+    var fn = actions[t.getAttribute("data-action")];
+    if (fn) fn(t);
+  });
+  document.addEventListener("change", function (e) {
+    var r = e.target.closest("[data-review]");
+    if (r) {
+      var id = r.getAttribute("data-review");
+      if (r.checked) reviewed.add(id); else reviewed.delete(id);
+      save(); paint();
+      if (r.checked && reviewed.size === SECTIONS.length) notify("All sections reviewed — nice work.");
+      return;
+    }
+    var ev = e.target.closest("[data-evidence]");
+    if (ev) {
+      var k = ev.getAttribute("data-evidence");
+      if (ev.checked) evidence.add(k); else evidence.delete(k);
+      save();
+    }
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>

