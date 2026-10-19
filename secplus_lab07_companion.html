@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,36 +292,136 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>Kali</b></td><td><code>203.0.113.2</code></td><td><code>kali</code></td><td><code>kali</code></td></tr><tr><td><b>pfSense</b></td><td><code>192.168.0.1</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>SecOnion</b></td><td><code>192.168.0.6</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>UbuntuSRV</b></td><td><code>172.16.1.10</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>WinOS</b></td><td><code>192.168.0.50</code></td><td><code>Administrator</code></td><td><code>NDGlabpass123!</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">The nmap flags, grouped by what they answer. Each flag is a different question.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · Windows recon (PowerShell)</span>
-        <h3>Enumerate from inside the OS</h3>
-        <p class="why">On the Windows server and client, PowerShell gathers host facts — network config, listening services, shares, and users — the same inventory an attacker builds after landing on a box. It's recon from the host's own vantage point rather than across the wire.</p>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · Host discovery (nmap)</span>
-        <h3>Who's alive?</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> nmap --iflist              <span class="cmt"># your own interfaces/routes</span>
-<span class="pr">kali@kali$</span> nmap -sP 172.16.1.*          <span class="cmt"># ping sweep: which hosts answer</span>
-<span class="pr">kali@kali$</span> nmap -Pn 192.168.0.1         <span class="cmt"># skip ping, treat as up (beats a drop-ping firewall)</span></div>
-        <p class="why"><code class="inl">-sP</code> (now <code class="inl">-sn</code>) is a ping sweep — host discovery only, no port scan. <code class="inl">-Pn</code> is the fix for the "host is down" lie: it tells nmap to skip the ping test and scan anyway, which is how you find hosts behind a firewall that silently drops ICMP.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> a ping sweep result, and a host that only appears once -Pn is used.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · Ports &amp; services</span>
-        <h3>What's open, and what's answering?</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> nmap -sT 192.168.0.6         <span class="cmt"># TCP connect scan</span>
-<span class="pr">kali@kali$</span> nmap -p 80 192.168.0.0/24 172.16.1.0/28   <span class="cmt"># one port across ranges</span>
-<span class="pr">kali@kali$</span> nmap -sV 172.16.1.10         <span class="cmt"># version-detect the services</span></div>
-        <p class="why"><code class="inl">-sT</code> completes a full TCP handshake (reliable, noisy). <code class="inl">-p</code> limits to specific ports — here sweeping port 80 across whole subnets to find web servers. <code class="inl">-sV</code> interrogates each open port to name the software and version, which is what turns "port 80 open" into "Apache 2.2.8 — and here are its known CVEs."</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> an -sV scan naming the service versions on a target.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 4 · OS fingerprinting</span>
-        <h3>What is it running?</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> sudo nmap -O 172.16.1.10
-<span class="pr">kali@kali$</span> sudo nmap -O --osscan-guess 172.16.1.10</div>
-        <p class="why"><code class="inl">-O</code> infers the operating system from subtle differences in how the stack replies. <code class="inl">--osscan-guess</code> reports its best guesses when it can't be certain. OS and version together complete the attack-surface picture.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the OS-detection result for a target.</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Use PowerShell to Perform an Active Reconnaissance of a Windows Server</h3>
+<p class="why">In this section, you will utilize PowerShell on the Windows server to gather extensive information.</p>
+<div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Log in as administrator using the password NDGlabpass123!.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Leave the Server Manager window untouched (or you can minimize it). Then, right-click on the Windows logo in the taskbar and click Windows PowerShell (admin).</p>
+</div>
+<div class="step"><p><span class="snum">5</span> In the PowerShell window, type the command below, followed by pressing the Enter key.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> $cred=Get-Credential</div>
+</div>
+<div class="step"><p><span class="snum">6</span> Notice a pop-up window appears. Type Administrator in the User name field, followed by typing NDGlabpass123! in the Password field. Click OK.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Back on the PowerShell prompt, enter the command below to retrieve a list of domain users on the system.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> Get-ADGroupMember -Credential $cred -server WinOS
+"Domain Users" | select samaccountname</div>
+</div>
+<div class="step"><p><span class="snum">8</span> Enter the command below to identify which users are Domain Admin Members.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> Get-ADGroupMember -Credential $cred -server WinOS
+"Domain Admins"</div>
+</div>
+<div class="step"><p><span class="snum">9</span> Filter the SAM account names.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> Get-ADGroupMember -Credential $cred -server WinOS
+"Domain Admins" | select samaccountname</div>
+</div>
+<div class="step"><p><span class="snum">10</span> View the domain itself.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> Get-ADDomain</div>
+</div>
+<div class="step"><p><span class="snum">11</span> See whether the lab2-user account is currently enabled.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> Get-ADUser -filter 'samaccountname -eq "lab2-user"'</div>
+</div>
+<div class="step"><p><span class="snum">12</span> Not only do we see that the account lab2-user is enabled, but we also have the account's SID as well. Try to retrieve more information about the Administrator account by entering the command below.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> Get-ADUser -filter 'samaccountname -eq "administrator"'</div>
+</div>
+<div class="step"><p><span class="snum">13</span> View the lab-user account user's group memberships and confirm whether the account belongs to the Domain Admins group.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> Get-ADPrincipalGroupMembership lab-user</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> It can be verified that the lab-user is part of the Domain Admins group as well as other groups.</div>
+</div>
+<div class="step"><p><span class="snum">14</span> Type cls, and press Enter; leave the PowerShell window open to continue with the next task.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>Use PowerShell to Perform an Active Reconnaissance of a Windows Client</h3>
+<p class="why">In this task, you will utilize PowerShell on a Windows system to gather extensive information.</p>
+<div class="step"><p><span class="snum">1</span> Identify the Active Directory that lab-user belongs to by entering the .NET command with PowerShell below.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> 
+[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()</div>
+</div>
+<div class="step"><p><span class="snum">2</span> Since the forest is different from a domain, identify which domain the user is associated with.</p>
+<div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> 
+[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> Using PowerShell, you successfully obtained the domain name, forest name, and group membership.</div>
+</div>
+<div class="step"><p><span class="snum">3</span> The Windows reconnaissance portion is now complete. You may proceed with the Linux portion next.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3</span><h3>Scanning the Network for Vulnerable Systems</h3>
+<p class="why">In this section, you will utilize nmap on the Linux machine to gather network information.</p>
+<div class="step"><p><span class="snum">1</span> Launch the Kali virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in as kali with kali as the password.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Open a new terminal and view the available options that can be used with Nmap by typing nmap into the terminal followed by pressing the Enter key.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Initiate a quick ping scan to identify live hosts with a network ID of 172.16.1.*.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap -sP 172.16.1.*</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> You should see two host results; 172.16.1.1 as the DMZ gateway, and 172.16.1.10 as Ubuntu Server.</div>
+</div>
+<div class="step"><p><span class="snum">5</span> Initiate a ping scan while spoofing the source MAC address at the same time.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap -v -sP -spoof-mac 0 172.16.1.*</div>
+</div>
+<div class="step"><p><span class="snum">6</span> When scanning for active systems on a network, Nmap also gives the ability to scan for which IP protocols are supported by the host involved in the scanning process. Enter the command below, and enter the password kali when prompted.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> sudo nmap -PO 172.16.1.10</div>
+</div>
+<div class="step"><p><span class="snum">7</span> In the Terminal window, select File from the top menu pane and click on New Tab.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> While engaged in the new tab, initiate a Transmission Control Protocol (TCP) scan against the SecOnion system. Type the following command:</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap -sT 192.168.0.6</div>
+</div>
+<div class="step"><p><span class="snum">9</span> Notice that the scan came back stating that the host seemed to be down and that it was unable to scan it. Attempt another scan against the same system, but this time using the no ping option.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap -PN 192.168.0.6</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> After 2-3 minutes, notice that nmap scan now states that the host is up but that the first 1000 ports are being filtered; most likely due to a firewall.</div>
+</div>
+<div class="step"><p><span class="snum">10</span> Initiate an operating system scan against the pfSense system to help identify what version of OS it is running on.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> sudo nmap -O 192.168.0.1</div>
+</div>
+<div class="step"><p><span class="snum">11</span> Notice that the nmap scan returned with a host is down message. Scan the host again, this time, using the -PN option to identify whether the host is actually up or down.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap -PN 192.168.0.1</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> After 2-3 minutes, notice that nmap scan now states that the host is up but that the first 1000 ports are being filtered.</div>
+</div>
+<div class="step"><p><span class="snum">12</span> Initiate the same scan from the previous step but this time against the UbuntuSRV system.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> sudo nmap -O 172.16.1.10</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> Notice that Nmap has a tough time trying to identify the operating system information.</div>
+</div>
+<div class="step"><p><span class="snum">13</span> To try and gather more information about the same host regarding its OS, make Nmap take approximate guesses as to what the OS is by using the command below with an included script.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> sudo nmap -O --osscan-guess 172.16.1.10</div>
+</div>
+<div class="step"><p><span class="snum">14</span> Initiate a scan specifically for port 80, but this time for all hosts on both networks (Internal &amp; DMZ).</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap -p 80 192.168.0.0/24 172.16.1.0/28</div>
+</div>
+<div class="step"><p><span class="snum">15</span> Scan the UbuntuSRV system while at the same time displaying all packets being sent and received while initiating the scan.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap --packet-trace 172.16.1.10</div>
+</div>
+<div class="step"><p><span class="snum">16</span> Nmap can also be used to show local host data about which interfaces are up and what the route table looks like. Enter the command below.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap --iflist</div>
+</div>
+<div class="step"><p><span class="snum">17</span> To detect remote services, both services and daemons, along with their respective version numbers, initiate the Nmap command below.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap -sV 172.16.1.10</div>
+</div>
+<div class="step"><p><span class="snum">18</span> The lab is now complete; you may end the reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

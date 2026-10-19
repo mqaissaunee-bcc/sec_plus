@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,30 +292,133 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>Kali</b></td><td><code>203.0.113.2</code></td><td><code>kali</code></td><td><code>kali</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">Hide a message, hide a file, then watch a hash avalanche.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · Steganography with steghide</span>
-        <h3>Put a secret inside a photo</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> echo "The password to the WinOS is NDGlabpass123\!" > secret.txt
-<span class="pr">kali@kali$</span> steghide embed -cf top_secret.jpg -ef secret.txt   <span class="cmt"># cover file + embed file</span>
-<span class="pr">kali@kali$</span> steghide info top_secret.jpg                         <span class="cmt"># shows an embedded file exists</span>
-<span class="pr">kali@kali$</span> steghide extract -sf top_secret.jpg                   <span class="cmt"># pull the secret back out</span></div>
-        <p class="why"><code class="inl">-cf</code> is the cover file (the innocent carrier), <code class="inl">-ef</code> the file to hide. steghide tucks the data into the image so it looks unchanged to the eye. A passphrase protects extraction — that passphrase is the only real secrecy; the hiding itself is just obscurity.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the embed and extract succeeding (the recovered secret.txt).</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · Hide a file by concatenation</span>
-        <h3>A zip wearing an image's clothes</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> zip secret_files secret.txt top_secret.jpg
-<span class="pr">kali@kali$</span> cat cyber_monday.jpg secret_files.zip > cybersec.jpg</div>
-        <p class="why">Because a JPG reader stops at the image's end marker and a zip reader reads from the end of the file, you can glue a zip onto the tail of an image. <code class="inl">cybersec.jpg</code> opens as a normal picture <em>and</em> unzips as an archive. Crude, but it illustrates how easily data hides in plain sight.</p>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · The avalanche effect</span>
-        <h3>One bit in, a whole new fingerprint out</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> sha1sum top_secret.jpg          <span class="cmt"># note the hash before</span></div>
-        <p class="why">In CyberChef, build a recipe (<em>From Binary</em> → <em>MD5</em>, or SHA-1) and flip a single bit of the input. The output hash changes completely and unpredictably — that's the avalanche effect, and it's why a hash can detect even a one-character tamper. Re-running <code class="inl">sha1sum</code> on a changed file gives a totally different value.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the hash before and after a one-bit change — two completely different values.</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Hiding a Hidden Message Within a Picture</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Using Steghide to Hide Hidden Messages</h3>
+<div class="step"><p><span class="snum">1</span> Launch the Kali virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in as kali with kali as the password. Open the Kali PC Viewer.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Double-click the steg folder on the desktop. After the window opens, right-click on an empty space, and choose the option, Open Terminal Here.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> In the Terminal window, create a new text document with a secret text string. Type the message below:</p>
+<div class="code-block"><span class="pr">kali@kali$</span> echo "The password to the WinOS is NDGlabpass123\!" &gt; secret.txt</div>
+</div>
+<div class="step"><p><span class="snum">5</span> Double-check the content of the secret.txt file using the command:</p>
+<div class="code-block"><span class="pr">kali@kali$</span> cat secret.txt</div>
+</div>
+<div class="step"><p><span class="snum">6</span> Verify the capacity of the top_secret.jpg image to see what the capacity is for being able to hide a message within the image itself.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> steghide info top_secret.jpg</div>
+</div>
+<div class="step"><p><span class="snum">7</span> Notice the capacity amount. When asked to get information about embedded data, type N.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> See how large the secret.txt file is to confirm whether we can hide it within the top_secret.jpg image. Use the du with -b option to display the file size in terms of bytes.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> du -b secret.txt</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> Notice that we should be able to fit the 44 byte sized secret.txt file in the 3.1 KB top_secret.jpg image file.</div>
+</div>
+<div class="step"><p><span class="snum">9</span> Before we embed the secret message, confirm the sha1 hash value for the top_secret.jpg image file.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> sha1sum top_secret.jpg</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> Take note of this hash value for later comparison. Your value could be different from what is shown here.</div>
+</div>
+<div class="step"><p><span class="snum">10</span> Type the command below to initialize the process of hiding the secret message. When prompted for a passphrase, type secret followed by pressing Enter. Type secret once more. Press Enter.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> steghide embed -cf top_secret.jpg -ef secret.txt</div>
+</div>
+<div class="step"><p><span class="snum">11</span> Verify the hash value again with the same top_secret.jpg image file.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> Notice the integrity has been lost in the steganography process due to a different hash value.</div>
+</div>
+<div class="step"><p><span class="snum">12</span> Type the command below to gather info on the embedded data within the top_secret.jpg file. When asked to get information about embedded data, type Y. Type secret as the passphrase. Press Enter.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> steghide info top_secret.jpg</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> Notice the output, highlighting that there is a secret.txt file present within the top_secret.jpg file.</div>
+</div>
+<div class="step"><p><span class="snum">13</span> Now, we are going to delete the secret.txt file we just created. Type rm secret.txt and press Enter. Then run ls to see that the secret.txt file was gone.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> Attempt to extract the secret data within the top_secret.jpg image file. When prompted for the passphrase, type secret followed by pressing Enter. Now the secret.txt file is back.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> steghide extract -sf top_secret.jpg</div>
+</div>
+<div class="step"><p><span class="snum">15</span> Let's examine the content of the extracted file; type cat secret.txt and press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Leave the Terminal window open to continue with the next task.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>Hiding Multiple Files Within an Image File</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.1</span><h3>Using Basic Linux Commands to Hide Zipped Archives</h3>
+<div class="step"><p><span class="snum">1</span> While still on the Kali system, in the Terminal window, verify that you are still in the ~/Desktop/steg directory. List the files in the current directory using the ls -lh command. Take note of the file sizes for both cyber_monday.jpg and secret.txt.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Create a zipped archive named secret_files to include the files: secret.txt and dc.jpg</p>
+<div class="code-block"><span class="pr">kali@kali$</span> zip secret_files secret.txt top_secret.jpg</div>
+</div>
+<div class="step"><p><span class="snum">3</span> Enter ls -lh to list the current files in the directory and verify that secret_files.zip is present.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Using the cat command, enter the command below to hide the zipped archive within the image file called cyber_monday.jpg. This will enable the cat command to concatenate the image and zip file together in a new file named cybersec.jpg.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> cat cyber_monday.jpg secret_files.zip &gt; cybersec.jpg</div>
+</div>
+<div class="step"><p><span class="snum">5</span> Enter the command ls -lh to list the files in the current directory and verify that the cybersec.jpg image file has been successfully created. Also, take note of the file size and compare it to the original cyber_monday.jpg.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3</span><h3>Observe the Avalanche Effect in Hashing Operation</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.1</span><h3>Observe the Avalanche Effect</h3>
+<p class="why">The avalanche effect is observed in cryptography when one bit in the plain text flips; the encrypted</p>
+<p class="why">text will have at least half of the bits flipped. In contrast, if the avalanche effect does not exist or is not</p>
+<p class="why">so significant, it means the encryption algorithm has poor randomization. Or, in other words, it is less</p>
+<p class="why">secure. In this section, we will observe the bit flips in the MD5 hash function in a popular tool called</p>
+<p class="why">CyberChef.</p>
+<div class="step"><p><span class="snum">1</span> First, let's go to the Downloads folder by clicking the Folder icon, then Downloads, then Open Folder.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> A window will open, showing a folder named CyberChef. Double-click to open the folder.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Inside the CyberChef folder, there is a CyberChef_v9.32.2.html file. Double-click to open it in the browser.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> A browser window will open. You will now see the CyberChef main page.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> On the CyberChef main page, number 1 indicates the recipe(function) Search field. Number 2 is the main operation field, where the recipe(function) can be added to apply the algorithms. Number 3 is the place that accepts user inputs. Number 4 will output the result to the user.</div>
+</div>
+<div class="step"><p><span class="snum">5</span> Now let's first observe the MD5 hash function. First, type from Binary in the search field.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> In the search result list, double-click on From Binary to add it to the Recipe. We will leave the default setting.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> After adding the From Binary recipe(function), let's delete everything in the search field and type MD5. Same as before, double-click to add the MD5 recipe(function).</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Once again, go to the search field, type To Binary, double-click to add to the Recipe. Leave the default setting.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> To the right side, we will now enter the binary form of the word secret; make sure you include the spaces: 01110011 01100101 01100011 01110010 01100101 01110100</p>
+</div>
+<div class="step"><p><span class="snum">10</span> As you type the binary in, the Output hash changes. Let's start a Text Editor. Click the Applications icon, and select to open the Text Editor.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> Go back to the browser window. Copy the output and paste it to the Text Editor.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> With the output stored, let's go back to the browser window. We are going to flip one bit in the input and observe the bit changes in the output.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> In the input field, change the rightmost bit from 0 to 1. Leave everything else untouched.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> To compare the bit flips in the output, let's first copy the output. Then switch to the Text Editor window. Press Enter to start a new line. Then paste the copied output.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> To make the comparison easier, in the menu, click Document, then uncheck Word Wrap.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> The two lines of binary numbers are now aligned. The top is the original output; the bottom is the one-bit flipped output. Drag the horizontal scroll bar to observe the result and count the bit flips.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> The same process can also be used to test the SHA1 hash function. Feel free to do so to observe the difference.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> The lab is now complete; you may end the reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

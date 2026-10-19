@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,25 +292,187 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>UbuntuSRV</b></td><td><code>172.16.1.10</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">Stand up the platform, scope the accounts, connect a device.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · Start the platform</span>
-        <h3>ThingsBoard in a container</h3>
-        <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo docker run -it -p 9090:9090 -p 1883:1883 -p 7070:7070 ... thingsboard</div>
-        <p class="why">The container exposes the web UI (9090) and the <strong>MQTT broker</strong> (1883) — MQTT being the lightweight publish/subscribe protocol most IoT devices speak. Those exposed ports are also the attack surface: a management UI and a broker reachable on the network.</p>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · Create scoped accounts</span>
-        <h3>Roles, not one god-account</h3>
-        <p class="why">ThingsBoard separates <strong>tenant</strong> (manages devices and rules) from <strong>customer</strong> (sees only their own devices). Creating these is role-based access control in miniature: each account gets only what it needs, so a compromised customer login can't touch the whole fleet.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the tenant and customer accounts created with their roles.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · Add a device &amp; send data</span>
-        <h3>Register, then report telemetry</h3>
-        <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> mosquitto_pub -d -q 1 -h 127.0.0.1 -t v1/devices/me/telemetry -u &lt;TOKEN&gt; -m '{"temp":22}'</div>
-        <p class="why">Add a device in the platform (which issues it an access <strong>token</strong>), add a rule chain to process its data, then publish telemetry to the broker as that device. The platform receives, stores, and displays the reading. The token is the device's identity — how the broker knows which device is talking and whether it's allowed to.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the published telemetry appearing in the device's dashboard.</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Start the Service and Create Accounts</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Start ThingsBoard Service</h3>
+<p class="why">In this section, you will start the ThingsBoard service.</p>
+<div class="step"><p><span class="snum">1</span> Click on the UbuntuSRV tab to access the UbuntuSRV.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in to the UbuntuSRV as username sysadmin, password NDGlabpass123!.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Click the Terminal icon to start a Terminal.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> In the Terminal, type the following command to start the ThingsBoard server. When prompted for a password, type NDGlabpass123!</p>
+<div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo docker run -it -p 9090:9090 -p 1883:1883 -p 7070:7070 -
+p 5683-5688:5683-5688/udp -v ~/.mytb-data:/data -v ~/.mytb-
+logs:/var/log/thingsboard --name mytb --restart always thingsboard/tb-postgres</div>
+</div>
+<div class="step"><p><span class="snum">5</span> After a few minutes, the ThingsBoard should finish booting. You can check it by visiting the address http://localhost:9090 in a browser. When the server is ready, you should see the login below.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Fill in the default login information. Username: sysadmin@thingsboard.org Password: sysadmin</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Once you log in, you should see something like the image below; you may need to change the window's size if the window is too small.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Click the menu button (three vertical dots) at the upper-right corner, and select Profile.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> For security purposes, we will change the default login credentials. Click and change the Email address to sysadmin@xyzsecurity.com then click the Save button to save the change.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> Then, click the Change Password button. In the pop-up window, fill in the current password sysadmin and type the new password NDGlabpass123! twice, then click Change Password to change it.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> Once you are brought back to the Profile page, click the menu at the upper-right corner again, and click Logout to log out of the current session. Notice the user email address is already changed.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Log back in using the new credentials. username: sysadmin@xyzsecurity.com password: NDGlabpass123!</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Create Different Accounts</h3>
+<p class="why">In this section, you will make changes to the existing account and add necessary accounts.</p>
+<div class="step"><p><span class="snum">1</span> First, we will start by creating a Tenant. Click Tenants on the left side.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> To the right side, we will first delete the default Tenant account (again, for security purposes). Click the trash can icon.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> A pop-up question will appear; click Yes to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> As the default Tenant is gone, we will create a new Tenant. Click the + button in the upper-right corner.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> A window will pop-up. For practice purposes, we will only fill in the Title field and leave the Tenant profile as Default. Type netlab as the Title and click the Add button.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> You should see that the netlab Tenant is created. Click the Manage tenant admins button.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> On the new page, click the + button to create a Tenant Admin.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> In the pop-up window, fill the email field as netlab_tenantadmin@xyzsecurity.com leave the Activation method as the default setting, and click the Add button.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> After you click the Add button, a new window will show. Click the Copy button to copy the activation link. It will prompt with, User activation link has been copied to clipboard, click Close.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> Start a new tab in the browser, and paste the copied link to the address bar. Press Enter to visit that page.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> You will be asked to create a password for the account; type NDGlabpass123! and then click Create Password.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> You will be brought to the main admin page, and the upper-right corner should show that you are logged in as the netlab_tenantadmin@xyzsecurity.com account. To the left side, there will be more options showing than before.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> Click the Customers button, then on the right side, click the + to add a new customer.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> In the pop-up window, we will fill the title field with test_customer as our customer and leave the rest blank. Click the Add button.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> The customer should be created and shown on the Customers page. Leave the window open and proceed to the next step.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>Create and Add an IoT Device</h3>
+<p class="why">In this section, you will create and add a device to the ThingsBoard server.</p>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.2</span><h3>Add a New Rule Chain</h3>
+<div class="step"><p><span class="snum">1</span> We will create a rule chain first. This will be used in the new device. Click on the Rule Chains button from the left panel. Then click the + button at the upper-right corner and select the Create new rule chain option.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> In the pop-up window, type temperatureRule. Then, click Add to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> You will have two rule chains; click the Open rule chain button on the right side of the temperatureRule.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> You will see something like this:</p>
+</div>
+<div class="step"><p><span class="snum">5</span> To the left side, find message type switch, click and drag it to the grids on the right. When prompted, type check POST telemetry as the Name. Then, click Add.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> You should have something like this now:</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Next, find check existence fields and drag it to the grids.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> When prompted, type check temperature and humidity fields as the Name. In the Message data area, type temperature and press Enter; type humidity and press Enter. You should have something like what is shown below. Leave the Message metadata empty and click Add to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Next, find script and drag it to the grids.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> When prompted, type check temperature and humidity data as the Name, then change the script in the function Filter area. When finished, click Add to confirm. The script should be: return msg.temperature &gt; 68 &amp;&amp; msg.temperature &lt; 71 &amp;&amp; msg.humidity &gt; 40 &amp;&amp; msg.humidity &lt; 60</p>
+</div>
+<div class="step"><p><span class="snum">11</span> Once again, on the left side, find save timeseries and drag it to the grids. When prompted, type save the entry as the Name. Change the Default TTL in seconds to 3 and click Add to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> For the last time, on the left side, find create alarm and drag it to the grids.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> When prompted, type warning as the Name. Then, add the following script to the function Details area. When finished, click Add to confirm. details.temperature = msg.temperature; details.humidity = msg.humidity;</p>
+</div>
+<div class="step"><p><span class="snum">14</span> Your grid area should look something like this. The next step is to connect them to make a chain.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> Click on the round connection point to the right side of Input. Click and drag it to the connection point on the left side of the message type switch. After you release the mouse, it should create a link with the arrow pointing to the direction of the data flow.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Use the same method to create a link between message type switch and check existence fields. When prompted, select Post telemetry as the Link label.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> Then, add a link between check existence fields and script. When prompted, select True as the Link label. Click Add to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> Add a link from script to save timeseries. When prompted, select True. Click Add to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> Add a link from script to create alarm. When prompted, select False. Click Add to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> With all links added, everything should look like this:</p>
+</div>
+<div class="step"><p><span class="snum">21</span> Save the changes by clicking the orange checkmark button at the lower-right corner.</p>
+</div>
+<div class="step"><p><span class="snum">22</span> Leave the window open and proceed to the next step.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.3</span><h3>Add New Device</h3>
+<div class="step"><p><span class="snum">1</span> Click on Devices on the left side. Then, click the + button in the upper-right corner and select the Add new device option.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> The Add new device window will appear. Type temperatureSensor as the Name. Then, select to check Create new device profile. Type mqtt as the Device profile name. Select temperatureRule for the Rule chain option, and Main for the Queue Name. Double-check everything; once done, you can then click the Next: Transport configuration button.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> On the Transport Configuration page, click to change the Transport type to MQTT. Then, change the Telemetry topic filter to v1/devices/temperatureSensor/telemetry and change the Attributes topic filter to v1/devices/temperatureSensor/attributes. These paths will be used for the MQTT message later on. Click Next: Alarm rules to continue.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> On the Alarm rules page, we will not add any rules. Click Next: Device provisioning to continue.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> On the Device provisioning page, do not change anything, click Next: Credentials to continue.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> On the Credentials page, we will not add credentials. Click Next: Customer to continue.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Click to select test_customer in the Customer to assign the device field. Click Add to add the device.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Leave the ThingsBoard window open and proceed to the next section.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3</span><h3>Testing the Device</h3>
+<div class="step"><p><span class="snum">1</span> A quick way to test the device we created is to send an MQTT message to the ThingsBoard server from the terminal. First, we will get the access token from our temperatureSensor device. With the ThingsBoard still open, make sure you are still on the Devices page. Then, click on the temperatureSensor once.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> A panel will slide open from the right side. Click on Copy access token.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> A pop-up message will show quickly at the lower-right corner, indicating that the Device access token has been copied to clipboard. Click Close.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Once the token is copied, click Latest temeletry and we will observe the data from this tab. Right now, there is no telemetry at all.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Start a new terminal and enter the following command. Replace the $ACCESS_TOKEN with the token we just copied. Press Enter to send the message to the ThingsBoard server.</p>
+<div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> mosquitto_pub -d -q 1 -h "127.0.0.1" -t
+"v1/devices/temperatureSensor/telemetry" -u "$ACCESS_TOKEN" -m
+"{"temperature":69,"humidity":56}"</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> The $ACCESS_TOKEN must be replaced for the message to work. The token in the example will be different from yours.</div>
+</div>
+<div class="step"><p><span class="snum">6</span> Immediately, you should see a telemetry show up in the ThingsBoard, under the Latest telemetry tab.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Alternatively, you could move the Terminal window to show the Latest telemetry in the background. Then, change the humidity to 50 and run the command again.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Now, we will set a higher temperature to create an alarm. Go back to the ThingsBoard and click on the Alarms tab. There is nothing right now.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Switch back to the Terminal window; we will send another MQTT message but with a temperature of 85. An alarm will show up with a Severity level of Critical. If the Alarm page does not refresh itself, click the Refresh button.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> We can acknowledge the alarm and even clear the alarm once it has been dealt with. Click the Details button.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> In the pop-up window, click Acknowledge, then click Clear. Once cleared, you can click the Close to exit the pop-up window.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Now the Status should indicate Cleared Acknowledged.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> The lab is now finished; you may end the reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

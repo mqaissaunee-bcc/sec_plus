@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,36 +292,233 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>Kali</b></td><td><code>203.0.113.2</code></td><td><code>kali</code></td><td><code>kali</code></td></tr><tr><td><b>pfSense</b></td><td><code>192.168.0.1</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>SecOnion</b></td><td><code>192.168.0.6</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>UbuntuSRV</b></td><td><code>172.16.1.10</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>WinOS</b></td><td><code>192.168.0.50</code></td><td><code>Administrator</code></td><td><code>NDGlabpass123!</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">Capture, read, and compare cleartext against encrypted.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · tcpdump basics</span>
-        <h3>Capture from the command line</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> ping 192.168.0.50
-<span class="pr">sysadmin@seconion:~$</span> sudo tcpdump -i ens192 icmp         <span class="cmt"># only ICMP</span>
-<span class="pr">sysadmin@seconion:~$</span> sudo tcpdump -i ens192 arp          <span class="cmt"># only ARP</span>
-<span class="pr">sysadmin@seconion:~$</span> sudo tcpdump -i ens192 -w cap.pcap  <span class="cmt"># save to a file</span></div>
-        <p class="why">A <strong>capture filter</strong> like <code class="inl">icmp</code> or <code class="inl">arp</code> limits what's recorded to one protocol. The output line reads <code class="inl">time  IP src &gt; dst: type, id, seq, len</code>. <code class="inl">-w</code> writes a pcap instead of printing — that's how an admin saves evidence for later analysis; <code class="inl">Ctrl+C</code> stops the capture.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> tcpdump output filtered to ICMP (and the saved .pcap).</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · FTP in the clear</span>
-        <h3>The point of the whole lab</h3>
-        <div class="code-block"><span class="pr">kali@kali:~$</span> ftp 192.168.0.50     <span class="cmt"># log in as anonymous / anonymous</span></div>
-        <p class="why">Capture this login in Wireshark and follow the stream: the <code class="inl">USER</code> and <code class="inl">PASS</code> commands show the username and password as readable text. FTP sends credentials with no protection at all — anyone capturing the link has them.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> Wireshark showing the FTP username and password in plaintext.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · SFTP encrypted</span>
-        <h3>The same login, hidden</h3>
-        <div class="code-block"><span class="pr">kali@kali:~$</span> sftp sysadmin@192.168.0.6</div>
-        <p class="why">Capture the SFTP session and you'll see the <strong>Diffie-Hellman key exchange</strong> up front — and after it, nothing readable. The login and file transfer are encrypted over the medium. Same task, same credentials, completely different exposure.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the Wireshark SFTP capture: the key exchange, then encrypted (unreadable) packets.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 4 · HTTP with dumpcap &amp; NetworkMiner</span>
-        <h3>Reassemble what crossed the wire</h3>
-        <div class="code-block"><span class="pr">sysadmin@seconion:~$</span> sudo dumpcap -P -i ens192 -w /tmp/netcapture2.pcap
-<span class="pr">sysadmin@seconion:~$</span> sudo networkminer   <span class="cmt"># carve files/creds from the capture</span></div>
-        <p class="why"><code class="inl">dumpcap</code> is Wireshark's lightweight capture engine, good for long or headless captures. <strong>NetworkMiner</strong> reassembles a capture into the files, images, and credentials that passed by — making the cost of plain HTTP vivid.</p>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Using tcpdump to Capture and Analyze Network Traffic</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Using tcpdump to Capture ICMP Traffic</h3>
+<div class="step"><p><span class="snum">1</span> Launch the SecOnion virtual machine.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> If you see the SecOnion lock screen, click, hold, and drag up to unlock it.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> On the login screen, type sysadmin as the username and NDGlabpass123! as the password. Click Sign In.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Navigate to Applications &gt; System Tools and click the Terminal icon to launch a new terminal.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Type the command below, followed by pressing the Enter key. If prompted, enter NDGlabpass123! for root privileges. sysadmin@seconion ~$ sudo so-status</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> If so-status reports back with all modules as OK, proceed to the next step. If not, wait a few minutes and try the command again until all show as OK.</div>
+<p class="why">so-</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Type the command below to view all available interfaces on the system. The screenshot below shows two physical interfaces: ens160 and ens192. sysadmin@seconion ~$ ifconfig -a</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Issue the command below to identify which flags are configured for each interface. sysadmin@seconion ~$ netstat -i</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> Notice how BMPRU is set for the interfaces under the Flg column. Notice that BMPORU is set for both eth1 and eth2. For a quick overview: B flag is for broadcast, M flag is for multicast, P flag is for promiscuous mode, O flag is for no ARP (Address Resolution Protocol) requests, R flag is for running and U flag is for up. Also, notice that LRU is set for lo; the L flag means that the specified interface is a loopback device.</div>
+</div>
+<div class="step"><p><span class="snum">8</span> To familiarize yourself with the tcpdump utility, type the following command to view several available options for tcpdump. sysadmin@seconion ~$ tcpdump --help</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Launch the Kali virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> Log in as kali with kali as the password.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> Click the Firefox icon located in the top menu bar.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Once Firefox opens, go to pfSense on address http://203.0.113.1, then sign in using username sysadmin and password NDGlabpass123!.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> Go to Firewall &gt; Rules.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> On the Rules page, make sure you are on the WAN category. Then, click the disable button to disable the rule where the Description says Block Internal network access.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> In a real-world scenario, you do not want to disable this rule on your firewall. The outside network should not be allowed to have direct access to the intranet.</div>
+</div>
+<div class="step"><p><span class="snum">15</span> Click Apply Changes, to make the change effective.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Close Firefox, click on the Terminal icon located in the top menu bar.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> Type the following command to initiate a continuous ping to the WinOS system. Leave the pings running in the background and proceed to the next step.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> ping 192.168.0.50</div>
+</div>
+<div class="step"><p><span class="snum">18</span> Switch back to the SecOnion system. In the previous Terminal, run tcpdump on the internal network by entering the command below. If prompted with a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump -i ens192 icmp</p>
+</div>
+<div class="step"><p><span class="snum">19</span> Notice the output that tcpdump provides: HH:MM:SS.mmmmmm IP src &gt; dst: ptype, id, seq, len. Also, take note that for each echo request, there is a reply. HH:MM:SS.mmmmmm                      Timestamp in hours, minutes, seconds, and</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> microseconds</div>
+<p class="why">IP                                   Internet Protocol</p>
+<p class="why">src &gt; dst                            Source and destination IP addresses</p>
+<p class="why">ptype                                Packet type</p>
+<p class="why">id, seq, len                         IP headers; identification, protocol (1=ICMP), total length</p>
+</div>
+<div class="step"><p><span class="snum">20</span> After a minute, press CTRL+C to stop tcpdump from running and discontinue the network capture.</p>
+</div>
+<div class="step"><p><span class="snum">21</span> From an administrator's standpoint, we may want to save the output from a tcpdump capture and save it automatically into a compatible file to view later with a program such as Wireshark. Initiate the command below to capture traffic on the 192.168.1.0/24 network and send it to a file. If prompted with a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump icmp -i ens192 -s 0 -w netcapture1.pcap -c 100 The following table lists details of the options used with the tcpdump command icmp            Captures only ICMP packets (works for tcp, udp, and</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> icmp)</div>
+<p class="why">-i eth0          Use interface zero</p>
+<p class="why">-s 0           Disables default packet size, date and time format</p>
+<p class="why">-w            Write to a captured file, instead of displaying to the screen</p>
+<p class="why">-c           Split the captures into files of this size</p>
+</div>
+<div class="step"><p><span class="snum">22</span> Wait for about 1-2 minutes until all 100 packets are captured.</p>
+</div>
+<div class="step"><p><span class="snum">23</span> To view the captured file in a graphical user interface like Wireshark, enter the command below in the SecOnion terminal. If prompted with a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo wireshark netcapture1.pcap</p>
+</div>
+<div class="step"><p><span class="snum">24</span> Notice the traffic listed that takes place on the 192.168.1.0/24 network.</p>
+</div>
+<div class="step"><p><span class="snum">25</span> Close Wireshark.</p>
+</div>
+<div class="step"><p><span class="snum">26</span> Switch to the Kali machine and press CTRL+C to stop the continuous pings.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Using tcpdump to Capture ARP Traffic</h3>
+<div class="step"><p><span class="snum">1</span> Change focus to the SecOnion system.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> In a Terminal window, enter the ARP command below and examine the results. sysadmin@seconion ~$ arp -n</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Enter the command below to capture ARP packets. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump -i ens160 -nn -e arp</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Launch the UbuntuSRV virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Log in as sysadmin with NDGlabpass123! as the password.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Open a Terminal window by clicking on the terminal icon located in the left menu pane.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Type the ping command below.</p>
+<div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> ping -c4 192.168.0.6</div>
+</div>
+<div class="step"><p><span class="snum">8</span> Switch back to SecOnion and press CTRL+C to stop the tcpdump capture. Notice the ARP output: HH:MM:SS:mmmmmm srcMAC &gt; dstMAC: ptype, len, request/response, length.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Enter the command below to display the ARP table. Notice the ARP entry for the IP address 192.168.0.1 is showing in the orange square. sysadmin@seconion ~$ arp -n</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>Using Wireshark to Capture &amp; Analyze Network Traffic</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.1</span><h3>Using Wireshark to Capture FTP Traffic</h3>
+<p class="why">2.1.1       Setup FTP Server</p>
+<div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen. While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in as Administrator using the password NDGlabpass123!.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Once logged in, click the Server Manager icon to launch it.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> In the Server Manager window, click Manage in the upper-right corner. We will install FTP service to the server.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> In the pop-up window, click Next.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> On the Select destination server step, click Next.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> On the Select server roles screen, scroll down to check the box in front of Web Server(IIS).</p>
+</div>
+<div class="step"><p><span class="snum">8</span> In the new pop-up window, click Add Features.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> When brought back to the Select server roles window, click Next.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> On the Select features window, click Next.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> At the Web Server Role (IIS) window, click Next.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> At the Select role services window, scroll down, and check the FTP Server box, click Next.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> At the Confirm installation selections window, click Install.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> At the Installation progress window, wait until the process is finished. Click Close.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> Once the window is closed, click the Tools menu in the Server Manager window, then select Internet Information Services (IIS) Manager.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> In the IIS Manager window, click the WINOS server.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> To the right side, you will see the WINOS Home page. Double-click the FTP Authentication icon.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> You will see the list of authentication modes and their status. For simplicity purposes, we will just enable the anonymous user. Right-click on Anonymous Authentication, select Enable.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> The next step is to create a site so anonymous can log in. In the left pane, click the arrow to expand WINOS, then right-click on the Sites. In the pop-up menu, select the Add FTP Site option.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> In the new window, type anonymous for the site name, and click the button with three horizon dots to set the path.</p>
+</div>
+<div class="step"><p><span class="snum">21</span> In the Browse For Folder window, expand Local Disk (C:), then expand inetpub, then click on ftproot. Click OK to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">22</span> You will be brought back to the Add FTP Site window. Double-check everything, then click the Next button.</p>
+</div>
+<div class="step"><p><span class="snum">23</span> On the next page, click and select the binding address 192.168.0.50, check to use No SSL and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">24</span> In the last step, make sure the Anonymous authentication is checked, and Allow access to Anonymous users, then add both Read and Write permissions. Click Finish to confirm.</p>
+</div>
+<div class="step"><p><span class="snum">25</span> We will finish the last step for the FTP setup. Open the port to the world. Click the Search button, and type firewall. In the search result, click the first Windows Defender Firewall.</p>
+</div>
+<div class="step"><p><span class="snum">26</span> In the left pane of the new window, click Turn Windows Defender Firewall on or off.</p>
+</div>
+<div class="step"><p><span class="snum">27</span> Make sure to check Turn Off Windows Defender Firewall for all three types of networks. Then, click OK to confirm. 2.1.2       Monitor the FTP Traffic</p>
+</div>
+<div class="step"><p><span class="snum">1</span> In the SecOnion system, open a Terminal window and type the command below to run Wireshark as root. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo wireshark</p>
+</div>
+<div class="step"><p><span class="snum">2</span> In the Wireshark window, to the left side of the Capture section, scroll down and find ens192, click to select, then click the Start button.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Now, switch the focus to the Kali machine. Change focus to the terminal and type the command below to connect to the FTP server located on the WinOS Server. When prompted for a username and password, enter anonymous as the user and anonymous again as the password. kali@kali ~$ ftp 192.168.0.50</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Once the FTP connection is complete, type exit to exit out of the connection. ftp&gt; exit</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Switch back to the Wireshark window on SecOnion and press the Stop Capture button.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> In the Filter field, type ftp and press Enter. Now that the packet focus is on FTP only, locate the initial request. Here, you can see the username anonymous and the password of anonymous in clear text</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.2</span><h3>Using Wireshark to Capture SFTP Traffic</h3>
+<div class="step"><p><span class="snum">1</span> Start a new capture by clicking on the Start a new live capture button.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> If prompted to save the capture file, select Continue without Saving.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> In the filter pane, type ssh and press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Change focus to the Kali system. Focus on the terminal and enter the command below, when asked, are you sure you want to continue, type yes. Then, you will be prompted for a password; enter NDGlabpass123!.</p>
+<div class="code-block"><span class="pr">kali@kali:~$</span> sftp sysadmin@192.168.0.6</div>
+</div>
+<div class="step"><p><span class="snum">5</span> Switch to the SecOnion system and stop the capture by clicking the Stop Capture button.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Locate the Diffie-Hellman key exchange between the client and the SFTP service. After the key exchange, the packets that follow are encrypted over the medium. Feel free to clear the filter and examine the traffic. You will no longer see the username and password in clear text compared to FTP.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Close the Wireshark application. When prompted, click Quit without Saving.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Leave the SecOnion viewer open to continue with the next task.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3</span><h3>Capturing and Analyzing HTTP Traffic</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.1</span><h3>Using dumpcap to Capture HTTP Traffic</h3>
+<div class="step"><p><span class="snum">1</span> While on the SecOnion system, focus on the terminal window and enter the command below. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo dumpcap -P -i ens192 -w /tmp/netcapture2.pcap</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Switch focus to the Kali system, start a browser, then go to address 192.168.0.50 followed by pressing the Enter key. Wait until the page finishes loading. The address should return the Internet Information Services default page on Windows Server.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Switch back to the Terminal running dumpcap and press CTRL+C to stop the running process</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Leave the Terminal open to continue with the next task.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.2</span><h3>Using Network Miner to Capture HTTP Traffic</h3>
+<div class="step"><p><span class="snum">1</span> While in the Terminal, enter the command sudo networkminer to open the program (enter NDGlabpass123! if prompted for a password). On the Network Miner application window, navigate to File &gt; Open.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Select the My Computer icon from the left pane. On the right side, double-click HDD (xfs, mapper/system-tmp).</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Next, Select the netcapture2.pcap file and select Open. If you don't see the netcapture2.pcap file, scroll the horizontal bar to the right side, until you see netcapture2.pcap on the top.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Once the PCAP is finished loading, click on the Files tab within the Network Miner program.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Notice the list of files acquired. Click on the Images tab.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Notice the images that are captured.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> The lab is now complete; you may end the reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

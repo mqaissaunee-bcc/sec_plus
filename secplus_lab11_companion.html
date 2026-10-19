@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,26 +292,131 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>Kali</b></td><td><code>203.0.113.2</code></td><td><code>kali</code></td><td><code>kali</code></td></tr><tr><td><b>pfSense</b></td><td><code>192.168.0.1</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>SecOnion</b></td><td><code>192.168.0.6</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>UbuntuSRV</b></td><td><code>172.16.1.10</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>WinOS</b></td><td><code>192.168.0.50</code></td><td><code>Administrator</code></td><td><code>NDGlabpass123!</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">Two implementations, one test.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · Windows NPS</span>
-        <h3>RADIUS the Microsoft way</h3>
-        <p class="why">Add the <strong>Network Policy and Access Services</strong> role (Network Policy Server), then configure a <strong>network policy</strong>: the conditions a request must meet, the RADIUS <strong>clients</strong> allowed to ask, and the <strong>shared secret</strong> that authenticates those clients to the server. NPS is how Windows environments centralize network authentication.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the NPS role installed and a network policy configured.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · FreeRADIUS</span>
-        <h3>RADIUS the open-source way</h3>
-        <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo nano /etc/freeradius/3.0/mods-config/files/authorize   <span class="cmt"># add a test user</span>
-<span class="pr">sysadmin@ubuntusrv:~$</span> sudo freeradius -X     <span class="cmt"># run in debug mode — shows every decision</span></div>
-        <p class="why">Add a user to the <code class="inl">authorize</code> file, then run FreeRADIUS with <code class="inl">-X</code> (debug), which prints exactly what happens on each request — the single most useful troubleshooting tool here.</p>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · Test it</span>
-        <h3>Ask for a verdict</h3>
-        <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> radtest testing password 127.0.0.1 18120 testing123</div>
-        <p class="why">The arguments are username, password, server, port, and the <strong>shared secret</strong> (<code class="inl">testing123</code>). A correct request returns <strong>Access-Accept</strong>; wrong credentials or a mismatched secret return a reject. That exchange is exactly what a switch or VPN does on every login.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the radtest command returning Access-Accept.</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Configure RADIUS on Windows</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Add the Network Policy Role</h3>
+<p class="why">In this task, you will add the role of Network Policy Server to the WinOS server. You will then add the</p>
+<p class="why">Network Policy and Access Services Tools.</p>
+<div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Log in as Administrator using the password NDGlabpass123!.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Once logged in, click the Server Manager icon to launch it. In the Server Manager window, click on Manage in the top-right corner and select Add Roles and Features.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Notice the Add Roles and Features Wizard appears. On the Installation Type step, keep the default setting of Role-based or feature-based Installation and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> On the Server Selection step, select the WinOS.netlab.local server from the pool and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> On the Server Roles step, check the checkbox for Network Policy and Access Services and notice a pop-up window appears. Click the Add Features button.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Back on the main wizard window, ensure that Network Policy and Access Services is checked, and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> On the Features step, leave the defaults and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> On the Network Policy and Access Services step, review the information and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> On the Confirmation step, click Install to finish the installation of the Network Policy Server.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> The installation will take about 3 minutes. After the install is complete, click Close.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Configure the Network Policy Server</h3>
+<div class="step"><p><span class="snum">1</span> Back on the Server Manager window, navigate to Tools &gt; Network Policy Server.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> In the Network Policy Server window, in the left pane, right-click on NPS (Local) and select Register Server in Active Directory.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> When prompted to authorize, click OK to continue.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Click OK again to confirm that the system is now authorized.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Expand the RADIUS Clients and Servers inventory object, right-click on RADIUS Clients and click New.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> In the New RADIUS Client window, fill in the following information: a. Friendly name: SecOnion b. Address: 192.168.0.6 c. Shared secret: password123 d. Confirm shared secret: password123</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Once the configurations are made, click OK.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Select RADIUS Clients from the left pane and verify that the SecOnion Client appears in the right pane and that it is enabled.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Now it is time to create a new network policy. In the left pane, expand Policies, right-click on Network Policies and select New.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> In the New Network Policy window, type Remote Access RADIUS in the Policy name text field and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> On the Specify Conditions step, click the Add button.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> In the Select condition window, scroll down and select Access Client IPv4 Address and click Add.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> When prompted for an IPv4 address, type 192.168.0.6 and click OK.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> Back on the Specify Conditions step, ensure that the new condition is listed and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> On the Specify Access Permission step, leave Access granted selected and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> On the Configure Authentication Methods step, leave the default settings and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> On the Configure Constraints step, leave the default settings and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> On the Configure Settings step, leave the defaults and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> On the Completing New Network Policy step, leave the defaults and click Finish.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> Back on the Network Policy Server window, in the left pane, click on Network Policies and confirm the new policy appears in the right pane.</p>
+</div>
+<div class="step"><p><span class="snum">21</span> This section is now complete. Proceed to the next section to configure RADIUS on the Ubuntu system.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>FreeRADIUS on Ubuntu</h3>
+<div class="step"><p><span class="snum">1</span> Launch the UbuntuSRV virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in as sysadmin using the password NDGlabpass123!.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Click the Terminal icon in the dock to start Terminal.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> In the new Terminal window, type the command service freeradius status to check the status of the service. It should say inactive. Press q on the keyboard to get out of the status check.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> We are going to create a test account to locally test the RADIUS server. Type the command below in the Terminal. Enter NDGlabpass123! when prompted for a password. sudo nano /etc/freeradius/3.0/mods-config/files/authorize</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Once in the editor, press Enter to insert a newline at the top of the file. Then add the user info by typing: testing Cleartext-Password := "password"</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Then, press Ctrl + S to save the file and Ctrl + X to quit the editor.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Start a new Terminal by right-clicking the Terminal icon in the dock and selecting New Window.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Rearrange the two windows to make them side-by-side.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> RADIUS is mostly used for Business Wireless Access Point authentication. It is an alternative method to Active Directory. In this lab, we are only going to test and learn the functionality of RADIUS rather than configure it. In the first Terminal window, type the command sudo freeradius -X and press Enter to run it. The -X option will run the freeradius service in debugging mode. Enter NDGlabpass123! when prompted for the password.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> When you see the Ready to process requests prompt, it means the RADIUS server is up and running. And for local testing, it is bound to port 18120.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Now switch to the other Terminal window. Enter the command radtest -h to bring up the help page.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> Based on the help info, the command we will be using is: radtest testing password 127.0.0.1 18120 testing123</p>
+</div>
+<div class="step"><p><span class="snum">14</span> If you see the result showing Received Access-Accept, it means the RADIUS server is working.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> And you should see the response scrolling in the other window.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> The lab is now complete; you may end your reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

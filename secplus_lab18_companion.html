@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,25 +292,199 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>Kali</b></td><td><code>203.0.113.2</code></td><td><code>kali</code></td><td><code>kali</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">Three captures, three levels of (in)security.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · Plaintext</span>
-        <h3>Nothing to crack — just read it</h3>
-        <p class="why">Open <code class="inl">httpcapture.cap</code> in Wireshark. With no encryption, you can <strong>export objects</strong> straight from the capture: pull an image out of HTTP traffic, and extract a zip transferred over FTP (<code class="inl">File &rarr; Export Objects</code>, or follow a stream like <code class="inl">tcp.stream eq 59</code> / filter <code class="inl">ftp-data</code>). Open Wi-Fi hands files to anyone listening.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> an image or zip exported directly from the plaintext wireless capture.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · WEP — broken</span>
-        <h3>Crack the key in seconds</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> aircrack-ng WEP.cap</div>
-        <p class="why">Run aircrack-ng against the WEP capture and it recovers the <strong>64-bit WEP key</strong> almost instantly — WEP's flawed use of initialization vectors leaks the key as traffic accumulates. Load the key into Wireshark to <strong>decrypt</strong> the capture, and the 'protected' traffic is now fully readable. WEP is the textbook example of broken crypto.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> aircrack-ng recovering the WEP key, and the decrypted traffic in Wireshark.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · WPA — the point of comparison</span>
-        <h3>Encrypted, and not a pushover</h3>
-        <p class="why">Open the <code class="inl">WPA.cap</code> capture. WPA (and WPA2/WPA3) don't fall to the same instant key-recovery — at best an attacker captures the handshake and must brute-force a strong passphrase offline, which a good passphrase defeats. The contrast with WEP is the lesson: same radio, vastly different protection.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the WPA capture open in Wireshark (encrypted, not trivially decrypted).</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Examining Plain Text Traffic</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Viewing Plain Text Wireless Traffic</h3>
+<div class="step"><p><span class="snum">1</span> Click on the Kali tab to access the Kali VM.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in to the Kali VM as username kali, password kali.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> On the desktop, find and double-click to open the folder named captures.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> In the pop-up window. Double-click the httpcapture.cap file to open it in Wireshark.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Click the maximize button shown on the screenshot to maximize the window to full-screen inside the VM.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Select the first frame in the Wireshark capture file.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> In the middle of the screen, click the arrow icon in front of the IEEE 802.11 Wireless Management to expand its view.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Dive in further by clicking the arrow icon in front of Tagged parameters followed by clicking the arrow icon in front of Tag: Vender Specific: Microsoft Corp.: WPA Information Element. View the WPA Version. Drag the handle to make the packet detail section area larger.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> View captured DNS requests by typing dns in the Filter pane, then press Enter. 1.1.1       Extract Image from Capture</p>
+</div>
+<div class="step"><p><span class="snum">1</span> With Wireshark, we can export images and files that have passed through the capture communication channel. Try exporting a file by clicking on the File menu option on the top pane and navigating to Export Objects &gt; HTTP.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> A new window appears. Look through the list of files that have been downloaded by wireless users. Under the Filename column, find the image file Securityv4.jpg and select the file. (Or, find the number 5393 under the Packet column.). With the file selected, click the Preview button.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> A preview window will open, showing a topology. Click the X to close the preview. Feel free to select and preview other image files being captured. Close the preview window once you finish examining them.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Alternatively, you can choose to save the Securityv4.jpg file. Having the file selected, click the Save button.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> In the Save Object As window, choose the /home/kali/Desktop directory to save to and click the Save button.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> View the image by selecting the Show desktop menu option located next to the Applications menu. Double-click to open Securityv4.jpg.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> The same topology image opens. Close the image viewer.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Click the Show desktop button again to restore the windows. Close the HTTP object list window. 1.1.2       Extract Zip File from FTP Traffic</p>
+</div>
+<div class="step"><p><span class="snum">1</span> Within the Wireshark interface, type ftp into the Filter: and press Enter. Because FTP is not encrypted, you will be able to see captured FTP traffic as well as clear-text usernames and passwords. Analyze the FTP traffic.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> You will want to disable the anonymous user access and use a secured FTP service for file sharing.</div>
+</div>
+<div class="step"><p><span class="snum">2</span> Next, we will pull a zip file via FTP out of the wireless capture file. Type ftp-data and frame contains PK into the Wireshark Filter: and press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Right-click on either the frame 1886 or 2746 in the list and select Follow, TCP Stream.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Examine the data shown in the TCP stream. Scroll to the bottom of the window and notice the PK" attached to the end of filenames.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Within the Follow TCP Stream window, click Show data as Raw, then click Save As.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Type images.zip in the Name text field. Set the save destination to /home/kali/Desktop and click the Save button.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Close the Follow TCP Stream window.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Open a new Terminal window and type the command below to unzip the file that was just pulled from the Wireshark capture file.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> unzip ~/Desktop/images.zip -d ~/Desktop</div>
+</div>
+<div class="step"><p><span class="snum">9</span> Select the Show desktop menu option from the top menu pane and double-click on the images Folder.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> Notice the three different image files in the images directory that were extracted from images.zip. Feel free to open each of them and check the content.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> Close the images window.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Leave the Kali window open to continue with the next task.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>Exploiting and Examining WEP Traffic</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.1</span><h3>Decrypt and Analyze WEP Traffic</h3>
+<div class="step"><p><span class="snum">1</span> Click on the httpcapture.cap Wireshark window to restore it.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Select the File menu option and click on Open.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> A new window appears. Verify that you are in the /home/kali/Desktop/captures directory. Select the WEP.cap file and click the Open button.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> In the Filter: pane, type dns and press Enter.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> You will not see any traffic displayed because the wireless traffic is encrypted.</div>
+</div>
+<div class="step"><p><span class="snum">5</span> Close the Wireshark application by selecting the File menu option and clicking on Quit.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Change focus to the terminal window and enter the command as shown below.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> aircrack-ng ~/Desktop/captures/WEP.cap</div>
+</div>
+<div class="step"><p><span class="snum">7</span> After a few seconds, the aircrack-ng program will be able to crack the 64-bit WEP key. Notice the output.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> After the WEP key is obtained, decrypt the network traffic with airdecap-ng. Enter the command shown below to decrypt the traffic.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> airdecap-ng -w 6B:33:6C:33:21 ~/Desktop/captures/WEP.cap</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> The number of decrypted WEP packets should be 37612.</div>
+</div>
+<div class="step"><p><span class="snum">9</span> Analyze the decrypted traffic with Wireshark. Change the focus to the captures window, double- click the WEP-dec.cap to open it in Wireshark.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> In the Filter: pane, type dns and press Enter.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> Notice that you can now see the DNS requests within the wireless traffic because the WEP traffic was decrypted with airdecap-ng.</div>
+</div>
+<div class="step"><p><span class="snum">11</span> Select the File menu option and navigate to Export Objects &gt; HTTP.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> A new window will appear. Browse through the list and examine what the wireless users were downloading. Under the Packet number column, select item #33076 (pic01.jpg). Once selected, click the Preview button.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> The Image Viewer window opens, showing the image content.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> Close the Image Viewer window.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> Close the HTTP object list window.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Change focus to the Wireshark application and type ftp into the Filter: pane. Click Apply. You will be able to see decrypted FTP traffic as well as clear-text usernames and passwords. Analyze the FTP traffic.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> Let's pull a ZIP file transferred via FTP from the wireless capture. Type tcp.stream eq 59 in the Filter: pane. Press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> Right-click on the first frame in the list and select Follow, TCP Stream.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> A new window appears. Change the Show data as to Raw, then click the Save as button.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> For the filename, type netlab.zip. Make sure the directory is set to /home/kali/Desktop/captures and click the Save button.</p>
+</div>
+<div class="step"><p><span class="snum">21</span> Close the Follow TCP Stream window.</p>
+</div>
+<div class="step"><p><span class="snum">22</span> Change focus to the captures window. Double-click on the netlab.zip file to open it.</p>
+</div>
+<div class="step"><p><span class="snum">23</span> A new window opens, showing the content of the zip file. Feel free to check the content in the netlab folder.</p>
+</div>
+<div class="step"><p><span class="snum">24</span> Once you finished observing the files, close the netlab.zip window.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3</span><h3>Exploiting and Examining WPA Traffic</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.1</span><h3>Exploiting and Examining WPA Traffic</h3>
+<div class="step"><p><span class="snum">1</span> Change focus to the Wireshark application. Open a WPA capture file by selecting the File menu option. Click Open.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Navigate to the /home/kali/Desktop/captures directory and select the WPA.cap file. Click the Open button.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> In the Filter: pane, type ftp and press Enter.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> You will not see any traffic because the wireless network traffic is encrypted.</div>
+</div>
+<div class="step"><p><span class="snum">4</span> Close Wireshark, change focus to the terminal window, and type the command shown below.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> aircrack-ng ~/Desktop/captures/WPA.cap -w /usr/share/john/password.lst</div>
+</div>
+<div class="step"><p><span class="snum">5</span> After a couple of seconds, the WPA passphrase is obtained.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Decrypt the traffic for the wireless network NetLab-WirelessHacking. Type the command shown below to decrypt the traffic.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> The number of decrypted of WPA packets should be 9855.</div>
+</div>
+<div class="step"><p><span class="snum">7</span> Change focus to the Captures window.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Double-click the WPA-dec.cap file to open it in Wireshark.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> In the Filter: pane, type dns and press Enter.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> You will now be able to see DNS requests with the decrypted wireless traffic.</div>
+</div>
+<div class="step"><p><span class="snum">10</span> Select the File menu option and navigate to Export Objects &gt; HTTP.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> A new window will appear. Browse through the list and examine what the wireless users were downloading. Under the Packet number column, find item #676 (pic01.jpg) and select it. Click the Preview button.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> The Image Viewer window opens, showing the content of the image.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> Close the Image Viewer window and the HTTP object list window.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> Change focus to the Wireshark application and type ftp in the Filter: pane. Press Enter.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> You will now be able to see the decrypted FTP traffic along with clear text usernames and passwords.</div>
+</div>
+<div class="step"><p><span class="snum">15</span> Scroll down through the ftp frames and examine some of the file names that were transferred.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Pull one of the zip files transferred via FTP. Type tcp.stream eq 75 into the Filter: pane. Press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> Right-click on the first frame in the list (#6825) and select Follow &gt; TCP Stream.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> A new window appears. Change the Show data as to Raw, then click the Save as button.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> For the name, type netlab2.zip. Verify the directory you are saving the file to is /home/kali/Desktop/captures. Click Save.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> Close the Follow TCP Stream window.</p>
+</div>
+<div class="step"><p><span class="snum">21</span> Change focus to the captures window. Double-click the netlab2.zip file to open it.</p>
+</div>
+<div class="step"><p><span class="snum">22</span> A new window opens, showing the content of the zip file. Feel free to check the content in the netlab2 folder.</p>
+</div>
+<div class="step"><p><span class="snum">23</span> The lab is now complete; you may end the reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

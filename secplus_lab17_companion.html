@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,29 +292,199 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>Kali</b></td><td><code>203.0.113.2</code></td><td><code>kali</code></td><td><code>kali</code></td></tr><tr><td><b>pfSense</b></td><td><code>192.168.0.1</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>UbuntuSRV</b></td><td><code>172.16.1.10</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">Block, redirect, tunnel.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · Block a protocol</span>
-        <h3>Deny ICMP and prove it</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> ping -c4 172.16.1.10     <span class="cmt"># works before the rule...</span>
-<span class="pr">kali@kali$</span> ping -c4 172.16.1.10     <span class="cmt"># ...times out after the block rule is applied</span></div>
-        <p class="why">Add a pfSense rule to block ICMP, then ping the target — the ping now fails. This is the simplest possible demonstration of a firewall rule: a specific protocol, denied, with observable effect. (It's also why hosts behind firewalls look 'down' to nmap — Lab 07's lesson, from the defender's side.)</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the ping succeeding, then failing after the block-ICMP rule is applied.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · Port forwarding (NAT)</span>
-        <h3>Send an outside port to an inside host</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> ssh sysadmin@203.0.113.1    <span class="cmt"># hitting the firewall's WAN address...</span></div>
-        <p class="why">Configure a NAT port-forward so a connection to the firewall's external address is redirected to an internal host. Now an SSH to the firewall's WAN IP lands on the internal server. Port forwarding is how services behind NAT become reachable — useful and, done carelessly, a way to expose internal hosts.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the SSH connection to the firewall's WAN address reaching the internal host.</span></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · VPN for remote access</span>
-        <h3>An encrypted tunnel in</h3>
-        <div class="code-block"><span class="pr">kali@kali$</span> cd ~/Downloads
-<span class="pr">kali@kali$</span> unzip pfSense-UDP4-1194-vpnuser-config.zip</div>
-        <p class="why">Set up an OpenVPN server on pfSense, export the client config, import it on Kali, and connect. The VPN gives a remote user an encrypted tunnel into the network — the right way to provide remote access, versus exposing individual services. Then manage the active connection from the firewall.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the VPN client connected and the session shown in pfSense.</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>Configure ICMP on the Firewall</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Blocking ICMP Requests on pfSense</h3>
+<div class="step"><p><span class="snum">1</span> Launch the UbuntuSRV virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Log in as sysadmin with NDGlabpass123! as the password.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Open a Terminal window by clicking on the Terminal icon located in the left menu pane.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Send a ping request to the Kali system; 203.0.113.2. Type the command below, followed by pressing the Enter key.</p>
+<div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> ping -c4 203.0.113.2</div>
+</div>
+<div class="step"><p><span class="snum">5</span> After a successful ping, launch the Kali virtual machine to access the graphical login screen.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Log in as kali with kali as the password. Open the Kali PC Viewer.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Open a new terminal window by clicking on the terminal icon located in the top toolbar.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> From the Kali terminal, send a ping request to the UbuntuSRV system: 172.16.1.10.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> ping -c4 172.16.1.10</div>
+</div>
+<div class="step"><p><span class="snum">9</span> After the successful ping, change focus to the UbuntuSRV system and open the Firefox web browser.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> In the address space, type http://172.16.1.1. Press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> Type the username sysadmin and password NDGlabpass123!. Click the SIGN IN button.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Once in the pfSense management graphical user interface, navigate to Firewall &gt; Rules.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> While viewing the WAN tab, click the Add rule to the top of the list icon on the bottom-right to add a new rule.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> On the newly opened page, click the dropdown box next to Action and select Block.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> Select ICMP as the Protocol selection, and leave the ICMP Subtypes as is.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> In the Destination section, set the network as the DMZ subnets, which is the 172.16.1.0/28 subnet.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> Leave all other options as defaults. Click the Save button located towards the bottom of the page.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> When brought back to the Firewall: Rules page, notice the warning message. Select Apply Changes.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> Verify that the firewall rules table looks like the image below for the WAN interface.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> Change focus to the Kali system and navigate to the Terminal window. Attempt to ping the UbuntuSRV system once again. The ping should not succeed.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> ping -c4 172.16.1.10</div>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2</span><h3>Redirecting Traffic to Internal Hosts on the Network</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.1</span><h3>Configuring pfSense to Allow Port and Redirect Requests</h3>
+<div class="step"><p><span class="snum">1</span> While on the Kali system, enter the command below to scan for open ports on the firewall appliance.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap 203.0.113.1</div>
+</div>
+<div class="step"><p><span class="snum">2</span> Change focus to the Firefox window on the UbuntuSRV system. In the pfSense management interface, navigate to Firewall &gt; NAT.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> On the Firewall / NAT / Port Forward interface, click the Add rule to the top of the list button to add a new rule.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> While on the Firewall / NAT / Port Forward / Edit interface, make the following changes: a. Change Destination port range to SSH for both From port and To port from the dropdown menu. b. Change Redirect target IP to 172.16.1.10. c. Change Redirect target port to SSH from the dropdown menu. d. Click the Save button located towards the bottom of the page</p>
+</div>
+<div class="step"><p><span class="snum">5</span> For the new configuration to take place, click the Apply changes button.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 2.2</span><h3>Retargeted SSH Connection</h3>
+<div class="step"><p><span class="snum">1</span> Change focus to the Kali system and initiate a quick scan against the firewall appliance using the terminal.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> nmap 203.0.113.1</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> Notice the change of open ports on the system; SSH is now open.</div>
+</div>
+<div class="step"><p><span class="snum">2</span> Verify the SSH configuration made on the firewall by typing the following command. Answer yes to accept the fingerprint. If prompted for a password, enter NDGlabpass123!.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> ssh sysadmin@203.0.113.1</div>
+</div>
+<div class="step"><p><span class="snum">3</span> Notice the Secure Shell prompt says you are on the sysadmin@ubuntusrv machine. To confirm you are on the correct system, use the ifconfig command.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Type the command route to examine the default gateway.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Type the command exit to leave the active SSH connection.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3</span><h3>Configuring VPN on pfSense</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.1</span><h3>Configuring VPN Server</h3>
+<div class="step"><p><span class="snum">1</span> Change focus to the UbuntuSRV system and focus on the Firefox web browser. If you are not already logged into the pfSense firewall management interface, do so now.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> While logged in, navigate to System &gt; Cert Manager.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> On the System / Certificate Manager / CAs page, while on the CAs tab, click on the + Add button.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> A new page should open; fill in the necessary fields. a. Descriptive Name: MyCA b. Method: Create an internal Certificate Authority c. Key Length: 2048 bits d. Lifetime: 365 days e. Distinguished Name: i. Common Name: internal-ca ii. Country Code: US iii. State or Province: Texas iv. City: Austin v. Organization: XYZ Security f. Click Save.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Add a server certificate this time by navigating to the Certificates tab. To add a new certificate, click on the + Add/Sign button.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> A new page should open; select the dropdown menu next to Method and select Create an internal Certificate.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> Fill in the necessary fields. a. Descriptive Name: VPNServerCert b. Certificate authority: MyCA c. Key Length: 2048 bits d. Lifetime: 365 days e. Distinguished Name: i. Common Name: pfsense.netlab.local ii. Country Code: US iii. State or Province: Texas iv. City: Austin v. Organization: XYZ Security f. Certificate Type: Server Certificate g. Click Save.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Navigate to System &gt; User Manager.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> On the System: User Manager page, click the +Add icon to create a new user.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> Fill in the necessary fields. a. Username: vpnuser b. Password: vpnpassword c. Full name: VPN User d. Check the box next to Click to create a user certificate (more options will appear). Then very the following information. i.   Descriptive name: VPNUser_Cert ii.   Certificate Authority: MyCA iii.   Key Length: 2048 bits iv.    Lifetime: 365 days e. Click Save.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> Navigate to VPN &gt; OpenVPN.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> While on the OpenVPN: Server page, click on the Wizards tab.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> A new page appears; select Local User Access for Type of Server. Click Next.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> On the next page, select MyCA as the Certificate Authority. Click Next.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> Next, select VPNServerCert as the Certificate. Click Next.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> On the next page, fill in all necessary fields as mentioned below (if the field is not mentioned, leave its default setting): a. Interface: WAN b. Protocol: UDP on IPv4 Only c. Local Port: 1194 d. Description: MyVPNServer e. Cryptographic Settings: i. TLS Authentication: Checked ii. Generate TLS Key: Checked iii. DH Parameters Length: 2048 bit iv. Fallback Data Encryption Algorithm: AES-128-CBC (128-bit) v. Hardware Crypto: No Hardware Crypto Acceleration f. Tunnel Settings: i. Tunnel Network: 10.1.1.0/24 ii. Redirect Gateway: Checked iii. Local Network: 172.16.1.0/28 iv. Concurrent Connections: 10 v. Compression: Disable Compression g. Client Settings: i. Dynamic IP: Checked h. Click Next.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> On the Firewall Rule Configuration page, fill in the necessary fields: a. Firewall Rule: Checked b. OpenVPN rule: Checked c. Click Next.</p>
+</div>
+<div class="step"><p><span class="snum">18</span> On the final configuration page, select Finish.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.2</span><h3>Exporting VPN Client Data</h3>
+<div class="step"><p><span class="snum">1</span> Switch to the kali machine, and start a Firefox browser.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Go to http://203.0.113.1 and log in as username sysadmin and password NDGlabpass123!.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Under VPN, click to go to the OpenVPN page.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Click on the Client Export tab.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Scroll down towards the bottom where the OpenVPN Clients is presented. Underneath the Export column, click on the Archive link to download the bundled configurations.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Notice that the file download is complete.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.3</span><h3>Configuring the VPN Client</h3>
+<div class="step"><p><span class="snum">1</span> While on the Kali system, open a terminal and type the command below to change to the Downloads directory.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> cd ~/Downloads</div>
+</div>
+<div class="step"><p><span class="snum">2</span> Unzip the downloaded zip file.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> unzip pfSense-UDP4-1194-vpnuser-config.zip</div>
+</div>
+<div class="step"><p><span class="snum">3</span> Open the Network Manager by clicking on the network icon located on the top pane and navigate to VPN Connections &gt; Add a VPN Connection.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> On the Choose a VPN connection Type window, select Import a saved VPN configuration option and click Create.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> In the File Manager window, select Downloads from the menu on the left. Double-click on the pfsense-udp-1194-vpnuser folder. Select the pfSense-UDP4-1194-vpnuser.ovpn file and click the Open button.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> In the new pop-up window, leave the Connection name as is. Type vpnuser in the User name field, and type vpnpassword in the Password field. Then, type the vpnpassword again in the User key password field. Then, click the Save button.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> If prompted to create a password for the new key ring, leave the two fields empty and click Continue.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> If prompted to store passwords unencrypted, click Continue.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.4</span><h3>Connecting the VPN Client</h3>
+<div class="step"><p><span class="snum">1</span> Connect using the VPN settings by clicking on the Network Manager icon on the top pane and navigating to VPN Connection &gt; pfSense-UDP4-1194-vpnuser. If prompted for a password, enter vpnpassword. Click OK.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Once the connection is established, a message will pop up like so:</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Verify the VPN tunnel and the IP address given by entering the command below in a Terminal.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> ip addr</div>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 3.5</span><h3>Managing VPN Connections</h3>
+<div class="step"><p><span class="snum">1</span> Once connected to the VPN server, switch to the UbuntuSRV, Firefox web browser, and navigate back to the pfSense Web Configurator.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> When logged in as admin, navigate to Status &gt; System Logs from the top menu pane.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> On the new page, select the OpenVPN tab.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> Notice the authentication to the VPN server. You may have to scroll down to find it.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Navigate to Status &gt; OpenVPN.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Notice how the current active VPN connections are listed here.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> The lab is now complete; you may end the reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 

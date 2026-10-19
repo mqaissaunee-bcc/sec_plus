@@ -210,6 +210,20 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .rel-no{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.07em;color:var(--muted)}
 .rel-ttl{font-weight:700;font-size:.96rem}
 .rel-why{font-size:.84rem;color:var(--muted)}
+
+.callout.tip{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.callout.tip .tag{color:var(--accent)}
+.step .snum{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;height:1.5em;
+  padding:0 .35em;margin-right:.5em;border-radius:6px;background:var(--card-2);border:1px solid var(--line);
+  color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.82em;vertical-align:baseline}
+.env-wrap{overflow-x:auto;margin:6px 0 10px}
+.env-table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:460px}
+.env-table caption{text-align:left;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.env-table th,.env-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.env-table thead th{color:var(--accent);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line)}
+.env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
+.env-table tbody tr:hover{background:var(--card-2)}
+.env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
 </style>
 </head>
 <body>
@@ -258,6 +272,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a class="nav-btn" href="#overview" data-nav="overview"><span class="done" aria-hidden="true">✓</span>📋 Overview</a>
+     <a class="nav-btn" href="#environment" data-nav="environment"><span class="done" aria-hidden="true">✓</span>🖥️ Environment</a>
     <a class="nav-btn" href="#walkthrough" data-nav="walkthrough"><span class="done" aria-hidden="true">✓</span>🧭 Walkthrough</a>
     <a class="nav-btn" href="#stuck" data-nav="stuck"><span class="done" aria-hidden="true">✓</span>⚠️ Where students get stuck</a>
     <a class="nav-btn" href="#defender" data-nav="defender"><span class="done" aria-hidden="true">✓</span>🛡️ Defender's view</a>
@@ -277,40 +292,189 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
       <label class="review"><input type="checkbox" data-review="overview"> Mark this section reviewed</label>
     </section>
 
+    <section class="lab-section" id="environment" data-section="environment">
+      <h2 class="section-title"><span class="ico" aria-hidden="true">🖥️</span> Environment &amp; credentials</h2>
+      <p class="section-lead">Everything you need to log in and work the lab. These are the fixed NETLAB+ pod values for this lab.</p>
+      <div class="env-wrap">
+        <table class="env-table">
+          <caption>Virtual machines in this lab's pod</caption>
+          <thead><tr><th>Virtual machine</th><th>IP address</th><th>Account</th><th>Password</th></tr></thead>
+          <tbody><tr><td><b>Kali</b></td><td><code>203.0.113.2</code></td><td><code>kali</code></td><td><code>kali</code></td></tr><tr><td><b>pfSense</b></td><td><code>192.168.0.1</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>SecOnion</b></td><td><code>192.168.0.6</code></td><td><code>sysadmin</code></td><td><code>NDGlabpass123!</code></td></tr><tr><td><b>WinOS</b></td><td><code>192.168.0.50</code></td><td><code>Administrator</code></td><td><code>NDGlabpass123!</code></td></tr></tbody>
+        </table>
+      </div>
+      <p class="env-note">Log in exactly as shown — usernames and passwords are case-sensitive. These credentials are the same every time the pod is reset.</p>
+      <label class="review"><input type="checkbox" data-review="environment"> Mark this section reviewed</label>
+    </section>
+
     <section class="lab-section" id="walkthrough" data-section="walkthrough">
       <h2 class="section-title"><span class="ico" aria-hidden="true">🧭</span> The walkthrough</h2>
       <p class="section-lead">The injection strings that matter, and why they work.</p>
-      <div class="subsection"><span class="phase-tag">Phase 1 · WebGoat SQLi (guided)</span>
-        <h3>Close the quote, add a truth</h3>
-        <div class="step"><h4>Start WebGoat and register</h4>
-          <div class="code-block"><span class="pr">kali@kali:~$</span> sudo docker run --rm -it webgoat/goatandwolf</div>
-          <p class="why">Then browse to <code class="inl">http://172.17.0.2:8080/WebGoat/login</code> (case-sensitive) and register <code class="inl">guestuser</code>/<code class="inl">guestuser</code>.</p></div>
-        <div class="step"><h4>Lesson 9 — the all-rows injection</h4>
-          <p class="why">The query ends with <code class="inl">... last_name = '</code>. Pick <code class="inl">Smith'</code> to close the quote, keep the <code class="inl">or</code>, and choose <code class="inl">'1' = '1</code> to balance the syntax. The query becomes always-true and dumps every row of <code class="inl">user_data</code>.</p>
-          <div class="code-block">SELECT ... WHERE last_name = 'Smith' or '1' = '1'</div>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the full users table returned by the injected query (lesson 9).</span></div>
-        </div>
-        <div class="step"><h4>Lesson 10 — find the injectable field</h4>
-          <p class="why">Two fields, one injectable. <code class="inl">Login_Count</code> rejects <code class="inl">0 or 1=1</code>; the <code class="inl">User_Id</code> field accepts it. The skill is testing each input, not assuming.</p></div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 2 · Burp Repeater challenge</span>
-        <h3>Log in as Larry without his password</h3>
-        <p class="why">Launch <code class="inl">burpsuite</code> (Temporary project → Start Burp), Proxy tab → turn <strong>Intercept off</strong> → Open Browser. Log into WebGoat, open the "Without password" challenge, and submit <code class="inl">Larry</code> / <code class="inl">fakepassword</code>. In Burp's <strong>HTTP history</strong>, find the POST to <code class="inl">/WebGoat/challenge/5</code>, right-click → <strong>Send to Repeater</strong>. In Repeater, replace the password field value with an injection like <code class="inl">0' or '1'='1</code> and click <strong>Send</strong> — the response logs you in as Larry.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the Burp Repeater response showing a successful login as Larry.</span></div>
-        <div class="callout"><span class="tag">[WHY BURP]</span> Repeater is Burp's version of Lab 2's Tamper Data: capture a real request, edit it, resend it. It's how you test injection outside a friendly dropdown.</div>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 3 · DVWA &amp; sqlmap</span>
-        <h3>The same bug in a second app</h3>
-        <div class="code-block"><span class="pr">sysadmin@seconion:~$</span> sudo docker run --rm -it -p 4444:80 vulnerables/web-dvwa
-<span class="pr">kali@kali$</span> sqlmap -u "http://&lt;dvwa&gt;/vulnerabilities/sqli/?id=1&amp;Submit=Submit"</div>
-        <p class="why">In DVWA's SQLi page, <code class="inl">' or '1'='1</code> in the ID field returns all users. <code class="inl">sqlmap</code> automates the whole process — it's the attacker's version of a dynamic scanner (DAST).</p>
-      </div>
-      <div class="subsection"><span class="phase-tag">Phase 4 · Cross-site scripting</span>
-        <h3>Make the browser run your script</h3>
-        <div class="code-block">&lt;script&gt;alert(document.cookie)&lt;/script&gt;</div>
-        <p class="why">Injected into a field the app echoes back unescaped, the browser executes it instead of showing it. Reflected XSS runs from a crafted link; stored XSS is saved on the server and fires for every visitor — which is why stored is the more dangerous of the two.</p>
-          <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> the XSS alert box firing in the browser.</span></div>
-      </div>
+<div class="subsection"><span class="phase-tag">Task 1</span><h3>SQL Injection Basics</h3>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Using WebGoat for SQL Injection</h3>
+<p class="why">In this section, you will be exploring how SQL Injection works and will also attack the vulnerable server.</p>
+<div class="step"><p><span class="snum">1</span> Click on the Kali tab to access the Kali machine. Enter username kali and password kali.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Once logged in, click the Terminal icon to start the Terminal.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> In the Terminal window, run the following command. When prompted for a password, type kali.</p>
+<div class="code-block"><span class="pr">kali@kali:~$</span> sudo docker run --rm -it webgoat/goatandwolf</div>
+</div>
+<div class="step"><p><span class="snum">4</span> Wait for a pause on the rolling message. You will see something similar to the screenshot below when everything is ready.</p>
+</div>
+<div class="step"><p><span class="snum">5</span> Start the Web Browser by clicking the icon.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> In the address bar, type http://172.17.0.2:8080/WebGoat/login (case-sensitive) and press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> You will see the WebGoat login page, click Register new user, and then type guestuser as the username and guestuser as the password (you can choose your own login info, but here we are using guestuser). Then, check the box, and click Sign up.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Once signed up, you will be brought to this page.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> Click on the (A1) Injection, then SQL Injection (Intro); you will then see the lessons in the right pane from 1 to 13.</p>
+</div>
+<div class="step"><p><span class="snum">10</span> We will be jumping directly to lesson 9. So, click on the number 9 here. Feel free to do the lessons from 1 to 8 on your own. It will help you review the concepts mentioned in this lab.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> When in lesson 9, you will see this screen. After reading the instructions, we understand that the challenge is to select the malicious SQL command to retrieve all the users from the users' table. In the SQL query, notice the part where last_name = ' ends with a single quote '. This means if we were to craft a malicious SQL query, we would want to close the single quote first. So, we select Smith' in the first dropdown box.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Next, we will leave the or untouched because it is the key part of the malicious query. And again, notice the single quote after 1=1. We should correct the syntax, so we are going to select '1' = '1 from the dropdown box.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> Clicking the Get Account Info button retrieves all the users from the user_data table. The red square shows the forged malicious SQL query.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> Now, click on lesson 10. In this lesson, we are asked to exploit two fields: the first one is Login_Count, and the second one is User_Id. Since we now have two fields and we do not know which one is susceptible to SQL injection, we will have to try it in both fields. Let's begin with the Login_Count, type 0 or 1=1 and fake id as shown in the screenshot below, and then click the Get Account Info button.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> The result shows it is not correct.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Therefore, we will try to exploit the User_Id. Change Login_count to 11 and User_Id to 0 or 1=1 as shown in the screenshot below, then click Get Account Info.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> We now have the correct solution.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> Keep checking the other lessons provided by the WebGoat. Use the hint if you feel stuck.</div>
+</div>
+<div class="step"><p><span class="snum">18</span> Let's now check a challenge and have a taste of what SQL injection could look like on a website. First, close the web browser, and click the top-left corner to bring up the Applications menu, then type burpsuite. In the result list, click burpsuite to launch the software.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> Ensure that Temporary project is selected and click Next.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> Then, click Start Burp on the next screen. If prompted for a new version, click OK to acknowledge it.</p>
+</div>
+<div class="step"><p><span class="snum">21</span> When Burp Suite starts, click Proxy to switch to the tab.</p>
+</div>
+<div class="step"><p><span class="snum">22</span> Then click Intercept is on to turn interception off. At last, click the Open Browser button.</p>
+</div>
+<div class="step"><p><span class="snum">23</span> In the newly opened browser, go to the http://172.17.0.2:8080/WebGoat/login page again, and log in using the guestuser login you just created (username guestuser, password guestuser). When prompted to save the password, click Never.</p>
+</div>
+<div class="step"><p><span class="snum">24</span> If prompted with Authentication required (or choose password for new keyring), click Cancel. Click Cancel again when it prompts for the second time.</p>
+</div>
+<div class="step"><p><span class="snum">25</span> After you log in, click the challenges, then Without password. We will see the challenge like this:</p>
+</div>
+<div class="step"><p><span class="snum">26</span> In the browser, fill in the username Larry and password fakepassword, and click Log In. This will create a POST request and send it to the WebGoat website.</p>
+</div>
+<div class="step"><p><span class="snum">27</span> Switch back to the Burp Suite window, if you are not already, click on the HTTP history tab. In the table header, click on Method twice to reorder the list in descending order, find the POST request that has the URL of /WebGoat/challenge/5</p>
+</div>
+<div class="step"><p><span class="snum">28</span> Right-click on that POST entry, and choose to Send to Repeater.</p>
+</div>
+<div class="step"><p><span class="snum">29</span> The Repeater will light up for a few seconds. Let's click the Repeater tab. You will see a screen like this:</p>
+</div>
+<div class="step"><p><span class="snum">30</span> Repeater is a built-in function in Burp Suite; it functions like the Tamper Data add-on in Firefox you experienced in Lab 2. Here is how Repeater works. On the left side, the attacker could choose to change the content of the POST request, and then Send it to the server. The reply will be presented on the right side in the Response section. In our case, the username and the password we submitted earlier are shown at the bottom.</p>
+</div>
+<div class="step"><p><span class="snum">31</span> To exploit the SQL Injection, we just need to change our username or password fields and click Send. The result will show on the right side. Since the challenge is "Can you login as Larry?" we know that the username Larry must exist. So, we can manipulate the password field. Let's click in the password_login field and replace the "fakepassword" text by typing the magic string: 0' or 1=1, then click the Send button.</p>
+</div>
+<div class="step"><p><span class="snum">32</span> Unfortunately, our first try spawns an error (it could look like any of the following screenshots). It did not go through.</p>
+</div>
+<div class="step"><p><span class="snum">33</span> After a few retries, we learned that the "--" can play an important role when attacking with SQL Injection. The "--" will comment out everything after. Thus, the SQL injection query could be altered to 0' or 1=1 --</p>
+</div>
+<div class="step"><p><span class="snum">34</span> Feel free to submit the flag to the WebGoat website. This section ends here. You can close all windows. We will start a fresh Burp Suite and Terminal in the next section.</p>
+</div>
+</div>
+<div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Using DVWA for SQL Injection</h3>
+<p class="why">In the previous section, you learned how to do the SQL injection manually. In this section, you will</p>
+<p class="why">learn how to do SQL injection automatically using SQLmap.</p>
+<div class="step"><p><span class="snum">1</span> Click on the SecOnion tab, then click and drag up to unlock the screen for a login prompt.</p>
+</div>
+<div class="step"><p><span class="snum">2</span> Type sysadmin as the username and NDGlabpass123! for the password.</p>
+</div>
+<div class="step"><p><span class="snum">3</span> Once logged in, click Applications &gt; System Tools &gt; Terminal to start the Terminal.</p>
+</div>
+<div class="step"><p><span class="snum">4</span> In the Terminal, enter the command below. When prompted, enter the password NDGlabpass123!:</p>
+<div class="code-block"><span class="pr">sysadmin@seconion:~$</span> sudo docker run --rm -it -p 4444:80 vulnerables/web-dvwa</div>
+</div>
+<div class="step"><p><span class="snum">5</span> When you see something like this, it means the dvwa server is up and running.</p>
+</div>
+<div class="step"><p><span class="snum">6</span> Click back on the Kali tab to switch back to the Kali machine. Before we can use SQLmap we have to prepare the vulnerable database. Open a web browser again. In the address bar, type http://203.0.113.1.</p>
+</div>
+<div class="step"><p><span class="snum">7</span> You will see the pfSense page; log in by entering sysadmin as the username and NDGlabpass123! as the password.</p>
+</div>
+<div class="step"><p><span class="snum">8</span> Once logged in, click the Firewall menu, and select the Rules option.</p>
+</div>
+<div class="step"><p><span class="snum">9</span> On the opened page, check to make sure you are on the WAN tab, and click the disable icon located on the right side of the first rule (Block Internal network access rule).</p>
+</div>
+<div class="step"><p><span class="snum">10</span> When it prompts that rule configuration has been changed, click Apply Changes to confirm the change. The first rule should grey out, and you can now access the internal network.</p>
+</div>
+<div class="step"><p><span class="snum">11</span> In the address bar, type http://192.168.0.6:4444.</p>
+</div>
+<div class="step"><p><span class="snum">12</span> Once the page opens, log in with the username admin, password admin.</p>
+</div>
+<div class="step"><p><span class="snum">13</span> On the new page, scroll down to the bottom. Click the Create/Reset Database button. It will log you out.</p>
+</div>
+<div class="step"><p><span class="snum">14</span> Log back in with the username admin, password password. When you see the Welcome page, you are all set. You can close the Firefox window.</p>
+</div>
+<div class="step"><p><span class="snum">15</span> Now we will fire up Burp Suite once again to collect some information before we use SQLmap. Once again, go to the top-left corner, click the Application menu and type burpsuite, then click burpsuite to start the software.</p>
+</div>
+<div class="step"><p><span class="snum">16</span> Click Next and Start Burp on the next two screens. (if Burp Suite prompts for an update, click Close, or if Burp Suite prompts to delete old temporary files, click Delete.)</p>
+</div>
+<div class="step"><p><span class="snum">35</span> When Burp Suite starts, click Proxy to switch to the tab.</p>
+</div>
+<div class="step"><p><span class="snum">36</span> Then click Intercept is on to turn interception off for now (we will use it later). At last, click the Open Browser button.</p>
+</div>
+<div class="step"><p><span class="snum">17</span> In the newly opened browser, go to the http://192.168.0.6:4444 address. (if prompted to Choose password for new keyring, click Cancel).</p>
+</div>
+<div class="step"><p><span class="snum">18</span> Log in as username admin, password password. When prompted to save the password, answer Never.</p>
+</div>
+<div class="step"><p><span class="snum">19</span> Click SQL Injection on the next page.</p>
+</div>
+<div class="step"><p><span class="snum">20</span> You will see this Vulnerability: SQL Injection page:</p>
+</div>
+<div class="step"><p><span class="snum">21</span> Go back to the Burpsuite window; you should still be at the Proxy tab. Click the Intercept is off button to turn it back on.</p>
+</div>
+<div class="step"><p><span class="snum">22</span> Then, switch back to the Vulnerability: SQL Injection window. We are going to type fakeid, and click Submit. 23.</p>
+</div>
+<div class="step"><p><span class="snum">24</span> After you click the Submit button, it should bring you back to the Burpsuite window. We are going to need the following two pieces of information from this screen. Make a note of them on your computer or a piece of paper.</p>
+<div class="callout tip"><span class="tag">[NOTE]</span> Your PHPSESSID is going to be different from the screenshot. Make sure you are recording what you see on your virtual machine.</div>
+<p class="why">/vulnerabilities/sqli/?id=fakeid&amp;Submit=Submit</p>
+<p class="why">PHPSESSID=a21s0f61tb13j9333v5pecdtn5; security=low</p>
+</div>
+<div class="step"><p><span class="snum">25</span> Once you have them written down, click the X button to close the Burp Suite window (if prompted to close all Burp Suite windows, answer Yes). The browser windows will close.</p>
+</div>
+<div class="step"><p><span class="snum">26</span> Click the Terminal icon to start the Terminal.</p>
+</div>
+<div class="step"><p><span class="snum">27</span> In the Terminal window, type the command below and press Enter to execute the command.</p>
+<div class="code-block"><span class="pr">kali@kali$</span> sqlmap -u
+"http://192.168.0.6:4444/vulnerabilities/sqli/?id=fakeid&amp;Submit=
+Submit" --cookie "PHPSESSID=buhibpdv4utvbekcvrd7ire5u0; security=low" --dump</div>
+</div>
+<div class="step"><p><span class="snum">28</span> Type y for the question below, then press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">29</span> Type y for the question below, then press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">30</span> Type n for the question below, then press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">31</span> Type y for the question below, then press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">32</span> Type y for the question below, then press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">33</span> Simply press Enter to use the first option.</p>
+</div>
+<div class="step"><p><span class="snum">34</span> Type n for the question below, then press Enter.</p>
+</div>
+<div class="step"><p><span class="snum">35</span> Wait till it finishes the SQL injection attack. Scroll up the Terminal window, until you see something like this. The rectangle indicates the place where the dumped database was stored.</p>
+</div>
+<div class="step"><p><span class="snum">36</span> Run the command below to have a better view of what is inside the table:</p>
+<div class="code-block"><span class="pr">kali@kali$</span> csvtool readable
+/home/kali/.local/share/sqlmap/output/192.168.0.6/dump/dvwa/users.csv</div>
+</div>
+<div class="step"><p><span class="snum">37</span> The results of the command will look like this. The passwords are stored in the database as hashes. Since the SQLmap decrypted all of them, you see the cracked hashes in the parenthesis.</p>
+</div>
+<div class="step"><p><span class="snum">38</span> The lab is now complete; you may end your reservation.</p>
+</div>
+</div>
       <label class="review"><input type="checkbox" data-review="walkthrough"> Mark this section reviewed</label>
     </section>
 
