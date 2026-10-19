@@ -607,7 +607,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   <button type="button" data-pm="prev" aria-label="Previous section">◀</button>
   <div class="pm-where"><span id="pmCount"></span><b id="pmName"></b></div>
   <button type="button" data-pm="next" aria-label="Next section">▶</button>
-  <button type="button" data-pm="exit" class="pm-exit" aria-label="Exit presenter mode">✕</button>
+  <button type="button" data-pm="exit" class="pm-exit" aria-label="Exit lab mode">✕</button>
 </div>
 
 <script id="presenter-mode-js">
@@ -641,7 +641,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (dock) dock.setAttribute("aria-hidden", "false");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "true");
-      btn.querySelector(".pm-txt").textContent = "Exit present"; }
+      btn.querySelector(".pm-txt").textContent = "Exit lab mode"; }
     try { localStorage.setItem(KEY, "1"); } catch (e) {}
     show(0);
   }
@@ -652,7 +652,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");
-      btn.querySelector(".pm-txt").textContent = "Present"; }
+      btn.querySelector(".pm-txt").textContent = "Lab mode"; }
     try { localStorage.setItem(KEY, "0"); } catch (e) {}
   }
 
@@ -662,8 +662,8 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     var btn = document.createElement("button");
     btn.className = "pm-toggle"; btn.id = "pmToggle"; btn.type = "button";
     btn.setAttribute("aria-pressed", "false");
-    btn.title = "Presenter mode — narrow, one section at a time (Shift+P)";
-    btn.innerHTML = '<span class="pm-ico" aria-hidden="true">⇥</span><span class="pm-txt">Present</span>';
+    btn.title = "Lab mode — steps beside the lab, one section at a time (Shift+L)";
+    btn.innerHTML = '<span class="pm-ico" aria-hidden="true">⇥</span><span class="pm-txt">Lab mode</span>';
     btn.addEventListener("click", toggle);
     document.body.appendChild(btn);
 
@@ -683,7 +683,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     }
 
     document.addEventListener("keydown", function (e) {
-      if (e.shiftKey && (e.key === "P" || e.key === "p")) {
+      if (e.shiftKey && (e.key === "L" || e.key === "l")) {
         var tag = (e.target && e.target.tagName) || "";
         if (tag === "INPUT" || tag === "TEXTAREA" || e.target.isContentEditable) return;
         e.preventDefault(); toggle(); return;
