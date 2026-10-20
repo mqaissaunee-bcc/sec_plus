@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -335,19 +338,23 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">9</span> Before we embed the secret message, confirm the sha1 hash value for the top_secret.jpg image file.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> sha1sum top_secret.jpg</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Hash before.</span> the <code class='inl'>sha1sum</code> (or MD5) of the original.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> Take note of this hash value for later comparison. Your value could be different from what is shown here.</div>
 </div>
 <div class="step"><p><span class="snum">10</span> Type the command below to initialize the process of hiding the secret message. When prompted for a passphrase, type secret followed by pressing Enter. Type secret once more. Press Enter.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> steghide embed -cf top_secret.jpg -ef secret.txt</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Extracted.</span> <code class='inl'>steghide extract</code> recovering the message.</span></div>
 </div>
 <div class="step"><p><span class="snum">11</span> Verify the hash value again with the same top_secret.jpg image file.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> Notice the integrity has been lost in the steganography process due to a different hash value.</div>
 </div>
 <div class="step"><p><span class="snum">12</span> Type the command below to gather info on the embedded data within the top_secret.jpg file. When asked to get information about embedded data, type Y. Type secret as the passphrase. Press Enter.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> steghide info top_secret.jpg</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Embedded.</span> <code class='inl'>steghide embed</code> succeeding and <code class='inl'>steghide info</code> showing a hidden file.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> Notice the output, highlighting that there is a secret.txt file present within the top_secret.jpg file.</div>
 </div>
 <div class="step"><p><span class="snum">13</span> Now, we are going to delete the secret.txt file we just created. Type rm secret.txt and press Enter. Then run ls to see that the secret.txt file was gone.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Secret created.</span> the <code class='inl'>secret.txt</code> you'll hide.</span></div>
 </div>
 <div class="step"><p><span class="snum">14</span> Attempt to extract the secret data within the top_secret.jpg image file. When prompted for the passphrase, type secret followed by pressing Enter. Now the secret.txt file is back.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> steghide extract -sf top_secret.jpg</div>
@@ -369,6 +376,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">4</span> Using the cat command, enter the command below to hide the zipped archive within the image file called cyber_monday.jpg. This will enable the cat command to concatenate the image and zip file together in a new file named cybersec.jpg.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> cat cyber_monday.jpg secret_files.zip &gt; cybersec.jpg</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">File-in-image.</span> the <code class='inl'>cat</code> concatenation producing cybersec.jpg.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> Enter the command ls -lh to list the files in the current directory and verify that the cybersec.jpg image file has been successfully created. Also, take note of the file size and compare it to the original cyber_monday.jpg.</p>
 </div>
@@ -413,6 +421,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">15</span> To make the comparison easier, in the menu, click Document, then uncheck Word Wrap.</p>
 </div>
 <div class="step"><p><span class="snum">16</span> The two lines of binary numbers are now aligned. The top is the original output; the bottom is the one-bit flipped output. Drag the horizontal scroll bar to observe the result and count the bit flips.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Avalanche.</span> the hash after a one-bit change — completely different.</span></div>
 </div>
 <div class="step"><p><span class="snum">17</span> The same process can also be used to test the SHA1 hash function. Feel free to do so to observe the difference.</p>
 </div>
@@ -741,6 +750,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -762,6 +772,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

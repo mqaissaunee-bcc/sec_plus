@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -324,7 +327,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="callout tip"><span class="tag">[NOTE]</span> If so-status reports back with all modules as OK, proceed to the next step. If not, wait a few minutes and try the command again until all show as OK.</div>
 <p class="why">so-</p>
 </div>
-<div class="step"><p><span class="snum">6</span> Type the command below to view all available interfaces on the system. The screenshot below shows two physical interfaces: ens160 and ens192. sysadmin@seconion ~$ ifconfig -a</p>
+<div class="step"><p><span class="snum">6</span> Type the command below to view all available interfaces on the system. You should see two physical interfaces: ens160 and ens192. sysadmin@seconion ~$ ifconfig -a</p>
 </div>
 <div class="step"><p><span class="snum">7</span> Issue the command below to identify which flags are configured for each interface. sysadmin@seconion ~$ netstat -i</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> Notice how BMPRU is set for the interfaces under the Flg column. Notice that BMPORU is set for both eth1 and eth2. For a quick overview: B flag is for broadcast, M flag is for multicast, P flag is for promiscuous mode, O flag is for no ARP (Address Resolution Protocol) requests, R flag is for running and U flag is for up. Also, notice that LRU is set for lo; the L flag means that the specified interface is a loopback device.</div>
@@ -353,21 +356,23 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">18</span> Switch back to the SecOnion system. In the previous Terminal, run tcpdump on the internal network by entering the command below. If prompted with a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump -i ens192 icmp</p>
 </div>
-<div class="step"><p><span class="snum">19</span> Notice the output that tcpdump provides: HH:MM:SS.mmmmmm IP src &gt; dst: ptype, id, seq, len. Also, take note that for each echo request, there is a reply. HH:MM:SS.mmmmmm                      Timestamp in hours, minutes, seconds, and</p>
+<div class="step"><p><span class="snum">19</span> Notice the output that tcpdump provides: HH:MM:SS.mmmmmm IP src &gt; dst: ptype, id, seq, len. Also, take note that for each echo request, there is a reply. HH:MM:SS.mmmmmm Timestamp in hours, minutes, seconds, and</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> microseconds</div>
-<p class="why">IP                                   Internet Protocol</p>
-<p class="why">src &gt; dst                            Source and destination IP addresses</p>
-<p class="why">ptype                                Packet type</p>
-<p class="why">id, seq, len                         IP headers; identification, protocol (1=ICMP), total length</p>
+<p class="why">IP Internet Protocol</p>
+<p class="why">src &gt; dst Source and destination IP addresses</p>
+<p class="why">ptype Packet type</p>
+<p class="why">id, seq, len IP headers; identification, protocol (1=ICMP), total length</p>
 </div>
 <div class="step"><p><span class="snum">20</span> After a minute, press CTRL+C to stop tcpdump from running and discontinue the network capture.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">tcpdump capture.</span> output filtered to ICMP or ARP.</span></div>
 </div>
-<div class="step"><p><span class="snum">21</span> From an administrator's standpoint, we may want to save the output from a tcpdump capture and save it automatically into a compatible file to view later with a program such as Wireshark. Initiate the command below to capture traffic on the 192.168.1.0/24 network and send it to a file. If prompted with a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump icmp -i ens192 -s 0 -w netcapture1.pcap -c 100 The following table lists details of the options used with the tcpdump command icmp            Captures only ICMP packets (works for tcp, udp, and</p>
+<div class="step"><p><span class="snum">21</span> From an administrator's standpoint, we may want to save the output from a tcpdump capture and save it automatically into a compatible file to view later with a program such as Wireshark. Initiate the command below to capture traffic on the 192.168.1.0/24 network and send it to a file. If prompted with a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump icmp -i ens192 -s 0 -w netcapture1.pcap -c 100 The following table lists details of the options used with the tcpdump command icmp Captures only ICMP packets (works for tcp, udp, and</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Saved pcap.</span> a capture written with <code class='inl'>-w</code>.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> icmp)</div>
-<p class="why">-i eth0          Use interface zero</p>
-<p class="why">-s 0           Disables default packet size, date and time format</p>
-<p class="why">-w            Write to a captured file, instead of displaying to the screen</p>
-<p class="why">-c           Split the captures into files of this size</p>
+<p class="why">-i eth0 Use interface zero</p>
+<p class="why">-s 0 Disables default packet size, date and time format</p>
+<p class="why">-w Write to a captured file, instead of displaying to the screen</p>
+<p class="why">-c Split the captures into files of this size</p>
 </div>
 <div class="step"><p><span class="snum">22</span> Wait for about 1-2 minutes until all 100 packets are captured.</p>
 </div>
@@ -386,6 +391,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">2</span> In a Terminal window, enter the ARP command below and examine the results. sysadmin@seconion ~$ arp -n</p>
 </div>
 <div class="step"><p><span class="snum">3</span> Enter the command below to capture ARP packets. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump -i ens160 -nn -e arp</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">SFTP protected.</span> the SFTP capture — key exchange then encrypted packets.</span></div>
 </div>
 <div class="step"><p><span class="snum">4</span> Launch the UbuntuSRV virtual machine to access the graphical login screen.</p>
 </div>
@@ -399,12 +405,13 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">8</span> Switch back to SecOnion and press CTRL+C to stop the tcpdump capture. Notice the ARP output: HH:MM:SS:mmmmmm srcMAC &gt; dstMAC: ptype, len, request/response, length.</p>
 </div>
 <div class="step"><p><span class="snum">9</span> Enter the command below to display the ARP table. Notice the ARP entry for the IP address 192.168.0.1 is showing in the orange square. sysadmin@seconion ~$ arp -n</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Reassembled.</span> NetworkMiner showing carved HTTP content/credentials.</span></div>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 2</span><h3>Using Wireshark to Capture &amp; Analyze Network Traffic</h3>
 </div>
 <div class="subsection"><span class="phase-tag">Task 2.1</span><h3>Using Wireshark to Capture FTP Traffic</h3>
-<p class="why">2.1.1       Setup FTP Server</p>
+<p class="why">2.1.1 Setup FTP Server</p>
 <div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen. While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as Administrator using the password NDGlabpass123!.</p>
@@ -457,13 +464,14 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">26</span> In the left pane of the new window, click Turn Windows Defender Firewall on or off.</p>
 </div>
-<div class="step"><p><span class="snum">27</span> Make sure to check Turn Off Windows Defender Firewall for all three types of networks. Then, click OK to confirm. 2.1.2       Monitor the FTP Traffic</p>
+<div class="step"><p><span class="snum">27</span> Make sure to check Turn Off Windows Defender Firewall for all three types of networks. Then, click OK to confirm. 2.1.2 Monitor the FTP Traffic</p>
 </div>
 <div class="step"><p><span class="snum">1</span> In the SecOnion system, open a Terminal window and type the command below to run Wireshark as root. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo wireshark</p>
 </div>
 <div class="step"><p><span class="snum">2</span> In the Wireshark window, to the left side of the Capture section, scroll down and find ens192, click to select, then click the Start button.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> Now, switch the focus to the Kali machine. Change focus to the terminal and type the command below to connect to the FTP server located on the WinOS Server. When prompted for a username and password, enter anonymous as the user and anonymous again as the password. kali@kali ~$ ftp 192.168.0.50</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">FTP exposed.</span> Wireshark showing the FTP username and password in plaintext.</span></div>
 </div>
 <div class="step"><p><span class="snum">4</span> Once the FTP connection is complete, type exit to exit out of the connection. ftp&gt; exit</p>
 </div>
@@ -495,6 +503,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="subsection"><span class="phase-tag">Task 3.1</span><h3>Using dumpcap to Capture HTTP Traffic</h3>
 <div class="step"><p><span class="snum">1</span> While on the SecOnion system, focus on the terminal window and enter the command below. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo dumpcap -P -i ens192 -w /tmp/netcapture2.pcap</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">dumpcap.</span> a <code class='inl'>dumpcap</code> capture running.</span></div>
 </div>
 <div class="step"><p><span class="snum">2</span> Switch focus to the Kali system, start a browser, then go to address 192.168.0.50 followed by pressing the Enter key. Wait until the page finishes loading. The address should return the Internet Information Services default page on Windows Server.</p>
 </div>
@@ -842,6 +851,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -863,6 +873,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

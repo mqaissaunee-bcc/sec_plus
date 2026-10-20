@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -321,14 +324,16 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">4</span> In the Terminal, we will need to forward IP packets through the Ubuntu system. Enter the command below, followed by pressing the Enter key to open the configuration file. If prompted for a password, enter NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">[sysadmin@seconion ~]$</span> sudo vi /proc/sys/net/ipv4/ip_forward</div>
 </div>
-<div class="step"><p><span class="snum">5</span> Check the value; you should see 1 showing, as below. Type :q to exit.</p>
-<div class="callout tip"><span class="tag">[NOTE]</span> If the value showing in the file is not 1, press the i key on the keyboard. Move the cursor to delete 0 and type 1. Then press Esc, then type :wq to save the config and quit.</div>
+<div class="step"><p><span class="snum">5</span> Check the value; you should see 1 showing. Type:q to exit.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Forwarding on.</span> the ip_forward file showing value 1.</span></div>
+<div class="callout tip"><span class="tag">[NOTE]</span> If the value showing in the file is not 1, press the i key on the keyboard. Move the cursor to delete 0 and type 1. Then press Esc, then type:wq to save the config and quit.</div>
 </div>
 <div class="step"><p><span class="snum">6</span> Enter the command below to deceive the gateway device by telling it that the Ubuntu's IP address is 192.168.1.100. If prompted for a password, enter NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">[sysadmin@seconion ~]$</span> sudo arpspoof -i ens160 -t 192.168.0.1 192.168.0.50</div>
 </div>
 <div class="step"><p><span class="snum">7</span> We are now going to tell the WinOS system that we are the 192.168.1.1 gateway device. Open another terminal by clicking File &gt; New Window in the current Terminal window. Switch to the New Terminal and enter the command below. If prompted for a password, enter NDGlabpass123!. You should now have two terminals opened with ARP spoofing.</p>
 <div class="code-block"><span class="pr">[sysadmin@seconion ~]$</span> sudo arpspoof -i ens160 -t 192.168.0.50 192.168.0.1</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Both lies live.</span> the two arpspoof terminals running at once.</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> We have now logically placed the SecOnion device between the WinOS system and the pfSense gateway. Leave the SecOnion screen opened to continue with the next task.</p>
 </div>
@@ -339,6 +344,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">2</span> Once Wireshark loads, scroll and select ens160 in the Interface List pane. Then, click the Start button to start capturing on that interface.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> After some packets have been captured and at least 10 seconds have passed, stop the live capture by clicking on the red square Stop the running live capture button. Then, type arp in the filter box, and click Apply.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Poison visible.</span> Wireshark arp filter — one MAC, two IPs.</span></div>
 </div>
 <div class="step"><p><span class="snum">4</span> Select Analyze, look at the first couple of packets, and notice that the 00:50:56:92:68:06 MAC address has two IP addresses assigned to it.</p>
 </div>
@@ -358,6 +364,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">5</span> Create a persistent ping to the 192.168.1.1 IP address by entering the command below.</p>
 <div class="code-block"><span class="pr">C:\Users\Administrator&gt;</span> ping -t 192.168.0.1</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Victim traffic.</span> the WinOS <code class='inl'>ping -t</code> running.</span></div>
 </div>
 <div class="step"><p><span class="snum">6</span> Change focus to the SecOnion virtual machine.</p>
 </div>
@@ -366,8 +373,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">8</span> Stop the capture by clicking on the red square button again, then type icmp in the filter, and click Apply to examine the filtered packets.</p>
 </div>
 <div class="step"><p><span class="snum">9</span> Analyze the output. You should see the ICMP traffic of the WinOS device traversing the SecOnion device instead of going directly to the pfSense gateway. Notice that the destination MAC address for a ping request is SecOnion's MAC address.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Interception proven.</span> Wireshark icmp showing the ping through SecOnion's MAC.</span></div>
 </div>
 <div class="step"><p><span class="snum">10</span> Open another new Terminal and enter the ip addr show dev ens160 command to view the MAC address for the SecOnion system. You should see that the MAC address is 00:50:56:92:68:06.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">MAC confirmed.</span> <code class='inl'>ip addr show dev ens160</code> matching that MAC.</span></div>
 </div>
 <div class="step"><p><span class="snum">11</span> The lab is now complete; you may end the reservation.</p>
 </div>
@@ -694,6 +703,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -715,6 +725,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

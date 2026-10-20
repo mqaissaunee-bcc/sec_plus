@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -333,6 +336,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">10</span> Scroll to the bottom of the page and click Save. The page will refresh and bring you back to the top after it is saved.</p>
 </div>
 <div class="step"><p><span class="snum">11</span> Then, click on the General tab and check the checkbox to Enable the Squid Proxy.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Filtering works.</span> a page allowed/blocked through the proxy.</span></div>
 </div>
 <div class="step"><p><span class="snum">12</span> Select LAN and DMZ for the Proxy interface. To do so, hold the CTRL key and select each entry until both are highlighted.</p>
 </div>
@@ -371,6 +375,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Configuring SquidGuard</h3>
 <div class="step"><p><span class="snum">1</span> While on the pfSense web configurator, navigate to Services &gt; SquidGuard Proxy filter.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Proxy running.</span> SquidGuard STARTED and Firefox pointed at it.</span></div>
 </div>
 <div class="step"><p><span class="snum">2</span> On the General settings tab, check the checkbox next to Enable.</p>
 </div>
@@ -449,6 +454,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">5</span> Type the following command to generate an RSA server key. When prompted for a passphrase, type NDGlabpass123! followed by pressing the Enter key. When prompted once more, type NDGlabpass123! again. Press Enter.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> openssl genrsa -des3 -out server.key 2048</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Key + CSR.</span> the <code class='inl'>genrsa</code> and <code class='inl'>req</code> commands producing key and CSR.</span></div>
 </div>
 <div class="step"><p><span class="snum">6</span> Verify that the server.key has been generated.</p>
 </div>
@@ -472,6 +478,7 @@ ix. Company Name: Press Enter</div>
 <div class="step"><p><span class="snum">9</span> Sign the server.csr to create a server.crt file. When prompted for the passphrase, type NDGlabpass123! followed by pressing Enter.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> openssl x509 -req -days 365 -in server.csr -signkey
 server.key -out server.crt</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Self-signed cert.</span> the <code class='inl'>x509 -req -signkey</code> output and <code class='inl'>-text</code> inspection.</span></div>
 </div>
 <div class="step"><p><span class="snum">10</span> Verify that the new server.crt has been created.</p>
 </div>
@@ -508,15 +515,16 @@ server.key -out server.crt</div>
 <div class="step"><p><span class="snum">11</span> Initiate the a2enmod module for SSL. Then, restart the apache2 service. If prompted for a password, type NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo a2enmod ssl</div>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo service apache2 restart</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Apache SSL on.</span> <code class='inl'>a2enmod ssl</code> and a successful restart.</span></div>
 </div>
 <div class="step"><p><span class="snum">12</span> Create a new symbolic link to the default-ssl.conf file. If prompted for a password, type NDGlabpass123!. If you receive an error stating that the file already exists, remove the old 000- default.conf file using the rm command and enter the ln command below again.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo ln -s /etc/apache2/sites-available/default-ssl.conf
 /etc/apache2/sites-enabled/000-default-ssl.conf</div>
 </div>
-<div class="step"><p><span class="snum">13</span> Verify that a Virtual Host is configured in the default sites-available file. Type the command below to open the file with the nano text editor. If prompted for a password, type NDGlabpass123! .</p>
+<div class="step"><p><span class="snum">13</span> Verify that a Virtual Host is configured in the default sites-available file. Type the command below to open the file with the nano text editor. If prompted for a password, type NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo nano /etc/apache2/sites-available/000-default.conf</div>
 </div>
-<div class="step"><p><span class="snum">14</span> When in the nano editor, confirm that the ServerName is set to 172.16.1.10:80. Then check other settings, if you see any missing entries, enter the same as shown in the screenshot below. Once finished, press CTRL+S to save, and CTRL+X to exit.</p>
+<div class="step"><p><span class="snum">14</span> When in the nano editor, confirm that the ServerName is set to 172.16.1.10:80. Then check other settings, if you see any missing entries, enter the same values. Once finished, press CTRL+S to save, and CTRL+X to exit.</p>
 </div>
 <div class="step"><p><span class="snum">15</span> Next, edit the contents of the default-ssl file. Type the command below followed by pressing Enter. If prompted for a password, type NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo nano /etc/apache2/sites-available/default-ssl.conf</div>
@@ -541,6 +549,7 @@ server.key -out server.crt</div>
 <div class="step"><p><span class="snum">4</span> Press CTRL + S to save, and CTRL+X to exit.</p>
 </div>
 <div class="step"><p><span class="snum">5</span> Restart the Apache web service to apply all the configuration changes made. If prompted for a password, enter NDGlabpass123!.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">HTTPS live.</span> the site loading over https (warning and all).</span></div>
 </div>
 <div class="step"><p><span class="snum">6</span> Open a new Firefox web browser by clicking the Firefox icon located on the left menu pane.</p>
 </div>
@@ -884,6 +893,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -905,6 +915,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -334,16 +337,18 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">11</span> In the Firefox window, click on the address bar and type localhost:3000 and then press Enter.</p>
 </div>
-<div class="step"><p><span class="snum">12</span> You should see the Hello World! page as shown below:</p>
+<div class="step"><p><span class="snum">12</span> You should see the Hello World! page:</p>
 </div>
 <div class="step"><p><span class="snum">13</span> Go back to the Terminal window, press Ctrl+C to stop the server.</p>
 </div>
 <div class="step"><p><span class="snum">14</span> Type the following command to obfuscate the JavaScript in the server.js file.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> javascript-obfuscator server.js --output server-obfu.js</div>
 </div>
-<div class="step"><p><span class="snum">15</span> Now, let's compare the before and after obfuscation. Type cat server.js and press Enter, then type cat server-obfu.js and press Enter (your obfuscated code may be different from what is shown in the screenshot below).</p>
+<div class="step"><p><span class="snum">15</span> Now, let's compare the before and after obfuscation. Type cat server.js and press Enter, then type cat server-obfu.js and press Enter (your obfuscated code may be different).</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Before.</span> the readable <code class='inl'>cat server.js</code>.</span></div>
 </div>
 <div class="step"><p><span class="snum">16</span> We can see that after the obfuscation, the code became much harder to read and very difficult to revert to its original state. Let's see if the code still runs. Type the command node server- obfu.js and then press Enter.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Still runs.</span> <code class='inl'>node server.js</code> executing the code.</span></div>
 </div>
 <div class="step"><p><span class="snum">17</span> We are seeing the same thing as last time; it is almost certain that the HTTP runs just fine. However, to be 100% sure, let's launch a Firefox Private Window once again and go to the localhost:3000 page. It should again show the same Hello World! page.</p>
 </div>
@@ -367,6 +372,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">6</span> We can test our function by entering values for first number and second number, then click Show Result.</p>
 </div>
 <div class="step"><p><span class="snum">7</span> Right-click on a white space area, then select View Page Source. In the new window, click on the my_javascript.js link, and we will be taken to our JavaScript code.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Your takeaway.</span> a one-line note: obfuscation protects IP, not security — never trust client code.</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> Now we can see what we had typed in as our addition function. This is the file that a client could see and would probably redistribute for personal use. For security practices, we can obfuscate this code so it is more difficult for others to directly copy and redistribute. Close the Firefox window.</p>
 </div>
@@ -395,7 +401,8 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="subsection"><span class="phase-tag">Task 2.1</span><h3>Dead Code Injection</h3>
 <div class="step"><p><span class="snum">1</span> While the Terminal window remains open, let's click on it. Type javascript-obfuscator to observe the options.</p>
 </div>
-<div class="step"><p><span class="snum">2</span> We can see that the program takes two options related to the dead code injection: dead-code- injection &lt;Boolean&gt; and dead-code-injection-threshold &lt;number&gt;. Here is an example of how to use them: javascript-obfuscator my_javascript.js --output my_dci_javascript.js --dead-code- injection true --dead-code-injection-threshold 0.4</p>
+<div class="step"><p><span class="snum">2</span> We can see that the program takes two options related to the dead code injection: dead-code- injection &lt;Boolean&gt; and dead-code-injection-threshold &lt;number&gt. Here is an example of how to use them: javascript-obfuscator my_javascript.js --output my_dci_javascript.js --dead-code- injection true --dead-code-injection-threshold 0.4</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Dead code.</span> the <code class='inl'>--dead-code-injection</code> command and output.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> dead-code-injection &lt;Boolean&gt; option is a switch that tells the program whether to add dead code. dead-code-injection-threshold &lt;number&gt; option sets the possibility a node will be injected with dead code. default is set to 0.4, maximum is 1 and minimum is 0.</div>
 </div>
 <div class="step"><p><span class="snum">3</span> To observe the code after the injection, type cat my_dci_javascript.js, then press Enter.</p>
@@ -403,6 +410,8 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="subsection"><span class="phase-tag">Task 2.2</span><h3>Other Dead Code Injection Options</h3>
 <div class="step"><p><span class="snum">1</span> There are other important options you may want to test in the lab setting. a. debug-protection &lt;boolean&gt; option: when this option is set true, the browser, if it has debug mode turned on, may freeze or be non-responsive. b. debug-protection-interval &lt;boolean&gt; option: when this option is set true, the browser may freeze or be non-responsive even after the page is loaded. c. disable-console-output &lt;boolean&gt; option: when this option is set true, the browser console will no longer output console.log, console.info, console.error, and console.warn messages. d. domain-lock &lt;list&gt; option: when setting this option, the user could provide a list of domain names that can execute the obfuscated code. Any other domain that is not on the list will not be able to execute the obfuscated code.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Domain lock.</span> the domain-lock option applied.</span></div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">After.</span> the obfuscated output, unreadable but equivalent.</span></div>
 </div>
 <div class="step"><p><span class="snum">2</span> To test the above-mentioned options, simply add them at the end of the command. For example, if we want to use the debug-protection option, run the command like so: javascript-obfuscator my_javascript.js --output my_dci_javascript.js --dead-code- injection true --dead-code-injection-threshold 0.4 --debug-protection true</p>
 </div>
@@ -738,6 +747,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -759,6 +769,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

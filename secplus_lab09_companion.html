@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -314,8 +317,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Creating a Virtual Machine Using Hyper-V</h3>
 <p class="why">In this section, you will load the Firewall configuration file.</p>
 <div class="step"><p><span class="snum">1</span> Click on the WinOS tab to access the WinOS. Click the dropdown menu and choose the Send CTRL + ALT + DELETE option.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">VM built.</span> the new VM in Hyper-V.</span></div>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as administrator using the password NDGlabpass123!.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">OS installed.</span> the guest OS running.</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> Once logged in, click the Server Manager icon to launch it.</p>
 </div>
@@ -324,7 +329,6 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">5</span> The Hyper-V Manager will open. Select WINOS &gt; New &gt; Virtual Machine.</p>
 </div>
 <div class="step"><p><span class="snum">6</span> Type NetLab-Testing as the Name, click Next to continue.</p>
-<div class="callout tip"><span class="tag">[NOTE]</span> .</div>
 </div>
 <div class="step"><p><span class="snum">7</span> At the Specify Generation step, click to check the Generation 1 option. Click Next to continue.</p>
 </div>
@@ -354,7 +358,8 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">3</span> If you miss the chance to press the key the first time. You can click the Action menu and Reset the machine to retry. When asked, Are you sure… click the Reset button.</p>
 </div>
-<div class="step"><p><span class="snum">4</span> Once the ISO is booted, you will see the Windows Setup window like below. Leave everything to its default setting and click the Next button. You may want to maximize the window to full screen to have a better interaction with the VM.</p>
+<div class="step"><p><span class="snum">4</span> Once the ISO is booted, you will see the Windows Setup window. Leave everything to its default setting and click the Next button. You may want to maximize the window to full screen to have a better interaction with the VM.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Effect.</span> the enforced setting visible on the client.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> On the next screen, click the Install Now button.</p>
 </div>
@@ -402,7 +407,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">4</span> In the pop-up window, double-click the Internet Protocol Version 4 (TCP/IPv4) to open the IPV4 properties window.</p>
 </div>
-<div class="step"><p><span class="snum">5</span> Select the button for Use the following IP address, then type the information as shown in the screenshot below. Click OK when finished. Click OK again to confirm.</p>
+<div class="step"><p><span class="snum">5</span> Select the button for Use the following IP address, then type the information. Click OK when finished. Click OK again to confirm.</p>
 </div>
 <div class="step"><p><span class="snum">6</span> On the right side of the screen, if prompted to allow the PC to be discovered, answer Yes.</p>
 </div>
@@ -417,6 +422,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">11</span> On the You will need the following information window, click Next.</p>
 </div>
 <div class="step"><p><span class="snum">12</span> In the next step, we will be using the lab2-user account to join the domain. Type lab2-user as the User name, and NDGlabpass123! as the Password, then NETLAB.LOCAL as the Domain name. Click Next once finished.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Domain joined.</span> the join confirmation.</span></div>
 </div>
 <div class="step"><p><span class="snum">13</span> On the new screen, we will change the Computer name to NETLAB-TESTING and Computer domain to NETLAB.LOCAL. Click Next to continue.</p>
 </div>
@@ -445,6 +451,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">2</span> You should have the Server Manager window up right now. If not, click the Server Manager icon on the taskbar to open it.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> In the Server Manager window, go to the upper-right corner, click the Tools menu and select Group Policy Management.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">GPO linked.</span> the policy linked/edited in Group Policy Management.</span></div>
 </div>
 <div class="step"><p><span class="snum">4</span> The Group Policy Management window will appear. Right-click on the Default Domain Policy, select Edit…</p>
 </div>
@@ -465,6 +472,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">12</span> Next, click the Type here to search the area on the taskbar, type powershell, then press Enter.</p>
 </div>
 <div class="step"><p><span class="snum">13</span> In the PowerShell window, type gpupdate, then press Enter to run the command. This will force an update to the Group Policy immediately. Otherwise, the Group Policy will update itself in the next update cycle. When it's done, you will see two successful messages; one is for Computer Policy, and the other is for User Policy.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Applied.</span> <code class='inl'>gpupdate /force</code> completing.</span></div>
 </div>
 <div class="step"><p><span class="snum">14</span> Now the Group Policy is up to date, we want to observe the difference between before and after. So, let's repeat everything in step 11. Notice the Unpin from taskbar option is gone. However, we still have the Store icon showing in the taskbar. If you remember, the instruction says it will be removed after the next login. So, let's check it by logging out and then logging back in.</p>
 </div>
@@ -801,6 +809,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -822,6 +831,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

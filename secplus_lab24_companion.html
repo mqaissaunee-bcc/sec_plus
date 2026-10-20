@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -315,6 +318,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen. While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as Administrator using the password NDGlabpass123!.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">File deleted.</span> the target file removed (the simulated loss).</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> Once logged in, click the search icon and type disk management into the search field. From the results, click on Create and format hard disk partitions.</p>
 </div>
@@ -346,6 +350,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">16</span> At the Select server roles step, click Next.</p>
 </div>
 <div class="step"><p><span class="snum">17</span> At the Select features step, scroll down in the Features box until you see Windows Server Backup; click to check the Windows Server Backup feature, click Next.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Feature added.</span> Windows Server Backup installed in Server Manager.</span></div>
 </div>
 <div class="step"><p><span class="snum">18</span> At the Confirm installation selections step, click Install.</p>
 </div>
@@ -358,8 +363,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">22</span> When you are in the Documents folder, right-click and select New &gt; Text Document. Name it Important file.</p>
 </div>
 <div class="step"><p><span class="snum">23</span> Leave the window open, click on the search icon in the taskbar, and type windows server backup. Click the Windows Server Backup from the search result list.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Recovery run.</span> the Recover wizard restoring from the backup.</span></div>
 </div>
 <div class="step"><p><span class="snum">24</span> Notice the wbadmin console windows appears. In the left pane, click on Local Backup. Notice the pane to the right changes, right-click on Local Backup in the left pane and click on Backup Once. If you don't see the option available, wait one minute for the application to finish initializing.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Backup done.</span> a completed backup in the wbadmin console.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> Normally you want to create a backup schedule. Because scheduled backups will happen on the hour, for time purposes, we will select the Backup Once option.</div>
 </div>
 <div class="step"><p><span class="snum">25</span> The Backup Once Wizard appears. On the Backup Options step, leave the default setting and click Next.</p>
@@ -367,10 +374,12 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">26</span> On the Select Backup Configuration step, select the radio button for Custom and click Next.</p>
 </div>
 <div class="step"><p><span class="snum">27</span> On the Select Items for Backup step, click on the Add Items button.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Schedule set.</span> the backup schedule with its items and destination.</span></div>
 </div>
 <div class="step"><p><span class="snum">28</span> In the Select Items window, expand Local disk (C:) &gt; Users &gt; Administrator &gt; Documents. Check the checkbox for Important file.txt and click OK.</p>
 </div>
 <div class="step"><p><span class="snum">29</span> Back on the Backup Once Wizard window, ensure that Important file.txt is listed and click Next.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">File restored.</span> the recovered file back in place, intact.</span></div>
 </div>
 <div class="step"><p><span class="snum">30</span> On the Specify Destination Type step, select the radio button for Local drives and click Next.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> Unless you are limited to access the local drive, you almost never want to backup to local drives. For this lab example, we are going to back up on the local drive.</div>
@@ -735,6 +744,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -756,6 +766,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

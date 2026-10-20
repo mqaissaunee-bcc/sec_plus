@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -320,31 +323,35 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">3</span> In the Terminal window, run the following command. When prompted for a password, type kali.</p>
 <div class="code-block"><span class="pr">kali@kali:~$</span> sudo docker run --rm -it webgoat/goatandwolf</div>
 </div>
-<div class="step"><p><span class="snum">4</span> Wait for a pause on the rolling message. You will see something similar to the screenshot below when everything is ready.</p>
+<div class="step"><p><span class="snum">4</span> Wait for a pause on the rolling message. You will see something similar when everything is ready.</p>
 </div>
 <div class="step"><p><span class="snum">5</span> Start the Web Browser by clicking the icon.</p>
 </div>
 <div class="step"><p><span class="snum">6</span> In the address bar, type http://172.17.0.2:8080/WebGoat/login (case-sensitive) and press Enter.</p>
 </div>
 <div class="step"><p><span class="snum">7</span> You will see the WebGoat login page, click Register new user, and then type guestuser as the username and guestuser as the password (you can choose your own login info, but here we are using guestuser). Then, check the box, and click Sign up.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">XSS fires.</span> the alert box executing in the browser.</span></div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Second app.</span> the DVWA SQLi result (or sqlmap output).</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> Once signed up, you will be brought to this page.</p>
 </div>
 <div class="step"><p><span class="snum">9</span> Click on the (A1) Injection, then SQL Injection (Intro); you will then see the lessons in the right pane from 1 to 13.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Injection string.</span> the crafted request showing your <code class='inl'>' or '1'='1</code> payload.</span></div>
 </div>
 <div class="step"><p><span class="snum">10</span> We will be jumping directly to lesson 9. So, click on the number 9 here. Feel free to do the lessons from 1 to 8 on your own. It will help you review the concepts mentioned in this lab.</p>
 </div>
 <div class="step"><p><span class="snum">11</span> When in lesson 9, you will see this screen. After reading the instructions, we understand that the challenge is to select the malicious SQL command to retrieve all the users from the users' table. In the SQL query, notice the part where last_name = ' ends with a single quote '. This means if we were to craft a malicious SQL query, we would want to close the single quote first. So, we select Smith' in the first dropdown box.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">SQLi works.</span> WebGoat lesson 9 returning the full user table.</span></div>
 </div>
 <div class="step"><p><span class="snum">12</span> Next, we will leave the or untouched because it is the key part of the malicious query. And again, notice the single quote after 1=1. We should correct the syntax, so we are going to select '1' = '1 from the dropdown box.</p>
 </div>
 <div class="step"><p><span class="snum">13</span> Clicking the Get Account Info button retrieves all the users from the user_data table. The red square shows the forged malicious SQL query.</p>
 </div>
-<div class="step"><p><span class="snum">14</span> Now, click on lesson 10. In this lesson, we are asked to exploit two fields: the first one is Login_Count, and the second one is User_Id. Since we now have two fields and we do not know which one is susceptible to SQL injection, we will have to try it in both fields. Let's begin with the Login_Count, type 0 or 1=1 and fake id as shown in the screenshot below, and then click the Get Account Info button.</p>
+<div class="step"><p><span class="snum">14</span> Now, click on lesson 10. In this lesson, we are asked to exploit two fields: the first one is Login_Count, and the second one is User_Id. Since we now have two fields and we do not know which one is susceptible to SQL injection, we will have to try it in both fields. Let's begin with the Login_Count, type 0 or 1=1 and fake id, and then click the Get Account Info button.</p>
 </div>
 <div class="step"><p><span class="snum">15</span> The result shows it is not correct.</p>
 </div>
-<div class="step"><p><span class="snum">16</span> Therefore, we will try to exploit the User_Id. Change Login_count to 11 and User_Id to 0 or 1=1 as shown in the screenshot below, then click Get Account Info.</p>
+<div class="step"><p><span class="snum">16</span> Therefore, we will try to exploit the User_Id. Change Login_count to 11 and User_Id to 0 or 1=1, then click Get Account Info.</p>
 </div>
 <div class="step"><p><span class="snum">17</span> We now have the correct solution.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> Keep checking the other lessons provided by the WebGoat. Use the hint if you feel stuck.</div>
@@ -360,6 +367,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">22</span> Then click Intercept is on to turn interception off. At last, click the Open Browser button.</p>
 </div>
 <div class="step"><p><span class="snum">23</span> In the newly opened browser, go to the http://172.17.0.2:8080/WebGoat/login page again, and log in using the guestuser login you just created (username guestuser, password guestuser). When prompted to save the password, click Never.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Your explanation.</span> a one-line note naming the fix for each attack (parameterized queries / output encoding).</span></div>
 </div>
 <div class="step"><p><span class="snum">24</span> If prompted with Authentication required (or choose password for new keyring), click Cancel. Click Cancel again when it prompts for the second time.</p>
 </div>
@@ -374,6 +382,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">29</span> The Repeater will light up for a few seconds. Let's click the Repeater tab. You will see a screen like this:</p>
 </div>
 <div class="step"><p><span class="snum">30</span> Repeater is a built-in function in Burp Suite; it functions like the Tamper Data add-on in Firefox you experienced in Lab 2. Here is how Repeater works. On the left side, the attacker could choose to change the content of the POST request, and then Send it to the server. The reply will be presented on the right side in the Response section. In our case, the username and the password we submitted earlier are shown at the bottom.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Burp challenge.</span> the Repeater response logged in as Larry.</span></div>
 </div>
 <div class="step"><p><span class="snum">31</span> To exploit the SQL Injection, we just need to change our username or password fields and click Send. The result will show on the right side. Since the challenge is "Can you login as Larry?" we know that the username Larry must exist. So, we can manipulate the password field. Let's click in the password_login field and replace the "fakepassword" text by typing the magic string: 0' or 1=1, then click the Send button.</p>
 </div>
@@ -797,6 +806,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -818,6 +828,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -356,7 +359,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">20</span> Double-click inetpub to open it, then double-click wwwroot to open it.</p>
 </div>
-<div class="step"><p><span class="snum">21</span> At the bottom of the Save As window, type index.html as the filename. Change the Save as type to All Files (*.*) , change the Encoding to UTF-8. At last, click Save.</p>
+<div class="step"><p><span class="snum">21</span> At the bottom of the Save As window, type index.html as the filename. Change the Save as type to All Files (*.*), change the Encoding to UTF-8. At last, click Save.</p>
 </div>
 <div class="step"><p><span class="snum">22</span> The index page is set. Let's check it before we move to the next section. Click on the Edge icon to open a browser window.</p>
 </div>
@@ -382,8 +385,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv~:$</span> sudo rm index.nginx-debian.html</div>
 </div>
 <div class="step"><p><span class="snum">7</span> Then, let's stop the nginx service by typing sudo service nginx stop.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">One down.</span> a backend service stopped.</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> We will now add an index page. Type sudo nano index.html and you will enter the nano text editor. Type in the words: Hello, this is the UbuntuSRV server!</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Backend A.</span> the Apache/Ubuntu server serving its page.</span></div>
 </div>
 <div class="step"><p><span class="snum">9</span> Press Ctrl+S to save, and then Ctrl+X to exit.</p>
 </div>
@@ -410,10 +415,13 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">7</span> In the Name field, to make it easier to remember, we will put WebServerBackendPool. Then, in the Server list area, click the down-arrow to add a server.</p>
 </div>
 <div class="step"><p><span class="snum">8</span> After you click the arrow, the page will expand. Fill in the blanks using the following information (You'll need to scroll right to see all fields): a. Name: WinOS b. Address: 192.168.0.50 c. Port: 80 d. Weight: 50</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Still up.</span> the site still responding after failover to the survivor.</span></div>
 </div>
 <div class="step"><p><span class="snum">9</span> Once finished, click the arrow again to add another server to the pool. Fill each field with the following information: a. Name: UbuntuSRV b. Address: 172.16.1.10 c. Port: 80 d. Weight: 50</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Backend B.</span> the IIS/Windows server serving its page.</span></div>
 </div>
 <div class="step"><p><span class="snum">10</span> Next, we will choose the Load Balancing option. Click the + sign to expand the area to show options. Click to select Round robin.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Pool configured.</span> the load-balancer pool with both backends.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> Round robin simply means the load balancer will be alternating the servers in the server pool depending on their assigned weights.</div>
 </div>
 <div class="step"><p><span class="snum">11</span> Leave the rest of the configurations untouched. Feel free to check and learn any of the other configurations. Once done, scroll down to the bottom and click the Save button.</p>
@@ -449,6 +457,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">3</span> You should see the hello message from the WinOS server (this server is the first one in the Backend Pool list).</p>
 </div>
 <div class="step"><p><span class="snum">4</span> Click the Refresh button a few times to observe the change in the hello message. It should be alternating between the WinOS and UbuntuSRV servers.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Distribution.</span> the balancer address alternating between servers on refresh.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> Thinking about how load balancer deals with sessions? For example, if a user is on an e-Commerce website, refreshing the page will likely clear the shopping cart. How annoying that is! Our lab does not deal with sticky sessions, you may want to do a Google search and practice how to use a sticky session.</div>
 </div>
 <div class="step"><p><span class="snum">5</span> The lab is now complete; you may end the reservation.</p>
@@ -778,6 +787,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -799,6 +809,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

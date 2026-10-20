@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -320,8 +323,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">4</span> Send a ping request to the Kali system; 203.0.113.2. Type the command below, followed by pressing the Enter key.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> ping -c4 203.0.113.2</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">ICMP blocked.</span> the block rule applied and the ping now failing.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> After a successful ping, launch the Kali virtual machine to access the graphical login screen.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Ping before.</span> a successful ping to the target.</span></div>
 </div>
 <div class="step"><p><span class="snum">6</span> Log in as kali with kali as the password. Open the Kali PC Viewer.</p>
 </div>
@@ -339,6 +344,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">12</span> Once in the pfSense management graphical user interface, navigate to Firewall &gt; Rules.</p>
 </div>
 <div class="step"><p><span class="snum">13</span> While viewing the WAN tab, click the Add rule to the top of the list icon on the bottom-right to add a new rule.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Port-forward.</span> the NAT rule, and SSH to the WAN address reaching the internal host.</span></div>
 </div>
 <div class="step"><p><span class="snum">14</span> On the newly opened page, click the dropdown box next to Action and select Block.</p>
 </div>
@@ -350,7 +356,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">18</span> When brought back to the Firewall: Rules page, notice the warning message. Select Apply Changes.</p>
 </div>
-<div class="step"><p><span class="snum">19</span> Verify that the firewall rules table looks like the image below for the WAN interface.</p>
+<div class="step"><p><span class="snum">19</span> Verify that the firewall rules table looks right for the WAN interface.</p>
 </div>
 <div class="step"><p><span class="snum">20</span> Change focus to the Kali system and navigate to the Terminal window. Attempt to ping the UbuntuSRV system once again. The ping should not succeed.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> ping -c4 172.16.1.10</div>
@@ -407,7 +413,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">9</span> On the System: User Manager page, click the +Add icon to create a new user.</p>
 </div>
-<div class="step"><p><span class="snum">10</span> Fill in the necessary fields. a. Username: vpnuser b. Password: vpnpassword c. Full name: VPN User d. Check the box next to Click to create a user certificate (more options will appear). Then very the following information. i.   Descriptive name: VPNUser_Cert ii.   Certificate Authority: MyCA iii.   Key Length: 2048 bits iv.    Lifetime: 365 days e. Click Save.</p>
+<div class="step"><p><span class="snum">10</span> Fill in the necessary fields. a. Username: vpnuser b. Password: vpnpassword c. Full name: VPN User d. Check the box next to Click to create a user certificate (more options will appear). Then very the following information. i. Descriptive name: VPNUser_Cert ii. Certificate Authority: MyCA iii. Key Length: 2048 bits iv. Lifetime: 365 days e. Click Save.</p>
 </div>
 <div class="step"><p><span class="snum">11</span> Navigate to VPN &gt; OpenVPN.</p>
 </div>
@@ -450,6 +456,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">3</span> Open the Network Manager by clicking on the network icon located on the top pane and navigate to VPN Connections &gt; Add a VPN Connection.</p>
 </div>
 <div class="step"><p><span class="snum">4</span> On the Choose a VPN connection Type window, select Import a saved VPN configuration option and click Create.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Session managed.</span> the active VPN connection shown in pfSense.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> In the File Manager window, select Downloads from the menu on the left. Double-click on the pfsense-udp-1194-vpnuser folder. Select the pfSense-UDP4-1194-vpnuser.ovpn file and click the Open button.</p>
 </div>
@@ -471,12 +478,14 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="subsection"><span class="phase-tag">Task 3.5</span><h3>Managing VPN Connections</h3>
 <div class="step"><p><span class="snum">1</span> Once connected to the VPN server, switch to the UbuntuSRV, Firefox web browser, and navigate back to the pfSense Web Configurator.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Client connected.</span> the VPN client connected from Kali.</span></div>
 </div>
 <div class="step"><p><span class="snum">2</span> When logged in as admin, navigate to Status &gt; System Logs from the top menu pane.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> On the new page, select the OpenVPN tab.</p>
 </div>
 <div class="step"><p><span class="snum">4</span> Notice the authentication to the VPN server. You may have to scroll down to find it.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">VPN server.</span> the OpenVPN server configured on pfSense.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> Navigate to Status &gt; OpenVPN.</p>
 </div>
@@ -808,6 +817,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -829,6 +839,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

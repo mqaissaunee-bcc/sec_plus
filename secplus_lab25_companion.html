@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -314,20 +317,22 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen. While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> In the lower-left corner, click Other user, then type netlab\lab-user as the username and password NDGlabpass123!.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Second tag.</span> another tagged item (e.g. the PDF).</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> Ignore or minimize the Server Manager window, click the Search icon in the taskbar, type Autopsy, then click Autopsy 4.19.0 to start the program.</p>
 </div>
 <div class="step"><p><span class="snum">4</span> Click OK in the pop-up window.</p>
 </div>
 <div class="step"><p><span class="snum">5</span> In the Welcome window, click the New Case button to start a new case.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Case created.</span> the new Autopsy case.</span></div>
 </div>
 <div class="step"><p><span class="snum">6</span> Type 8032021001 as the Case Name, and click Browse.</p>
 </div>
-<div class="step"><p><span class="snum">7</span> In the Select file window, in the Folder name box, double-check to make sure it looks like the picture shown below, then click Select.</p>
+<div class="step"><p><span class="snum">7</span> In the Select file window, in the Folder name box, double-check to make sure it looks correct, then click Select.</p>
 </div>
 <div class="step"><p><span class="snum">8</span> You will be brought back to the Case Information Step, review the information, then click Next.</p>
 </div>
-<div class="step"><p><span class="snum">9</span> On the optional information page, we choose to fill out the following information, then click Next. Number:             8032021001 Name:               Will Smith Notes:              SD card evidence inspection</p>
+<div class="step"><p><span class="snum">9</span> On the optional information page, we choose to fill out the following information, then click Next. Number: 8032021001 Name: Will Smith Notes: SD card evidence inspection</p>
 </div>
 <div class="step"><p><span class="snum">10</span> Wait until Add Data Source is opened. In the Select Host step, make sure Generate new host name based on data source name is selected and click Next.</p>
 </div>
@@ -340,8 +345,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">14</span> On the Configure Ingest step, leave the default setting and click Next.</p>
 </div>
 <div class="step"><p><span class="snum">15</span> The program will analyze the image file. Once complete, click Finish.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Recovered file.</span> a deleted/recovered file surfaced.</span></div>
 </div>
 <div class="step"><p><span class="snum">16</span> Autopsy will start adding the source. Proceed to the next section.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Evidence loaded.</span> the disk image added as a data source.</span></div>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 2</span><h3>Explore the Autopsy Software and Examine the Evidence Image</h3>
@@ -352,11 +359,11 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">3</span> First, let's click on the + in front of the Data Source, then click the + again, and click it for the third time; you will see the partition information. The image was partitioned into three parts, Vol1, Vol2, and Vol3. Vol2 is in a Win FAT32 format, Vol3 is in a Linux format.</p>
 </div>
 <div class="step"><p><span class="snum">4</span> Click the + in front of Vol2; we can see that the evidence was once plugged into 1)an Android device; 2) a Mac computer; 3) a Windows computer. Feel Free to expand different folders in Vol2 to explore the files found.</p>
-<div class="callout tip"><span class="tag">[NOTE]</span> Certain systems will auto generate certain files/folders. For instance: the .Spotlight-V100 is from macOS; LOST.DIR is from Android; and System Volume Information is from Windows OS.</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> Certain systems will auto generate certain files/folders. For instance: the.Spotlight-V100 is from macOS; LOST.DIR is from Android; and System Volume Information is from Windows OS.</div>
 </div>
 <div class="step"><p><span class="snum">5</span> Click the + in front of Vol3. We will see a structure that looks like a Linux system.</p>
 </div>
-<div class="step"><p><span class="snum">6</span> Click to expand the home folder; we see a folder named alpine, which is also the username. Click on alpine; on the right side, it will open the alpine folder. Click on the .ash_history. We can see what commands had executed before. It looks like someone changed the content in the motd file.</p>
+<div class="step"><p><span class="snum">6</span> Click to expand the home folder; we see a folder named alpine, which is also the username. Click on alpine; on the right side, it will open the alpine folder. Click on the.ash_history. We can see what commands had executed before. It looks like someone changed the content in the motd file.</p>
 </div>
 <div class="step"><p><span class="snum">7</span> We'll now click on the etc folder, and to the right side, find the motd file and click to examine the file content. You will need to scroll down to see the file. The motd file says Welcome to Pi- AdBlocker! We can confirm that this SD card was once used to host the Pi-AdBlocker server.</p>
 </div>
@@ -368,9 +375,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">11</span> Click the + in front of File Views, then File Types, and then By Extension, and then click on Images.</p>
 </div>
-<div class="step"><p><span class="snum">12</span> On the right side, we see 4 .jpg files, the X mark on the file icon indicates the file was previously deleted. If you click on one of the other two files, you will see an image preview in the Autopsy software.</p>
+<div class="step"><p><span class="snum">12</span> On the right side, we see 4.jpg files, the X mark on the file icon indicates the file was previously deleted. If you click on one of the other two files, you will see an image preview in the Autopsy software.</p>
 </div>
 <div class="step"><p><span class="snum">13</span> Right-click on vault.jpg, select Add File Tag &gt; Tag and Comment.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Tagged.</span> a file tagged as evidence with a comment.</span></div>
 </div>
 <div class="step"><p><span class="snum">14</span> In the pop-up window, we are going to add a new tag. Click the New Tag button.</p>
 </div>
@@ -387,6 +395,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">20</span> Repeat the tag-adding step to add tag and comments to the PDF file.</p>
 </div>
 <div class="step"><p><span class="snum">21</span> The investigation section is finished. Continue to the next section to generate a report.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Report.</span> the generated forensic report.</span></div>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 3</span><h3>Generating a Report</h3>
@@ -736,6 +745,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -757,6 +767,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

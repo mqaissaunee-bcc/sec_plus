@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -323,12 +326,13 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo docker run -it -p 9090:9090 -p 1883:1883 -p 7070:7070 -
 p 5683-5688:5683-5688/udp -v ~/.mytb-data:/data -v ~/.mytb-
 logs:/var/log/thingsboard --name mytb --restart always thingsboard/tb-postgres</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Platform up.</span> the ThingsBoard login/dashboard running.</span></div>
 </div>
-<div class="step"><p><span class="snum">5</span> After a few minutes, the ThingsBoard should finish booting. You can check it by visiting the address http://localhost:9090 in a browser. When the server is ready, you should see the login below.</p>
+<div class="step"><p><span class="snum">5</span> After a few minutes, the ThingsBoard should finish booting. You can check it by visiting the address http://localhost:9090 in a browser. When the server is ready, you should see the login screen.</p>
 </div>
 <div class="step"><p><span class="snum">6</span> Fill in the default login information. Username: sysadmin@thingsboard.org Password: sysadmin</p>
 </div>
-<div class="step"><p><span class="snum">7</span> Once you log in, you should see something like the image below; you may need to change the window's size if the window is too small.</p>
+<div class="step"><p><span class="snum">7</span> Once you log in, you should see something similar; you may need to change the window's size if the window is too small.</p>
 </div>
 <div class="step"><p><span class="snum">8</span> Click the menu button (three vertical dots) at the upper-right corner, and select Profile.</p>
 </div>
@@ -346,6 +350,7 @@ logs:/var/log/thingsboard --name mytb --restart always thingsboard/tb-postgres</
 <div class="step"><p><span class="snum">1</span> First, we will start by creating a Tenant. Click Tenants on the left side.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> To the right side, we will first delete the default Tenant account (again, for security purposes). Click the trash can icon.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Accounts scoped.</span> the tenant and customer accounts with their roles.</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> A pop-up question will appear; click Yes to confirm.</p>
 </div>
@@ -392,7 +397,8 @@ logs:/var/log/thingsboard --name mytb --restart always thingsboard/tb-postgres</
 </div>
 <div class="step"><p><span class="snum">7</span> Next, find check existence fields and drag it to the grids.</p>
 </div>
-<div class="step"><p><span class="snum">8</span> When prompted, type check temperature and humidity fields as the Name. In the Message data area, type temperature and press Enter; type humidity and press Enter. You should have something like what is shown below. Leave the Message metadata empty and click Add to confirm.</p>
+<div class="step"><p><span class="snum">8</span> When prompted, type check temperature and humidity fields as the Name. In the Message data area, type temperature and press Enter; type humidity and press Enter. You should have something similar. Leave the Message metadata empty and click Add to confirm.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Data received.</span> the reading appearing on the device dashboard.</span></div>
 </div>
 <div class="step"><p><span class="snum">9</span> Next, find script and drag it to the grids.</p>
 </div>
@@ -405,6 +411,7 @@ logs:/var/log/thingsboard --name mytb --restart always thingsboard/tb-postgres</
 <div class="step"><p><span class="snum">13</span> When prompted, type warning as the Name. Then, add the following script to the function Details area. When finished, click Add to confirm. details.temperature = msg.temperature; details.humidity = msg.humidity;</p>
 </div>
 <div class="step"><p><span class="snum">14</span> Your grid area should look something like this. The next step is to connect them to make a chain.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Rule chain.</span> the rule chain processing device data.</span></div>
 </div>
 <div class="step"><p><span class="snum">15</span> Click on the round connection point to the right side of Input. Click and drag it to the connection point on the left side of the message type switch. After you release the mouse, it should create a link with the arrow pointing to the direction of the data flow.</p>
 </div>
@@ -445,6 +452,7 @@ logs:/var/log/thingsboard --name mytb --restart always thingsboard/tb-postgres</
 <div class="step"><p><span class="snum">1</span> A quick way to test the device we created is to send an MQTT message to the ThingsBoard server from the terminal. First, we will get the access token from our temperatureSensor device. With the ThingsBoard still open, make sure you are still on the Devices page. Then, click on the temperatureSensor once.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> A panel will slide open from the right side. Click on Copy access token.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Device added.</span> the registered device and its access token.</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> A pop-up message will show quickly at the lower-right corner, indicating that the Device access token has been copied to clipboard. Click Close.</p>
 </div>
@@ -454,6 +462,7 @@ logs:/var/log/thingsboard --name mytb --restart always thingsboard/tb-postgres</
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> mosquitto_pub -d -q 1 -h "127.0.0.1" -t
 "v1/devices/temperatureSensor/telemetry" -u "$ACCESS_TOKEN" -m
 "{"temperature":69,"humidity":56}"</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Telemetry sent.</span> the <code class='inl'>mosquitto_pub</code> command publishing a reading.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> The $ACCESS_TOKEN must be replaced for the message to work. The token in the example will be different from yours.</div>
 </div>
 <div class="step"><p><span class="snum">6</span> Immediately, you should see a telemetry show up in the ThingsBoard, under the Latest telemetry tab.</p>
@@ -796,6 +805,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -817,6 +827,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

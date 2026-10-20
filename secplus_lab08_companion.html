@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -390,9 +393,11 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">9</span> Now, click Applications again, and then System Tools, then click Terminal to start a terminal window.</p>
 </div>
 <div class="step"><p><span class="snum">10</span> We will first check the status of the services required for this lab. In the Terminal window, type sudo so-status. When prompted for a password, type NDGlabpass123!. Then, the command will run and check all services. The result should show OK on all of them. If not, wait a couple of minutes and check again. The status of OK is critical to this lab; you will want to wait until all of them indicate OK.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Sensor healthy.</span> <code class='inl'>so-status</code> with modules OK.</span></div>
 </div>
 <div class="step"><p><span class="snum">11</span> Next, we can import the pcap file to SecOnion. Type the following command; if prompted for a password, enter NDGlabpass123!. When the import completes, it will say that the events will take 30 seconds or more to appear in Hunt. We'll wait a little bit here.</p>
 <div class="code-block"><span class="pr">[sysadmin@seconion ~]$</span> sudo so-import-pcap ~/Downloads/scan.pcap</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Pcap imported.</span> <code class='inl'>so-import-pcap</code> completing.</span></div>
 </div>
 <div class="step"><p><span class="snum">12</span> Leave the Terminal window open and proceed to the next section.</p>
 </div>
@@ -411,7 +416,8 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">6</span> On the Overview page, click the menu button at the top-left corner. Then, click on Alerts.</p>
 </div>
-<div class="step"><p><span class="snum">7</span> Once the import is complete, you'll see the top of the screen as shown below, indicating that 118 alerts were found. They are grouped by name and module, and you can adjust the time for the findings. The total number of alerts may vary slightly from what's shown in the screenshot.</p>
+<div class="step"><p><span class="snum">7</span> Once the import is complete, you'll see the top of the screen, indicating that 118 alerts were found. They are grouped by name and module, and you can adjust the time for the findings. The total number of alerts may vary slightly from what's shown in the screenshot.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Alert found.</span> the nmap-scan alert in the Security Onion interface.</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> At the bottom half of the screen, in the list, the colored bell icon indicates the severity; however, please note that clicking on the icon will acknowledge the alert instead of opening the details of the alert. The blue triangle with an exclamation mark inside is the Escalate button. Clicking on it will raise the alert so that it can be added to a case. We will cover it in the following section. The third column in the list shows the number of alerts grouped by the rule name (fourth column) and module (fifth column). The last column shows the severity of the alert. You may need to hide the navigation pane on the left to see all the columns.</p>
 </div>
@@ -424,7 +430,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="subsection"><span class="phase-tag">Task 3.1</span><h3>Escalate an Alert to Add a Case</h3>
 <div class="step"><p><span class="snum">1</span> With the SecurityOnion still opened, let's examine the alerts and analyze a few of them. First, left- click on the ET SCAN Possible Nmap User-Agent Observed rule name, then select the Drilldown option.</p>
 </div>
-<div class="step"><p><span class="snum">2</span> The view will be changed, and you should see something like below, click the arrow in front of the first entry.</p>
+<div class="step"><p><span class="snum">2</span> The view will be changed, and you should see something similar, click the arrow in front of the first entry.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> Detailed information about this alert will show up. Scroll down to learn more about it, e.g., destination.ip, destination.port, source.ip, source.port, network.data.decoded, rule.rule, etc.</p>
 </div>
@@ -435,6 +441,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">6</span> Feel free to switch on and off the toggles to see different views of the captured traffic.</p>
 </div>
 <div class="step"><p><span class="snum">7</span> If you are familiar with the Follow Stream on Wireshark, you may find this view also exists in the Security Onion PCAP module (click the first list toggle, then the HEX toggle).</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Attack generated.</span> the nmap scan running (and captured in Wireshark).</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> Next, let's go back by clicking the Back button in the browser.</p>
 </div>
@@ -444,9 +451,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">11</span> Click on the Timestamp column header to list the results in chronological order. Now we see that the first alert is a medium severity with suspicious inbound activity. Once again, let's left-click on the name and select Actions, then select Hunt. If you don't see a brute force rule name, you may select another alert of your choice to proceed in the next steps.</p>
 </div>
-<div class="step"><p><span class="snum">12</span> You will see the Hunt tool page as shown below. On this page, it will bring more details about this alert most of the time. Hunt is used to find similar events, track down malicious files, and observe malicious behaviors. We will not go into details about how to use Hunt in this lab.</p>
+<div class="step"><p><span class="snum">12</span> You will see the Hunt tool page. On this page, it will bring more details about this alert most of the time. Hunt is used to find similar events, track down malicious files, and observe malicious behaviors. We will not go into details about how to use Hunt in this lab.</p>
 </div>
 <div class="step"><p><span class="snum">13</span> Click the browser Back button again. Let's say that we need to escalate and create a case for the suspicious inbound activity and nmap scan alert. If you don't see the following selections, you may select another alert of your choice to proceed to the next steps. Click on the first blue triangle and then select + Escalate to new case.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Case built.</span> the case with observables and tasks added.</span></div>
 </div>
 <div class="step"><p><span class="snum">14</span> Once added, it's going to prompt and say Escalated alert and removed from view.</p>
 </div>
@@ -457,6 +465,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">1</span> View the Cases dashboard by navigating to the top-left corner, clicking the Menu button, then selecting the Cases menu option.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> You should see the case list with the newly added cases.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Case closed.</span> the closed case with its disposition.</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> Click on the right arrow next to the first case entry to view additional details related to the case. Review the information.</p>
 </div>
@@ -478,7 +487,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="subsection"><span class="phase-tag">Task 3.3</span><h3>Finish All Tasks and Close a Case</h3>
 <p class="why">Let's assume that we are assigned to perform the task.</p>
-<div class="step"><p><span class="snum">1</span> Let's assume the source IP is a penetration testing contractor. Therefore, we should add it to the log as shown below. Press the Add log button to save.</p>
+<div class="step"><p><span class="snum">1</span> Let's assume the source IP is a penetration testing contractor. Therefore, we should add it to the log. Press the Add log button to save.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Then, we can close this task by selecting closed from the Summary pane.</p>
 </div>
@@ -808,6 +817,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -829,6 +839,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

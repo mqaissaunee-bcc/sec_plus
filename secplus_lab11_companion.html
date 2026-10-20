@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -343,6 +346,8 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">1</span> Back on the Server Manager window, navigate to Tools &gt; Network Policy Server.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> In the Network Policy Server window, in the left pane, right-click on NPS (Local) and select Register Server in Active Directory.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Policy set.</span> the NPS network policy with its conditions and client.</span></div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">NPS role.</span> the Network Policy Server role installed.</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> When prompted to authorize, click OK to continue.</p>
 </div>
@@ -394,7 +399,8 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">5</span> We are going to create a test account to locally test the RADIUS server. Type the command below in the Terminal. Enter NDGlabpass123! when prompted for a password. sudo nano /etc/freeradius/3.0/mods-config/files/authorize</p>
 </div>
-<div class="step"><p><span class="snum">6</span> Once in the editor, press Enter to insert a newline at the top of the file. Then add the user info by typing: testing Cleartext-Password := "password"</p>
+<div class="step"><p><span class="snum">6</span> Once in the editor, press Enter to insert a newline at the top of the file. Then add the user info by typing: testing Cleartext-Password:= "password"</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">User added.</span> the entry in the authorize file.</span></div>
 </div>
 <div class="step"><p><span class="snum">7</span> Then, press Ctrl + S to save the file and Ctrl + X to quit the editor.</p>
 </div>
@@ -403,10 +409,13 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">9</span> Rearrange the two windows to make them side-by-side.</p>
 </div>
 <div class="step"><p><span class="snum">10</span> RADIUS is mostly used for Business Wireless Access Point authentication. It is an alternative method to Active Directory. In this lab, we are only going to test and learn the functionality of RADIUS rather than configure it. In the first Terminal window, type the command sudo freeradius -X and press Enter to run it. The -X option will run the freeradius service in debugging mode. Enter NDGlabpass123! when prompted for the password.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Accounting.</span> a log/accounting entry for the authentication.</span></div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">FreeRADIUS debug.</span> <code class='inl'>freeradius -X</code> running.</span></div>
 </div>
 <div class="step"><p><span class="snum">11</span> When you see the Ready to process requests prompt, it means the RADIUS server is up and running. And for local testing, it is bound to port 18120.</p>
 </div>
 <div class="step"><p><span class="snum">12</span> Now switch to the other Terminal window. Enter the command radtest -h to bring up the help page.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Access-Accept.</span> the <code class='inl'>radtest</code> success.</span></div>
 </div>
 <div class="step"><p><span class="snum">13</span> Based on the help info, the command we will be using is: radtest testing password 127.0.0.1 18120 testing123</p>
 </div>
@@ -740,6 +749,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -761,6 +771,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

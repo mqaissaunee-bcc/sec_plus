@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -320,6 +323,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">4</span> Enter the command below to verify that the SSH service is running. Type q to quit. If it is not running, enter the command sudo service sshd start. Type NDGlabpass123! when prompted for the password.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> service sshd status</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Brute force running.</span> ncrack attacking the SSH service on 172.16.1.10.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> Next, enter the command below to verify that the service denyhosts is not running. Type q to quit the status window. If it is running, stop the service by running this command: sudo service sshguard stop. Enter NDGlabpass123! as the password if prompted.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> service sshguard status</div>
@@ -366,12 +370,14 @@ c. You should see something like this:</div>
 </div>
 <div class="step"><p><span class="snum">4</span> Let's check the firewall setting before the next step, type and run the following command. If prompted for a password, type NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo iptables -S</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">The command.</span> the fork bomb line in the terminal.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> Now, we start the sshguard on the UbuntuSRV system. Type the command below, followed by pressing the Enter key. If prompted for a password, type NDGlabpass123!. Press Enter. To double-check, you can confirm the sshguard status by running the service sshguard status command.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo service sshguard start</div>
 </div>
 <div class="step"><p><span class="snum">6</span> Run the following command to check the firewall rules again. If prompted for a password, type NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo iptables -S</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Defense engaged.</span> <code class='inl'>iptables -S</code> showing the sshguard chain and a blocked IP.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> Notice the extra entry of -N sshguard being created. This gives sshguard the ability to insert firewall rules to block malicious hosts.</div>
 </div>
 <div class="step"><p><span class="snum">7</span> Next, let's configure the sshguard to auto-block attacks. Type the following command in the Terminal. Enter NDGlabpass123! if prompted for a password.</p>
@@ -393,6 +399,7 @@ time is reached).</div>
 <div class="step"><p><span class="snum">11</span> Analyze the Ubuntu's auth.log file for failed password attempts (case sensitive).</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> grep -a "Failed password" /var/log/auth.log | grep -a
 "203.0.113.2"</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">The trail.</span> <code class='inl'>auth.log</code> failed/accepted password lines.</span></div>
 </div>
 <div class="step"><p><span class="snum">12</span> Type clear in the Terminal and press Enter. Leave the Terminal on the UbuntuSRV system open to continue with the next task.</p>
 </div>
@@ -408,6 +415,7 @@ time is reached).</div>
 </div>
 <div class="step"><p><span class="snum">4</span> In the new Terminal window, type the command below to initiate a "fork bomb" attack on the Ubuntu system.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> :(){ :|: &amp; };:</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">DoS in action.</span> htop/iotop during the fork bomb.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> Watch closely at the Terminal window with htop running. After 3-4 minutes, notice how the CPU usage spikes, reaching almost 100% while both memory and swap memory spiking as well. What is happening here is that the UbuntuSRV system is running out of memory by forking a process infinitely. In other words, it is making multiple copies of itself that is setting off a chain reaction resulting in quickly exhausting the system's resources.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> Because the system is overwhelmed, the htop application may be slow and unresponsive. Keep an eye on the Uptime value and see whether it is incrementing. If it is not, it is unresponsive. You may proceed to the next step.</div>
@@ -438,6 +446,7 @@ time is reached).</div>
 </div>
 <div class="step"><p><span class="snum">7</span> Type the command below to mimic an HDD attack if an attacker had access to a physical machine within a network infrastructure. If prompted for a password, enter NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo dd if=/dev/zero of=/dev/sda</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Destruction understood.</span> a short note naming what <code class='inl'>dd if=/dev/zero of=/dev/sda</code> does and its mitigation (do NOT wipe anything outside the pod).</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> Notice on the Terminal running iotop, a heavy I/O activity is taking place.</div>
 </div>
 <div class="step"><p><span class="snum">8</span> Wait 1-3 minutes until the system crashes. Click on the dropdown menu for the UbuntuSRV system and select Power Off.</p>
@@ -774,6 +783,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -795,6 +805,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

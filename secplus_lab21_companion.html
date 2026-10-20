@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -315,6 +318,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen. While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as Administrator using the password NDGlabpass123!.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">CA configured.</span> the CA configuration choices (root/enterprise, key length, validity).</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> Once logged in, click the Server Manager icon to launch it. In the Server Manager window, click on Manage in the top-right corner and select Add Roles and Features.</p>
 </div>
@@ -323,14 +327,17 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">5</span> On the Server Selection step, select the WinOS.netlab.local server from the pool and click Next.</p>
 </div>
 <div class="step"><p><span class="snum">6</span> On the Server Roles step, check the checkbox for Active Directory Certificate Services and notice a pop-up window appears. Click the Add Features button.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Role added.</span> AD Certificate Services selected/installed in Server Manager.</span></div>
 </div>
 <div class="step"><p><span class="snum">7</span> Back on the main wizard window, ensure that Active Directory Certificate Services is checked and click Next.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Request made.</span> the certificate request / CSR from IIS.</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> On the Features step, leave the defaults and click Next.</p>
 </div>
 <div class="step"><p><span class="snum">9</span> On the AD CS step, review the information and click Next.</p>
 </div>
 <div class="step"><p><span class="snum">10</span> On the Role Services step, ensure that Certification Authority is checked and click Next.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">CA online.</span> the Certification Authority console showing your CA.</span></div>
 </div>
 <div class="step"><p><span class="snum">11</span> On the Confirmation step, click Install to finish the installation of the AD CS Server.</p>
 </div>
@@ -398,6 +405,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">3</span> On the Server Selection step, select the WinOS.netlab.local server from the pool and click Next.</p>
 </div>
 <div class="step"><p><span class="snum">4</span> On the Server Roles step, check the checkbox for Web Server (IIS) and notice a pop-up window appears. Click the Add Features button.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">IIS installed.</span> the IIS site running.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> Back on the main wizard window, ensure that Web Server (IIS) is checked and click Next.</p>
 </div>
@@ -417,11 +425,12 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">13</span> You will see that there is a personal certificate; we will ignore it. Let's click the Create Domain Certificate…</p>
 </div>
-<div class="step"><p><span class="snum">14</span> In the new window, fill in the information as shown below, then click the Next button.</p>
+<div class="step"><p><span class="snum">14</span> In the new window, fill in the information, then click the Next button.</p>
 </div>
-<div class="step"><p><span class="snum">15</span> Then, fill in the information as shown below, then click the Finish button.</p>
+<div class="step"><p><span class="snum">15</span> Then, fill in the information, then click the Finish button.</p>
 </div>
 <div class="step"><p><span class="snum">16</span> Notice the certificate with a WEB_CA as its name. Now you have your certificate issued from the WINOS server.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Cert issued.</span> the certificate issued by your CA and bound to the site.</span></div>
 </div>
 <div class="step"><p><span class="snum">17</span> Switch back to the Server Manager window. Click on Tools, and select open Certification Authority.</p>
 </div>
@@ -756,6 +765,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -777,6 +787,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

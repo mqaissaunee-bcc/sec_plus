@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -328,11 +331,12 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">8</span> Dive in further by clicking the arrow icon in front of Tagged parameters followed by clicking the arrow icon in front of Tag: Vender Specific: Microsoft Corp.: WPA Information Element. View the WPA Version. Drag the handle to make the packet detail section area larger.</p>
 </div>
-<div class="step"><p><span class="snum">9</span> View captured DNS requests by typing dns in the Filter pane, then press Enter. 1.1.1       Extract Image from Capture</p>
+<div class="step"><p><span class="snum">9</span> View captured DNS requests by typing dns in the Filter pane, then press Enter. 1.1.1 Extract Image from Capture</p>
 </div>
 <div class="step"><p><span class="snum">1</span> With Wireshark, we can export images and files that have passed through the capture communication channel. Try exporting a file by clicking on the File menu option on the top pane and navigating to Export Objects &gt; HTTP.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> A new window appears. Look through the list of files that have been downloaded by wireless users. Under the Filename column, find the image file Securityv4.jpg and select the file. (Or, find the number 5393 under the Packet column.). With the file selected, click the Preview button.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">WPA capture.</span> the WPA capture open (and resisting trivial decryption).</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> A preview window will open, showing a topology. Click the X to close the preview. Feel free to select and preview other image files being captured. Close the preview window once you finish examining them.</p>
 </div>
@@ -344,12 +348,13 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">7</span> The same topology image opens. Close the image viewer.</p>
 </div>
-<div class="step"><p><span class="snum">8</span> Click the Show desktop button again to restore the windows. Close the HTTP object list window. 1.1.2       Extract Zip File from FTP Traffic</p>
+<div class="step"><p><span class="snum">8</span> Click the Show desktop button again to restore the windows. Close the HTTP object list window. 1.1.2 Extract Zip File from FTP Traffic</p>
 </div>
 <div class="step"><p><span class="snum">1</span> Within the Wireshark interface, type ftp into the Filter: and press Enter. Because FTP is not encrypted, you will be able to see captured FTP traffic as well as clear-text usernames and passwords. Analyze the FTP traffic.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> You will want to disable the anonymous user access and use a secured FTP service for file sharing.</div>
 </div>
 <div class="step"><p><span class="snum">2</span> Next, we will pull a zip file via FTP out of the wireless capture file. Type ftp-data and frame contains PK into the Wireshark Filter: and press Enter.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Plaintext file.</span> a zip pulled from FTP traffic in the capture.</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> Right-click on either the frame 1886 or 2746 in the list and select Follow, TCP Stream.</p>
 </div>
@@ -391,12 +396,15 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="code-block"><span class="pr">kali@kali$</span> aircrack-ng ~/Desktop/captures/WEP.cap</div>
 </div>
 <div class="step"><p><span class="snum">7</span> After a few seconds, the aircrack-ng program will be able to crack the 64-bit WEP key. Notice the output.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">WEP cracked.</span> aircrack-ng recovering the WEP key.</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> After the WEP key is obtained, decrypt the network traffic with airdecap-ng. Enter the command shown below to decrypt the traffic.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> airdecap-ng -w 6B:33:6C:33:21 ~/Desktop/captures/WEP.cap</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Your takeaway.</span> a one-line note ranking WEP vs WPA vs WPA2/WPA3 and why.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> The number of decrypted WEP packets should be 37612.</div>
 </div>
 <div class="step"><p><span class="snum">9</span> Analyze the decrypted traffic with Wireshark. Change the focus to the captures window, double- click the WEP-dec.cap to open it in Wireshark.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">WEP decrypted.</span> the decrypted WEP traffic readable in Wireshark.</span></div>
 </div>
 <div class="step"><p><span class="snum">10</span> In the Filter: pane, type dns and press Enter.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> Notice that you can now see the DNS requests within the wireless traffic because the WEP traffic was decrypted with airdecap-ng.</div>
@@ -460,6 +468,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">11</span> A new window will appear. Browse through the list and examine what the wireless users were downloading. Under the Packet number column, find item #676 (pic01.jpg) and select it. Click the Preview button.</p>
 </div>
 <div class="step"><p><span class="snum">12</span> The Image Viewer window opens, showing the content of the image.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Plaintext image.</span> an image exported from the open capture.</span></div>
 </div>
 <div class="step"><p><span class="snum">13</span> Close the Image Viewer window and the HTTP object list window.</p>
 </div>
@@ -808,6 +817,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -829,6 +839,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

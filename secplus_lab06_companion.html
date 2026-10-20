@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -314,13 +317,16 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Start and Set the Services</h3>
 <p class="why">In this section, you will start the services required to perform the lab activities.</p>
 <div class="step"><p><span class="snum">1</span> Launch the Kali virtual machine to access the graphical login screen.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Report by severity.</span> the report sorted high-to-low.</span></div>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as kali with the password kali.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">One finding read.</span> a single high-severity finding with its CVE and suggested fix.</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> Open a Terminal window by clicking on the Terminal icon, located in the left menu pane.</p>
 </div>
 <div class="step"><p><span class="snum">4</span> Enter the command below to check the available docker images. When prompted for the password, type kali. Verify that icarossio/metasploitable2 and mikesplain/openvas exist.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> sudo docker images</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Services up.</span> <code class='inl'>docker images</code> showing openvas and metasploitable2.</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> Next, let's start and set the metasploitable service. In the Terminal window, type the following command to start the metasploit2. This command will forward every port to the host kali machine. Once executed, you will see a long string of numbers and letters. This will be the container-id of the next step.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> sudo docker run --rm -ditP icarossio/metasploitable2</div>
@@ -376,14 +382,17 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="subsection"><span class="phase-tag">Task 2.2</span><h3>Add a Task</h3>
 <div class="step"><p><span class="snum">1</span> Next, we will create a task to scan the target. Select Scans &gt; Tasks.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Task created.</span> the scan task before or during the run.</span></div>
 </div>
 <div class="step"><p><span class="snum">2</span> Currently, there is no task. Click the star button in the upper-left corner to add a new task.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> In the New Task window, type the Name as metasploitable scan, select the metasploitable as Scan Target, then select OpenVAS Default as the Scanner and Full and fast as the Scan Config. Click Create when finished.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Target set.</span> the OpenVAS target for 127.0.0.1.</span></div>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 2.3</span><h3>Scan Vulnerabilities and Check Reports</h3>
 <div class="step"><p><span class="snum">1</span> Now you should see the newly created scan task appear in the Tasks window. To the lower right- hand corner, click the Start button to start the scan. The scan process may take 10 - 30 minutes. So, please be patient.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Scan done.</span> the completed task at 100%.</span></div>
 </div>
 <div class="step"><p><span class="snum">2</span> To the upper-right corner, click the arrow in the No auto-refresh field to change the auto-refresh rate.</p>
 </div>
@@ -719,6 +728,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -740,6 +750,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

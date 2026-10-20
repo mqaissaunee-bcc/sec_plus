@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -318,6 +321,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">3</span> Log in as administrator using the password NDGlabpass123!.</p>
 </div>
 <div class="step"><p><span class="snum">4</span> Leave the Server Manager window untouched (or you can minimize it). Then, right-click on the Windows logo in the taskbar and click Windows PowerShell (admin).</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Windows recon.</span> PowerShell output enumerating the host (config/services/users).</span></div>
 </div>
 <div class="step"><p><span class="snum">5</span> In the PowerShell window, type the command below, followed by pressing the Enter key.</p>
 <div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> $cred=Get-Credential</div>
@@ -354,7 +358,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="subsection"><span class="phase-tag">Task 2</span><h3>Use PowerShell to Perform an Active Reconnaissance of a Windows Client</h3>
 <p class="why">In this task, you will utilize PowerShell on a Windows system to gather extensive information.</p>
-<div class="step"><p><span class="snum">1</span> Identify the Active Directory that lab-user belongs to by entering the .NET command with PowerShell below.</p>
+<div class="step"><p><span class="snum">1</span> Identify the Active Directory that lab-user belongs to by entering the.NET command with PowerShell below.</p>
 <div class="code-block"><span class="pr">PS C:\Users\Administrator&gt;</span> 
 [System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()</div>
 </div>
@@ -376,6 +380,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">4</span> Initiate a quick ping scan to identify live hosts with a network ID of 172.16.1.*.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> nmap -sP 172.16.1.*</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Host discovery.</span> an nmap ping sweep of a subnet.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> You should see two host results; 172.16.1.1 as the DMZ gateway, and 172.16.1.10 as Ubuntu Server.</div>
 </div>
 <div class="step"><p><span class="snum">5</span> Initiate a ping scan while spoofing the source MAC address at the same time.</p>
@@ -388,13 +393,16 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">8</span> While engaged in the new tab, initiate a Transmission Control Protocol (TCP) scan against the SecOnion system. Type the following command:</p>
 <div class="code-block"><span class="pr">kali@kali$</span> nmap -sT 192.168.0.6</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Open ports.</span> an <code class='inl'>-sT</code> or <code class='inl'>-p</code> scan listing open ports.</span></div>
 </div>
 <div class="step"><p><span class="snum">9</span> Notice that the scan came back stating that the host seemed to be down and that it was unable to scan it. Attempt another scan against the same system, but this time using the no ping option.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> nmap -PN 192.168.0.6</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">The -Pn reveal.</span> a host shown 'down' by ping, then found with <code class='inl'>-Pn</code>.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> After 2-3 minutes, notice that nmap scan now states that the host is up but that the first 1000 ports are being filtered; most likely due to a firewall.</div>
 </div>
 <div class="step"><p><span class="snum">10</span> Initiate an operating system scan against the pfSense system to help identify what version of OS it is running on.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> sudo nmap -O 192.168.0.1</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">OS guess.</span> an <code class='inl'>-O</code> OS-detection result.</span></div>
 </div>
 <div class="step"><p><span class="snum">11</span> Notice that the nmap scan returned with a host is down message. Scan the host again, this time, using the -PN option to identify whether the host is actually up or down.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> nmap -PN 192.168.0.1</div>
@@ -418,6 +426,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">17</span> To detect remote services, both services and daemons, along with their respective version numbers, initiate the Nmap command below.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> nmap -sV 172.16.1.10</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Service versions.</span> an <code class='inl'>-sV</code> result naming software versions.</span></div>
 </div>
 <div class="step"><p><span class="snum">18</span> The lab is now complete; you may end the reservation.</p>
 </div>
@@ -746,6 +755,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -767,6 +777,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");

