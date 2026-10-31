@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security+ Module 7 Video Series: Errata and Gaps</title>
+<meta name="description" content="Corrections, clarifications, and missing content for the six NotebookLM explainer videos on Security+ Module 7: Data Protection, Resilience, and Recovery.">
+<style>
+:root{
+  --paper:#F6F7F9; --sheet:#FFFFFF; --ink:#1B2238; --ink-soft:#4A5270; --rule:#D9DDE6;
+  --fix:#B3261E; --fix-bg:#FBEDEC;
+  --clar:#8A5A00; --clar-bg:#FBF3E2;
+  --miss:#1F4E9C; --miss-bg:#EAF0FA;
+  --module:#2D6A4F; --focus:#1F4E9C;
+  --serif:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#12151F; --sheet:#1A1E2B; --ink:#E6E8EF; --ink-soft:#A7ADC2; --rule:#2E3446;
+    --fix:#FF8A80; --fix-bg:#3A1F22;
+    --clar:#F2C36B; --clar-bg:#362C17;
+    --miss:#8FB4FF; --miss-bg:#1C2943;
+    --module:#7DD3A8; --focus:#8FB4FF;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:1.0625rem;line-height:1.65}
+.skip-link{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--sheet);padding:.6rem 1rem;z-index:10;font-family:var(--sans)}
+.skip-link:focus{left:1rem;top:1rem}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:52rem;margin:0 auto;padding:clamp(1.25rem,4vw,3rem) clamp(1rem,4vw,2rem) 4rem}
+header{border-bottom:2px solid var(--ink);padding-bottom:1.5rem;margin-bottom:2rem}
+.course{font-family:var(--sans);font-size:.9rem;color:var(--ink-soft);margin:0 0 .75rem}
+h1{font-size:clamp(2rem,5.5vw,3.1rem);line-height:1.08;margin:0 0 1rem;letter-spacing:-.015em;font-weight:700}
+h1 .struck{text-decoration:line-through;text-decoration-color:var(--fix);text-decoration-thickness:.09em;color:var(--ink-soft);font-weight:400}
+.lede{max-width:38rem;margin:0}
+.lede a{color:inherit}
+h2{font-size:1.55rem;line-height:1.2;margin:0 0 .35rem}
+h3{font-family:var(--sans);font-size:1rem;margin:2rem 0 .75rem}
+p{margin:0 0 1rem}
+.marks{font-family:var(--sans);font-size:.95rem;margin:1.75rem 0 0}
+.marks p{margin:0 0 .6rem;color:var(--ink-soft)}
+.filters{display:flex;flex-wrap:wrap;gap:.5rem}
+.filters button{font:inherit;font-weight:600;min-height:44px;padding:.45rem 1rem;border-radius:999px;border:2px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
+.filters button[aria-pressed="false"]{opacity:.55;text-decoration:line-through}
+.swatch{width:.75rem;height:.75rem;border-radius:50%;display:inline-block}
+.sw-fix{background:var(--fix)} .sw-clar{background:var(--clar)} .sw-miss{background:var(--miss)}
+.index{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.92rem;margin:2.25rem 0 0}
+.index caption{text-align:left;font-weight:700;padding-bottom:.5rem;font-size:1rem}
+.index th,.index td{text-align:left;padding:.55rem .5rem;border-bottom:1px solid var(--rule);vertical-align:top}
+.index th{font-weight:600;color:var(--ink-soft)}
+.index td.n{text-align:center;font-variant-numeric:tabular-nums;width:4.5rem}
+.index a{color:var(--ink)}
+.table-scroll{overflow-x:auto}
+section.ep{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:clamp(1.1rem,3vw,2rem);margin:2.5rem 0}
+.ep-meta{font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);margin:0 0 1.25rem}
+.ep-intro{color:var(--ink-soft);font-size:1rem}
+ol.items{list-style:none;margin:0;padding:0}
+li.item{display:grid;grid-template-columns:4.25rem 1fr;gap:0 1rem;padding:1.15rem 0;border-top:1px solid var(--rule)}
+li.item[hidden]{display:none}
+.when{font-family:var(--sans);font-variant-numeric:tabular-nums;font-size:.9rem;font-weight:600;padding-top:.15rem}
+.when small{display:block;font-weight:400;color:var(--ink-soft);font-size:.78rem}
+.kind{font-family:var(--sans);font-size:.8rem;font-weight:700;display:inline-block;padding:.1rem .55rem;border-radius:3px;margin-bottom:.45rem}
+.fix .kind{color:var(--fix);background:var(--fix-bg)}
+.clar .kind{color:var(--clar);background:var(--clar-bg)}
+.miss .kind{color:var(--miss);background:var(--miss-bg)}
+.said{margin:0 0 .6rem}
+.said q{quotes:"\201C" "\201D"}
+.fix .said q{text-decoration:underline wavy var(--fix);text-decoration-thickness:1.5px;text-underline-offset:.22em}
+.clar .said q{text-decoration:underline dotted var(--clar);text-decoration-thickness:2px;text-underline-offset:.22em}
+.lbl{font-family:var(--sans);font-size:.82rem;font-weight:700;color:var(--ink-soft);margin-right:.35rem}
+.module{border-left:3px solid var(--module);padding:.1rem 0 .1rem .9rem;margin:0}
+.module .lbl{color:var(--module)}
+.module ul{margin:.4rem 0 0;padding-left:1.2rem}
+.module li{margin-bottom:.25rem}
+.empty{font-family:var(--sans);color:var(--ink-soft);font-size:.92rem;padding:1rem 0;border-top:1px solid var(--rule);margin:0}
+.series ul{padding-left:1.2rem}
+.series li{margin-bottom:.6rem}
+footer{font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);border-top:1px solid var(--rule);padding-top:1rem;margin-top:3rem}
+@media (max-width:30rem){li.item{grid-template-columns:1fr}.when{margin-bottom:.35rem}.when small{display:inline;margin-left:.35rem}}
+@media print{
+  :root{--paper:#fff;--sheet:#fff}
+  .filters,.skip-link{display:none}
+  section.ep{border:none;padding:0;break-inside:auto}
+  li.item{break-inside:avoid}
+  li.item[hidden]{display:grid}
+  a{color:inherit;text-decoration:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<div class="wrap">
+<header>
+  <p class="course">Security+ · Module 7 · Data Protection, Resilience, and Recovery</p>
+  <h1>Video series errata and gaps</h1>
+  <p class="lede">The six explainer videos for this module were generated with NotebookLM from the <a href="https://mqaissaunee-bcc.github.io/sec_plus/secplus_module07.html">Module 7 page</a>. Where a video and the module disagree, <strong>the module is correct</strong>. This sheet lists what the videos get wrong, what they state loosely, and what they leave out. Timestamps are approximate; “slide” means the error is in the on-screen text, not the narration.</p>
+  <div class="marks" role="group" aria-labelledby="filter-label">
+    <p id="filter-label">Show or hide each kind of entry:</p>
+    <div class="filters">
+      <button type="button" data-kind="fix" aria-pressed="true"><span class="swatch sw-fix" aria-hidden="true"></span>Corrections</button>
+      <button type="button" data-kind="clar" aria-pressed="true"><span class="swatch sw-clar" aria-hidden="true"></span>Clarifications</button>
+      <button type="button" data-kind="miss" aria-pressed="true"><span class="swatch sw-miss" aria-hidden="true"></span>Missing from the video</button>
+    </div>
+  </div>
+  <div class="table-scroll">
+  <table class="index">
+    <caption>Entries by episode</caption>
+    <thead><tr><th scope="col">Episode</th><th scope="col" class="n">Corrections</th><th scope="col" class="n">Clarifications</th><th scope="col" class="n">Missing</th></tr></thead>
+    <tbody id="index-body"></tbody>
+  </table>
+  </div>
+  <p id="live" class="ep-meta" aria-live="polite" style="margin-top:1rem"></p>
+</header>
+
+<main id="main">
+
+<section class="ep" id="ep1" data-title="1. Protecting What an Organization Holds">
+  <h2>Episode 1: Protecting What an Organization Holds</h2>
+  <p class="ep-meta">01_Data_Protection · 7:12</p>
+  <p class="ep-intro">An overview episode. It introduces RPO and RTO and previews classification. Episode 2 covers most of the same classification material again in more depth, so expect repetition.</p>
+  <ol class="items">
+    <li class="item clar"><div class="when">0:36</div><div>
+      <span class="kind">Clarification</span>
+      <p class="said"><span class="lbl">Video:</span><q>hitting zero data loss is technically impossible and incredibly expensive</q></p>
+      <div class="module"><span class="lbl">Module:</span>Makes no claim that near-zero data loss is impossible. Replication, journaling, and continuous data protection exist precisely to push RPO very low. The real limit is cost and whether the business actually needs it, because RPO is a business tolerance, not a technical ceiling.</div>
+    </div></li>
+    <li class="item clar"><div class="when">3:18</div><div>
+      <span class="kind">Clarification</span>
+      <p class="said"><span class="lbl">Video:</span>Maps the library rooms directly to levels: <q>reference room … that’s private</q>, <q>rare books room … that’s restricted</q>.</p>
+      <div class="module"><span class="lbl">Module:</span>The library analogy has four areas (open shelves, reference room, rare books room, archive) and illustrates one idea: label once and the handling rules follow automatically. It is not a one-to-one map of CompTIA levels. Don’t memorize the rooms; memorize the six levels. The module also notes where the analogy breaks: a book stays in one room, but data gets copied everywhere, so the label must travel with the data.</div>
+    </div></li>
+    <li class="item fix"><div class="when">4:39</div><div>
+      <span class="kind">Correction</span>
+      <p class="said"><span class="lbl">Video:</span><q>A simple three-tier scheme will always outperform a complex one.</q></p>
+      <div class="module"><span class="lbl">Module:</span>“Three or four well-understood levels outperform a precise scheme nobody applies correctly.” Four levels is fine, and there is no “always.” Note too that an organization choosing to use fewer levels doesn’t excuse you from knowing all six CompTIA labels for the exam.</div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="ep" id="ep2" data-title="2. Data Types and Classification">
+  <h2>Episode 2: Data Types and Classification</h2>
+  <p class="ep-meta">02_Data_Types_Classification · 9:28</p>
+  <ol class="items">
+    <li class="item fix"><div class="when">2:45<small>slide</small></div><div>
+      <span class="kind">Correction</span>
+      <p class="said"><span class="lbl">Video:</span>The classification table lists the handling for Critical as <q>High-availability</q>.</p>
+      <div class="module"><span class="lbl">Module:</span>Critical handling is “availability and integrity emphasis.” Critical data must stay present <em>and</em> correct; a price list that is online but wrong stops the business just as surely as one that has vanished.</div>
+    </div></li>
+    <li class="item miss"><div class="when">2:41</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">The narration describes handling for Public and Restricted only, and the slide abbreviates the rest.</p>
+      <div class="module"><span class="lbl">Module:</span>Know the typical handling for every level:
+        <ul>
+          <li><strong>Public</strong>: no harm from disclosure; no restriction.</li>
+          <li><strong>Private</strong>: internal, personal, or non-public; internal access only.</li>
+          <li><strong>Sensitive</strong>: harm if disclosed; encryption and controlled access.</li>
+          <li><strong>Confidential</strong>: significant harm if disclosed; strong access control and logging.</li>
+          <li><strong>Restricted</strong>: severe harm, often regulated; need-to-know and strict audit.</li>
+          <li><strong>Critical</strong>: essential to operations; availability and integrity emphasis.</li>
+        </ul></div>
+    </div></li>
+    <li class="item miss"><div class="when">7:21</div><div>
+      <span class="kind">Missing</span>
+      <p class="said"><span class="lbl">Video:</span>Says embedded labels let <q>automated security tools</q> do their jobs.</p>
+      <div class="module"><span class="lbl">Module:</span>Names the tool: <strong>data loss prevention (DLP)</strong>. Labels stored in file metadata, headers, or document properties survive copying, which is what lets DLP act on them. A label recorded only in a spreadsheet describes where the data was when someone last looked.</div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="ep" id="ep3" data-title="3. Protecting Data">
+  <h2>Episode 3: Protecting Data — States, Sovereignty, and Choosing the Right Method</h2>
+  <p class="ep-meta">03_Protecting_Data · 6:37</p>
+  <ol class="items">
+    <li class="item miss"><div class="when">1:38</div><div>
+      <span class="kind">Missing</span>
+      <p class="said"><span class="lbl">Video:</span>Names TLS as the protection for data in transit.</p>
+      <div class="module"><span class="lbl">Module:</span>Data in transit is protected by <strong>TLS or IPSec</strong>. Expect both on the exam.</div>
+    </div></li>
+    <li class="item miss"><div class="when">3:02</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">Geographic restrictions are presented only as a compliance tool for where data is stored.</p>
+      <div class="module"><span class="lbl">Module:</span>Geographic restrictions (sometimes called geofencing) also limit <em>where data may be accessed from</em>. That access side is a security control in its own right: blocking authentication from countries where the organization has no staff removes a large volume of attack traffic.</div>
+    </div></li>
+    <li class="item miss"><div class="when">3:40<small>slide</small></div><div>
+      <span class="kind">Missing</span>
+      <p class="said">The “decision engine” table shows only three of the eight methods: encryption, hashing, and tokenization. Masking appears only inside a scenario.</p>
+      <div class="module"><span class="lbl">Module:</span>The full selection table also includes:
+        <ul>
+          <li><strong>Masking</strong>: usually not recoverable in that view; choose it when partial visibility suffices, such as support screens or test data.</li>
+          <li><strong>Obfuscation</strong>: recoverability varies; raises attacker effort but is never a primary control.</li>
+          <li><strong>Segmentation</strong>: limits which <em>systems</em> can reach the data at all.</li>
+          <li><strong>Permission restrictions</strong>: limit which <em>people</em> can reach it.</li>
+          <li><strong>Geographic restrictions</strong>: sovereignty, or reducing access attack surface.</li>
+        </ul>
+        The first five are transformations applied to the data; the last three are restrictions on reaching it. A complete strategy uses both, which is defence in depth applied to data.</div>
+    </div></li>
+    <li class="item clar"><div class="when">6:20</div><div>
+      <span class="kind">Clarification</span>
+      <p class="said"><span class="lbl">Video:</span>Closes with an open question: if a foreign government seizes the server, <q>whose laws are really protecting your secrets?</q></p>
+      <div class="module"><span class="lbl">Module:</span>The module answers this directly. Data is subject to the laws of the country where it is physically stored, <em>including that country’s laws about government access</em>, regardless of who owns it. Encryption may keep the contents unreadable, but it does not change which jurisdiction applies. That is why storage location is a compliance question before it is a technical one.</div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="ep" id="ep4" data-title="4. High Availability">
+  <h2>Episode 4: High Availability — Keeping Systems Running</h2>
+  <p class="ep-meta">04_High_Availability · 6:58</p>
+  <ol class="items">
+    <li class="item miss"><div class="when">1:40</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">The video explains that cluster nodes share state but never says what load-balanced nodes do.</p>
+      <div class="module"><span class="lbl">Module:</span>Load-balanced nodes are often <strong>independent</strong>; cluster nodes <strong>coordinate and share state</strong>. This is one of the four rows the module uses to compare them (purpose, nodes, primary gain, state).</div>
+    </div></li>
+    <li class="item clar"><div class="when">2:05<small>slide too</small></div><div>
+      <span class="kind">Clarification</span>
+      <p class="said"><span class="lbl">Video:</span>Load balancing is like a manager <q>opening more tills</q> to process the lines faster.</p>
+      <div class="module"><span class="lbl">Module:</span>Load balancing is the person <em>directing shoppers to whichever till is shortest</em>; every till is already open. Distributing work across existing active nodes is load balancing. Adding nodes is scaling out, which is a different idea.</div>
+    </div></li>
+    <li class="item miss"><div class="when">4:15</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">Multi-cloud is justified only as protection against a provider outage.</p>
+      <div class="module"><span class="lbl">Module:</span>Multi-cloud also protects against a <strong>commercial dispute</strong> with a provider, reduces <strong>vendor lock-in</strong>, and improves <strong>negotiating position</strong>. The module also warns that multi-cloud adopted for resilience alone frequently produces more incidents than it prevents.</div>
+    </div></li>
+    <li class="item clar"><div class="when">4:56<small>slide</small></div><div>
+      <span class="kind">Clarification</span>
+      <p class="said"><span class="lbl">Video:</span>Capacity planning slide: <q>Infrastructure: Enough space and power?</q></p>
+      <div class="module"><span class="lbl">Module:</span>Infrastructure covers <strong>power, cooling, space, and connectivity</strong>. Technology covers compute, storage, <em>and bandwidth</em>. For people, the module names three controls: cross-training, documentation, and a defined on-call rotation. The video mentions only the first two.</div>
+    </div></li>
+    <li class="item clar"><div class="when">5:53<small>slide</small></div><div>
+      <span class="kind">Clarification</span>
+      <p class="said"><span class="lbl">Video:</span>Generator <q>carries the load for hours</q>.</p>
+      <div class="module"><span class="lbl">Module:</span>A generator covers extended outages for <strong>hours to days, while fuel lasts</strong>.</div>
+    </div></li>
+    <li class="item miss"><div class="when">6:03</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">The UPS is described only as bridging the gap until the generator starts.</p>
+      <div class="module"><span class="lbl">Module:</span>The UPS has a second job: if the generator <em>fails to start</em>, the UPS carries the load across a <strong>graceful shutdown</strong> so systems don’t simply crash.</div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="ep" id="ep5" data-title="5. Backups and Recovery">
+  <h2>Episode 5: Backups and Recovery — Making Sure You Can Get It Back</h2>
+  <p class="ep-meta">05_Backups_and_Recovery · 7:57</p>
+  <ol class="items">
+    <li class="item miss"><div class="when">1:00</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">The video never discusses <strong>backup encryption</strong> as a consideration in its own right. Encryption keys come up only as something that gets lost.</p>
+      <div class="module"><span class="lbl">Module:</span>Encryption is one of the seven backup considerations named in objective 3.4. It decides <strong>whether stolen backup media is a breach</strong>. An unencrypted backup tape that goes missing is a data breach even if production was never touched.</div>
+    </div></li>
+    <li class="item miss"><div class="when">3:28</div><div>
+      <span class="kind">Missing</span>
+      <p class="said"><strong>Journaling</strong> and <strong>continuous data protection</strong> are not mentioned anywhere in the series.</p>
+      <div class="module"><span class="lbl">Module:</span>Journaling keeps a record of every change, allowing precise point-in-time recovery. Together with continuous data protection, it serves very low RPO requirements: you can restore to the moment <em>immediately before a corrupting transaction</em> rather than to last midnight. Journaling is named in the objective; know it.</div>
+    </div></li>
+    <li class="item clar"><div class="when">3:50<small>slide</small></div><div>
+      <span class="kind">Clarification</span>
+      <p class="said"><span class="lbl">Video:</span>3-2-1 slide lists <q>2 different media types</q>, <q>1 held offsite</q>, <q>1 immutable copy</q>.</p>
+      <div class="module"><span class="lbl">Module:</span>The rule is <strong>3</strong> copies (production plus two backups), on <strong>2</strong> media, with <strong>1</strong> offsite. The ransomware-era addition is one copy that is <strong>immutable or offline</strong>. The narration says this correctly; the slide drops the “3 copies” line and the “or offline” option.</div>
+    </div></li>
+    <li class="item fix"><div class="when">5:05<small>slide</small></div><div>
+      <span class="kind">Correction</span>
+      <p class="said"><span class="lbl">Video:</span>Backup types table says an incremental backup copies <q>Any changes</q>.</p>
+      <div class="module"><span class="lbl">Module:</span>An incremental copies the <strong>changes since the last backup of any kind</strong> (full or incremental). A differential copies the changes since the last <em>full</em> backup. “Any changes” blurs exactly the distinction the exam tests. The narration gets this right.</div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="ep" id="ep6" data-title="6. Continuity, Recovery Sites, and Testing">
+  <h2>Episode 6: Continuity, Recovery Sites, and Testing the Plan</h2>
+  <p class="ep-meta">06_Recovery_Continuity · 8:24</p>
+  <ol class="items">
+    <li class="item clar"><div class="when">1:35<small>slide</small></div><div>
+      <span class="kind">Clarification</span>
+      <p class="said"><span class="lbl">Video:</span>Site table describes a cold site as <q>Space Only</q>.</p>
+      <div class="module"><span class="lbl">Module:</span>A cold site provides <strong>space, power, and connectivity</strong>, but no equipment or data. The narration says this correctly.</div>
+    </div></li>
+    <li class="item miss"><div class="when">3:37</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">Geographic dispersion is explained, but without a rule of thumb for distance.</p>
+      <div class="module"><span class="lbl">Module:</span>“Same city” is usually too close for anything but a building-level failure. Distance adds latency, which <strong>limits synchronous replication</strong>, so the right distance is far enough to escape a shared regional event and close enough to remain workable.</div>
+    </div></li>
+    <li class="item fix"><div class="when">3:54<small>slide</small></div><div>
+      <span class="kind">Correction</span>
+      <p class="said"><span class="lbl">Video:</span>Section title reads <q>Continuity Operations</q>.</p>
+      <div class="module"><span class="lbl">Module:</span>The term is <strong>continuity of operations</strong> (often abbreviated COOP).</div>
+    </div></li>
+    <li class="item miss"><div class="when">3:58</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">Continuity of operations is presented only as manual workarounds.</p>
+      <div class="module"><span class="lbl">Module:</span>Continuity is broader than disaster recovery. DR restores technology; a continuity of operations plan covers <strong>people, premises, suppliers, and manual workarounds</strong>. The manual workaround is the element most often missing, which is why the video emphasizes it, but it is not the whole plan.</div>
+    </div></li>
+    <li class="item miss"><div class="when">5:34</div><div>
+      <span class="kind">Missing</span>
+      <p class="said">The four test types are described, but not what each one is good at finding or what the exam rewards.</p>
+      <div class="module"><span class="lbl">Module:</span>A <strong>tabletop</strong> reveals people and process gaps: nobody knows who declares a disaster, or the plan calls a supplier who is no longer contracted. Only a real <strong>failover</strong> reveals that the recovery site’s certificate expired, its firewall rules were never updated, or <em>its capacity is half what production needs</em>. Organizations tend to repeat tabletops and never run a failover, so the exam treats <strong>scheduling a full failover</strong> as the mature answer.</div>
+    </div></li>
+    <li class="item miss"><div class="when">6:14<small>slide</small></div><div>
+      <span class="kind">Missing</span>
+      <p class="said">The requirement-mapping table shows four of the module’s seven rows, and trims the controls in the rows it does show.</p>
+      <div class="module"><span class="lbl">Module:</span>The complete map:
+        <ul>
+          <li><strong>Low RPO</strong>: frequent backups, replication, <em>journaling</em>.</li>
+          <li><strong>Low RTO</strong>: hot site, tested failover, <em>standby capacity</em>.</li>
+          <li><strong>Survive site loss</strong>: offsite backups, geographic dispersion.</li>
+          <li><strong>Survive ransomware</strong>: immutable or offline copies, <em>segmentation</em>.</li>
+          <li><strong>Survive vendor failure</strong>: platform diversity, multi-cloud. <em>(not in video)</em></li>
+          <li><strong>Survive staff absence</strong>: cross-training, documentation, on-call rotation. <em>(not in video)</em></li>
+          <li><strong>Survive power loss</strong>: UPS for the gap, generator for duration, both tested. <em>(not in video)</em></li>
+        </ul></div>
+    </div></li>
+    <li class="item fix"><div class="when">7:32</div><div>
+      <span class="kind">Correction</span>
+      <p class="said"><span class="lbl">Video:</span><q>Episodes one through three were entirely about confidentiality and integrity.</q></p>
+      <div class="module"><span class="lbl">Module:</span>Data protection is <em>largely</em> about confidentiality and integrity, not entirely. Episode 1 opened with RPO and RTO, which are availability measures, and the Critical classification level is explicitly an availability judgement. The module’s point is that the two halves together complete the CIA triad.</div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="ep series" id="series" data-title="Across the whole series">
+  <h2>Not covered anywhere in the series</h2>
+  <p class="ep-intro">These parts of the module have no counterpart in the videos. Read them on the module page.</p>
+  <ul>
+    <li><strong>The objective split.</strong> Objective 3.3 covers how data is classified and guarded; objective 3.4 covers how systems survive failure and how quickly they come back.</li>
+    <li><strong>Cross-references to other modules.</strong> The protection mechanisms (encryption, hashing, tokenization, masking, obfuscation) and the three data states are explained in Module 2. RPO and RTO are formally defined alongside business impact analysis in Module 11. Data owner and custodian roles are defined formally in Module 12 with privacy obligations.</li>
+    <li><strong>Why the module asks “when,” not “how.”</strong> Module 2 asked how tokenization works; this module asks when you would choose it over masking. That shift is what defines Domain 3.</li>
+    <li><strong>Practice activities, labs, and the assessment.</strong> The classify-and-protect practice, method selection cases, recovery timeline, first-restore exercise, requirement-to-control map, labs, and the module quiz are only on the module page. The videos are a review aid, not a substitute.</li>
+  </ul>
+</section>
+
+</main>
+<footer>
+  Prepared from a review of all six videos (narration and on-screen slides) against the Module 7 page. Security+ · Brookdale Community College · 2026
+</footer>
+</div>
+<script>
+(function(){
+  var kinds={fix:"Corrections",clar:"Clarifications",miss:"Missing"};
+  var body=document.getElementById("index-body");
+  var eps=document.querySelectorAll("section.ep[id^='ep']");
+  eps.forEach(function(sec){
+    var tr=document.createElement("tr");
+    var th=document.createElement("th"); th.scope="row";
+    var a=document.createElement("a"); a.href="#"+sec.id; a.textContent=sec.getAttribute("data-title");
+    th.appendChild(a); tr.appendChild(th);
+    ["fix","clar","miss"].forEach(function(k){
+      var td=document.createElement("td"); td.className="n";
+      td.textContent=sec.querySelectorAll("li.item."+k).length; tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+  var live=document.getElementById("live");
+  var buttons=document.querySelectorAll(".filters button");
+  function apply(){
+    var on={}; buttons.forEach(function(b){on[b.getAttribute("data-kind")]=b.getAttribute("aria-pressed")==="true";});
+    var shown=0;
+    document.querySelectorAll("li.item").forEach(function(li){
+      var k=["fix","clar","miss"].filter(function(c){return li.classList.contains(c);})[0];
+      li.hidden=!on[k]; if(on[k]) shown++;
+    });
+    eps.forEach(function(sec){
+      var list=sec.querySelector("ol.items"); var note=sec.querySelector(".empty");
+      var any=sec.querySelectorAll("li.item:not([hidden])").length>0;
+      if(!any&&!note){note=document.createElement("p");note.className="empty";note.textContent="No entries of the selected kinds in this episode.";list.after(note);}
+      if(any&&note){note.remove();}
+    });
+    live.textContent="Showing "+shown+" of "+document.querySelectorAll("li.item").length+" entries.";
+  }
+  buttons.forEach(function(b){b.addEventListener("click",function(){
+    b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")==="true"?"false":"true"); apply();
+  });});
+  apply();
+})();
+</script>
+</body>
+</html>
