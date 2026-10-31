@@ -227,6 +227,16 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
 html[data-present="on"] .container > .callout{display:none!important}
 html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
+
+.onmachine{display:flex;align-items:center;gap:.5rem;margin:1.1rem 0 .55rem;padding:.42rem .7rem;
+  border-left:4px solid var(--brand);background:color-mix(in srgb,var(--brand) 14%,transparent);
+  border-radius:9px;font-weight:800;font-size:.86rem;letter-spacing:.02em;color:var(--text)}
+.onmachine .vm-ico{font-size:1.02rem;line-height:1}
+.onmachine[data-vm="SecOnion"]{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.onmachine[data-vm="WinOS"]{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.onmachine[data-vm="UbuntuSRV"]{border-left-color:#b48cff;background:color-mix(in srgb,#b48cff 16%,transparent)}
+.onmachine[data-vm="OpenSUSE"]{border-left-color:#35c6b4;background:color-mix(in srgb,#35c6b4 16%,transparent)}
+.onmachine[data-vm="pfSense"]{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,transparent)}
 </style>
 </head>
 <body>
@@ -314,6 +324,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
       <p class="section-lead">The nmap flags, grouped by what they answer. Each flag is a different question.</p>
 <div class="subsection"><span class="phase-tag">Task 1</span><h3>Use PowerShell to Perform an Active Reconnaissance of a Windows Server</h3>
 <p class="why">In this section, you will utilize PowerShell on the Windows server to gather extensive information.</p>
+<div class="onmachine" data-vm="WinOS"><span class="vm-ico" aria-hidden="true">🪟</span>On WinOS</div>
 <div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
@@ -372,6 +383,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="subsection"><span class="phase-tag">Task 3</span><h3>Scanning the Network for Vulnerable Systems</h3>
 <p class="why">In this section, you will utilize nmap on the Linux machine to gather network information.</p>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">1</span> Launch the Kali virtual machine to access the graphical login screen.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as kali with kali as the password.</p>

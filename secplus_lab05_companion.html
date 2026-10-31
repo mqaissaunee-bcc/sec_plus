@@ -227,6 +227,16 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
 html[data-present="on"] .container > .callout{display:none!important}
 html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
+
+.onmachine{display:flex;align-items:center;gap:.5rem;margin:1.1rem 0 .55rem;padding:.42rem .7rem;
+  border-left:4px solid var(--brand);background:color-mix(in srgb,var(--brand) 14%,transparent);
+  border-radius:9px;font-weight:800;font-size:.86rem;letter-spacing:.02em;color:var(--text)}
+.onmachine .vm-ico{font-size:1.02rem;line-height:1}
+.onmachine[data-vm="SecOnion"]{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.onmachine[data-vm="WinOS"]{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.onmachine[data-vm="UbuntuSRV"]{border-left-color:#b48cff;background:color-mix(in srgb,#b48cff 16%,transparent)}
+.onmachine[data-vm="OpenSUSE"]{border-left-color:#35c6b4;background:color-mix(in srgb,#35c6b4 16%,transparent)}
+.onmachine[data-vm="pfSense"]{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,transparent)}
 </style>
 </head>
 <body>
@@ -315,6 +325,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 <div class="subsection"><span class="phase-tag">Task 1</span><h3>Bruteforcing SSH</h3>
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Demonstrate ncrack Against sshguard</h3>
+<div class="onmachine" data-vm="UbuntuSRV"><span class="vm-ico" aria-hidden="true">🖧</span>On UbuntuSRV</div>
 <div class="step"><p><span class="snum">1</span> Launch the Ubuntu virtual machine to access the graphical login screen.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as sysadmin with the password NDGlabpass123!.</p>
@@ -328,6 +339,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 <div class="step"><p><span class="snum">5</span> Next, enter the command below to verify that the service denyhosts is not running. Type q to quit the status window. If it is running, stop the service by running this command: sudo service sshguard stop. Enter NDGlabpass123! as the password if prompted.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> service sshguard status</div>
 </div>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">6</span> Launch the Kali virtual machine to access the graphical login screen. Log in as kali with kali as the password.</p>
 </div>
 <div class="step"><p><span class="snum">7</span> Open a new Terminal window by clicking on the Terminal icon located in the top toolbar.</p>
@@ -339,6 +351,7 @@ Enter.
 b. When prompted for a password, type NDGlabpass123!. Press Enter.
 c. You should see something like this:</div>
 </div>
+<div class="onmachine" data-vm="UbuntuSRV"><span class="vm-ico" aria-hidden="true">🖧</span>On UbuntuSRV</div>
 <div class="step"><p><span class="snum">9</span> Change focus to the UbuntuSRV machine.</p>
 </div>
 <div class="step"><p><span class="snum">10</span> While logged in to the UbuntuSRV system, focus on the Terminal window. Type the command below to grep the log entry recorded from the SSH connection that was initiated by the Kali system (case sensitive).</p>
@@ -346,6 +359,7 @@ c. You should see something like this:</div>
 "203.0.113.2"</div>
 <div class="callout tip"><span class="tag">[NOTE]</span> If there were previous successful logins, the log entry will show them, indicating the system accepted the SSH request from the Kali system.</div>
 </div>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">11</span> Change focus to the Kali viewer.</p>
 </div>
 <div class="step"><p><span class="snum">12</span> Within the Terminal window, type the help command below to see what available options can be used with ncrack.</p>
@@ -358,6 +372,7 @@ c. You should see something like this:</div>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Observe the Action of sshguard</h3>
+<div class="onmachine" data-vm="UbuntuSRV"><span class="vm-ico" aria-hidden="true">🖧</span>On UbuntuSRV</div>
 <div class="step"><p><span class="snum">1</span> Change focus to the UbuntuSRV viewer.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Within a Terminal window, run the following command to change the sshguard configuration. If prompted for a password, type NDGlabpass123!.</p>
@@ -383,19 +398,23 @@ c. You should see something like this:</div>
 <div class="step"><p><span class="snum">7</span> Next, let's configure the sshguard to auto-block attacks. Type the following command in the Terminal. Enter NDGlabpass123! if prompted for a password.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo iptables -A INPUT -p tcp -m tcp --dport 22 -j sshguard</div>
 </div>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">8</span> Change focus to the Kali viewer. Run the ncrack command again to attack the UbuntuSRV once more. The attack will fail due to the block from the sshguard.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> ncrack -v 172.16.1.10 --user sysadmin -P
 /usr/share/wordlists/fasttrack.txt -p ssh</div>
 </div>
+<div class="onmachine" data-vm="UbuntuSRV"><span class="vm-ico" aria-hidden="true">🖧</span>On UbuntuSRV</div>
 <div class="step"><p><span class="snum">9</span> Let's quickly switch back to the Ubuntusrv machine to observe the change in the firewall. Run the following command in the Terminal:</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> sudo iptables -S
 Notice the last entry in the iptables was created to block the access from 203.0.113.2, which is our
 Kali machine (Feel free to ssh to the Ubuntusrv machine on Kali, it will fail until the 60-second block
 time is reached).</div>
 </div>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">10</span> Wait 60 seconds, and switch back to the Terminal on the Kali machine. We could then ssh to UbuntuSRV again. Verify it is working now.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> ssh sysadmin@172.16.1.10</div>
 </div>
+<div class="onmachine" data-vm="UbuntuSRV"><span class="vm-ico" aria-hidden="true">🖧</span>On UbuntuSRV</div>
 <div class="step"><p><span class="snum">11</span> Analyze the Ubuntu's auth.log file for failed password attempts (case sensitive).</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> grep -a "Failed password" /var/log/auth.log | grep -a
 "203.0.113.2"</div>

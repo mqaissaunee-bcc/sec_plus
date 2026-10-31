@@ -227,6 +227,16 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
 html[data-present="on"] .container > .callout{display:none!important}
 html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
+
+.onmachine{display:flex;align-items:center;gap:.5rem;margin:1.1rem 0 .55rem;padding:.42rem .7rem;
+  border-left:4px solid var(--brand);background:color-mix(in srgb,var(--brand) 14%,transparent);
+  border-radius:9px;font-weight:800;font-size:.86rem;letter-spacing:.02em;color:var(--text)}
+.onmachine .vm-ico{font-size:1.02rem;line-height:1}
+.onmachine[data-vm="SecOnion"]{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.onmachine[data-vm="WinOS"]{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.onmachine[data-vm="UbuntuSRV"]{border-left-color:#b48cff;background:color-mix(in srgb,#b48cff 16%,transparent)}
+.onmachine[data-vm="OpenSUSE"]{border-left-color:#35c6b4;background:color-mix(in srgb,#35c6b4 16%,transparent)}
+.onmachine[data-vm="pfSense"]{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,transparent)}
 </style>
 </head>
 <body>
@@ -315,6 +325,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 <div class="subsection"><span class="phase-tag">Task 1</span><h3>Using tcpdump to Capture and Analyze Network Traffic</h3>
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Using tcpdump to Capture ICMP Traffic</h3>
+<div class="onmachine" data-vm="SecOnion"><span class="vm-ico" aria-hidden="true">🧅</span>On SecOnion</div>
 <div class="step"><p><span class="snum">1</span> Launch the SecOnion virtual machine.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> If you see the SecOnion lock screen, click, hold, and drag up to unlock it.</p>
@@ -334,6 +345,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="step"><p><span class="snum">8</span> To familiarize yourself with the tcpdump utility, type the following command to view several available options for tcpdump. sysadmin@seconion ~$ tcpdump --help</p>
 </div>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">9</span> Launch the Kali virtual machine to access the graphical login screen.</p>
 </div>
 <div class="step"><p><span class="snum">10</span> Log in as kali with kali as the password.</p>
@@ -354,6 +366,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 <div class="step"><p><span class="snum">17</span> Type the following command to initiate a continuous ping to the WinOS system. Leave the pings running in the background and proceed to the next step.</p>
 <div class="code-block"><span class="pr">kali@kali$</span> ping 192.168.0.50</div>
 </div>
+<div class="onmachine" data-vm="SecOnion"><span class="vm-ico" aria-hidden="true">🧅</span>On SecOnion</div>
 <div class="step"><p><span class="snum">18</span> Switch back to the SecOnion system. In the previous Terminal, run tcpdump on the internal network by entering the command below. If prompted with a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump -i ens192 icmp</p>
 </div>
 <div class="step"><p><span class="snum">19</span> Notice the output that tcpdump provides: HH:MM:SS.mmmmmm IP src &gt; dst: ptype, id, seq, len. Also, take note that for each echo request, there is a reply. HH:MM:SS.mmmmmm Timestamp in hours, minutes, seconds, and</p>
@@ -382,10 +395,12 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="step"><p><span class="snum">25</span> Close Wireshark.</p>
 </div>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">26</span> Switch to the Kali machine and press CTRL+C to stop the continuous pings.</p>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.2</span><h3>Using tcpdump to Capture ARP Traffic</h3>
+<div class="onmachine" data-vm="SecOnion"><span class="vm-ico" aria-hidden="true">🧅</span>On SecOnion</div>
 <div class="step"><p><span class="snum">1</span> Change focus to the SecOnion system.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> In a Terminal window, enter the ARP command below and examine the results. sysadmin@seconion ~$ arp -n</p>
@@ -393,6 +408,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 <div class="step"><p><span class="snum">3</span> Enter the command below to capture ARP packets. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo tcpdump -i ens160 -nn -e arp</p>
 <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">SFTP protected.</span> the SFTP capture — key exchange then encrypted packets.</span></div>
 </div>
+<div class="onmachine" data-vm="UbuntuSRV"><span class="vm-ico" aria-hidden="true">🖧</span>On UbuntuSRV</div>
 <div class="step"><p><span class="snum">4</span> Launch the UbuntuSRV virtual machine to access the graphical login screen.</p>
 </div>
 <div class="step"><p><span class="snum">5</span> Log in as sysadmin with NDGlabpass123! as the password.</p>
@@ -402,6 +418,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 <div class="step"><p><span class="snum">7</span> Type the ping command below.</p>
 <div class="code-block"><span class="pr">sysadmin@ubuntusrv:~$</span> ping -c4 192.168.0.6</div>
 </div>
+<div class="onmachine" data-vm="SecOnion"><span class="vm-ico" aria-hidden="true">🧅</span>On SecOnion</div>
 <div class="step"><p><span class="snum">8</span> Switch back to SecOnion and press CTRL+C to stop the tcpdump capture. Notice the ARP output: HH:MM:SS:mmmmmm srcMAC &gt; dstMAC: ptype, len, request/response, length.</p>
 </div>
 <div class="step"><p><span class="snum">9</span> Enter the command below to display the ARP table. Notice the ARP entry for the IP address 192.168.0.1 is showing in the orange square. sysadmin@seconion ~$ arp -n</p>
@@ -412,6 +429,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="subsection"><span class="phase-tag">Task 2.1</span><h3>Using Wireshark to Capture FTP Traffic</h3>
 <p class="why">2.1.1 Setup FTP Server</p>
+<div class="onmachine" data-vm="WinOS"><span class="vm-ico" aria-hidden="true">🪟</span>On WinOS</div>
 <div class="step"><p><span class="snum">1</span> Launch the WinOS virtual machine to access the graphical login screen. While on the splash screen, focus on the NETLAB+ tabs. Click the dropdown menu for the WinOS tab and click on Send CTRL+ALT+DEL.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as Administrator using the password NDGlabpass123!.</p>
@@ -466,6 +484,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="step"><p><span class="snum">27</span> Make sure to check Turn Off Windows Defender Firewall for all three types of networks. Then, click OK to confirm. 2.1.2 Monitor the FTP Traffic</p>
 </div>
+<div class="onmachine" data-vm="SecOnion"><span class="vm-ico" aria-hidden="true">🧅</span>On SecOnion</div>
 <div class="step"><p><span class="snum">1</span> In the SecOnion system, open a Terminal window and type the command below to run Wireshark as root. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo wireshark</p>
 </div>
 <div class="step"><p><span class="snum">2</span> In the Wireshark window, to the left side of the Capture section, scroll down and find ens192, click to select, then click the Start button.</p>
@@ -487,9 +506,11 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="step"><p><span class="snum">3</span> In the filter pane, type ssh and press Enter.</p>
 </div>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">4</span> Change focus to the Kali system. Focus on the terminal and enter the command below, when asked, are you sure you want to continue, type yes. Then, you will be prompted for a password; enter NDGlabpass123!.</p>
 <div class="code-block"><span class="pr">kali@kali:~$</span> sftp sysadmin@192.168.0.6</div>
 </div>
+<div class="onmachine" data-vm="SecOnion"><span class="vm-ico" aria-hidden="true">🧅</span>On SecOnion</div>
 <div class="step"><p><span class="snum">5</span> Switch to the SecOnion system and stop the capture by clicking the Stop Capture button.</p>
 </div>
 <div class="step"><p><span class="snum">6</span> Locate the Diffie-Hellman key exchange between the client and the SFTP service. After the key exchange, the packets that follow are encrypted over the medium. Feel free to clear the filter and examine the traffic. You will no longer see the username and password in clear text compared to FTP.</p>
@@ -505,6 +526,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 <div class="step"><p><span class="snum">1</span> While on the SecOnion system, focus on the terminal window and enter the command below. If prompted for a password, enter NDGlabpass123!. sysadmin@seconion ~$ sudo dumpcap -P -i ens192 -w /tmp/netcapture2.pcap</p>
 <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">dumpcap.</span> a <code class='inl'>dumpcap</code> capture running.</span></div>
 </div>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">2</span> Switch focus to the Kali system, start a browser, then go to address 192.168.0.50 followed by pressing the Enter key. Wait until the page finishes loading. The address should return the Internet Information Services default page on Windows Server.</p>
 </div>
 <div class="step"><p><span class="snum">3</span> Switch back to the Terminal running dumpcap and press CTRL+C to stop the running process</p>

