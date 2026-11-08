@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 8 Video Errata</title>
+<meta name="description" content="Corrections, clarifications, and gaps in the Module 8 explainer video series, checked against the Module 8 reading.">
+<style>
+:root{
+  --bg:#f7f7f5; --surface:#ffffff; --text:#1d1f23; --muted:#5b6170; --line:#dfe1e6;
+  --accent:#1f5fa8; --accent-soft:#e8f0fa;
+  --fix:#b3261e; --fix-soft:#fbeceb;
+  --clar:#9a5b00; --clar-soft:#fdf3e2;
+  --gap:#2e6b3a; --gap-soft:#e9f4ec;
+  --minor:#5b6170; --minor-soft:#eef0f3;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171b; --surface:#1e2127; --text:#e7e9ee; --muted:#a3a9b6; --line:#343844;
+    --accent:#7fb2ee; --accent-soft:#1d2a3b;
+    --fix:#f2958e; --fix-soft:#3a1f1e;
+    --clar:#f0be6a; --clar-soft:#3a2e1a;
+    --gap:#8fd19c; --gap-soft:#1c3222;
+    --minor:#b4bac6; --minor-soft:#2a2e36;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171b; --surface:#1e2127; --text:#e7e9ee; --muted:#a3a9b6; --line:#343844;
+  --accent:#7fb2ee; --accent-soft:#1d2a3b;
+  --fix:#f2958e; --fix-soft:#3a1f1e;
+  --clar:#f0be6a; --clar-soft:#3a2e1a;
+  --gap:#8fd19c; --gap-soft:#1c3222;
+  --minor:#b4bac6; --minor-soft:#2a2e36;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:24px 16px 64px}
+header.top{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:24px}
+.eyebrow{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+h1{font-size:1.75rem;line-height:1.25;margin:0 0 8px}
+h2{font-size:1.3rem;margin:40px 0 4px;scroll-margin-top:16px}
+h3{font-size:1.02rem;margin:22px 0 8px}
+p{margin:0 0 12px}
+.lede{color:var(--muted);margin:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin:16px 0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:8px 0 0;padding:0;list-style:none;font-size:.92rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  padding:2px 8px;border-radius:999px;white-space:nowrap;vertical-align:middle}
+.tag.fix{background:var(--fix-soft);color:var(--fix)}
+.tag.clar{background:var(--clar-soft);color:var(--clar)}
+.tag.gap{background:var(--gap-soft);color:var(--gap)}
+.tag.minor{background:var(--minor-soft);color:var(--minor)}
+nav.toc ol{margin:6px 0 0;padding-left:20px}
+nav.toc li{margin:2px 0}
+.meta{color:var(--muted);font-size:.9rem;margin:0 0 8px}
+.item{border-left:4px solid var(--line);background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;
+  padding:12px 16px;margin:10px 0;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.item.fix{border-left-color:var(--fix)}
+.item.clar{border-left-color:var(--clar)}
+.item.minor{border-left-color:var(--minor)}
+.item .head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px}
+.ts{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.85rem;color:var(--muted)}
+.said{margin:0 0 6px}
+.said::before{content:"Video: ";font-weight:600}
+.fixtext{margin:0}
+.fixtext::before{content:"Module 8: ";font-weight:600}
+ul.gaps{margin:8px 0 0;padding-left:20px}
+ul.gaps li{margin:6px 0}
+.gapbox{background:var(--gap-soft);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;margin:12px 0}
+.gapbox h3{margin:0 0 4px;color:var(--gap)}
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{padding:6px 0 6px 30px;position:relative;border-bottom:1px dashed var(--line)}
+.check li:last-child{border-bottom:0}
+.check li::before{content:"";position:absolute;left:4px;top:10px;width:14px;height:14px;border:2px solid var(--muted);border-radius:3px}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px}
+.stat b{display:block;font-size:1.5rem;line-height:1.2}
+.stat span{font-size:.85rem;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:.94rem}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem}
+.themebtn{float:right;font:inherit;font-size:.85rem;background:var(--surface);color:var(--text);
+  border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer}
+@media print{
+  :root{--bg:#fff;--surface:#fff}
+  .themebtn{display:none}
+  .item,.card,.gapbox,.stat{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <button class="themebtn" type="button" id="themeBtn" aria-label="Toggle light or dark theme">Theme</button>
+  <p class="eyebrow">Security+ · Module 8 · Explainer video series</p>
+  <h1>Errata: Secure Baselines, Hardening, and Asset Management videos</h1>
+  <p class="lede">The five explainer videos for Module 8 were AI-generated from the Module 8 reading. They are a good overview, but they contain a few errors and leave out several exam-relevant points. When a video and the reading disagree, <strong>the reading is correct</strong>: <a href="https://mqaissaunee-bcc.github.io/sec_plus/secplus_module08.html">Security+ Module 8</a>.</p>
+</header>
+
+<section class="card" aria-labelledby="howto">
+  <h2 id="howto" style="margin-top:0">How to use this page</h2>
+  <p>Each video has its own section below. Timestamps are approximate (mm:ss). Items are labelled by type:</p>
+  <ul class="legend">
+    <li><span class="tag fix">Correction</span> The video says something wrong. Learn the module version.</li>
+    <li><span class="tag clar">Clarification</span> Overstated, imprecise, or easy to misread.</li>
+    <li><span class="tag minor">Minor</span> A harmless difference. No action needed.</li>
+    <li><span class="tag gap">Missing</span> In the reading but not in the video.</li>
+  </ul>
+  <div class="summary" aria-label="Summary counts">
+    <div class="stat"><b>5</b><span>videos reviewed (≈39 min)</span></div>
+    <div class="stat"><b>2</b><span>corrections</span></div>
+    <div class="stat"><b>9</b><span>clarifications</span></div>
+    <div class="stat"><b>6</b><span>minor notes</span></div>
+    <div class="stat"><b>28</b><span>points missing from the videos</span></div>
+  </div>
+</section>
+
+<section class="card" aria-labelledby="top5">
+  <h2 id="top5" style="margin-top:0">If you read nothing else</h2>
+  <ol>
+    <li><strong>The one universal hardening technique is changing default credentials. Isolation is not part of it.</strong> Video 2 adds "and isolate the device" to that answer. "Change defaults and isolate" is the approach for IoT devices specifically.</li>
+    <li><strong>HttpOnly does not stop cross-site scripting.</strong> It limits the damage by keeping scripts from reading the cookie. The injected script still runs (Video 4).</li>
+    <li><strong>A code signature proves the code came from whoever holds the signing key.</strong> That is not the same as proving who the publisher is. A stolen key produces a valid signature (Video 4).</li>
+    <li><strong>Failed drives that can't be overwritten must be destroyed, whatever their sensitivity.</strong> Destruction methods are shredding, <em>degaussing</em>, and <em>incineration</em> (Video 5).</li>
+    <li><strong>Several exam terms appear in none of the videos:</strong> EAP, secure boot, host-based firewall, embedded/RTOS systems, degaussing, and the Domain 4 exam weight (28%). See the <a href="#checklist">checklist</a>.</li>
+  </ol>
+</section>
+
+<nav class="toc card" aria-label="Contents">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#v1">01 · Security Operations Starts with a Secure Baseline</a></li>
+    <li><a href="#v2">02 · Hardening Techniques</a></li>
+    <li><a href="#v3">03 · Securing Wireless Networks and Mobile Devices</a></li>
+    <li><a href="#v4">04 · Application Security, Sandboxing, and Monitoring</a></li>
+    <li><a href="#v5">05 · Asset Management</a></li>
+    <li><a href="#checklist">Checklist: exam points the videos skip</a></li>
+    <li><a href="#module-only">Activities only in the module</a></li>
+  </ol>
+</nav>
+
+<!-- ============ VIDEO 1 ============ -->
+<section aria-labelledby="v1">
+  <h2 id="v1">01 · Security Operations Starts with a Secure Baseline</h2>
+  <p class="meta">8:10 · Module sections: Overview, Secure Baselines</p>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">07:18–07:30</span></div>
+    <p class="said">Infrastructure as code "gives drift almost zero opportunity to accumulate."</p>
+    <p class="fixtext">Rebuilding from a definition gives drift <em>less</em> opportunity to accumulate. It doesn't eliminate drift, so you still need configuration enforcement and monitoring.</p>
+  </div>
+
+  <div class="item minor">
+    <div class="head"><span class="tag minor">Minor</span><span class="ts">01:33–01:46</span></div>
+    <p class="said">The building-code analogy uses "10,000 houses using 400 different people over a decade."</p>
+    <p class="fixtext">The reading says a thousand houses built by four hundred people. The point is the same: a careful individual doesn't scale, and a standard does.</p>
+  </div>
+
+  <div class="gapbox">
+    <h3>Missing from Video 1</h3>
+    <ul class="gaps">
+      <li><strong>Exam weight and objectives.</strong> Domain 4 (Security Operations) is 28% of the exam, the largest domain. This module covers objective <strong>4.1</strong> (applying security techniques to computing resources) and <strong>4.2</strong> (asset management). The two go together because you can't apply a baseline to a system you don't know exists.</li>
+      <li><strong>How to deploy.</strong> The video explains how deployment fails but not how it should be done: <em>ideally at build time, through automation</em>, and applied to the existing systems as well as new ones.</li>
+      <li><strong>CIS Benchmarks have graded levels.</strong> They aren't one setting for everyone.</li>
+      <li><strong>Exception versus drift.</strong> The video says a documented adjustment is what separates a thoughtful exception from a mistake. The reading goes further: a documented, justified deviation is a <em>baseline exception</em>, and an undocumented one <em>is configuration drift</em>.</li>
+      <li><strong>The lifecycle is a loop.</strong> Drift findings feed back into revising the baseline (Establish → Deploy → Maintain → Establish).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ VIDEO 2 ============ -->
+<section aria-labelledby="v2">
+  <h2 id="v2">02 · Hardening Techniques</h2>
+  <p class="meta">6:42 · Module section: Hardening Targets and Techniques</p>
+
+  <div class="item fix">
+    <div class="head"><span class="tag fix">Correction</span><span class="ts">05:46–06:02</span></div>
+    <p class="said">The question asks for the single technique that applies to every class of target. The answer given is "You change the default credentials <em>and isolate the device</em>."</p>
+    <p class="fixtext">The universal technique is <strong>changing default credentials</strong>, with nothing added. It needs no agent, no patch, and no vendor support. "Change defaults and isolate" is the right approach for <strong>IoT devices</strong>, but you don't isolate a managed workstation on its own network segment, so isolation isn't universal. The video's own explanation (06:02) only justifies the credentials part.</p>
+  </div>
+
+  <div class="item minor">
+    <div class="head"><span class="tag minor">Minor</span><span class="ts">01:43–01:50</span></div>
+    <p class="said">Changing default credentials removes "the simplest, most common attack factor."</p>
+    <p class="fixtext">"Factor" should be <em>vector</em>. The reading calls it "the simplest vector in the curriculum." It doesn't claim it is the most common.</p>
+  </div>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">04:16–04:34</span></div>
+    <p class="said">Cloud logs should be exported to a separate account.</p>
+    <p class="fixtext">That's correct but incomplete. Logs go to a separate account <em>with different credentials</em>, and they must be <em>retained</em> long enough to investigate. Also, cloud logging is <em>often disabled by default</em>, which is why "enable at account creation" matters.</p>
+  </div>
+
+  <div class="gapbox">
+    <h3>Missing from Video 2</h3>
+    <ul class="gaps">
+      <li><strong>The full hardening toolkit.</strong> The video covers removing software, disabling ports, changing defaults, and least functionality. It never mentions <strong>host-based firewall</strong> or <strong>secure boot</strong> (only signed boot code runs), and it doesn't cover <strong>patch management on a defined cycle</strong> or <strong>logging and monitoring</strong> as toolkit items.</li>
+      <li><strong>Embedded systems and RTOS</strong> are never mentioned. In the reading they're a separate target class: network isolation and vendor firmware updates. Agents are impossible, and often so is any update at all.</li>
+      <li><strong>Why ICS/SCADA gets <em>passive</em> monitoring.</strong> Active scanning can crash fragile controllers. ICS/SCADA can't take patching, agents, or active scanning.</li>
+      <li><strong>Other target rows.</strong> Servers emphasize least functionality, baselines, and a host firewall. For switches and routers, change defaults, disable unused ports, and secure the management plane, because you can't install agents. With cloud infrastructure you can't access the layers the provider operates. IoT devices sometimes can't even be inventoried.</li>
+      <li><strong>The pattern behind it.</strong> When a technique isn't possible on the device, controls move <em>around</em> the device. This is the <em>compensating control</em> pattern from Module 1.</li>
+      <li><strong>The management plane is broader than switches.</strong> It also covers hypervisors, cloud consoles, and storage arrays. Old unencrypted protocols should be <em>disabled, not just deprioritized</em>, because of downgrade attacks (Module 5).</li>
+      <li><strong>Cloud configuration.</strong> Misconfiguration is the leading cloud finding, which is why automated scanning against a baseline matters. All three cloud areas are on the customer side of the shared responsibility model (Module 4).</li>
+      <li><strong>Half the practice set.</strong> The video works 3 of the 6 scenarios. The others are:
+        <div class="tablewrap"><table>
+          <thead><tr><th>Scenario</th><th>Approach</th></tr></thead>
+          <tbody>
+            <tr><td>Networked camera with factory password and no firmware updates</td><td>Change defaults and isolate</td></tr>
+            <tr><td>Core switch whose management is reachable from the user VLAN</td><td>Secure the management plane</td></tr>
+            <tr><td>Employee-owned phone with corporate email</td><td>MDM and containerization</td></tr>
+            <tr><td>Production Linux server with unused default services</td><td>Least functionality and baselines</td></tr>
+          </tbody>
+        </table></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ VIDEO 3 ============ -->
+<section aria-labelledby="v3">
+  <h2 id="v3">03 · Securing Wireless Networks and Mobile Devices</h2>
+  <p class="meta">7:51 · Module section: Wireless and Mobile</p>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">03:55–04:04</span></div>
+    <p class="said">Enterprise authentication "is an absolute requirement for modern organizations."</p>
+    <p class="fixtext">The exam rule is narrower. Enterprise mode (individual authentication against RADIUS) is the answer <em>whenever a scenario mentions staff turnover</em> or needs to revoke one user without affecting anyone else. Personal mode (pre-shared key) still exists and is still tested.</p>
+  </div>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">05:12–05:17</span></div>
+    <p class="said">CYOD "offers a nice middle ground from an approved list."</p>
+    <p class="fixtext">The middle ground is about <em>choice</em>, not ownership. In CYOD the <strong>organization owns</strong> the device and has <strong>high</strong> control. Employees just pick from an approved list. Only BYOD is employee-owned.</p>
+  </div>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">07:01–07:09</span></div>
+    <p class="said">Bluetooth introduces pairing attacks "if it's just carelessly left on indefinitely."</p>
+    <p class="fixtext">The specific weakness is leaving Bluetooth <strong>discoverable</strong> indefinitely, not just leaving it on.</p>
+  </div>
+
+  <div class="item minor">
+    <div class="head"><span class="tag minor">Minor</span><span class="ts">06:46–06:51</span></div>
+    <p class="said">"Cellular connections are generally the most controlled and secure path."</p>
+    <p class="fixtext">The reading says "generally the most <em>controlled</em> path." It makes no claim that cellular is inherently secure.</p>
+  </div>
+
+  <div class="gapbox">
+    <h3>Missing from Video 3</h3>
+    <ul class="gaps">
+      <li><strong>EAP</strong> is never mentioned. EAP is the framework that carries credentials (passwords, certificates, tokens) in enterprise wireless authentication. It appears in the reading's wireless settings table.</li>
+      <li><strong>What else a site survey finds:</strong> existing networks already present, interference, and channel overlap. These affect availability, and <em>availability is a security property</em>.</li>
+      <li><strong>MDM restricts applications</strong> as well as deploying them.</li>
+      <li><strong>Exam rule.</strong> When a BYOD scenario needs corporate data removed, the answer is a <em>selective or container wipe</em>, never a full device wipe.</li>
+      <li><strong>Link back.</strong> The rogue access point and evil twin risks come from Module 5.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ VIDEO 4 ============ -->
+<section aria-labelledby="v4">
+  <h2 id="v4">04 · Application Security, Sandboxing, and Monitoring</h2>
+  <p class="meta">8:36 · Module section: Application Security, Sandboxing, and Monitoring</p>
+
+  <div class="item fix">
+    <div class="head"><span class="tag fix">Correction</span><span class="ts">02:11–02:25</span></div>
+    <p class="said">The HttpOnly attribute "is a huge defense against cross site scripting."</p>
+    <p class="fixtext">HttpOnly <strong>does not prevent XSS</strong>. It makes the cookie unreadable to client-side script, which <em>limits the damage</em> a successful XSS can do (no session-token theft). The injected script still runs. Input validation and output encoding are what prevent XSS. Expect exam options built around this difference.</p>
+  </div>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">04:54–05:02</span></div>
+    <p class="said">Code signing "proves exactly who published the software."</p>
+    <p class="fixtext">A signature proves the software came from <strong>the holder of that signing key</strong> and hasn't changed since signing. If the key is stolen, or the publisher is compromised (a supply chain attack, Module 3), malware gets a valid signature. A signature also says nothing about whether the software is safe. That's why <em>signature verification and behavioral monitoring after installation are both required</em>.</p>
+  </div>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">06:15–06:33</span></div>
+    <p class="said">"Sandboxing is about containment, not outright prevention. Actually, scratch that. It's more like a temporary holding cell…"</p>
+    <p class="fixtext">The self-correction is confusing, and the first statement was the right one. Sandboxing is <strong>detection and containment rather than prevention</strong>. Sandbox-aware malware can stay dormant while it's being watched, so a clean sandbox result is weaker evidence than it looks. That's why sandboxing <em>complements endpoint monitoring rather than replacing it</em>.</p>
+  </div>
+
+  <div class="item minor">
+    <div class="head"><span class="tag minor">Minor</span><span class="ts">03:05–03:13</span></div>
+    <p class="said">Static analysis catches flaws "before the software is even compiled."</p>
+    <p class="fixtext">What defines static analysis is that it examines code <em>without running it</em>, early in development. Some SAST tools also analyze compiled code.</p>
+  </div>
+
+  <div class="item minor">
+    <div class="head"><span class="tag minor">Minor</span><span class="ts">07:01–07:07</span></div>
+    <p class="said">"As the source material perfectly puts it…"</p>
+    <p class="fixtext">This is left over from how the video was generated. The "source material" is the Module 8 reading.</p>
+  </div>
+
+  <div class="gapbox">
+    <h3>Missing from Video 4</h3>
+    <ul class="gaps">
+      <li><strong>The third operational form of sandboxing:</strong> separating development and test environments from production. The video only covers detonating attachments and isolating browser tabs.</li>
+      <li><strong>The operational framing.</strong> Module 4 covered these as fixes for specific vulnerabilities. Objective 4.1 treats them as <em>controls applied across an estate</em>.</li>
+      <li><strong>Why publisher-based allow lists work.</strong> Allowing "signed code from approved publishers" is far easier to maintain than listing individual files (Module 5). Code signing is the Module 2 digital signature applied to executables.</li>
+      <li><strong>The missing-logs indicator.</strong> Logs that aren't forwarded off the host can be erased. Missing logs are a Module 5 indicator of compromise.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ VIDEO 5 ============ -->
+<section aria-labelledby="v5">
+  <h2 id="v5">05 · Asset Management</h2>
+  <p class="meta">8:00 · Module section: Asset Management</p>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">05:38–05:47</span></div>
+    <p class="said">For "a failed drive that literally can't be overwritten… physical destruction like shredding is mandatory for highly sensitive data."</p>
+    <p class="fixtext">The video merges two separate cases. Destruction is right for <strong>(1) highly sensitive data</strong> and <strong>(2) failed media</strong>. A drive too damaged to overwrite can't be sanitized, so destruction is the <em>only</em> option however sensitive the data is. Destruction methods include <strong>shredding, degaussing, and incineration</strong>.</p>
+  </div>
+
+  <div class="item clar">
+    <div class="head"><span class="tag clar">Clarification</span><span class="ts">02:01–02:10</span></div>
+    <p class="said">Without asking about end of support, "you literally just bought a very expensive paperweight."</p>
+    <p class="fixtext">The real danger is the opposite. The device keeps working, so it stays in service while it can't be patched. Example from the reading: a device bought with three years of security updates and used for eight is <strong>unpatchable for five years</strong>. Ask at purchase how long the vendor will issue security updates.</p>
+  </div>
+
+  <div class="item minor">
+    <div class="head"><span class="tag minor">Minor</span><span class="ts">01:22–01:31</span></div>
+    <p class="said">The lifecycle runs from "purchase on day one to assignment in week one…"</p>
+    <p class="fixtext">The timings are only for illustration and don't come from the reading or any standard. The four phases are Acquisition → Assignment → Monitoring/Tracking → Disposal.</p>
+  </div>
+
+  <div class="gapbox">
+    <h3>Missing from Video 5</h3>
+    <ul class="gaps">
+      <li><strong>Warranty returns.</strong> A failed drive sent back to the vendor under warranty leaves <em>with its data intact</em> unless that's negotiated in advance.</li>
+      <li><strong>Phantom inventory entries.</strong> The video stresses undiscovered assets. The reading points out that the other direction matters too: inventory entries for assets that no longer exist create <em>false assurance</em> that something was decommissioned when it may still be running.</li>
+      <li><strong>Location includes cloud region</strong>, which matters for data sovereignty.</li>
+      <li><strong>Why certification matters.</strong> Without a certificate of destruction, the organization <em>can't demonstrate to a regulator</em> that the data was removed. Scenarios mentioning regulators or audits want certification named.</li>
+      <li><strong>Legal holds.</strong> Destroying a device that holds records under a legal hold is a serious problem. Keeping data past its purpose is liability with no benefit (Module 7).</li>
+      <li><strong>Classification</strong> ties to the data classification work in Module 7.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ CHECKLIST ============ -->
+<section aria-labelledby="checklist">
+  <h2 id="checklist">Checklist: exam points the videos skip</h2>
+  <p class="meta">If you only watched the videos, make sure you can explain each of these from the reading.</p>
+  <div class="card">
+    <ul class="check">
+      <li>Domain 4 is <strong>28%</strong> of the exam. This module covers objectives <strong>4.1</strong> and <strong>4.2</strong>.</li>
+      <li>Baselines are deployed <strong>at build time through automation</strong>, to existing systems as well as new ones.</li>
+      <li>A <strong>documented</strong> deviation is an exception. An <strong>undocumented</strong> one is drift.</li>
+      <li><strong>Secure boot</strong> and <strong>host-based firewall</strong> are hardening techniques.</li>
+      <li><strong>Embedded systems / RTOS</strong>: network isolation and vendor firmware. Agents (and often updates) are impossible.</li>
+      <li><strong>ICS/SCADA</strong>: no patching, no agents, <strong>no active scanning</strong>. Use segmentation and passive monitoring.</li>
+      <li>The <strong>only</strong> universal technique is <strong>changing default credentials</strong>.</li>
+      <li><strong>EAP</strong> carries credentials (passwords, certificates, tokens) in enterprise wireless.</li>
+      <li>CYOD is <strong>organization-owned</strong>. Only BYOD is employee-owned.</li>
+      <li>BYOD + remove corporate data → <strong>selective/container wipe</strong>, never a full wipe.</li>
+      <li><strong>HttpOnly</strong> limits XSS damage. It doesn't prevent XSS.</li>
+      <li>A code signature proves <strong>key holder + integrity</strong>, not safety.</li>
+      <li>Sandboxing is <strong>detection and containment</strong>, and it complements endpoint monitoring.</li>
+      <li>Destruction methods: <strong>shredding, degaussing, incineration</strong>. Failed media must be destroyed.</li>
+      <li>Warranty returns leave <strong>with data intact</strong> unless negotiated.</li>
+      <li>Deletion ≠ sanitization. <strong>Certification</strong> is the evidence regulators want.</li>
+    </ul>
+  </div>
+</section>
+
+<section aria-labelledby="module-only">
+  <h2 id="module-only">Activities only in the module</h2>
+  <p>The videos can't replace the interactive parts of the reading. Do these on the <a href="https://mqaissaunee-bcc.github.io/sec_plus/secplus_module08.html">Module 8 page</a>:</p>
+  <ul>
+    <li><strong>Detecting drift</strong> (Secure Baselines): compare a system against its baseline.</li>
+    <li><strong>Practice: match the target to the technique</strong> (Hardening): all six scenarios, plus the hardening reference table.</li>
+    <li><strong>Enterprise wireless authentication</strong> (Wireless and Mobile): step through authenticating a client.</li>
+    <li><strong>Choosing a disposal method</strong> (Asset Management): three worked cases, including failed drives and regulated records.</li>
+    <li><strong>Lab Activities</strong> and the <strong>Assessment</strong> (80% to pass, unlimited attempts).</li>
+  </ul>
+</section>
+
+<footer>
+  Security+ · Module 8 · Video errata · Brookdale Community College · November 2026<br>
+  Reviewed against the published Module 8 reading and the video transcripts. Timestamps are approximate.
+</footer>
+
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('themeBtn'), root=document.documentElement;
+  try{var saved=localStorage.getItem('m8-errata-theme'); if(saved) root.setAttribute('data-theme',saved);}catch(e){}
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    var next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('m8-errata-theme',next);}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
